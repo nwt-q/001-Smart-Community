@@ -90,7 +90,9 @@
     "prepare": "git init && husky",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "up-taze": "pnpm up @ruan-cat/taze-config -L && npx taze"
+    "up-taze": "pnpm up @ruan-cat/taze-config -L && npx taze",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs --base=/001-Smart-Community/"
   },
   "dependencies": {
     "@alova/adapter-uniapp": "^2.0.14",
