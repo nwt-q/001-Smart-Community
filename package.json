@@ -92,7 +92,8 @@
     "lint:fix": "eslint --fix",
     "up-taze": "pnpm up @ruan-cat/taze-config -L && npx taze",
     "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs --base=/001-Smart-Community/"
+    "docs:build": "vitepress build docs --base=/001-Smart-Community/",
+    "ci": "turbo do-build"
   },
   "dependencies": {
     "@alova/adapter-uniapp": "^2.0.14",
@@ -170,6 +171,7 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "sass": "1.77.8",
     "taze": "^19.6.0",
+    "turbo": "^2.5.6",
     "typescript": "~5.8.3",
     "unocss": "66.0.0",
     "unplugin-auto-import": "^20.1.0",

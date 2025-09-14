@@ -29,6 +29,9 @@ docs/.vitepress/cache
 
 src/types
 
+# 忽略 turbo 生成的缓存目录
+.turbo
+
 # lock 文件还是不要了，我主要的版本写死就好了
 pnpm-lock.yaml
 # package-lock.json

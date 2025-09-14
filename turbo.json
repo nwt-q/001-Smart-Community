@@ -1,0 +1,18 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "cache": true,
+      "outputs": ["dist/**"]
+    },
+    "docs:build": {
+      "cache": true,
+      "outputs": ["docs/.vitepress/dist/**"]
+    },
+    "do-build": {
+      "cache": true,
+      "dependsOn": ["build", "docs:build"]
+    }
+  }
+}
