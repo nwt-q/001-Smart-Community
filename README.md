@@ -91,3 +91,17 @@ Copyright (c) 2025 菲鸽
 <img alt="special sponsor appwrite" src="https://oss.laf.run/ukw0y1-site/pay/wepay.png" height="330" style="display:inline-block; height:330px;">
 <img alt="special sponsor appwrite" src="https://oss.laf.run/ukw0y1-site/pay/alipay.jpg" height="330" style="display:inline-block; height:330px; margin-left:10px;">
 </p>
+
+
+## 参考原型仓库
+
+- https://gitee.com/java110/PropertyApp
+
+## 工作任务划分
+
+### 阮喵喵
+
+做下面这4个静态页面。
+
+![2025-09-13-00-33-54](https://s2.loli.net/2025/09/13/gtkP7dIYfnyqZ6m.png)
+
