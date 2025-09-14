@@ -98,6 +98,11 @@ Copyright (c) 2025 菲鸽
 
 - https://gitee.com/java110/PropertyApp
 
+## 其他资料
+
+- wot-design-uni 组件库： https://wot-ui.cn/guide/quick-use.html
+- unibest 框架文档：https://unibest.tech/base/2-start
+
 ## 工作任务划分
 
 ### 阮喵喵
