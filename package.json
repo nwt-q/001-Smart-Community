@@ -89,7 +89,8 @@
     "openapi-ts-request": "openapi-ts",
     "prepare": "git init && husky",
     "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "up-taze": "pnpm up @ruan-cat/taze-config -L && npx taze"
   },
   "dependencies": {
     "@alova/adapter-uniapp": "^2.0.14",
@@ -133,6 +134,7 @@
     "@iconify-json/carbon": "^1.2.4",
     "@rollup/rollup-darwin-x64": "^4.28.0",
     "@ruan-cat/commitlint-config": "^3.0.0",
+    "@ruan-cat/taze-config": "^0.2.0",
     "@types/node": "^20.17.9",
     "@uni-helper/eslint-config": "^0.5.0",
     "@uni-helper/plugin-uni": "0.1.0",
@@ -164,6 +166,7 @@
     "postcss-scss": "^4.0.9",
     "rollup-plugin-visualizer": "^6.0.3",
     "sass": "1.77.8",
+    "taze": "^19.6.0",
     "typescript": "~5.8.0",
     "unocss": "66.0.0",
     "unplugin-auto-import": "^20.0.0",
