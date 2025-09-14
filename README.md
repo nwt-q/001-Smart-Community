@@ -26,6 +26,7 @@
 ![pnpm version](https://img.shields.io/badge/pnpm-%3E%3D10-green)
 ![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/feige996/unibest)
 ![GitHub License](https://img.shields.io/github/license/feige996/unibest)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nwt-q/001-Smart-Community)
 
 </div>
 
