@@ -110,10 +110,16 @@ Copyright (c) 2025 菲鸽
 - 物业员工账号： wuxw
 - 物业员工密码： admin
 
-## 其他资料
+## 上手学习 `unibest`的资料
 
 - wot-design-uni 组件库： https://wot-ui.cn/guide/quick-use.html
 - unibest 框架文档：https://unibest.tech/base/2-start
+
+## 期望达到的学习目标
+
+1. 借此来学习vue2和vue3的uniapp代码编写差异。便于我日后上手公司项目。熟悉一大套API。
+2. 尝试给出一个claude code代码迁移代理，迁移代码写法为vue3。
+3. 接触一下UI生成类的AI工具，帮我生成合适的UI方案，并设计合适的css颜色变量。
 
 ## 工作任务划分
 
