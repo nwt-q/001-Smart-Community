@@ -1,14 +1,14 @@
 // https://vitepress.dev/guide/custom-theme
 import type { Theme } from 'vitepress'
+import ElementPlus from 'element-plus'
 import DefaultTheme from 'vitepress/theme'
 import { h } from 'vue'
-import './custom.css'
 
+import FreshImage from './components/FreshImage.vue'
 import HomeStar from './components/HomeStar.vue'
 import NavBarTitleAfter from './components/NavBarTitleAfter.vue'
-import FreshImage from './components/FreshImage.vue'
 
-import ElementPlus from 'element-plus'
+import './custom.css'
 import 'element-plus/dist/index.css'
 
 export default {
@@ -23,6 +23,7 @@ export default {
   enhanceApp({ app, router, siteData }) {
     // ...
     app.component('FreshImage', FreshImage)
+    // @ts-expect-error 忽略掉类型报错
     app.use(ElementPlus)
   },
 } satisfies Theme
