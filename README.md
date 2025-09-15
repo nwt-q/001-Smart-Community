@@ -93,10 +93,22 @@ Copyright (c) 2025 菲鸽
 <img alt="special sponsor appwrite" src="https://oss.laf.run/ukw0y1-site/pay/alipay.jpg" height="330" style="display:inline-block; height:330px; margin-left:10px;">
 </p>
 
+## 我们在做什么？
 
-## 参考原型仓库
+我们做的是物业系统的app。对于物业的员工来说，他们使用这款app响应处理业主的反馈与投诉。比如：
 
-- https://gitee.com/java110/PropertyApp
+-
+
+## 参考资料
+
+- gitee仓库： https://gitee.com/java110/PropertyApp
+- 可访问demo地址： http://property.homecommunity.cn
+- 参考系统的文档： http://www.homecommunity.cn/pages/demo/demo_cn.html
+
+### 参考app的账号与密码
+
+- 物业员工账号： wuxw
+- 物业员工密码： admin
 
 ## 其他资料
 
@@ -110,4 +122,3 @@ Copyright (c) 2025 菲鸽
 做下面这4个静态页面。
 
 ![2025-09-13-00-33-54](https://s2.loli.net/2025/09/13/gtkP7dIYfnyqZ6m.png)
-
