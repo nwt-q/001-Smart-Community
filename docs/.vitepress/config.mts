@@ -5,12 +5,23 @@ import packageJson from '../../package.json'
 
 const buildTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
-const base = '/unibest/' // default is /
+/**
+ * 文档项目部署地址
+ * @description
+ * 因为文档项目默认部署到 github page 上，所以base 取值为仓库名称。
+ *
+ * - https://github.com/nwt-q/001-Smart-Community
+ */
+const base = '/001-Smart-Community/'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'zh-CN',
-  base: base,
+  /**
+   * 不推荐在此处配置写死的 base 路径。部署平台不应该约束构建过程的配置。
+   * 在 vitepress build 命令中，通过 --base 参数来配置 base 路径。
+   */
+  // base: base,
   title: 'unibest 官方文档',
   description: '最好用的 uniapp 开发模板',
   lastUpdated: true,

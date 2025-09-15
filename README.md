@@ -22,10 +22,11 @@
 [![GitHub forks](https://img.shields.io/github/forks/feige996/unibest?style=flat&logo=github)](https://github.com/feige996/unibest)
 [![star](https://gitee.com/feige996/unibest/badge/star.svg?theme=dark)](https://gitee.com/feige996/unibest/stargazers)
 [![fork](https://gitee.com/feige996/unibest/badge/fork.svg?theme=dark)](https://gitee.com/feige996/unibest/members)
-![node version](https://img.shields.io/badge/node-%3E%3D18-green)
-![pnpm version](https://img.shields.io/badge/pnpm-%3E%3D7.30-green)
+![node version](https://img.shields.io/badge/node-%3E%3D22-green)
+![pnpm version](https://img.shields.io/badge/pnpm-%3E%3D10-green)
 ![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/feige996/unibest)
 ![GitHub License](https://img.shields.io/github/license/feige996/unibest)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nwt-q/001-Smart-Community)
 
 </div>
 
@@ -96,6 +97,11 @@ Copyright (c) 2025 菲鸽
 ## 参考原型仓库
 
 - https://gitee.com/java110/PropertyApp
+
+## 其他资料
+
+- wot-design-uni 组件库： https://wot-ui.cn/guide/quick-use.html
+- unibest 框架文档：https://unibest.tech/base/2-start
 
 ## 工作任务划分
 

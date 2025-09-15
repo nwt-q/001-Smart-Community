@@ -3,7 +3,8 @@ name: Auto Merge aliyun
 on:
   push:
     branches:
-      - main
+      # 不使用该工作流了 因为我们没有 aliyun 分支。也没有对应的 GH_TOKEN_AUTO_MERGE 令牌。
+      - main-notuse
   workflow_dispatch: # 手动触发
 
 jobs:
