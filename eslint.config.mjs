@@ -46,5 +46,8 @@ export default uniHelper({
      * By default uses Prettier
      */
     html: true,
+
+    /** 允许 markdown 文件使用 prettier 格式化 */
+    markdown: 'prettier',
   },
 })
