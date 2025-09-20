@@ -34,3 +34,14 @@
 3. 请你编写模拟用的假接口。接口名称和url路径，保持和 `旧项目` 一样的路径，但是使用的是假接口。返回写死的假数据即可。
 
 请你按照该要求，更新接口迁移计划文档。
+
+### 002 新建本地的 claude code agent文件
+
+请深度思考。
+
+我需要你将这些迁移计划，改造成能够被 claude code 识别使用的本地agent文件。
+
+1. 阅读 `.github\prompts\migrate-plan` 的迁移计划文件。
+2. 将 `api-migration.md` `code-migration.md` 和 `style-migration.md` 新建为claude code的子代理。
+3. 删除掉这三个文件，以后的迁移计划一律以claude code子代理的形式展示出来。
+4. 恰当的更新 .github\prompts\migrate-plan\README.md 文件。

@@ -1,6 +1,4 @@
-# uni-app 代码写法迁移计划
-
-## 迁移概述
+# uni-app 代码写法迁移专家
 
 从 Vue2 项目的 **Options API + JavaScript** 开发模式迁移到 Vue3 项目的 **Composition API + TypeScript + unibest** 现代化开发模式。
 
@@ -412,11 +410,13 @@ interface Task {
   id: string
   title: string
   status: 'pending' | 'completed'
+  assignee: string
 }
 
 interface User {
   id: string
   name: string
+  role: string
 }
 
 export const useTaskStore = defineStore('task', () => {
@@ -430,31 +430,66 @@ export const useTaskStore = defineStore('task', () => {
     taskList.value.filter(task => task.status === 'completed')
   )
 
+  const taskCount = computed(() => ({
+    total: taskList.value.length,
+    completed: completedTasks.value.length,
+    pending: taskList.value.filter(task => task.status === 'pending').length
+  }))
+
   // Actions
   const loadTasks = async () => {
     loading.value = true
     try {
       const result = await getTaskList()
       taskList.value = result
+    } catch (error) {
+      console.error('加载任务失败:', error)
+      throw error
     } finally {
       loading.value = false
     }
   }
 
-  const setUser = (newUser: User) => {
-    user.value = newUser
+  const addTask = (task: Omit<Task, 'id'>) => {
+    const newTask: Task = {
+      ...task,
+      id: Date.now().toString()
+    }
+    taskList.value.unshift(newTask)
+  }
+
+  const updateTask = (taskId: string, updates: Partial<Task>) => {
+    const index = taskList.value.findIndex(task => task.id === taskId)
+    if (index !== -1) {
+      taskList.value[index] = { ...taskList.value[index], ...updates }
+    }
+  }
+
+  const deleteTask = (taskId: string) => {
+    const index = taskList.value.findIndex(task => task.id === taskId)
+    if (index !== -1) {
+      taskList.value.splice(index, 1)
+    }
+  }
+
+  const setCurrentUser = (user: User) => {
+    currentUser.value = user
   }
 
   return {
     // State
-    user,
-    taskList,
-    loading,
+    taskList: readonly(taskList),
+    loading: readonly(loading),
+    currentUser: readonly(currentUser),
     // Getters
     completedTasks,
+    taskCount,
     // Actions
     loadTasks,
-    setUser
+    addTask,
+    updateTask,
+    deleteTask,
+    setCurrentUser
   }
 }, {
   // 持久化配置
@@ -464,22 +499,30 @@ export const useTaskStore = defineStore('task', () => {
       getItem: uni.getStorageSync,
       setItem: uni.setStorageSync
     },
-    paths: ['user'] // 只持久化 user 数据
+    paths: ['currentUser'] // 只持久化用户信息
   }
 })
 
 // 组件中使用
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useTaskStore } from '@/stores/useTaskStore'
 
 const taskStore = useTaskStore()
 
-// 直接使用响应式数据
-const { user, taskList, loading, completedTasks } = storeToRefs(taskStore)
+// 响应式解构
+const { taskList, loading, completedTasks, taskCount } = storeToRefs(taskStore)
 
-// 调用 actions
-const handleLoadTasks = () => {
-  taskStore.loadTasks()
+// Actions 可以直接解构（不需要 storeToRefs）
+const { loadTasks, addTask, updateTask, deleteTask } = taskStore
+
+// 使用
+const handleAddTask = () => {
+  addTask({
+    title: '新任务',
+    status: 'pending',
+    assignee: 'user1'
+  })
 }
 </script>
 ```
