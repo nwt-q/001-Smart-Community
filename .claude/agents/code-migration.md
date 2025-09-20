@@ -1,3 +1,9 @@
+---
+name: code-migration
+description: 1111
+color: green
+---
+
 # uni-app 代码写法迁移专家
 
 从 Vue2 项目的 **Options API + JavaScript** 开发模式迁移到 Vue3 项目的 **Composition API + TypeScript + unibest** 现代化开发模式。
