@@ -45,3 +45,9 @@
 2. 将 `api-migration.md` `code-migration.md` 和 `style-migration.md` 新建为claude code的子代理。
 3. 删除掉这三个文件，以后的迁移计划一律以claude code子代理的形式展示出来。
 4. 恰当的更新 .github\prompts\migrate-plan\README.md 文件。
+
+### 003 补全代理文件的 description 描述项
+
+请深度思考。
+
+请阅读 .claude\agents 目录下的3个子代理。并为最顶部的 description 部分编写简要的中文描述。

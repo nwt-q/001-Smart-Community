@@ -250,9 +250,9 @@
 
 本迁移计划已转换为 Claude Code 本地专家代理，可直接在 IDE 中调用：
 
-- **API 迁移专家**: `/.claude/api-migration-agent.md` - 专注于接口请求从 Java110Context 到 Alova + TypeScript + Mock 的迁移
-- **代码迁移专家**: `/.claude/code-migration-agent.md` - 专注于 Vue2 Options API 到 Vue3 Composition API + TypeScript 的迁移
-- **样式迁移专家**: `/.claude/style-migration-agent.md` - 专注于 ColorUI 到 UnoCSS + wot-design-uni 的样式系统迁移
+- **API 迁移专家**: `.claude/agents/api-migration.md` - 专注于接口请求从 Java110Context 到 Alova + TypeScript + Mock 的迁移
+- **代码迁移专家**: `.claude/agents/code-migration.md` - 专注于 Vue2 Options API 到 Vue3 Composition API + TypeScript 的迁移
+- **样式迁移专家**: `.claude/agents/style-migration.md` - 专注于 ColorUI 到 UnoCSS + wot-design-uni 的样式系统迁移
 
 ### 使用方法
 

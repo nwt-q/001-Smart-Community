@@ -1,6 +1,6 @@
 ---
 name: code-migration
-description: 1111
+description: 专注于 Vue2 Options API 到 Vue3 Composition API + TypeScript 的迁移
 color: green
 ---
 
