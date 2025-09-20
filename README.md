@@ -93,15 +93,33 @@ Copyright (c) 2025 菲鸽
 <img alt="special sponsor appwrite" src="https://oss.laf.run/ukw0y1-site/pay/alipay.jpg" height="330" style="display:inline-block; height:330px; margin-left:10px;">
 </p>
 
+## 我们在做什么？
 
-## 参考原型仓库
+我们做的是物业系统的app。对于物业的员工来说，他们使用这款app响应处理业主的反馈与投诉。比如：
 
-- https://gitee.com/java110/PropertyApp
+-
 
-## 其他资料
+## 参考资料
+
+- gitee仓库： https://gitee.com/java110/PropertyApp
+- 可访问demo地址： http://property.homecommunity.cn
+- 参考系统的文档： http://www.homecommunity.cn/pages/demo/demo_cn.html
+
+### 参考app的账号与密码
+
+- 物业员工账号： wuxw
+- 物业员工密码： admin
+
+## 上手学习 `unibest`的资料
 
 - wot-design-uni 组件库： https://wot-ui.cn/guide/quick-use.html
 - unibest 框架文档：https://unibest.tech/base/2-start
+
+## 期望达到的学习目标
+
+1. 借此来学习vue2和vue3的uniapp代码编写差异。便于我日后上手公司项目。熟悉一大套API。
+2. 尝试给出一个claude code代码迁移代理，迁移代码写法为vue3。
+3. 接触一下UI生成类的AI工具，帮我生成合适的UI方案，并设计合适的css颜色变量。
 
 ## 工作任务划分
 
@@ -111,3 +129,7 @@ Copyright (c) 2025 菲鸽
 
 ![2025-09-13-00-33-54](https://s2.loli.net/2025/09/13/gtkP7dIYfnyqZ6m.png)
 
+- 公告
+- 维修录单
+- 通讯录
+- 投诉录单

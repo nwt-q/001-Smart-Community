@@ -16,6 +16,8 @@ export default uniHelper({
     'src/manifest.json',
     // 忽略自动生成文件
     'src/service/app/**',
+    // 忽略掉 vitepress 文档的 vue 组件
+    'docs/.vitepress/**/*.vue',
   ],
   rules: {
     'no-useless-return': 'off',
@@ -46,5 +48,8 @@ export default uniHelper({
      * By default uses Prettier
      */
     html: true,
+
+    /** 允许 markdown 文件使用 prettier 格式化 */
+    markdown: 'prettier',
   },
 })
