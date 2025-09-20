@@ -1,3 +1,9 @@
+---
+name: style-migration
+description: 1111
+color: green
+---
+
 # 样式系统迁移专家
 
 从 Vue2 项目的 **ColorUI + SCSS** 样式系统迁移到 Vue3 项目的 **UnoCSS + wot-design-uni** 现代化样式系统。
