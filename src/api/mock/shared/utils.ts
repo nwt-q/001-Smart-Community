@@ -30,9 +30,74 @@ export function createPaginationResponse<T>(
   }
 }
 
-// 生成随机 ID
+// 生成随机 ID（更加真实的业务ID格式）
 export function generateId(prefix: string = 'ID') {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  const timestamp = Date.now().toString(36)
+  const random = Math.random().toString(36).substring(2, 8)
+  return `${prefix}_${timestamp}_${random}`.toUpperCase()
+}
+
+// 生成业务编号（按日期 + 序号格式）
+export function generateBusinessId(prefix: string = 'BIZ') {
+  const date = new Date()
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '') // YYYYMMDD
+  const timeStr = date.toTimeString().slice(0, 8).replace(/:/g, '') // HHMMSS
+  const random = Math.floor(Math.random() * 999).toString().padStart(3, '0')
+  return `${prefix}${dateStr}${timeStr}${random}`
+}
+
+// 生成随机中文姓名
+export function generateChineseName() {
+  const surnames = ['王', '李', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗']
+  const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞']
+  const surname = surnames[Math.floor(Math.random() * surnames.length)]
+  const name = names[Math.floor(Math.random() * names.length)]
+  return surname + name
+}
+
+// 生成随机手机号
+export function generatePhoneNumber() {
+  const prefixes = ['130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '150', '151', '152', '153', '155', '156', '157', '158', '159', '180', '181', '182', '183', '184', '185', '186', '187', '188', '189']
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
+  const suffix = Math.floor(Math.random() * 100000000).toString().padStart(8, '0')
+  return prefix + suffix
+}
+
+// 生成随机地址
+export function generateAddress() {
+  const buildings = Array.from({ length: 20 }, (_, i) => (i + 1).toString())
+  const units = ['A', 'B', 'C', 'D', 'E', 'F']
+  const floors = Array.from({ length: 30 }, (_, i) => (i + 1).toString().padStart(2, '0'))
+
+  const building = buildings[Math.floor(Math.random() * buildings.length)]
+  const unit = units[Math.floor(Math.random() * units.length)]
+  const floor = floors[Math.floor(Math.random() * floors.length)]
+
+  return `${building}栋${floor}${unit}室`
+}
+
+// 生成随机时间范围
+export function generateTimeRange(startDaysFromNow: number = -30, endDaysFromNow: number = 30) {
+  const now = Date.now()
+  const startTime = now + (startDaysFromNow * 24 * 60 * 60 * 1000)
+  const endTime = now + (endDaysFromNow * 24 * 60 * 60 * 1000)
+  const randomTime = startTime + Math.random() * (endTime - startTime)
+  return new Date(randomTime).toISOString()
+}
+
+// 生成随机金额
+export function generateAmount(min: number = 10, max: number = 1000) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+// 生成随机状态
+export function generateStatus<T extends string>(statuses: T[]): T {
+  return statuses[Math.floor(Math.random() * statuses.length)]
+}
+
+// 生成随机优先级
+export function generatePriority() {
+  return generateStatus(['HIGH', 'MEDIUM', 'LOW'])
 }
 
 // 模拟成功响应
