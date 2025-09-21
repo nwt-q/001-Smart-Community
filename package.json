@@ -89,7 +89,7 @@
     "openapi-ts-request": "openapi-ts",
     "prepare": "git init && husky",
     "lint": "eslint",
-    "lint:fix": "eslint --fix",
+    "lint:fix": "eslint --fix --ignore-pattern docs/.vitepress/** --ignore-pattern gitee-example/**",
     "up-taze": "pnpm up @ruan-cat/taze-config -L && npx taze",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs --base=/001-Smart-Community/",

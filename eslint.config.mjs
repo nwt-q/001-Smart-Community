@@ -16,8 +16,8 @@ export default uniHelper({
     'src/manifest.json',
     // 忽略自动生成文件
     'src/service/app/**',
-    // 忽略掉 vitepress 文档的 vue 组件
-    'docs/.vitepress/**/*.vue',
+    // 忽略掉 vitepress 文档的全部文件
+    'docs/.vitepress/**',
   ],
   rules: {
     'no-useless-return': 'off',
@@ -54,14 +54,10 @@ export default uniHelper({
   },
 },
 
-
-  // 为 *.mock.ts 文件忽略 multiline-ternary 规则
-  {
-    files: ['**/*.mock.ts'],
-    rules: {
-      'style/multiline-ternary': 'off',
-    },
+// 为 *.mock.ts 文件忽略 multiline-ternary 规则
+{
+  files: ['**/*.mock.ts'],
+  rules: {
+    'style/multiline-ternary': 'off',
   },
-
-)
-
+})
