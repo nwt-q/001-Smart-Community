@@ -70,6 +70,13 @@
       }
     },
     {
+      "path": "pages/activity/detail",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "活动详情"
+      }
+    },
+    {
       "path": "pages/login/login",
       "type": "page",
       "style": {
