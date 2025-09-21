@@ -51,3 +51,12 @@
 请深度思考。
 
 请阅读 .claude\agents 目录下的3个子代理。并为最顶部的 description 部分编写简要的中文描述。
+
+### 004 新建路由子代理
+
+请你为我制作路由迁移功能的子代理。
+
+1. 请先阅读 .github\prompts\make-migrate-plan.md 文档。但是你不阅读 `其他内容` 栏目下的内容。
+2. 阅读 .github\prompts\migrate-plan\README.md 文档。
+3. 粗略地阅读 `.claude\agents` 文件夹下面的子代理，了解子代理的格式写法。你稍后将模仿这些子代理的写法。
+4. 搞清楚 `本项目` 和 `旧项目` 的路由差异，指定合适的路由迁移计划，并在 `.claude\agents` 下面制作子代理。
