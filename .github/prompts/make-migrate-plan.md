@@ -60,3 +60,27 @@
 2. 阅读 .github\prompts\migrate-plan\README.md 文档。
 3. 粗略地阅读 `.claude\agents` 文件夹下面的子代理，了解子代理的格式写法。你稍后将模仿这些子代理的写法。
 4. 搞清楚 `本项目` 和 `旧项目` 的路由差异，指定合适的路由迁移计划，并在 `.claude\agents` 下面制作子代理。
+
+### 005 更新 api-migration 接口请求迁移专家 子代理
+
+请深度思考。
+
+我需要你更新 `api-migration` 子代理，重点更新 `2. 模拟接口实现策略` 这一部分的提示词写法。这部分的提示词写法使用了不存在的 `registerMockHandler` 函数。这不正确。
+
+1. 请阅读 `.claude\agents\code-migration.md` 文件。**针对性**的阅读 `2. 模拟接口实现策略` 这一部分的提示词写法。不需要你全面的阅读。
+2. 请阅读 `vite-plugin-mock-dev-server` 这个库。阅读 ： https://github.com/pengzhanbo/vite-plugin-mock-dev-server 这个仓库。
+3. 请阅读 https://vite-plugin-mock-dev-server.netlify.app/llms.txt 文档。**请充分的**阅读关于 `vite-plugin-mock-dev-server` API使用的文档。
+4. 定义的mock接口，其文件格式为 `*.mock.ts` ，不是定义在 `api/mock` 这样的文件夹内。请在子代理内重点说明这个要求。
+5. 按照 `vite-plugin-mock-dev-server` 的文档要求，重写基于 `vite-plugin-mock-dev-server` 的 `2. 模拟接口实现策略` 。
+
+### 006 安装 `vite-plugin-mock-dev-server`
+
+请深度思考。
+
+按照文档 https://vite-plugin-mock-dev-server.netlify.app/zh/guide/install 的要求，在本项目内安装该包，并在vite配置内配置该插件。
+
+### 007 应用最新的 `api-migration` 子代理
+
+请深度思考。
+
+对 `src\api\mock` 文件夹的mock接口代码，应用 `api-migration` 子代理做出修改。
