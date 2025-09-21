@@ -267,21 +267,25 @@ export const deleteMaintainanceTask = (taskId: string) =>
 **核心要求**:
 
 - **文件格式**: 必须使用 `*.mock.ts` 格式，不得使用其他格式
-- **文件位置**: 模拟接口文件必须放在项目根目录的 `/mock` 目录下
-- **不要创建** `src/api/mock/` 目录，这是错误的做法
+- **文件位置**: 模拟接口文件必须放在 `src/api/mock` 目录下
+- **注意**: Mock 文件与 API 接口文件在同一目录层级，便于管理和维护
 
 **正确的项目结构**:
 
 ```
 项目根目录/
-├── mock/                          # Mock 文件目录
-│   ├── maintainance.mock.ts       # 维修模块 Mock 接口
-│   ├── complaint.mock.ts          # 投诉模块 Mock 接口
-│   ├── activity.mock.ts           # 活动模块 Mock 接口
-│   └── shared/                    # 共享 Mock 数据
-│       ├── mockData.ts            # 通用模拟数据生成器
-│       └── utils.ts               # Mock 工具函数
 ├── src/
+│   └── api/                       # API 目录
+│       ├── mock/                  # Mock 文件目录
+│       │   ├── maintainance.mock.ts    # 维修模块 Mock 接口
+│       │   ├── complaint.mock.ts       # 投诉模块 Mock 接口
+│       │   ├── activity.mock.ts        # 活动模块 Mock 接口
+│       │   └── shared/                 # 共享 Mock 数据
+│       │       ├── mockData.ts         # 通用模拟数据生成器
+│       │       └── utils.ts            # Mock 工具函数
+│       ├── maintainance.ts        # 维修相关接口定义
+│       ├── complaint.ts           # 投诉相关接口定义
+│       └── activity.ts            # 活动相关接口定义
 ├── vite.config.ts                 # 确保配置了 mockDevServerPlugin
 └── package.json
 ```
@@ -298,7 +302,9 @@ import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
 export default defineConfig({
   plugins: [
     // 其他插件...
-    mockDevServerPlugin(), // 启用 Mock 插件
+    mockDevServerPlugin({
+      dir: 'src/api/mock', // 指定 Mock 文件目录
+    }),
   ],
   server: {
     proxy: {
@@ -314,7 +320,7 @@ export default defineConfig({
 **创建共享的模拟数据工厂**:
 
 ```typescript
-// mock/shared/mockData.ts
+// src/api/mock/shared/mockData.ts
 import type { MaintainanceTask, PaginationResponse } from '@/types'
 
 // 模拟数据生成器
@@ -444,7 +450,7 @@ export const mockDb = MockDatabase.getInstance()
 **正确使用 `defineMock` 定义 Mock 接口**:
 
 ```typescript
-// mock/maintainance.mock.ts
+// src/api/mock/maintainance.mock.ts
 import { defineMock } from 'vite-plugin-mock-dev-server'
 import { mockDb } from './shared/mockData'
 import type { UpdateMaintainanceTaskReq } from '@/types'
@@ -573,7 +579,7 @@ export default defineMock([
 **条件响应和数据验证**:
 
 ```typescript
-// mock/advanced.mock.ts
+// src/api/mock/advanced.mock.ts
 import { defineMock } from 'vite-plugin-mock-dev-server'
 
 export default defineMock([
@@ -638,7 +644,7 @@ export default defineMock([
 **基于 Activity 模块的完整 Mock 实现**:
 
 ```typescript
-// mock/activity.mock.ts
+// src/api/mock/activity.mock.ts
 import { defineMock } from 'vite-plugin-mock-dev-server'
 
 // 活动模拟数据
@@ -934,22 +940,27 @@ export default defineConfig({
 
 ```
 项目根目录/
-├── mock/
-│   ├── shared/
-│   │   ├── mockData.ts     # 通用数据生成器
-│   │   └── utils.ts        # Mock 工具函数
-│   ├── activity.mock.ts    # 活动模块 Mock
-│   └── README.md           # Mock 开发说明
-└── src/types/              # TypeScript 类型定义
-    ├── api.ts
-    ├── activity.ts
-    └── ...
+├── src/
+│   ├── api/
+│   │   ├── mock/
+│   │   │   ├── shared/
+│   │   │   │   ├── mockData.ts     # 通用数据生成器
+│   │   │   │   └── utils.ts        # Mock 工具函数
+│   │   │   ├── activity.mock.ts    # 活动模块 Mock
+│   │   │   └── README.md           # Mock 开发说明
+│   │   ├── activity.ts             # 活动 API 接口
+│   │   └── ...
+│   └── types/                      # TypeScript 类型定义
+│       ├── api.ts
+│       ├── activity.ts
+│       └── ...
+└── vite.config.ts
 ```
 
 **Step 3: 创建第一个 Mock 文件验证**
 
 ```typescript
-// mock/test.mock.ts
+// src/api/mock/test.mock.ts
 import { defineMock } from 'vite-plugin-mock-dev-server'
 
 export default defineMock({
@@ -970,7 +981,7 @@ export default defineMock({
 
 - [ ] 创建 `src/types/activity.ts` 类型定义
 - [ ] 创建 `src/api/activity.ts` API 接口
-- [ ] 创建 `mock/activity.mock.ts` Mock 文件
+- [ ] 创建 `src/api/mock/activity.mock.ts` Mock 文件
 - [ ] 在组件中测试验证
 
 **完整迁移示例**:
@@ -1003,7 +1014,7 @@ export interface Activity {
 export const getActivityList = (params: ActivityListParams) =>
   http.Get<ActivityListResponse>('/api/app/activities.listActivitiess', { params })
 
-// Step 4: 创建 Mock 文件 (mock/activity.mock.ts)
+// Step 4: 创建 Mock 文件 (src/api/mock/activity.mock.ts)
 export default defineMock([
   {
     url: '/api/app/activities.listActivitiess',
@@ -1048,7 +1059,7 @@ const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
 **质量检查清单**:
 
 - ✅ 所有 Mock 文件使用 `*.mock.ts` 格式
-- ✅ Mock 文件都在 `/mock` 目录下
+- ✅ Mock 文件都在 `src/api/mock` 目录下
 - ✅ 使用 `defineMock()` 而非自定义函数
 - ✅ API 接口保持与原项目相同的 URL 路径
 - ✅ 完整的 TypeScript 类型定义
