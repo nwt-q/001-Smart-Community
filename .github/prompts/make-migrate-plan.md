@@ -106,7 +106,23 @@
 
 在 `eslint.config.mjs` 内，为 `*.mock.ts` 格式的文件，增加规则忽略，忽略掉 `style/multiline-ternary` 规则，设置为 `off` 。
 
-### 010 给 `api-migration` 子代理增加新的mock数据存储规则
+### 010 拆分业务类型
+
+<!-- TODO: 待使用 -->
+
+请深度思考。
+
+请阅读 `src\types\api.ts` 和 `src\types\activity.ts` 。做好业务类型拆分。
+
+我不希望看到全部的类型都集中在唯一一个 `src\types\api.ts` 文件内。
+
+请你适度的做好业务类型拆分。将业务类型和公共通用的类型拆分好。
+
+1. 将mock相关的类型拆分迁移到 `src\api\mock\shared` 目录内，这些类型将作为 mock 的通用工具类型。定义一个 `src\api\mock\shared\types.ts` 文件来管理这些类型。
+2. 将通用类型继续保留在 `src\types\api.ts` 内。
+3. 模仿 `src\types\activity.ts` 的写法，将业务类型做合理的拆分。
+
+### 011 给 `api-migration` 子代理增加新的mock数据存储规则
 
 <!-- TODO: 待使用 -->
 
