@@ -27,7 +27,8 @@ dist
 docs/.vitepress/dist
 docs/.vitepress/cache
 
-src/types
+# 生成的业务类型文件 也会存储在这里 故忽略掉自动生成的文件
+src/types/*.d.ts
 
 # 忽略 turbo 生成的缓存目录
 .turbo
