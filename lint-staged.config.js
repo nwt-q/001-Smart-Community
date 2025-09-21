@@ -13,4 +13,5 @@ export default {
    * !(gitee-example) - 排除 gitee-example 文件夹
    */
   '!(gitee-example)/**/*': 'eslint --fix',
+  '!(gitee-example)/**/*.md': 'prettier --ignore-unknown --experimental-cli --write',
 }
