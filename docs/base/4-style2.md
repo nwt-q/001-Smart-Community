@@ -3,20 +3,17 @@
 对于 unibest 项目使用 TailwindCSS 的评估如下：
 
 1. **直接使用TailwindCSS的限制**：
-
    - 原生TailwindCSS是为Web设计的，在小程序环境下会有兼容性问题
    - 不支持rpx单位，在小程序适配上有困难
    - 需要额外配置postcss和purgeCSS才能在小程序工作
 
 2. **当前UnoCSS的优势**：
-
    - 您的项目已经配置了`unocss-applet`，专门为小程序优化
    - 支持rpx单位转换（通过presetRemRpx）
    - 支持小程序属性化写法（transformerAttributify）
    - 体积更小，按需生成样式
 
 3. **替代方案建议**：
-
    - 保持使用UnoCSS，它已经实现了Tailwind的大部分功能
    - 可以通过安装`@unocss/preset-wind`来获得Tailwind风格的类名：
 

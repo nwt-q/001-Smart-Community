@@ -13,33 +13,33 @@
    import jiansuoyou from './监所邮.png'
 const  cases = [
     {
-        name: '佰润', 
-        desc: '月销200w+',  
+        name: '佰润',
+        desc: '月销200w+',
         image: bairun,
     },
     {
-        name: '进货平台', 
-        desc: '月销200w+',  
+        name: '进货平台',
+        desc: '月销200w+',
         image: jinhuopingtai,
     },
     {
-        name: '橙掌柜', 
-        desc: '月销200w+',  
+        name: '橙掌柜',
+        desc: '月销200w+',
         image: chengzhanggui,
     },
     {
-        name: '云打牌记账本', 
-        desc: '',  
+        name: '云打牌记账本',
+        desc: '',
         image:yundapai,
     },
     {
-        name: '监所通', 
-        desc: '出入所管理',  
+        name: '监所通',
+        desc: '出入所管理',
         image:jiansuotong,
     },
     {
-        name: '监所邮', 
-        desc: '寄信管理',  
+        name: '监所邮',
+        desc: '寄信管理',
         image: jiansuoyou,
     },
 ]

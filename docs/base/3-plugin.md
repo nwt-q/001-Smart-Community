@@ -40,18 +40,15 @@
 `unibest` 引入了 `uni-helper` 团队的几个重要插件，少了它们 `unibest` 就缺少了灵魂，感谢 `uni-helper` 团队的贡献。`Uni 插件` 列表如下：
 
 - `vite-plugin-uni-pages`
-
   - 介绍：为 `Vite` 下的 `uni-app` 提供基于文件系统的路由
   - 额外：使用 `TypeScript` 来编写 `uni-app` 的 `pages.json`
   - 访问地址：[@uni-helper/vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages)
 
 - `vite-plugin-uni-layouts`
-
   - 介绍：为 `Vite` 下的 `uni-app` 提供类 `nuxt` 的 `layouts` 系统
   - 访问地址：[@uni-helper/vite-plugin-uni-layouts](https://github.com/uni-helper/vite-plugin-uni-layouts)
 
 - `vite-plugin-uni-manifest`
-
   - 介绍：使用 `TypeScript` 来编写 `uni-app` 的 `manifest.json`
   - 访问地址：[@uni-helper/vite-plugin-uni-manifest](https://github.com/uni-helper/vite-plugin-uni-manifest)
 
