@@ -77,7 +77,8 @@
 
 请深度思考。
 
-按照文档 https://vite-plugin-mock-dev-server.netlify.app/zh/guide/install 的要求，在本项目内安装该包，并在vite配置内配置该插件。
+1. 按照文档 https://vite-plugin-mock-dev-server.netlify.app/zh/guide/install 的要求，在本项目内安装该包，并在vite配置内配置该插件。
+2. 阅读 `api-migration` 子代理的要求，安装并配置 `vite-plugin-mock-dev-server` 插件。
 
 ### 007 应用最新的 `api-migration` 子代理
 
