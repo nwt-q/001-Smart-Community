@@ -38,7 +38,7 @@ color: orange
 ├── pages.config.ts               # 全局配置和组件自动导入
 ├── src/pages/                    # 页面目录结构即路由结构
 │   ├── index/                    # /pages/index/index
-│   │   └── index.vue            # 页面文件 + route-block 配置
+│   │   └── index.vue            # 页面文件
 │   ├── login/                    # /pages/login/
 │   │   ├── login.vue            # 登录页面
 │   │   └── register.vue         # 注册页面
@@ -101,41 +101,17 @@ color: orange
 
 ```vue
 <!-- src/pages/index/index.vue -->
-<route-block lang="json">
-{
-  "style": {
-    "navigationBarTitleText": "首页"
-  }
-}
-</route-block>
-
-<template>
-  <view>首页内容</view>
-</template>
-
 <script setup lang="ts">
-// 或者使用 definePage API
+// 使用 definePage API
 definePage({
   style: {
     navigationBarTitleText: '首页'
   }
 })
 </script>
-```
-
-```vue
-<!-- src/pages/login/login.vue -->
-<route-block lang="json">
-{
-  "style": {
-    "navigationBarTitleText": "登录",
-    "navigationStyle": "custom"
-  }
-}
-</route-block>
 
 <template>
-  <view>登录页面</view>
+  <view>首页内容</view>
 </template>
 ```
 
@@ -440,21 +416,6 @@ export const tabBar = {
 
 ```vue
 <!-- src/pages/repair/order.vue - 维修工单池 -->
-<route-block lang="json">
-{
-  "style": {
-    "navigationBarTitleText": "维修工单池",
-    "enablePullDownRefresh": true
-  }
-}
-</route-block>
-
-<template>
-  <view class="repair-order-page">
-    <!-- 维修工单列表 -->
-  </view>
-</template>
-
 <script setup lang="ts">
 // 使用 definePage API (推荐方式)
 definePage({
@@ -466,6 +427,12 @@ definePage({
 
 // 页面逻辑
 </script>
+
+<template>
+  <view class="repair-order-page">
+    <!-- 维修工单列表 -->
+  </view>
+</template>
 ```
 
 ```vue

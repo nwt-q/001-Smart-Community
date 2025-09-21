@@ -1,11 +1,3 @@
-<route-block lang="json">
-{
-  "style": {
-    "navigationBarTitleText": "活动详情"
-  }
-}
-</route-block>
-
 <script setup lang="ts">
 import type { Activity } from '@/types/activity'
 import { onLoad } from '@dcloudio/uni-app'
