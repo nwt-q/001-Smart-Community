@@ -1,5 +1,6 @@
+import type { RepairStatus } from '@/types/repair'
 import { defineMock } from 'vite-plugin-mock-dev-server'
-import { createMockRepair, RepairStatus } from './shared/mockData'
+import { createMockRepair } from './shared/mockData'
 import { createPaginationResponse, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
 
 /**
@@ -78,7 +79,7 @@ const mockRepairDatabase = {
   },
 
   // 更新工单状态
-  updateRepairStatus(repairId: string, status: string, assignedWorker?: string) {
+  updateRepairStatus(repairId: string, status: RepairStatus, assignedWorker?: string) {
     const repair = this.getRepairById(repairId)
     if (repair) {
       repair.status = status
