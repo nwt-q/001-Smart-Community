@@ -80,7 +80,21 @@
 1. 按照文档 https://vite-plugin-mock-dev-server.netlify.app/zh/guide/install 的要求，在本项目内安装该包，并在vite配置内配置该插件。
 2. 阅读 `api-migration` 子代理的要求，安装并配置 `vite-plugin-mock-dev-server` 插件。
 
-### 007 应用最新的 `api-migration` 子代理
+### 007 重构 `vite-plugin-mock-dev-server` 的目录结构
+
+请深度思考。
+
+目前的mock规则不符合我的期望，我希望你帮我更改掉目录结构。
+
+最核心的更改： mock文件目录从 `mock` 迁移到 `src\api\mock` 内。
+
+1. 请你同步更改掉 `.claude\agents\api-migration.md` 文档关于此目录结构的写法。mock文件位置改了，但是mock文件的格式仍旧是 `*.mock.ts` 。
+2. 请阅读 https://vite-plugin-mock-dev-server.netlify.app/zh/guide/plugin-config 文档。
+3. 请你同步更新 `vite.config.ts` 关于文件目录的部分，同步更改成期望的 `src\api\mock` 文件夹内。
+4. 请你移动现有的 `mock` 文件，到 `src\api\mock` 内。
+5. 请你及时同步更改 `src\api\mock\README.md` 文档的说明。
+
+### 008 应用最新的 `api-migration` 子代理
 
 请深度思考。
 
