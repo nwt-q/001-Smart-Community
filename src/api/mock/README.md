@@ -5,7 +5,7 @@
 ## 📁 目录结构
 
 ```
-mock/
+src/api/mock/
 ├── shared/
 │   ├── utils.ts        # Mock 工具函数
 │   └── mockData.ts     # 通用模拟数据生成器
@@ -43,7 +43,7 @@ export default defineMock([
 
 ## 🚀 使用说明
 
-1. **创建 Mock 文件**: 在 `/mock` 目录下创建 `*.mock.ts` 文件
+1. **创建 Mock 文件**: 在 `src/api/mock` 目录下创建 `*.mock.ts` 文件
 2. **定义接口**: 使用 `defineMock()` 函数定义 Mock 接口
 3. **启动开发服务器**: 运行 `pnpm dev` 启动开发服务器
 4. **访问 Mock 接口**: 发送请求到配置的接口路径
@@ -58,7 +58,8 @@ export default defineMock([
 
 ## ⚠️ 重要提醒
 
-- Mock 文件必须放在项目根目录的 `/mock` 目录下
-- 不要在 `src/api/mock/` 目录下创建 Mock 文件
+- Mock 文件必须放在 `src/api/mock` 目录下
+- Mock 文件与 API 接口文件在同一目录层级，便于管理和维护
 - 使用 `defineMock()` 而非自定义函数
 - Mock 接口仅在开发环境生效
+- 通过 `vite.config.ts` 中的 `dir: 'src/api/mock'` 配置指定目录

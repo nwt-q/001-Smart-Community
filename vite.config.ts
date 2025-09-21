@@ -109,7 +109,9 @@ export default ({ command, mode }) => {
         restart: ['vite.config.js'],
       }),
       // Mock 开发服务器插件，仅在开发环境启用
-      command === 'serve' && mockDevServerPlugin(),
+      command === 'serve' && mockDevServerPlugin({
+        dir: 'src/api/mock', // 指定 Mock 文件目录
+      }),
       // h5环境增加 BUILD_TIME 和 BUILD_BRANCH
       UNI_PLATFORM === 'h5' && {
         name: 'html-transform',
