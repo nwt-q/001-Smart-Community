@@ -87,7 +87,6 @@
 ![alt text](./assets/5-22.png)
 
 - 7. 这个怎么处理呢？转成 `base64` 是最快捷的，`iconfont` 本身就支持， `3`步搞定：
-
   - 7.1 如下图，勾选 `Base64`
 
     ![alt text](./assets/5-21.png)
@@ -95,7 +94,6 @@
   - 7.2 生成新链接，并得到新的 `css` 代码
 
   ![alt text](./assets/5-20.png)
-
   - 7.3 引入新代码，刷新界面，小程序不报错了，APP 也正常了！
 
   ![alt text](./assets/5-19.png)
