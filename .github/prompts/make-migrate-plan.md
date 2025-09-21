@@ -99,3 +99,23 @@
 请深度思考。
 
 对 `src\api\mock` 文件夹的mock接口代码，应用 `api-migration` 子代理做出修改。
+
+### 009 在 `eslint.config.mjs` 内忽略 `style/multiline-ternary` 规则
+
+请深度思考。
+
+在 `eslint.config.mjs` 内，为 `*.mock.ts` 格式的文件，增加规则忽略，忽略掉 `style/multiline-ternary` 规则，设置为 `off` 。
+
+### 010 给 `api-migration` 子代理增加新的mock数据存储规则
+
+<!-- TODO: 待使用 -->
+
+请深度思考。
+
+`api-migration` 子代理需要细化针对mock数据的存储规则。增加以下这两条规则。
+
+- 每一个 `*.mock.ts` 单文件包含：数据库对象 + 接口定义
+- 数据生成函数从 `src\api\mock\shared\mockData.ts` 导入
+- 主动的使用来自 `src\types` 文件夹内拆分划分出来的业务类型。确保mock生成的假数据均满足业务类型。
+
+请修改 `.claude\agents\api-migration.md` 文件。使得生成mock接口数据时，满足改规则。
