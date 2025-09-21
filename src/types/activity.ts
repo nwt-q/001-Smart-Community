@@ -1,6 +1,8 @@
 /**
- * 活动相关类型定义
+ * 活动模块类型定义
  */
+
+import type { PaginationParams, StatusType } from './api'
 
 // 活动基础信息
 export interface Activity {
@@ -8,36 +10,34 @@ export interface Activity {
   title: string
   userName: string
   startTime: string
+  endTime: string
   context: string
-  headerImg: string
+  headerImg?: string
   src?: string
-  endTime?: string
-  communityId?: string
-  createTime?: string
-  updateTime?: string
-  status?: 'ACTIVE' | 'INACTIVE' | 'DRAFT'
-  viewCount?: number
-  likeCount?: number
+  communityId: string
+  createTime: string
+  updateTime: string
+  status: StatusType
+  viewCount: number
+  likeCount: number
 }
 
 // 活动列表查询参数
-export interface ActivityListParams {
-  page: number
-  row: number
+export interface ActivityListParams extends PaginationParams {
   activitiesId?: string
   communityId: string
+  status?: StatusType
   keyword?: string
-  status?: string
-  startTime?: string
-  endTime?: string
+  startDate?: string
+  endDate?: string
 }
 
 // 活动列表响应
 export interface ActivityListResponse {
   activitiess: Activity[]
-  total?: number
-  page?: number
-  row?: number
+  total: number
+  page: number
+  row: number
 }
 
 // 创建活动请求
@@ -45,19 +45,13 @@ export interface CreateActivityReq {
   title: string
   context: string
   startTime: string
-  endTime?: string
+  endTime: string
   headerImg?: string
-  communityId: string
-  status?: Activity['status']
+  communityId?: string
+  status?: StatusType
 }
 
 // 更新活动请求
-export interface UpdateActivityReq {
+export interface UpdateActivityReq extends CreateActivityReq {
   activitiesId: string
-  title?: string
-  context?: string
-  startTime?: string
-  endTime?: string
-  headerImg?: string
-  status?: Activity['status']
 }

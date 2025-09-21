@@ -1,4 +1,4 @@
-import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/api'
+import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/complaint'
 import { defineMock } from 'vite-plugin-mock-dev-server'
 import { createPaginationResponse, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateStatus, generateTimeRange, randomDelay, successResponse } from './shared/utils'
 
