@@ -260,12 +260,61 @@ export const deleteMaintainanceTask = (taskId: string) =>
 
 ### 2. 模拟接口实现策略
 
-#### 2.1 模拟数据生成
+⚠️ **重要说明**: 本项目使用 `vite-plugin-mock-dev-server` 插件进行模拟接口开发。
 
-**创建模拟数据工厂**:
+#### 2.1 Mock 文件结构要求
+
+**核心要求**:
+
+- **文件格式**: 必须使用 `*.mock.ts` 格式，不得使用其他格式
+- **文件位置**: 模拟接口文件必须放在项目根目录的 `/mock` 目录下
+- **不要创建** `src/api/mock/` 目录，这是错误的做法
+
+**正确的项目结构**:
+
+```
+项目根目录/
+├── mock/                          # Mock 文件目录
+│   ├── maintainance.mock.ts       # 维修模块 Mock 接口
+│   ├── complaint.mock.ts          # 投诉模块 Mock 接口
+│   ├── activity.mock.ts           # 活动模块 Mock 接口
+│   └── shared/                    # 共享 Mock 数据
+│       ├── mockData.ts            # 通用模拟数据生成器
+│       └── utils.ts               # Mock 工具函数
+├── src/
+├── vite.config.ts                 # 确保配置了 mockDevServerPlugin
+└── package.json
+```
+
+#### 2.2 Vite 配置
+
+**确保 vite.config.ts 正确配置**:
 
 ```typescript
-// src/api/mock/maintainanceData.ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
+
+export default defineConfig({
+  plugins: [
+    // 其他插件...
+    mockDevServerPlugin(), // 启用 Mock 插件
+  ],
+  server: {
+    proxy: {
+      // 配置代理路径，插件会自动拦截这些路径
+      '^/api': 'http://localhost:3000', // 实际后端地址
+    },
+  },
+})
+```
+
+#### 2.3 模拟数据生成器
+
+**创建共享的模拟数据工厂**:
+
+```typescript
+// mock/shared/mockData.ts
 import type { MaintainanceTask, PaginationResponse } from '@/types'
 
 // 模拟数据生成器
@@ -296,9 +345,17 @@ export const generateMockTaskList = (count: number = 20): MaintainanceTask[] => 
   )
 }
 
-// 全局模拟数据存储
-export const mockDatabase = {
-  maintainanceTasks: generateMockTaskList(50),
+// 创建内存数据库
+export class MockDatabase {
+  private static instance: MockDatabase
+  public maintainanceTasks: MaintainanceTask[] = generateMockTaskList(50)
+
+  static getInstance(): MockDatabase {
+    if (!MockDatabase.instance) {
+      MockDatabase.instance = new MockDatabase()
+    }
+    return MockDatabase.instance
+  }
 
   // 获取任务列表（支持分页和筛选）
   getTaskList(params: {
@@ -335,14 +392,13 @@ export const mockDatabase = {
       pageSize: params.pageSize,
       hasMore: end < total
     }
-  },
+  }
 
-  // 获取单个任务
+  // 其他数据库操作方法...
   getTaskById(taskId: string): MaintainanceTask | undefined {
     return this.maintainanceTasks.find(task => task.taskId === taskId)
-  },
+  }
 
-  // 更新任务
   updateTask(taskId: string, updateData: Partial<MaintainanceTask>): MaintainanceTask | null {
     const index = this.maintainanceTasks.findIndex(task => task.taskId === taskId)
     if (index === -1) return null
@@ -354,9 +410,8 @@ export const mockDatabase = {
     }
 
     return this.maintainanceTasks[index]
-  },
+  }
 
-  // 创建任务
   createTask(taskData: Omit<MaintainanceTask, 'id' | 'taskId' | 'createTime' | 'updateTime'>): MaintainanceTask {
     const newId = (this.maintainanceTasks.length + 1).toString().padStart(3, '0')
     const newTask: MaintainanceTask = {
@@ -369,9 +424,8 @@ export const mockDatabase = {
 
     this.maintainanceTasks.unshift(newTask)
     return newTask
-  },
+  }
 
-  // 删除任务
   deleteTask(taskId: string): boolean {
     const index = this.maintainanceTasks.findIndex(task => task.taskId === taskId)
     if (index === -1) return false
@@ -380,598 +434,623 @@ export const mockDatabase = {
     return true
   }
 }
+
+// 导出数据库实例
+export const mockDb = MockDatabase.getInstance()
 ```
 
-#### 2.2 模拟接口拦截器
+#### 2.4 Mock 接口定义
 
-**使用 Alova 的模拟适配器**:
+**正确使用 `defineMock` 定义 Mock 接口**:
 
 ```typescript
-// src/http/mockAdapter.ts
-import { mockDatabase } from '@/api/mock/maintainanceData'
-import type { MaintainanceTask, UpdateMaintainanceTaskReq } from '@/types'
+// mock/maintainance.mock.ts
+import { defineMock } from 'vite-plugin-mock-dev-server'
+import { mockDb } from './shared/mockData'
+import type { UpdateMaintainanceTaskReq } from '@/types'
 
 // 模拟请求延迟
 const delay = (ms: number = 300) => new Promise(resolve => setTimeout(resolve, ms))
 
-// 模拟接口响应拦截器
-export const mockInterceptor = {
-  // 维修任务相关接口
-  async '/app/ownerRepair.listOwnerRepairs'(params: any) {
-    await delay()
+export default defineMock([
+  // 1. 获取维修任务列表
+  {
+    url: '/api/app/ownerRepair.listOwnerRepairs',
+    method: ['GET', 'POST'],
+    delay: [300, 800], // 随机延迟 300-800ms
+    body: async ({ query, body }) => {
+      await delay()
 
-    const result = mockDatabase.getTaskList({
-      page: params.page || 1,
-      pageSize: params.pageSize || 10,
-      status: params.status,
-      keyword: params.keyword
-    })
+      const params = { ...query, ...body }
+      const result = mockDb.getTaskList({
+        page: Number(params.page) || 1,
+        pageSize: Number(params.pageSize) || 10,
+        status: params.status,
+        keyword: params.keyword
+      })
 
-    console.log('🚀 Mock API: listOwnerRepairs', params, '→', result)
-    return result
-  },
-
-  async '/app/ownerRepair.getOwnerRepair'(params: any) {
-    await delay()
-
-    const task = mockDatabase.getTaskById(params.taskId)
-    if (!task) {
-      throw new Error('任务不存在')
-    }
-
-    console.log('🚀 Mock API: getOwnerRepair', params, '→', task)
-    return task
-  },
-
-  async '/app/ownerRepair.updateOwnerRepair'(data: UpdateMaintainanceTaskReq) {
-    await delay()
-
-    const updatedTask = mockDatabase.updateTask(data.taskId, data)
-    if (!updatedTask) {
-      throw new Error('更新失败，任务不存在')
-    }
-
-    console.log('🚀 Mock API: updateOwnerRepair', data, '→', updatedTask)
-    return updatedTask
-  },
-
-  async '/app/ownerRepair.saveOwnerRepair'(data: any) {
-    await delay()
-
-    const newTask = mockDatabase.createTask(data)
-    console.log('🚀 Mock API: saveOwnerRepair', data, '→', newTask)
-    return newTask
-  },
-
-  async '/app/ownerRepair.deleteOwnerRepair'(params: any) {
-    await delay()
-
-    const success = mockDatabase.deleteTask(params.taskId)
-    const result = { success }
-
-    console.log('🚀 Mock API: deleteOwnerRepair', params, '→', result)
-    return result
-  }
-}
-```
-
-#### 2.3 组件中的使用方式对比
-
-**Vue2 项目组件使用**:
-
-```vue
-<script>
-import { UpdateMaintainanceTask } from '@/api/maintainance/maintainance.js'
-
-export default {
-  data() {
-    return {
-      loading: false,
-      taskList: [] // 不知道数组元素类型
-    }
-  },
-  methods: {
-    async updateTask(taskData) { // 参数无类型约束
-      this.loading = true
-      try {
-        const result = await UpdateMaintainanceTask(this, taskData)
-        this.taskList = result.tasks // 不确定 result 的结构
-        uni.showToast({
-          title: '更新成功',
-          icon: 'success'
-        })
-      } catch (error) {
-        console.error('更新失败', error)
-      } finally {
-        this.loading = false
-      }
-    }
-  }
-}
-</script>
-```
-
-**Vue3 项目组件使用**:
-
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useRequest } from 'alova/client'
-import {
-  updateMaintainanceTask,
-  getMaintainanceTaskList
-} from '@/api/maintainance'
-import type {
-  UpdateMaintainanceTaskReq,
-  MaintainanceTask
-} from '@/types'
-
-// 获取任务列表 - 自动类型推导
-const {
-  loading: listLoading,
-  data: taskList, // 类型：Ref<PaginationResponse<MaintainanceTask> | undefined>
-  send: refreshList
-} = useRequest(getMaintainanceTaskList({ page: 1, pageSize: 10 }), {
-  immediate: true
-})
-
-// 更新任务 - 类型安全
-const {
-  loading: updateLoading,
-  send: sendUpdate
-} = useRequest(updateMaintainanceTask, {
-  immediate: false
-})
-
-// 严格的类型约束
-const updateTask = async (taskData: UpdateMaintainanceTaskReq) => {
-  try {
-    const updatedTask = await sendUpdate(taskData) // 返回类型：MaintainanceTask
-    uni.showToast({ title: '更新成功', icon: 'success' })
-    await refreshList() // 自动刷新列表
-  } catch (error) {
-    console.error('更新失败', error)
-  }
-}
-
-// 搜索功能 - 类型安全的参数
-const searchTasks = async (keyword: string, status?: string) => {
-  const { send } = useRequest(getMaintainanceTaskList, { immediate: false })
-
-  const result = await send({
-    page: 1,
-    pageSize: 20,
-    keyword,
-    status
-  })
-
-  taskList.value = result // TypeScript 会检查类型兼容性
-}
-</script>
-
-<template>
-  <view class="task-list">
-    <!-- 加载状态 -->
-    <view v-if="listLoading" class="loading">
-      加载中...
-    </view>
-
-    <!-- 任务列表 - 完整的类型提示 -->
-    <view
-      v-for="task in taskList?.list"
-      :key="task.taskId"
-      class="task-item"
-    >
-      <text>{{ task.title }}</text>
-      <text>状态：{{ task.status }}</text>
-      <text>负责人：{{ task.assigneeName }}</text>
-
-      <!-- 更新按钮 -->
-      <button
-        :disabled="updateLoading"
-        @click="updateTask({
-          taskId: task.taskId,
-          status: 'COMPLETED',
-          remark: '任务已完成'
-        })"
-      >
-        完成任务
-      </button>
-    </view>
-  </view>
-</template>
-```
-
-### 3. 模拟接口集成配置
-
-#### 3.1 Alova 集成模拟适配器
-
-**配置模拟响应拦截**:
-
-```typescript
-// src/http/alova.ts - 更新配置
-import { createAlova } from 'alova'
-import AdapterUniapp from '@alova/adapter-uniapp'
-import VueHook from 'alova/vue'
-import { mockInterceptor } from './mockAdapter'
-
-const isDevelopment = import.meta.env.DEV
-
-const alovaInstance = createAlova({
-  baseURL: '/api',
-  ...AdapterUniapp(),
-  timeout: 5000,
-  statesHook: VueHook,
-
-  beforeRequest(method) {
-    method.config.headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...method.config.headers,
+      console.log('🚀 Mock API: listOwnerRepairs', params, '→', `${result.list.length} items`)
+      return result
     }
   },
 
-  responded: async (response, method) => {
-    const { statusCode } = response
+  // 2. 获取维修任务详情
+  {
+    url: '/api/app/ownerRepair.getOwnerRepair',
+    method: ['GET', 'POST'],
+    delay: 200,
+    body: async ({ query, body }) => {
+      const params = { ...query, ...body }
+      const task = mockDb.getTaskById(params.taskId)
 
-    // 开发环境使用模拟接口
-    if (isDevelopment) {
-      const url = method.url
-      const mockHandler = mockInterceptor[url]
-
-      if (mockHandler) {
-        try {
-          const mockData = await mockHandler(method.data || method.config.params || {})
-          console.log(`🎭 Mock Response [${method.type.toUpperCase()}] ${url}:`, mockData)
-          return mockData
-        } catch (error) {
-          console.error(`❌ Mock Error [${url}]:`, error)
-          throw error
+      if (!task) {
+        return {
+          status: 404,
+          statusText: 'Not Found',
+          body: { error: '任务不存在' }
         }
       }
-    }
 
-    // 生产环境或未配置模拟的接口走真实请求
-    if (statusCode !== 200) {
-      throw new Error(`请求失败[${statusCode}]`)
+      console.log('🚀 Mock API: getOwnerRepair', params, '→', task.title)
+      return task
     }
-
-    return response.data
   },
-})
 
-export const http = alovaInstance
+  // 3. 更新维修任务
+  {
+    url: '/api/app/ownerRepair.updateOwnerRepair',
+    method: 'POST',
+    delay: 600,
+    body: async ({ body }) => {
+      const data = body as UpdateMaintainanceTaskReq
+      const updatedTask = mockDb.updateTask(data.taskId, data)
+
+      if (!updatedTask) {
+        return {
+          status: 400,
+          statusText: 'Bad Request',
+          body: { error: '更新失败，任务不存在' }
+        }
+      }
+
+      console.log('🚀 Mock API: updateOwnerRepair', data, '→', updatedTask.title)
+      return updatedTask
+    }
+  },
+
+  // 4. 创建维修任务
+  {
+    url: '/api/app/ownerRepair.saveOwnerRepair',
+    method: 'POST',
+    delay: 800,
+    body: async ({ body }) => {
+      const newTask = mockDb.createTask(body)
+      console.log('🚀 Mock API: saveOwnerRepair', body.title, '→', newTask)
+      return newTask
+    }
+  },
+
+  // 5. 删除维修任务
+  {
+    url: '/api/app/ownerRepair.deleteOwnerRepair',
+    method: ['DELETE', 'POST'],
+    delay: 400,
+    body: async ({ query, body }) => {
+      const params = { ...query, ...body }
+      const success = mockDb.deleteTask(params.taskId)
+      const result = { success }
+
+      console.log('🚀 Mock API: deleteOwnerRepair', params.taskId, '→', success)
+      return result
+    }
+  },
+
+  // 6. 动态路由示例 - 根据 ID 获取任务
+  {
+    url: '/api/app/ownerRepair/task/:taskId',
+    method: 'GET',
+    delay: 300,
+    body: async ({ params }) => {
+      const task = mockDb.getTaskById(params.taskId)
+
+      if (!task) {
+        return {
+          status: 404,
+          statusText: 'Not Found',
+          body: { error: '任务不存在' }
+        }
+      }
+
+      console.log('🚀 Mock API: getTaskById', params.taskId, '→', task.title)
+      return task
+    }
+  }
+])
 ```
 
-#### 3.2 完整业务模块示例
+#### 2.5 高级 Mock 特性示例
 
-**投诉管理模块**:
+**条件响应和数据验证**:
 
 ```typescript
-// src/types/complaint.ts
-export interface Complaint {
-  id: string
-  complaintId: string
-  title: string
-  content: string
-  type: 'NOISE' | 'ENVIRONMENT' | 'SERVICE' | 'FACILITY' | 'OTHER'
-  status: 'PENDING' | 'PROCESSING' | 'RESOLVED' | 'CLOSED'
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
-  reporterId: string
-  reporterName: string
-  reporterPhone: string
-  handlerId?: string
-  handlerName?: string
-  createTime: string
-  handleTime?: string
-  resolveTime?: string
-  images?: string[]
-  location?: string
-  remark?: string
-}
+// mock/advanced.mock.ts
+import { defineMock } from 'vite-plugin-mock-dev-server'
 
-// src/api/complaint.ts
-import { http } from '@/http/alova'
-import type { Complaint, PaginationResponse, PaginationParams } from '@/types'
+export default defineMock([
+  // 条件响应示例
+  {
+    url: '/api/app/task/conditional',
+    method: 'POST',
+    // 使用 validator 根据不同条件返回不同数据
+    validator: { body: { type: 'urgent' } },
+    body: {
+      message: '紧急任务处理',
+      priority: 'HIGH'
+    }
+  },
+  {
+    url: '/api/app/task/conditional',
+    method: 'POST',
+    validator: { body: { type: 'normal' } },
+    body: {
+      message: '普通任务处理',
+      priority: 'MEDIUM'
+    }
+  },
 
-export interface ComplaintListParams extends PaginationParams {
-  status?: string
-  type?: string
-  keyword?: string
-  startTime?: string
-  endTime?: string
-}
+  // 文件上传模拟
+  {
+    url: '/api/upload/image',
+    method: 'POST',
+    delay: 1000,
+    body: ({ body }) => {
+      // 模拟文件上传成功
+      return {
+        success: true,
+        fileId: `FILE_${Date.now()}`,
+        url: `https://picsum.photos/400/300?random=${Date.now()}`,
+        size: Math.floor(Math.random() * 1000000) + 50000,
+        originalName: body.name || 'uploaded_file.jpg'
+      }
+    }
+  },
 
-export interface CreateComplaintReq {
-  title: string
-  content: string
-  type: Complaint['type']
-  priority: Complaint['priority']
-  reporterName: string
-  reporterPhone: string
-  location?: string
-  images?: string[]
-}
-
-export interface UpdateComplaintReq {
-  complaintId: string
-  status?: Complaint['status']
-  handlerName?: string
-  remark?: string
-}
-
-// API 接口定义 - 保持与旧项目相同的路径
-export const getComplaintList = (params: ComplaintListParams) =>
-  http.Get<PaginationResponse<Complaint>>('/app/complaint.listComplaints', { params })
-
-export const getComplaintDetail = (complaintId: string) =>
-  http.Get<Complaint>('/app/complaint.getComplaint', { params: { complaintId } })
-
-export const createComplaint = (data: CreateComplaintReq) =>
-  http.Post<Complaint>('/app/complaint.saveComplaint', data)
-
-export const updateComplaint = (data: UpdateComplaintReq) =>
-  http.Post<Complaint>('/app/complaint.updateComplaint', data)
-
-export const auditComplaint = (complaintId: string, auditResult: 'APPROVED' | 'REJECTED', remark?: string) =>
-  http.Post<Complaint>('/app/complaint.auditComplaint', { complaintId, auditResult, remark })
+  // 错误处理示例
+  {
+    url: '/api/app/error/demo',
+    method: 'GET',
+    body: ({ query }) => {
+      if (query.trigger === 'error') {
+        return {
+          status: 500,
+          statusText: 'Internal Server Error',
+          body: { error: '模拟服务器错误' }
+        }
+      }
+      return { message: '正常响应' }
+    }
+  }
+])
 ```
+
+#### 2.6 活动模块 Mock 示例
+
+**基于 Activity 模块的完整 Mock 实现**:
+
+```typescript
+// mock/activity.mock.ts
+import { defineMock } from 'vite-plugin-mock-dev-server'
+
+// 活动模拟数据
+const mockActivities = [
+  {
+    activitiesId: 'ACT_001',
+    title: '社区春节联欢会',
+    userName: '物业管理处',
+    startTime: '2024-02-10 19:00:00',
+    endTime: '2024-02-10 21:30:00',
+    context: `
+      <h2>🎊 社区春节联欢会 🎊</h2>
+      <p>新春佳节即将到来，为了增进邻里感情...</p>
+    `,
+    headerImg: 'spring_festival_header.jpg',
+    src: 'https://picsum.photos/800/500?random=festival',
+    communityId: 'COMM_001',
+    createTime: '2024-01-15 10:30:00',
+    updateTime: '2024-01-20 14:20:00',
+    status: 'ACTIVE',
+    viewCount: 245,
+    likeCount: 38,
+  }
+  // ... 更多模拟数据
+]
+
+export default defineMock([
+  // 获取活动列表/详情
+  {
+    url: '/api/app/activities.listActivitiess',
+    method: ['GET', 'POST'],
+    delay: [300, 600],
+    body: ({ query, body }) => {
+      const params = { ...query, ...body }
+
+      // 如果有 activitiesId，返回单个活动详情
+      if (params.activitiesId) {
+        const activity = mockActivities.find(a => a.activitiesId === params.activitiesId)
+        const result = {
+          activitiess: activity ? [activity] : [],
+        }
+        console.log('🚀 Mock API: getActivityDetail', params, '→', result)
+        return result
+      }
+
+      // 否则返回活动列表（支持分页和筛选）
+      let filteredActivities = [...mockActivities]
+
+      if (params.status) {
+        filteredActivities = filteredActivities.filter(a => a.status === params.status)
+      }
+
+      if (params.keyword) {
+        filteredActivities = filteredActivities.filter(a =>
+          a.title.includes(params.keyword) || a.context.includes(params.keyword)
+        )
+      }
+
+      const page = Number(params.page) || 1
+      const row = Number(params.row) || 10
+      const start = (page - 1) * row
+      const activitiess = filteredActivities.slice(start, start + row)
+
+      const result = {
+        activitiess,
+        total: filteredActivities.length,
+        page,
+        row
+      }
+
+      console.log('🚀 Mock API: getActivityList', params, '→', `${result.activitiess.length} items`)
+      return result
+    }
+  },
+
+  // 创建活动
+  {
+    url: '/api/app/activities.saveActivities',
+    method: 'POST',
+    delay: 800,
+    body: ({ body }) => {
+      const newId = `ACT_${Date.now()}`
+      const newActivity = {
+        activitiesId: newId,
+        ...body,
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
+        viewCount: 0,
+        likeCount: 0,
+        src: body.headerImg ? `/api/file?fileId=${body.headerImg}` : undefined,
+      }
+
+      mockActivities.unshift(newActivity)
+      console.log('🚀 Mock API: createActivity', body, '→', newActivity)
+      return newActivity
+    }
+  },
+
+  // 更新活动
+  {
+    url: '/api/app/activities.updateActivities',
+    method: 'POST',
+    delay: 600,
+    body: ({ body }) => {
+      const activity = mockActivities.find(a => a.activitiesId === body.activitiesId)
+      if (!activity) {
+        return {
+          status: 404,
+          statusText: 'Not Found',
+          body: { error: '活动不存在' }
+        }
+      }
+
+      Object.assign(activity, {
+        ...body,
+        updateTime: new Date().toISOString(),
+      })
+
+      console.log('🚀 Mock API: updateActivity', body, '→', activity)
+      return activity
+    }
+  },
+
+  // 删除活动
+  {
+    url: '/api/app/activities.deleteActivities',
+    method: ['DELETE', 'POST'],
+    delay: 400,
+    body: ({ query, body }) => {
+      const params = { ...query, ...body }
+      const index = mockActivities.findIndex(a => a.activitiesId === params.activitiesId)
+
+      const success = index !== -1
+      if (success) {
+        mockActivities.splice(index, 1)
+      }
+
+      const result = { success }
+      console.log('🚀 Mock API: deleteActivity', params, '→', result)
+      return result
+    }
+  },
+
+  // 增加浏览量
+  {
+    url: '/api/app/activities.increaseView',
+    method: 'POST',
+    delay: 200,
+    body: ({ body }) => {
+      const activity = mockActivities.find(a => a.activitiesId === body.activitiesId)
+      const success = !!activity
+
+      if (activity) {
+        activity.viewCount = (activity.viewCount || 0) + 1
+      }
+
+      const result = { success }
+      console.log('🚀 Mock API: increaseView', body, '→', result)
+      return result
+    }
+  }
+])
+```
+
+### 3. Mock 开发最佳实践
+
+#### 3.1 开发流程规范
+
+**标准开发流程**:
+
+1. **分析原 Vue2 接口** - 理解业务逻辑和数据结构
+2. **创建 TypeScript 类型定义** - 确保类型安全
+3. **创建 Alova API 接口** - 现代化的请求定义
+4. **创建 Mock 数据** - 在 `/mock` 目录下创建 `*.mock.ts` 文件
+5. **测试验证** - 确保 Mock 接口正常工作
+
+#### 3.2 文件组织原则
+
+**Mock 文件命名规范**:
+
+- 业务模块：`{模块名}.mock.ts`（如：`activity.mock.ts`、`maintainance.mock.ts`）
+- 共享数据：`shared/mockData.ts`
+- 工具函数：`shared/utils.ts`
+
+**数据管理策略**:
+
+- 使用单例模式管理内存数据库
+- 支持数据持久化（开发期间数据不丢失）
+- 提供数据重置和初始化功能
+
+#### 3.3 常见模式和技巧
+
+**1. 响应延迟模拟**:
+
+```typescript
+export default defineMock([
+  {
+    url: '/api/slow-endpoint',
+    delay: [500, 2000], // 随机延迟 500-2000ms
+    body: { message: '模拟慢接口' }
+  }
+])
+```
+
+**2. 条件响应**:
+
+```typescript
+export default defineMock([
+  {
+    url: '/api/conditional',
+    validator: { query: { type: 'admin' } },
+    body: { data: 'admin data' }
+  },
+  {
+    url: '/api/conditional',
+    body: { data: 'normal data' }
+  }
+])
+```
+
+**3. 错误模拟**:
+
+```typescript
+export default defineMock([
+  {
+    url: '/api/error-demo',
+    body: ({ query }) => {
+      if (query.error === 'true') {
+        return {
+          status: 500,
+          statusText: 'Internal Server Error',
+          body: { error: '服务器内部错误' }
+        }
+      }
+      return { success: true }
+    }
+  }
+])
+```
+
+#### 3.4 性能优化建议
+
+**数据量控制**:
+
+- 模拟数据数量适中（建议每个模块 20-50 条）
+- 使用懒加载和分页
+- 避免过度复杂的数据关联
+
+**内存管理**:
+
+- 定期清理过期数据
+- 使用 WeakMap 管理临时数据
+- 监控内存使用情况
 
 ## 迁移实施计划
 
-### 第一阶段：基础设施搭建（2-3天）
+### 第一阶段：Mock 环境搭建（1-2天）
 
 **核心任务**:
 
-- [ ] 配置简化的 Alova 实例（无认证）
-- [ ] 建立完整的 TypeScript 类型定义体系
-- [ ] 搭建模拟接口框架
-- [ ] 配置开发环境模拟数据拦截
+- [ ] 安装和配置 `vite-plugin-mock-dev-server`
+- [ ] 创建 `/mock` 目录和基础文件结构
+- [ ] 建立 TypeScript 类型定义体系
+- [ ] 验证 Mock 插件正常工作
 
-**详细任务清单**:
+**详细步骤**:
 
-**Day 1: Alova 配置和类型定义**
+**Step 1: 插件安装与配置**
+
+```bash
+# 安装插件
+pnpm add -D vite-plugin-mock-dev-server
+```
 
 ```typescript
-// 1. 创建基础类型定义文件
-// src/types/api.ts
-export interface ApiResponse<T = any> {
-  code: string
-  message: string
-  data: T
-  timestamp?: number
-}
+// vite.config.ts
+import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
 
-export interface PaginationParams {
-  page: number
-  pageSize: number
-}
-
-export interface PaginationResponse<T> {
-  list: T[]
-  total: number
-  page: number
-  pageSize: number
-  hasMore: boolean
-}
-
-// 2. 配置简化的 Alova 实例
-// src/http/alova.ts
-import { createAlova } from 'alova'
-import AdapterUniapp from '@alova/adapter-uniapp'
-import VueHook from 'alova/vue'
-
-const alovaInstance = createAlova({
-  baseURL: '/api',
-  ...AdapterUniapp(),
-  timeout: 5000,
-  statesHook: VueHook,
-
-  beforeRequest(method) {
-    // 简单的请求头设置，无需认证
-    method.config.headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...method.config.headers,
-    }
-  },
-
-  responded(response) {
-    const { statusCode, data } = response
-    if (statusCode !== 200) {
-      throw new Error(`请求失败[${statusCode}]`)
-    }
-    return data
+export default defineConfig({
+  plugins: [
+    // 其他插件...
+    mockDevServerPlugin(),
+  ],
+  server: {
+    proxy: {
+      '^/api': 'http://localhost:3000', // 后端地址
+    },
   },
 })
-
-export const http = alovaInstance
 ```
 
-**Day 2: 模拟接口框架搭建**
+**Step 2: 创建目录结构**
 
-```typescript
-// 3. 创建模拟数据管理器
-// src/api/mock/index.ts
-export class MockDataManager {
-  private static instance: MockDataManager
-  private databases: Map<string, any> = new Map()
-
-  static getInstance(): MockDataManager {
-    if (!MockDataManager.instance) {
-      MockDataManager.instance = new MockDataManager()
-    }
-    return MockDataManager.instance
-  }
-
-  register<T>(name: string, database: T): void {
-    this.databases.set(name, database)
-  }
-
-  get<T>(name: string): T {
-    return this.databases.get(name)
-  }
-}
-
-// 4. 创建模拟接口拦截器
-// src/http/mockAdapter.ts
-const delay = (ms: number = 300) => new Promise(resolve => setTimeout(resolve, ms))
-
-export const mockInterceptor: Record<string, Function> = {}
-
-export function registerMockHandler(url: string, handler: Function) {
-  mockInterceptor[url] = handler
-  console.log(`📝 注册模拟接口: ${url}`)
-}
+```
+项目根目录/
+├── mock/
+│   ├── shared/
+│   │   ├── mockData.ts     # 通用数据生成器
+│   │   └── utils.ts        # Mock 工具函数
+│   ├── activity.mock.ts    # 活动模块 Mock
+│   └── README.md           # Mock 开发说明
+└── src/types/              # TypeScript 类型定义
+    ├── api.ts
+    ├── activity.ts
+    └── ...
 ```
 
-**Day 3: 第一个完整业务模块示例**
+**Step 3: 创建第一个 Mock 文件验证**
 
 ```typescript
-// 5. 创建维修模块完整示例
-// src/types/maintainance.ts - 类型定义
-// src/api/maintainance.ts - API 接口
-// src/api/mock/maintainanceData.ts - 模拟数据
-// src/api/mock/maintainanceHandlers.ts - 模拟处理器
+// mock/test.mock.ts
+import { defineMock } from 'vite-plugin-mock-dev-server'
 
-// 验证整个流程是否工作正常
+export default defineMock({
+  url: '/api/test',
+  delay: 300,
+  body: {
+    message: 'Mock 插件工作正常！',
+    timestamp: Date.now()
+  }
+})
 ```
 
-### 第二阶段：核心业务模块迁移（5-7天）
+### 第二阶段：核心业务模块迁移（3-5天）
 
-**迁移优先级和时间安排**:
+**迁移优先级和完整流程**:
 
-**Day 1-2: 维修工单模块**
+**Day 1: 活动管理模块**
 
-- [ ] 维修任务 CRUD 接口迁移
-- [ ] 完整的类型定义（MaintainanceTask, UpdateRequest 等）
-- [ ] 模拟数据生成器和处理器
-- [ ] 组件使用示例验证
+- [ ] 创建 `src/types/activity.ts` 类型定义
+- [ ] 创建 `src/api/activity.ts` API 接口
+- [ ] 创建 `mock/activity.mock.ts` Mock 文件
+- [ ] 在组件中测试验证
 
-**Day 3-4: 投诉管理模块**
-
-- [ ] 投诉工单 CRUD 接口迁移
-- [ ] 投诉类型定义和状态管理
-- [ ] 模拟投诉数据和处理逻辑
-- [ ] 审核流程接口
-
-**Day 5-6: 巡检管理模块**
-
-- [ ] 巡检任务接口迁移
-- [ ] 巡检记录和报告类型
-- [ ] 二维码扫描相关接口模拟
-- [ ] 巡检流程状态管理
-
-**Day 7: 其他核心接口**
-
-- [ ] 通讯录接口
-- [ ] 公告管理接口
-- [ ] 文件上传模拟接口
-
-**标准迁移模板**:
+**完整迁移示例**:
 
 ```typescript
-// Step 1: 分析原 Vue2 接口
-// 原始文件：gitee-example/api/maintainance/maintainance.js
-export function UpdateMaintainanceTask(_that, _data) {
+// Step 1: 分析原接口 (gitee-example/api/activities/activities.js)
+// 原始：
+export function getActivitiesList(_that, _reqObj) {
   return new Promise((resolve, reject) => {
     _that.context.post({
-      url: url.UpdateMaintainanceTask,
-      data: _data,
-      success: (res) => resolve(res.data),
-      fail: (e) => reject(e)
+      url: url.getActivitiesList,
+      data: _reqObj,
+      // ...
     })
   })
 }
 
-// Step 2: 创建 TypeScript 类型定义
-// src/types/maintainance.ts
-export interface UpdateMaintainanceTaskReq {
-  taskId: string
-  status: 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
-  remark?: string
-  images?: string[]
-  handlerName?: string
-}
-
-export interface MaintainanceTask {
-  id: string
-  taskId: string
+// Step 2: 创建类型定义 (src/types/activity.ts)
+export interface Activity {
+  activitiesId: string
   title: string
-  description: string
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
-  priority: 'LOW' | 'MEDIUM' | 'HIGH'
-  assigneeId: string
-  assigneeName: string
-  createTime: string
-  updateTime: string
-  location?: string
-  images?: string[]
-  remark?: string
+  userName: string
+  startTime: string
+  context: string
+  headerImg: string
+  // ...其他字段
 }
 
-// Step 3: 创建现代化 API 接口
-// src/api/maintainance.ts
-import { http } from '@/http/alova'
-import type { MaintainanceTask, UpdateMaintainanceTaskReq, PaginationResponse } from '@/types'
+// Step 3: 创建 API 接口 (src/api/activity.ts)
+export const getActivityList = (params: ActivityListParams) =>
+  http.Get<ActivityListResponse>('/api/app/activities.listActivitiess', { params })
 
-// 保持与旧项目相同的 URL 路径
-export const updateMaintainanceTask = (data: UpdateMaintainanceTaskReq) =>
-  http.Post<MaintainanceTask>('/app/ownerRepair.updateOwnerRepair', data)
-
-export const getMaintainanceTaskList = (params: {
-  page: number
-  pageSize: number
-  status?: string
-  keyword?: string
-}) =>
-  http.Get<PaginationResponse<MaintainanceTask>>('/app/ownerRepair.listOwnerRepairs', { params })
-
-// Step 4: 创建模拟数据处理器
-// src/api/mock/maintainanceHandlers.ts
-import { registerMockHandler } from '@/http/mockAdapter'
-import { mockDatabase } from './maintainanceData'
-
-// 注册模拟处理器，使用与旧项目相同的 URL
-registerMockHandler('/app/ownerRepair.updateOwnerRepair', async (data: UpdateMaintainanceTaskReq) => {
-  await delay(300)
-
-  const updatedTask = mockDatabase.updateTask(data.taskId, data)
-  if (!updatedTask) {
-    throw new Error('任务不存在')
+// Step 4: 创建 Mock 文件 (mock/activity.mock.ts)
+export default defineMock([
+  {
+    url: '/api/app/activities.listActivitiess',
+    method: ['GET', 'POST'],
+    delay: [300, 600],
+    body: ({ query, body }) => {
+      // Mock 逻辑
+      return mockActivityList
+    }
   }
-
-  console.log('🚀 Mock: updateOwnerRepair', data, '→', updatedTask)
-  return updatedTask
-})
-
-registerMockHandler('/app/ownerRepair.listOwnerRepairs', async (params: any) => {
-  await delay(500)
-
-  const result = mockDatabase.getTaskList(params)
-  console.log('🚀 Mock: listOwnerRepairs', params, '→', result.list.length, 'items')
-  return result
-})
+])
 
 // Step 5: 组件中使用验证
-// 在页面组件中测试新接口是否工作正常
-const { loading, data: taskList, send: refreshTasks } = useRequest(
-  getMaintainanceTaskList({ page: 1, pageSize: 10 }),
-  { immediate: true }
-)
-
-const { loading: updating, send: updateTask } = useRequest(updateMaintainanceTask, {
-  immediate: false
-})
+const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
 ```
 
-## 总结
+**Day 2-3: 维修管理模块**
 
-接口请求迁移是整个项目迁移的关键环节，通过合理的规划和实施，可以实现：
+- [ ] 维修任务 CRUD 接口完整迁移
+- [ ] 复杂状态流转逻辑处理
+- [ ] 文件上传模拟接口
 
-1. **技术升级**: 从传统请求方式升级到现代化请求管理
-2. **开发效率提升**: 自动状态管理和类型检查
-3. **用户体验改善**: 更好的加载状态和错误处理
-4. **维护成本降低**: 统一的请求规范和错误处理机制
+**Day 4: 投诉管理模块**
 
-迁移过程中需要特别关注**业务逻辑一致性**、**数据格式兼容性**和**错误处理完整性**，确保迁移后的系统功能和用户体验不低于原系统。
+- [ ] 投诉工单接口迁移
+- [ ] 审核流程模拟
+
+**Day 5: 其他核心模块**
+
+- [ ] 通讯录、公告等辅助模块
+- [ ] 整体测试和优化
+
+### 第三阶段：迁移验证和优化（1天）
+
+**验证任务**:
+
+- [ ] 所有 Mock 接口响应正常
+- [ ] TypeScript 类型检查通过
+- [ ] 页面功能完全正常
+- [ ] 性能测试和优化
+
+**质量检查清单**:
+
+- ✅ 所有 Mock 文件使用 `*.mock.ts` 格式
+- ✅ Mock 文件都在 `/mock` 目录下
+- ✅ 使用 `defineMock()` 而非自定义函数
+- ✅ API 接口保持与原项目相同的 URL 路径
+- ✅ 完整的 TypeScript 类型定义
+- ✅ 适当的延迟和错误处理模拟
+- ✅ 控制台日志便于调试
