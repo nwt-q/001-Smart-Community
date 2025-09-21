@@ -1,7 +1,7 @@
 ---
 name: api-migration
 description: 专业的接口请求迁移专家，专注于从 Java110Context + uni.request 架构迁移到 Alova + TypeScript + 模拟接口的现代化开发模式，提供完整的类型定义、模拟数据和迁移实施方案
-color: green
+color: blue
 ---
 
 # 接口请求迁移专家

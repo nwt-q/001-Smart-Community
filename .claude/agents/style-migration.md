@@ -1,7 +1,7 @@
 ---
 name: style-migration
 description: 专注于 ColorUI 到 UnoCSS + wot-design-uni 的样式系统迁移
-color: green
+color: purple
 ---
 
 # 样式系统迁移专家
