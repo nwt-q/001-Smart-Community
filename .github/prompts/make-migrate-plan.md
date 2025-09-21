@@ -67,7 +67,7 @@
 
 我需要你更新 `api-migration` 子代理，重点更新 `2. 模拟接口实现策略` 这一部分的提示词写法。这部分的提示词写法使用了不存在的 `registerMockHandler` 函数。这不正确。
 
-1. 请阅读 `.claude\agents\code-migration.md` 文件。**针对性**的阅读 `2. 模拟接口实现策略` 这一部分的提示词写法。不需要你全面的阅读。
+1. 请阅读 `.claude\agents\api-migration.md` 文件。**针对性**的阅读 `2. 模拟接口实现策略` 这一部分的提示词写法。不需要你全面的阅读。
 2. 请阅读 `vite-plugin-mock-dev-server` 这个库。阅读 ： https://github.com/pengzhanbo/vite-plugin-mock-dev-server 这个仓库。
 3. 请阅读 https://vite-plugin-mock-dev-server.netlify.app/llms.txt 文档。**请充分的**阅读关于 `vite-plugin-mock-dev-server` API使用的文档。
 4. 定义的mock接口，其文件格式为 `*.mock.ts` ，不是定义在 `api/mock` 这样的文件夹内。请在子代理内重点说明这个要求。
