@@ -23,6 +23,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
+import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
 import ViteRestart from 'vite-plugin-restart'
 
 // https://vitejs.dev/config/
@@ -107,6 +108,8 @@ export default ({ command, mode }) => {
         // 通过这个插件，在修改vite.config.js文件则不需要重新运行也生效配置
         restart: ['vite.config.js'],
       }),
+      // Mock 开发服务器插件，仅在开发环境启用
+      command === 'serve' && mockDevServerPlugin(),
       // h5环境增加 BUILD_TIME 和 BUILD_BRANCH
       UNI_PLATFORM === 'h5' && {
         name: 'html-transform',
