@@ -161,8 +161,6 @@
 
 ### 015 应用 `api-migration` 子代理，更新 `defineMock` 函数为 `defineUniAppMock` 函数
 
-<!-- TODO: 待使用 -->
-
 请你使用 `api-migration` 子代理，对 `src\api\mock` 目录下的 `*.mock.ts` 规则的文件，使用该代理，应用该代理的规则。
 
 1. 更新 `defineMock` 函数为 `defineUniAppMock` 函数。
