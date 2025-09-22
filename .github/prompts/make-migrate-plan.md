@@ -122,11 +122,9 @@
 
 ### 011 给 `api-migration` 子代理增加新的 mock 数据存储规则
 
-<!-- TODO: 待使用 -->
-
 请深度思考。
 
-`api-migration` 子代理需要细化针对 mock 数据的存储规则。增加以下这两条规则。
+`api-migration` 子代理需要细化针对 mock 数据的存储规则。增加以下这几条规则。
 
 - 每一个 `*.mock.ts` 单文件包含：数据库对象 + 接口定义
 - 数据生成函数从 `src\api\mock\shared\mockData.ts` 导入
