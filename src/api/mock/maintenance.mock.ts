@@ -23,7 +23,7 @@ const mockRepairDatabase = {
     page: number
     row: number
     communityId?: string
-    status?: string
+    status?: RepairStatus
     repairType?: string
     keyword?: string
     startDate?: string
@@ -73,7 +73,7 @@ const mockRepairDatabase = {
   },
 
   // 添加工单
-  addRepair(repair: any) {
+  addRepair(repair: RepairOrder): RepairOrder {
     this.repairs.unshift(repair)
     return repair
   },
@@ -96,7 +96,7 @@ const mockRepairDatabase = {
 export default defineMock([
   // 获取维修工单列表
   {
-    url: '/api/app/ownerRepair.listOwnerRepairs',
+    url: '/app/ownerRepair.listOwnerRepairs',
     method: ['GET', 'POST'],
     delay: [300, 800],
     body: async ({ query, body }) => {
@@ -133,7 +133,7 @@ export default defineMock([
 
   // 获取维修工单详情
   {
-    url: '/api/app/ownerRepair.queryOwnerRepair',
+    url: '/app/ownerRepair.queryOwnerRepair',
     method: ['GET', 'POST'],
     delay: [200, 500],
     body: async ({ query, body }) => {
@@ -165,7 +165,7 @@ export default defineMock([
 
   // 创建维修工单
   {
-    url: '/api/app/ownerRepair.saveOwnerRepair',
+    url: '/app/ownerRepair.saveOwnerRepair',
     method: 'POST',
     delay: [500, 1200],
     body: async ({ body }) => {
@@ -223,7 +223,7 @@ export default defineMock([
 
   // 更新维修工单状态
   {
-    url: '/api/app/ownerRepair.updateRepairStatus',
+    url: '/app/ownerRepair.updateRepairStatus',
     method: 'POST',
     delay: [300, 700],
     body: async ({ body }) => {
@@ -267,7 +267,7 @@ export default defineMock([
 
   // 分配维修工
   {
-    url: '/api/app/ownerRepair.assignWorker',
+    url: '/app/ownerRepair.assignWorker',
     method: 'POST',
     delay: [200, 600],
     body: async ({ body }) => {
@@ -304,7 +304,7 @@ export default defineMock([
 
   // 维修工单统计
   {
-    url: '/api/app/ownerRepair.getRepairStatistics',
+    url: '/app/ownerRepair.getRepairStatistics',
     method: ['GET', 'POST'],
     delay: [200, 500],
     body: async ({ query, body }) => {
@@ -357,7 +357,7 @@ export default defineMock([
 
   // 维修工单评价
   {
-    url: '/api/app/ownerRepair.evaluateRepair',
+    url: '/app/ownerRepair.evaluateRepair',
     method: 'POST',
     delay: [300, 600],
     body: async ({ body }) => {

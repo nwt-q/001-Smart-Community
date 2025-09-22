@@ -144,8 +144,6 @@
 
 ### 013 应用 `api-migration` 子代理
 
-<!-- 未使用 -->
-
 请你使用 `api-migration` 子代理，对 `src\api\mock` 目录下的 `*.mock.ts` 规则的文件，使用该代理，应用该代理的规则。
 
 1. 确保 mock 文件的 url 没有出现额外的`/api`前缀。

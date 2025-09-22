@@ -6,7 +6,7 @@ import { defineMock } from 'vite-plugin-mock-dev-server'
 export default defineMock([
   // 基础测试接口
   {
-    url: '/api/test',
+    url: '/test',
     method: 'GET',
     delay: 300,
     body: {
@@ -22,7 +22,7 @@ export default defineMock([
 
   // 带参数的测试接口
   {
-    url: '/api/test/params',
+    url: '/test/params',
     method: ['GET', 'POST'],
     delay: [200, 500],
     body: ({ query, body }) => {
@@ -38,7 +38,7 @@ export default defineMock([
 
   // 模拟错误响应
   {
-    url: '/api/test/error',
+    url: '/test/error',
     method: 'GET',
     body: ({ query }) => {
       if (query.trigger === 'error') {

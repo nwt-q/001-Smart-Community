@@ -1,3 +1,4 @@
+import type { Contact, DepartmentType } from '@/types/contact'
 import { defineMock } from 'vite-plugin-mock-dev-server'
 import { createMockContact, DepartmentTypes } from './shared/mockData'
 import { createPaginationResponse, errorResponse, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
@@ -21,7 +22,7 @@ const mockContactDatabase = {
   getContactList(params: {
     page: number
     row: number
-    department?: string
+    department?: DepartmentType
     keyword?: string
     isOnline?: boolean
   }) {
@@ -68,7 +69,7 @@ const mockContactDatabase = {
       }
       acc[contact.department].push(contact)
       return acc
-    }, {} as Record<string, typeof this.contacts>)
+    }, {} as Record<DepartmentType, Contact[]>)
 
     // 排序每个部门内的联系人
     Object.keys(grouped).forEach((dept) => {
@@ -92,7 +93,7 @@ const mockContactDatabase = {
 export default defineMock([
   // 获取通讯录列表
   {
-    url: '/api/app/contact.listContacts',
+    url: '/app/contact.listContacts',
     method: ['GET', 'POST'],
     delay: [200, 600],
     body: async ({ query, body }) => {
@@ -126,7 +127,7 @@ export default defineMock([
 
   // 获取联系人详情
   {
-    url: '/api/app/contact.getContactDetail',
+    url: '/app/contact.getContactDetail',
     method: ['GET', 'POST'],
     delay: [100, 300],
     body: async ({ query, body }) => {
@@ -158,7 +159,7 @@ export default defineMock([
 
   // 按部门分组获取通讯录
   {
-    url: '/api/app/contact.getContactsByDepartment',
+    url: '/app/contact.getContactsByDepartment',
     method: ['GET', 'POST'],
     delay: [300, 700],
     body: async ({ query, body }) => {
@@ -194,7 +195,7 @@ export default defineMock([
 
   // 搜索联系人
   {
-    url: '/api/app/contact.searchContacts',
+    url: '/app/contact.searchContacts',
     method: ['GET', 'POST'],
     delay: [200, 500],
     body: async ({ query, body }) => {
@@ -246,7 +247,7 @@ export default defineMock([
 
   // 获取部门列表
   {
-    url: '/api/app/contact.getDepartments',
+    url: '/app/contact.getDepartments',
     method: ['GET', 'POST'],
     delay: [100, 200],
     body: async () => {
@@ -276,7 +277,7 @@ export default defineMock([
 
   // 更新联系人在线状态（模拟实时状态）
   {
-    url: '/api/app/contact.updateOnlineStatus',
+    url: '/app/contact.updateOnlineStatus',
     method: 'POST',
     delay: [50, 150],
     body: async ({ body }) => {
@@ -310,7 +311,7 @@ export default defineMock([
 
   // 获取常用联系人
   {
-    url: '/api/app/contact.getFavoriteContacts',
+    url: '/app/contact.getFavoriteContacts',
     method: ['GET', 'POST'],
     delay: [200, 400],
     body: async () => {
@@ -336,7 +337,7 @@ export default defineMock([
 
   // 获取紧急联系人
   {
-    url: '/api/app/contact.getEmergencyContacts',
+    url: '/app/contact.getEmergencyContacts',
     method: ['GET', 'POST'],
     delay: [100, 200],
     body: async () => {
