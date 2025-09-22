@@ -182,3 +182,11 @@
 5. `component-migration` 子代理是具体实现组件迁移的子代理，不应该包含任何迁移进度的报告。
 6. 预期新建一个 `.claude\agents\component-migration.md` 文件。和其他子代理保持相同的文件目录。
 7. 在 `.github\prompts\migrate-plan\README.md` 内同步补充说明 `component-migration` 代理的相关信息。
+
+### 016 美化 `component-migration` 文档格式
+
+阅读 `.claude\agents\component-migration.md` 文件。
+
+将该 markdown 文档涉及到的 table 表格，改成每一列居中对齐的效果。使用 markdown 的表格语法实现表格列居中对齐。
+
+仅需要阅读并修改表格即可。
