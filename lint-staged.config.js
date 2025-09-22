@@ -8,10 +8,11 @@ export default {
   /**
    * 排除gitee-example目录
    * @see https://github.com/lint-staged/lint-staged/blob/main/README.md#automatically-fix-code-style-with-prettier-for-any-format-prettier-supports
-   * @example '*': 'prettier --ignore-unknown --experimental-cli --write'
    * @description
    * !(gitee-example) - 排除 gitee-example 文件夹
+   * eslint --fix 处理所有非 md 文件
+   * prettier 只处理 md 文件
    */
-  '!(gitee-example)/**/*': 'eslint --fix',
+  '!(gitee-example)/**/*!(.md)': 'eslint --fix',
   '!(gitee-example)/**/*.md': 'prettier --ignore-unknown --experimental-cli --write',
 }
