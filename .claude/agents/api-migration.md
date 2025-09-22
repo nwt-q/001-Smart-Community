@@ -19,8 +19,35 @@ color: blue
 1. **📁 单文件完整性**: 每个 `*.mock.ts` 文件必须包含**数据库对象** + **接口定义**
 2. **🔗 数据生成导入**: 所有数据生成函数必须从 `src/api/mock/shared/mockData.ts` 导入
 3. **🎯 业务类型使用**: 强制使用 `src/types` 文件夹内拆分后的业务类型，确保 Mock 数据 100%类型安全
+4. **🌐 URL 前缀规范**: Mock 接口的 URL 必须**移除** `/api` 前缀，直接使用 `/app` 等路径
 
 > **⚠️ 注意**: 这些规范是为了确保 Mock 接口的类型安全性和可维护性，必须严格遵守。
+
+### URL 前缀变更规则
+
+**重要说明**: 在创建新的 Mock 函数时，URL 地址前缀需要按照以下规则变更：
+
+**❌ 错误示例**:
+
+```typescript
+// 错误：包含多余的 /api 前缀
+url: '/api/app/activities.updateStatus'
+url: '/api/app/ownerRepair.listOwnerRepairs'
+```
+
+**✅ 正确示例**:
+
+```typescript
+// 正确：直接使用业务路径，无需 /api 前缀
+url: '/app/activities.updateStatus'
+url: '/app/ownerRepair.listOwnerRepairs'
+```
+
+**规则说明**:
+
+- Mock 插件会自动处理路径拦截，无需手动添加 `/api` 前缀
+- 直接使用后端真实的业务路径结构（如 `/app/模块.方法`）
+- 这样可以确保 Mock 接口与实际后端接口路径保持一致
 
 ## 技术栈对比
 
@@ -629,7 +656,7 @@ const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve,
 export default defineMock([
   // 获取维修工单列表
   {
-    url: '/api/app/ownerRepair.listOwnerRepairs',
+    url: '/app/ownerRepair.listOwnerRepairs',
     method: ['GET', 'POST'],
     delay: [300, 800],
     body: async ({ query, body }) => {
@@ -660,7 +687,7 @@ export default defineMock([
 
   // 2. 获取维修任务详情
   {
-    url: '/api/app/ownerRepair.getOwnerRepair',
+    url: '/app/ownerRepair.getOwnerRepair',
     method: ['GET', 'POST'],
     delay: 200,
     body: async ({ query, body }) => {
@@ -682,7 +709,7 @@ export default defineMock([
 
   // 3. 更新维修任务
   {
-    url: '/api/app/ownerRepair.updateOwnerRepair',
+    url: '/app/ownerRepair.updateOwnerRepair',
     method: 'POST',
     delay: 600,
     body: async ({ body }) => {
@@ -704,7 +731,7 @@ export default defineMock([
 
   // 4. 创建维修任务
   {
-    url: '/api/app/ownerRepair.saveOwnerRepair',
+    url: '/app/ownerRepair.saveOwnerRepair',
     method: 'POST',
     delay: 800,
     body: async ({ body }) => {
@@ -716,7 +743,7 @@ export default defineMock([
 
   // 5. 删除维修任务
   {
-    url: '/api/app/ownerRepair.deleteOwnerRepair',
+    url: '/app/ownerRepair.deleteOwnerRepair',
     method: ['DELETE', 'POST'],
     delay: 400,
     body: async ({ query, body }) => {
@@ -731,7 +758,7 @@ export default defineMock([
 
   // 6. 动态路由示例 - 根据 ID 获取任务
   {
-    url: '/api/app/ownerRepair/task/:taskId',
+    url: '/app/ownerRepair/task/:taskId',
     method: 'GET',
     delay: 300,
     body: async ({ params }) => {
@@ -763,7 +790,7 @@ import { defineMock } from 'vite-plugin-mock-dev-server'
 export default defineMock([
   // 条件响应示例
   {
-    url: '/api/app/task/conditional',
+    url: '/app/task/conditional',
     method: 'POST',
     // 使用 validator 根据不同条件返回不同数据
     validator: { body: { type: 'urgent' } },
@@ -773,7 +800,7 @@ export default defineMock([
     },
   },
   {
-    url: '/api/app/task/conditional',
+    url: '/app/task/conditional',
     method: 'POST',
     validator: { body: { type: 'normal' } },
     body: {
@@ -801,7 +828,7 @@ export default defineMock([
 
   // 错误处理示例
   {
-    url: '/api/app/error/demo',
+    url: '/app/error/demo',
     method: 'GET',
     body: ({ query }) => {
       if (query.trigger === 'error') {
@@ -852,7 +879,7 @@ const mockActivities = [
 export default defineMock([
   // 获取活动列表/详情
   {
-    url: '/api/app/activities.listActivitiess',
+    url: '/app/activities.listActivitiess',
     method: ['GET', 'POST'],
     delay: [300, 600],
     body: ({ query, body }) => {
@@ -900,7 +927,7 @@ export default defineMock([
 
   // 创建活动
   {
-    url: '/api/app/activities.saveActivities',
+    url: '/app/activities.saveActivities',
     method: 'POST',
     delay: 800,
     body: ({ body }) => {
@@ -923,7 +950,7 @@ export default defineMock([
 
   // 更新活动
   {
-    url: '/api/app/activities.updateActivities',
+    url: '/app/activities.updateActivities',
     method: 'POST',
     delay: 600,
     body: ({ body }) => {
@@ -948,7 +975,7 @@ export default defineMock([
 
   // 删除活动
   {
-    url: '/api/app/activities.deleteActivities',
+    url: '/app/activities.deleteActivities',
     method: ['DELETE', 'POST'],
     delay: 400,
     body: ({ query, body }) => {
@@ -968,7 +995,7 @@ export default defineMock([
 
   // 增加浏览量
   {
-    url: '/api/app/activities.increaseView',
+    url: '/app/activities.increaseView',
     method: 'POST',
     delay: 200,
     body: ({ body }) => {
@@ -1200,12 +1227,12 @@ export interface Activity {
 
 // Step 3: 创建 API 接口 (src/api/activity.ts)
 export const getActivityList = (params: ActivityListParams) =>
-  http.Get<ActivityListResponse>('/api/app/activities.listActivitiess', { params })
+  http.Get<ActivityListResponse>('/app/activities.listActivitiess', { params })
 
 // Step 4: 创建 Mock 文件 (src/api/mock/activity.mock.ts)
 export default defineMock([
   {
-    url: '/api/app/activities.listActivitiess',
+    url: '/app/activities.listActivitiess',
     method: ['GET', 'POST'],
     delay: [300, 600],
     body: ({ query, body }) => {
