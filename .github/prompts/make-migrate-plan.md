@@ -148,3 +148,23 @@
 
 1. 确保 mock 文件的 url 没有出现额外的`/api`前缀。
 2. 确保 mock 文件导入了业务类型，并使用业务类型。
+
+### 014 自定义 mock 转换器
+
+<!-- TODO: 待使用 -->
+
+`api-migration` 子代理定义的 mock 写法，有变化。按照以下要求更改：
+
+1. 在 `src\api\mock\shared\utils.ts` 目录内，使用 vite-plugin-mock-dev-server 包的 `createDefineMock` 函数，定义一个 `defineUniAppMock` 函数，并对外导出。其语法请阅读： https://vite-plugin-mock-dev-server.netlify.app/zh/guide/create-define-mock 文档。
+2. defineUniAppMock 函数的职责，目前仅负责实现 mock.url 的更改。增加来自环境变量的前缀即可。
+3. 使用 import.meta.env.VITE_APP_PROXY_PREFIX 写法来获取环境变量的前缀。使用模板字符串来实现 url 的重新拼接。
+4. 请更新 `.claude\agents\api-migration.md` 文件，我们定义 mock 接口文件时，不再直接使用 vite-plugin-mock-dev-server 提供的 `defineMock` 函数，而是使用 `src\api\mock\shared\utils.ts` 导出的 `defineUniAppMock` 函数。请更改 `api-migration` 子代理，更新该规则。
+5. 更新 `api-migration` 子代理涉及到的代码示例。更新示例换成 `defineUniAppMock` 函数。
+
+### 015 应用 `api-migration` 子代理，更新 `defineMock` 函数为 `defineUniAppMock` 函数
+
+<!-- TODO: 待使用 -->
+
+请你使用 `api-migration` 子代理，对 `src\api\mock` 目录下的 `*.mock.ts` 规则的文件，使用该代理，应用该代理的规则。
+
+1. 更新 `defineMock` 函数为 `defineUniAppMock` 函数。
