@@ -131,3 +131,22 @@
 - 主动的使用来自 `src\types` 文件夹内拆分划分出来的业务类型。确保 mock 生成的假数据均满足业务类型。
 
 请修改 `.claude\agents\api-migration.md` 文件。使得生成 mock 接口数据时，满足改规则。
+
+### 012 mock 的 url 不提供明显的 `/api` 前缀
+
+针对新建 mock 函数， `api-migration` 子代理需要增加新建 mock 函数时，其 url 地址前缀需要变更的规则。例子如下：
+
+- 错误的 url： `/api/app/activities.updateStatus` 。
+- 正确的 url： `/app/activities.updateStatus` 。
+
+1. 在 `.claude\agents\api-migration.md` 文件内，增加该规则。确保以后使用该代理时，生成的 mock 文件的 url，不会多出额外的`/api`前缀。
+2. 请你更新 `.claude\agents\api-migration.md` 文件，确保本文件内设计到的 mock 示例的 url，不包含额外的`/api`前缀。
+
+### 013 应用 `api-migration` 子代理
+
+<!-- 未使用 -->
+
+请你使用 `api-migration` 子代理，对 `src\api\mock` 目录下的 `*.mock.ts` 规则的文件，使用该代理，应用该代理的规则。
+
+1. 确保 mock 文件的 url 没有出现额外的`/api`前缀。
+2. 确保 mock 文件导入了业务类型，并使用业务类型。
