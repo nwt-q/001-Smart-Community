@@ -76,6 +76,7 @@ const alovaInstance = createAlova({
   responded: onResponseRefreshToken((response, method) => {
     const { config } = method
     const { requestType } = config
+    // console.log('??? response ====>', response)
     const {
       statusCode,
       data: rawData,
@@ -100,6 +101,7 @@ const alovaInstance = createAlova({
 
     // 处理业务逻辑错误
     const { code, message, data } = rawData as IResponse
+    // console.log('??? rawData ====>', rawData)
     if (code !== ResultEnum.Success) {
       if (config.meta?.toast !== false) {
         uni.showToast({
