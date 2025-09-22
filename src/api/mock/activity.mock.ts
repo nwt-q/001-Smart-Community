@@ -1,7 +1,6 @@
 import type { Activity, ActivityListParams, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
 import type { StatusType } from '@/types/api'
-import { defineMock } from 'vite-plugin-mock-dev-server'
-import { createPaginationResponse, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
+import { createPaginationResponse, defineUniAppMock, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 活动模块 Mock 接口
@@ -260,7 +259,7 @@ const mockActivityDatabase = {
   },
 }
 
-export default defineMock([
+export default defineUniAppMock([
   // 获取活动列表/详情
   {
     url: '/app/activities.listActivitiess',

@@ -1,9 +1,9 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { defineUniAppMock } from './shared/utils'
 
 /**
  * 测试 Mock 插件是否正常工作
  */
-export default defineMock([
+export default defineUniAppMock([
   // 基础测试接口
   {
     url: '/test',

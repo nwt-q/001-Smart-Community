@@ -1,6 +1,5 @@
 import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/complaint'
-import { defineMock } from 'vite-plugin-mock-dev-server'
-import { createPaginationResponse, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateStatus, generateTimeRange, randomDelay, successResponse } from './shared/utils'
+import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateStatus, generateTimeRange, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 投诉模块 Mock 接口
@@ -194,7 +193,7 @@ const mockComplaintDatabase = {
   },
 }
 
-export default defineMock([
+export default defineUniAppMock([
   // 获取投诉列表
   {
     url: '/app/complaint.listComplaints',

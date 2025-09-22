@@ -1,7 +1,6 @@
 import type { Contact, DepartmentType } from '@/types/contact'
-import { defineMock } from 'vite-plugin-mock-dev-server'
 import { createMockContact, DepartmentTypes } from './shared/mockData'
-import { createPaginationResponse, errorResponse, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
+import { createPaginationResponse, defineUniAppMock, errorResponse, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 通讯录模块 Mock 接口
@@ -90,7 +89,7 @@ const mockContactDatabase = {
   },
 }
 
-export default defineMock([
+export default defineUniAppMock([
   // 获取通讯录列表
   {
     url: '/app/contact.listContacts',

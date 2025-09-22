@@ -1,7 +1,6 @@
 import type { RepairOrder, RepairStatus } from '@/types/repair'
-import { defineMock } from 'vite-plugin-mock-dev-server'
 import { createMockRepair } from './shared/mockData'
-import { createPaginationResponse, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
+import { createPaginationResponse, defineUniAppMock, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 维修模块 Mock 接口
@@ -93,7 +92,7 @@ const mockRepairDatabase = {
   },
 }
 
-export default defineMock([
+export default defineUniAppMock([
   // 获取维修工单列表
   {
     url: '/app/ownerRepair.listOwnerRepairs',
