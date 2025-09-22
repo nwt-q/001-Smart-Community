@@ -263,7 +263,7 @@ const mockActivityDatabase = {
 export default defineMock([
   // 获取活动列表/详情
   {
-    url: '/api/app/activities.listActivitiess',
+    url: '/app/activities.listActivitiess',
     method: ['GET', 'POST'],
     delay: [300, 800],
     body: async ({ query, body }) => {
@@ -312,7 +312,7 @@ export default defineMock([
 
   // 创建活动
   {
-    url: '/api/app/activities.saveActivities',
+    url: '/app/activities.saveActivities',
     method: 'POST',
     delay: [500, 1200],
     body: async ({ body }) => {
@@ -346,7 +346,7 @@ export default defineMock([
           likeCount: 0,
           status: data.status || 'DRAFT',
           headerImg: data.headerImg,
-          src: data.headerImg ? `/api/file?fileId=${data.headerImg}` : undefined,
+          src: data.headerImg ? `/file?fileId=${data.headerImg}` : undefined,
         }
 
         mockActivityDatabase.addActivity(newActivity)
@@ -362,7 +362,7 @@ export default defineMock([
 
   // 更新活动
   {
-    url: '/api/app/activities.updateActivities',
+    url: '/app/activities.updateActivities',
     method: 'POST',
     delay: [400, 900],
     body: async ({ body }) => {
@@ -398,7 +398,7 @@ export default defineMock([
 
   // 删除活动
   {
-    url: '/api/app/activities.deleteActivities',
+    url: '/app/activities.deleteActivities',
     method: 'POST',
     delay: [200, 600],
     body: async ({ body }) => {
@@ -429,7 +429,7 @@ export default defineMock([
 
   // 增加浏览量
   {
-    url: '/api/app/activities.increaseView',
+    url: '/app/activities.increaseView',
     method: 'POST',
     delay: [100, 300],
     body: async ({ body }) => {
@@ -460,7 +460,7 @@ export default defineMock([
 
   // 活动点赞
   {
-    url: '/api/app/activities.likeActivity',
+    url: '/app/activities.likeActivity',
     method: 'POST',
     delay: [100, 300],
     body: async ({ body }) => {
@@ -491,7 +491,7 @@ export default defineMock([
 
   // 活动状态管理
   {
-    url: '/api/app/activities.updateStatus',
+    url: '/app/activities.updateStatus',
     method: 'POST',
     delay: [300, 700],
     body: async ({ body }) => {

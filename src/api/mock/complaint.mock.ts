@@ -197,7 +197,7 @@ const mockComplaintDatabase = {
 export default defineMock([
   // 获取投诉列表
   {
-    url: '/api/app/complaint.listComplaints',
+    url: '/app/complaint.listComplaints',
     method: ['GET', 'POST'],
     delay: [300, 800],
     body: async ({ query, body }) => {
@@ -234,7 +234,7 @@ export default defineMock([
 
   // 获取投诉详情
   {
-    url: '/api/app/complaint.getComplaintDetail',
+    url: '/app/complaint.getComplaintDetail',
     method: ['GET', 'POST'],
     delay: [200, 500],
     body: async ({ query, body }) => {
@@ -266,7 +266,7 @@ export default defineMock([
 
   // 提交投诉
   {
-    url: '/api/app/complaint.submitComplaint',
+    url: '/app/complaint.submitComplaint',
     method: 'POST',
     delay: [600, 1200],
     body: async ({ body }) => {
@@ -320,7 +320,7 @@ export default defineMock([
 
   // 处理投诉
   {
-    url: '/api/app/complaint.handleComplaint',
+    url: '/app/complaint.handleComplaint',
     method: 'POST',
     delay: [400, 800],
     body: async ({ body }) => {
@@ -355,7 +355,7 @@ export default defineMock([
 
   // 回复投诉
   {
-    url: '/api/app/complaint.replyComplaint',
+    url: '/app/complaint.replyComplaint',
     method: 'POST',
     delay: [500, 1000],
     body: async ({ body }) => {
@@ -397,7 +397,7 @@ export default defineMock([
 
   // 投诉满意度评价
   {
-    url: '/api/app/complaint.evaluateComplaint',
+    url: '/app/complaint.evaluateComplaint',
     method: 'POST',
     delay: [300, 600],
     body: async ({ body }) => {
@@ -443,7 +443,7 @@ export default defineMock([
 
   // 获取投诉统计数据
   {
-    url: '/api/app/complaint.getComplaintStatistics',
+    url: '/app/complaint.getComplaintStatistics',
     method: ['GET', 'POST'],
     delay: [300, 600],
     body: async ({ query, body }) => {
