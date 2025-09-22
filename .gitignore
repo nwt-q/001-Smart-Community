@@ -46,3 +46,6 @@ pnpm-lock.yaml
 
 # 更新 uni-app 官方版本
 # npx @dcloudio/uvm@latest
+
+# 忽略掉 @chongdashu/cc-statusline 产生的日志 
+.claude/statusline.log
