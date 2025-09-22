@@ -22,19 +22,19 @@ export default {
       taskList: [],
       searchForm: {
         keyword: '',
-        status: ''
-      }
+        status: '',
+      },
     }
   },
   computed: {
     filteredTasks() {
-      return this.taskList.filter(task => {
+      return this.taskList.filter((task) => {
         if (this.searchForm.keyword) {
           return task.title.includes(this.searchForm.keyword)
         }
         return true
       })
-    }
+    },
   },
   mounted() {
     this.loadTasks()
@@ -50,8 +50,8 @@ export default {
       } finally {
         this.loading = false
       }
-    }
-  }
+    },
+  },
 }
 ```
 
@@ -144,15 +144,13 @@ export default {
   data() {
     return {
       searchForm: { keyword: '' },
-      taskList: []
+      taskList: [],
     }
   },
   computed: {
     filteredTasks() {
-      return this.taskList.filter(task =>
-        task.title.includes(this.searchForm.keyword)
-      )
-    }
+      return this.taskList.filter((task) => task.title.includes(this.searchForm.keyword))
+    },
   },
   mounted() {
     this.loadTasks()
@@ -161,8 +159,8 @@ export default {
     async loadTasks() {
       const result = await GetTaskList(this, {})
       this.taskList = result.tasks
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -182,17 +180,9 @@ export default {
 <template>
   <view class="p-4">
     <view class="mb-4">
-      <input
-        v-model="searchForm.keyword"
-        placeholder="搜索任务"
-        class="w-full p-2 border rounded"
-      />
+      <input v-model="searchForm.keyword" placeholder="搜索任务" class="w-full p-2 border rounded" />
     </view>
-    <view
-      v-for="task in filteredTasks"
-      :key="task.id"
-      class="p-4 mb-2 bg-white rounded shadow"
-    >
+    <view v-for="task in filteredTasks" :key="task.id" class="p-4 mb-2 bg-white rounded shadow">
       {{ task.title }}
     </view>
   </view>
@@ -206,8 +196,8 @@ import { getTaskList } from '@/api/task'
 // 页面配置
 definePage({
   style: {
-    navigationBarTitleText: '任务列表'
-  }
+    navigationBarTitleText: '任务列表',
+  },
 })
 
 // 类型定义
@@ -225,19 +215,14 @@ interface Task {
 const searchForm = ref<SearchForm>({ keyword: '' })
 
 // 请求管理
-const {
-  loading,
-  data: taskList
-} = useRequest(getTaskList, {
-  immediate: true
+const { loading, data: taskList } = useRequest(getTaskList, {
+  immediate: true,
 })
 
 // 计算属性
 const filteredTasks = computed(() => {
   if (!taskList.value) return []
-  return taskList.value.filter((task: Task) =>
-    task.title.includes(searchForm.value.keyword)
-  )
+  return taskList.value.filter((task: Task) => task.title.includes(searchForm.value.keyword))
 })
 </script>
 ```
@@ -249,24 +234,19 @@ const filteredTasks = computed(() => {
 ```vue
 <!-- 父组件 -->
 <template>
-  <TaskItem
-    v-for="task in taskList"
-    :key="task.id"
-    :task="task"
-    @update="handleTaskUpdate"
-  />
+  <TaskItem v-for="task in taskList" :key="task.id" :task="task" @update="handleTaskUpdate" />
 </template>
 
 <script>
 export default {
   methods: {
     handleTaskUpdate(taskId, newStatus) {
-      const task = this.taskList.find(t => t.id === taskId)
+      const task = this.taskList.find((t) => t.id === taskId)
       if (task) {
         task.status = newStatus
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -276,14 +256,14 @@ export default {
   props: {
     task: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     updateStatus(newStatus) {
       this.$emit('update', this.task.id, newStatus)
-    }
-  }
+    },
+  },
 }
 </script>
 ```
@@ -293,12 +273,7 @@ export default {
 ```vue
 <!-- 父组件 -->
 <template>
-  <TaskItem
-    v-for="task in taskList"
-    :key="task.id"
-    :task="task"
-    @update="handleTaskUpdate"
-  />
+  <TaskItem v-for="task in taskList" :key="task.id" :task="task" @update="handleTaskUpdate" />
 </template>
 
 <script setup lang="ts">
@@ -310,7 +285,7 @@ interface Task {
 const taskList = ref<Task[]>([])
 
 const handleTaskUpdate = (taskId: string, newStatus: string) => {
-  const task = taskList.value.find(t => t.id === taskId)
+  const task = taskList.value.find((t) => t.id === taskId)
   if (task) {
     task.status = newStatus
   }
@@ -678,7 +653,7 @@ onMounted(() => {
 export default {
   data() {
     return {
-      timer: null
+      timer: null,
     }
   },
   mounted() {
@@ -704,8 +679,8 @@ export default {
     },
     refreshData() {
       // 刷新数据
-    }
-  }
+    },
+  },
 }
 ```
 
@@ -781,8 +756,8 @@ definePage({
   style: {
     navigationBarTitleText: '任务列表',
     enablePullDownRefresh: true,
-    onReachBottomDistance: 50
-  }
+    onReachBottomDistance: 50,
+  },
 })
 </script>
 ```
@@ -828,8 +803,8 @@ export default {
       } finally {
         this.loading = false
       }
-    }
-  }
+    },
+  },
 }
 ```
 
@@ -849,17 +824,14 @@ const hasMore = ref(true)
 const {
   loading,
   data: taskList,
-  send: refreshData
+  send: refreshData,
 } = useRequest(() => getTaskList({ page: 1 }), {
-  immediate: true
+  immediate: true,
 })
 
 // 加载更多
-const {
-  loading: loadingMore,
-  send: loadMore
-} = useRequest((page: number) => getTaskList({ page }), {
-  immediate: false
+const { loading: loadingMore, send: loadMore } = useRequest((page: number) => getTaskList({ page }), {
+  immediate: false,
 })
 
 // 下拉刷新
@@ -960,7 +932,7 @@ interface Emits {
 // 使用类型
 const props = withDefaults(defineProps<Props>(), {
   editable: false,
-  showActions: true
+  showActions: true,
 })
 
 const emit = defineEmits<Emits>()
@@ -995,10 +967,10 @@ export default {
     return {
       formData: {
         title: '',
-        category: ''
+        category: '',
       },
       options: ['选项1', '选项2', '选项3'],
-      selectedIndex: 0
+      selectedIndex: 0,
     }
   },
   methods: {
@@ -1006,7 +978,7 @@ export default {
       if (!this.formData.title) {
         uni.showToast({
           title: '请输入标题',
-          icon: 'none'
+          icon: 'none',
         })
         return
       }
@@ -1021,8 +993,8 @@ export default {
     },
     async submitForm() {
       // 提交逻辑
-    }
-  }
+    },
+  },
 }
 </script>
 ```
@@ -1050,7 +1022,7 @@ interface FormData {
 
 const formData = reactive<FormData>({
   title: '',
-  category: ''
+  category: '',
 })
 
 const options = ['选项1', '选项2', '选项3']
@@ -1060,7 +1032,7 @@ const handleSubmit = () => {
   if (!formData.title) {
     uni.showToast({
       title: '请输入标题',
-      icon: 'none'
+      icon: 'none',
     })
     return
   }
@@ -1124,10 +1096,7 @@ export function debounce(func, wait) {
 // utils/format.ts
 import dayjs from 'dayjs'
 
-export function formatDate(
-  date: string | number | Date,
-  format: string = 'YYYY-MM-DD'
-): string {
+export function formatDate(date: string | number | Date, format: string = 'YYYY-MM-DD'): string {
   return dayjs(date).format(format)
 }
 
@@ -1135,10 +1104,7 @@ export function formatCurrency(amount: number): string {
   return `¥${amount.toFixed(2)}`
 }
 
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null
 
   return function executedFunction(...args: Parameters<T>) {
@@ -1155,138 +1121,9 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 // 使用示例
-export function useDebounce<T extends (...args: any[]) => any>(
-  fn: T,
-  delay: number = 300
-) {
+export function useDebounce<T extends (...args: any[]) => any>(fn: T, delay: number = 300) {
   return debounce(fn, delay)
 }
-```
-
-### 8. 自动化迁移工具
-
-#### 8.1 代码转换脚本
-
-```javascript
-// scripts/migrate-vue2-to-vue3.js
-const fs = require('fs')
-const path = require('path')
-
-// Vue2 到 Vue3 的转换规则
-const transformRules = {
-  // Options API 到 Composition API
-  optionsToComposition: {
-    data: 'ref/reactive',
-    computed: 'computed',
-    methods: 'function',
-    mounted: 'onMounted',
-    beforeDestroy: 'onBeforeUnmount'
-  },
-
-  // 语法转换
-  syntaxTransform: {
-    'this.': '',
-    '$emit': 'emit',
-    '$refs': 'templateRef',
-    'Vue.prototype': 'app.config.globalProperties'
-  }
-}
-
-function transformVue2File(filePath) {
-  let content = fs.readFileSync(filePath, 'utf8')
-
-  // 添加 script setup
-  if (content.includes('<script>')) {
-    content = content.replace('<script>', '<script setup lang="ts">')
-  }
-
-  // 转换 export default
-  const exportMatch = content.match(/export default\s*{([\s\S]*?)}\s*<\/script>/)
-  if (exportMatch) {
-    const optionsContent = exportMatch[1]
-    const compositionContent = transformOptions(optionsContent)
-    content = content.replace(exportMatch[0], compositionContent + '\n</script>')
-  }
-
-  return content
-}
-
-function transformOptions(optionsString) {
-  // 解析和转换 Options API
-  // 这里简化实现，实际需要完整的 AST 解析
-  let result = ''
-
-  // 转换 data
-  const dataMatch = optionsString.match(/data\(\)\s*{\s*return\s*{([\s\S]*?)}\s*}/)
-  if (dataMatch) {
-    const dataContent = dataMatch[1]
-    result += transformDataToRefs(dataContent)
-  }
-
-  // 转换 methods
-  const methodsMatch = optionsString.match(/methods\s*:\s*{([\s\S]*?)}/)
-  if (methodsMatch) {
-    const methodsContent = methodsMatch[1]
-    result += transformMethods(methodsContent)
-  }
-
-  return result
-}
-```
-
-#### 8.2 批量迁移脚本
-
-```bash
-#!/bin/bash
-# migrate-project.sh
-
-echo "开始 Vue2 到 Vue3 项目迁移..."
-
-# 1. 创建 Vue3 项目结构
-echo "创建新的项目结构..."
-mkdir -p src/pages
-mkdir -p src/components
-mkdir -p src/composables
-mkdir -p src/stores
-mkdir -p src/types
-
-# 2. 迁移页面文件
-echo "迁移页面文件..."
-find gitee-example/pages -name "*.vue" | while read file; do
-  # 获取相对路径
-  relative_path=${file#gitee-example/}
-  target_path="src/$relative_path"
-
-  # 创建目标目录
-  mkdir -p "$(dirname "$target_path")"
-
-  # 转换文件
-  node scripts/migrate-vue2-to-vue3.js "$file" "$target_path"
-  echo "已迁移: $file -> $target_path"
-done
-
-# 3. 迁移组件文件
-echo "迁移组件文件..."
-find gitee-example/components -name "*.vue" | while read file; do
-  relative_path=${file#gitee-example/}
-  target_path="src/$relative_path"
-  mkdir -p "$(dirname "$target_path")"
-  node scripts/migrate-vue2-to-vue3.js "$file" "$target_path"
-  echo "已迁移: $file -> $target_path"
-done
-
-# 4. 迁移 API 文件
-echo "迁移 API 文件..."
-find gitee-example/api -name "*.js" | while read file; do
-  relative_path=${file#gitee-example/}
-  target_path="src/api/${relative_path%.js}.ts"
-  mkdir -p "$(dirname "$target_path")"
-  node scripts/migrate-api-to-ts.js "$file" "$target_path"
-  echo "已迁移: $file -> $target_path"
-done
-
-echo "项目迁移完成！"
-echo "请检查生成的文件并进行必要的手动调整。"
 ```
 
 ### 9. 质量检查和测试
@@ -1413,8 +1250,7 @@ describe('迁移后功能测试', () => {
 uni-app 代码写法迁移是整个项目迁移的核心部分，通过系统性的迁移策略，可以实现：
 
 1. **代码现代化**: 从传统 Options API 升级到现代 Composition API
-2. **类型安全**: 通过 TypeScript 获得完整的类型检查和智能提示
-3. **开发效率**: 利用现代工具链和最佳实践提升开发体验
-4. **代码质量**: 更好的代码组织和复用机制
+2. **开发效率**: 利用现代工具链和最佳实践提升开发体验
+3. **代码质量**: 更好的代码组织和复用机制
 
 迁移过程中需要特别关注**功能一致性**、**类型安全性**和**性能表现**，确保迁移后的代码质量和用户体验都有显著提升。
