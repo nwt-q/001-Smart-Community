@@ -166,3 +166,19 @@
 请你使用 `api-migration` 子代理，对 `src\api\mock` 目录下的 `*.mock.ts` 规则的文件，使用该代理，应用该代理的规则。
 
 1. 更新 `defineMock` 函数为 `defineUniAppMock` 函数。
+
+### 015 设计 `component-migration` 组件迁移子代理
+
+请深度思考。
+
+我需要你帮我设计出一个全新的子代理，名为 `component-migration` ，帮助我实现 `本项目` 和 `旧项目` 之间的组件的迁移，编写一个通用的子代理。
+
+最终实现 ColorUI + uni-app 内置组件迁移成 wot-design-uni 组件库。
+
+1. 简单的，粗略的阅读 `.claude\agents\style-migration.md` 文件，明确子代理的写法格式。
+2. 全面的阅读 `gitee-example/components/**/*.vue` 和 `gitee-example/pages/**/*.vue` 的 vue 组件，只针对性的阅读 vue 组件的使用情况。搞清楚 `旧项目` 使用了那些旧组件。
+3. 全面的阅读 https://wot-ui.cn/ 所提供的组件库列表。搞清楚有哪些组件可以使用，那些组合式 api 可以使用，可以用于替换旧组件。
+4. 在 `component-migration` 子代理内，请绘制一个 markdown 格式的 table 表格，罗列出预期被迁移改造的`旧组件`，和改造替换后的`新组件`。制作一个总览性质的表格，便于我整体性的阅读。
+5. `component-migration` 子代理是具体实现组件迁移的子代理，不应该包含任何迁移进度的报告。
+6. 预期新建一个 `.claude\agents\component-migration.md` 文件。和其他子代理保持相同的文件目录。
+7. 在 `.github\prompts\migrate-plan\README.md` 内同步补充说明 `component-migration` 代理的相关信息。
