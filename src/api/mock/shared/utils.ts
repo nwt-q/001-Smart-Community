@@ -3,11 +3,22 @@
  */
 
 import { createDefineMock } from 'vite-plugin-mock-dev-server'
+// FIXME: 无法使用路径别名 出现路径识别错误 编译失败
+// import { ResultEnum } from '@/http/tools/enum'
+import { ResultEnum } from '../../../http/tools/enum'
 
-// 自定义 Mock 定义函数，自动添加环境变量前缀
+/**
+ * 自定义 Mock 定义函数，自动添加环境变量前缀
+ */
 export const defineUniAppMock = createDefineMock((mock) => {
   const prefix = import.meta.env.VITE_APP_PROXY_PREFIX || ''
-  mock.url = `${prefix}${mock.url}`
+
+  /**
+   * 为什么这里要加两次 prefix？
+   * 1 第一个前缀来自于 vite 的反向代理配置
+   * 2 第二个前缀来自于 alova 请求实例的 baseURL
+   */
+  mock.url = `${prefix}${prefix}${mock.url}`
 })
 
 // 模拟请求延迟
@@ -112,7 +123,7 @@ export function generatePriority() {
 export function successResponse<T>(data: T, message: string = '操作成功') {
   return {
     success: true,
-    code: '200',
+    code: ResultEnum.Success,
     message,
     data,
     timestamp: Date.now(),
