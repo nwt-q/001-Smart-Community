@@ -1,4 +1,7 @@
 import type { Activity, ActivityListResponse } from '@/types/activity'
+import type { PriorityType, StatusType } from '@/types/api'
+import type { Contact, DepartmentType } from '@/types/contact'
+import type { RepairOrder, RepairStatus, RepairType } from '@/types/repair'
 
 /**
  * 通用模拟数据生成器
@@ -26,7 +29,7 @@ export function createMockActivity(id: string): Activity {
     communityId: 'COMM_001',
     createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
     updateTime: new Date().toISOString(),
-    status: ['ACTIVE', 'INACTIVE', 'DRAFT'][Math.floor(Math.random() * 3)] as any,
+    status: ['ACTIVE', 'INACTIVE', 'DRAFT'][Math.floor(Math.random() * 3)] as StatusType,
     viewCount: Math.floor(Math.random() * 1000),
     likeCount: Math.floor(Math.random() * 200),
   }
@@ -267,17 +270,8 @@ export const mockActivityDatabase = {
 
 // ========== 维修模块数据 ==========
 
-// 维修工单状态枚举
-export const RepairStatus = {
-  PENDING: 'PENDING', // 待处理
-  ASSIGNED: 'ASSIGNED', // 已派工
-  IN_PROGRESS: 'IN_PROGRESS', // 处理中
-  COMPLETED: 'COMPLETED', // 已完成
-  CANCELLED: 'CANCELLED', // 已取消
-} as const
-
 // 维修类型
-export const RepairTypes = [
+export const RepairTypes: RepairType[] = [
   '水电维修',
   '门窗维修',
   '空调维修',
@@ -285,56 +279,63 @@ export const RepairTypes = [
   '管道疏通',
   '墙面修补',
   '其他维修',
-] as const
+]
+
+// 维修状态
+export const RepairStatuses: RepairStatus[] = [
+  'PENDING',
+  'ASSIGNED',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'CANCELLED',
+]
 
 // 模拟维修工单数据
-export function createMockRepair(id: string) {
-  const types = RepairTypes
-  const statuses = Object.values(RepairStatus)
+export function createMockRepair(id: string): RepairOrder {
   const now = Date.now()
   const randomDays = Math.floor(Math.random() * 30)
 
   return {
     repairId: `REP_${id}`,
-    title: `${types[Math.floor(Math.random() * types.length)]}维修`,
-    description: `业主报修：${types[Math.floor(Math.random() * types.length)]}出现问题，需要及时处理。`,
+    title: `${RepairTypes[Math.floor(Math.random() * RepairTypes.length)]}维修`,
+    description: `业主报修：${RepairTypes[Math.floor(Math.random() * RepairTypes.length)]}出现问题，需要及时处理。`,
     ownerName: `业主${Math.floor(Math.random() * 100 + 1)}`,
     ownerPhone: `138${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`,
     address: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
-    repairType: types[Math.floor(Math.random() * types.length)],
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    priority: ['HIGH', 'MEDIUM', 'LOW'][Math.floor(Math.random() * 3)],
+    repairType: RepairTypes[Math.floor(Math.random() * RepairTypes.length)],
+    status: RepairStatuses[Math.floor(Math.random() * RepairStatuses.length)],
+    priority: (['HIGH', 'MEDIUM', 'LOW'] as PriorityType[])[Math.floor(Math.random() * 3)],
     createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
     updateTime: new Date().toISOString(),
     assignedWorker: Math.random() > 0.5 ? `维修工${Math.floor(Math.random() * 10 + 1)}` : null,
     estimatedCost: Math.floor(Math.random() * 500 + 50),
     actualCost: Math.random() > 0.5 ? Math.floor(Math.random() * 500 + 50) : null,
     images: [`https://picsum.photos/400/300?random=${id}`],
+    communityId: 'COMM_001',
   }
 }
 
 // ========== 通讯录模块数据 ==========
 
 // 部门类型
-export const DepartmentTypes = [
+export const DepartmentTypes: DepartmentType[] = [
   '物业管理处',
   '保安部',
   '清洁部',
   '维修部',
   '客服部',
   '财务部',
-] as const
+]
 
 // 模拟通讯录数据
-export function createMockContact(id: string) {
-  const departments = DepartmentTypes
+export function createMockContact(id: string): Contact {
   const positions = ['主管', '专员', '助理', '经理']
 
   return {
     contactId: `CON_${id}`,
     name: `员工${id}`,
     position: positions[Math.floor(Math.random() * positions.length)],
-    department: departments[Math.floor(Math.random() * departments.length)],
+    department: DepartmentTypes[Math.floor(Math.random() * DepartmentTypes.length)],
     phone: `138${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`,
     email: `employee${id}@property.com`,
     workTime: '09:00-18:00',
@@ -354,7 +355,7 @@ export default {
 
   // 维修相关
   createMockRepair,
-  RepairStatus,
+  RepairStatuses,
   RepairTypes,
 
   // 通讯录相关
