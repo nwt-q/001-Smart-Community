@@ -24,7 +24,7 @@ const activitiesId = ref<string>('')
 const currentCommunityId = ref<string>('')
 const showHeadImage = ref<boolean>(true)
 
-const activity = reactive<Activity>({
+const activity = reactive<Partial<Activity>>({
   activitiesId: '',
   title: '',
   userName: '',

@@ -1,4 +1,5 @@
 import type { Activity, ActivityListParams, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
+import type { StatusType } from '@/types/api'
 import { defineMock } from 'vite-plugin-mock-dev-server'
 import { createPaginationResponse, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
 
@@ -20,7 +21,7 @@ const ACTIVITY_TYPES = [
 ] as const
 
 // 活动内容模板生成
-function generateActivityContent(activityType: typeof ACTIVITY_TYPES[0], id: string): string {
+function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id: string): string {
   const templates = {
     health: '专业健身教练现场指导，多种运动项目自由选择，健康体检和咨询服务',
     family: '亲子趣味运动会，手工制作体验课，故事分享时间，家庭才艺展示',
@@ -85,14 +86,14 @@ function generateOrganizerName(): string {
 
 // 现代化活动数据生成器
 function createMockActivity(id: string): Activity {
-  const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)]
+  const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)] as typeof ACTIVITY_TYPES[number]
   const now = Date.now()
   const randomDays = Math.floor(Math.random() * 30) // 创建时间：过去30天内
   const startOffset = Math.random() * 14 * 24 * 60 * 60 * 1000 // 开始时间：未来14天内
   const duration = (Math.random() * 3 + 1) * 60 * 60 * 1000 // 活动时长：1-4小时
 
   const statusRand = Math.random()
-  const status = statusRand < 0.6 ? 'ACTIVE' : statusRand < 0.8 ? 'INACTIVE' : 'DRAFT'
+  const status: StatusType = statusRand < 0.6 ? 'ACTIVE' : statusRand < 0.8 ? 'INACTIVE' : 'DRAFT'
 
   return {
     activitiesId: `ACT_${id}`,

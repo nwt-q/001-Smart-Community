@@ -1,4 +1,4 @@
-import type { RepairStatus } from '@/types/repair'
+import type { RepairOrder, RepairStatus } from '@/types/repair'
 import { defineMock } from 'vite-plugin-mock-dev-server'
 import { createMockRepair } from './shared/mockData'
 import { createPaginationResponse, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
@@ -189,7 +189,7 @@ export default defineMock([
           return errorResponse('维修地址不能为空', '400')
         }
 
-        const newRepair = {
+        const newRepair: RepairOrder = {
           repairId: generateId('REP'),
           title: body.title,
           description: body.description,
@@ -197,7 +197,7 @@ export default defineMock([
           ownerPhone: body.ownerPhone,
           address: body.address,
           repairType: body.repairType || '其他维修',
-          status: RepairStatus.PENDING,
+          status: 'PENDING',
           priority: body.priority || 'MEDIUM',
           createTime: new Date().toISOString(),
           updateTime: new Date().toISOString(),
@@ -238,7 +238,7 @@ export default defineMock([
         }
 
         // 验证状态有效性
-        const validStatuses = Object.values(RepairStatus)
+        const validStatuses: RepairStatus[] = ['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
         if (!validStatuses.includes(body.status)) {
           return errorResponse('无效的工单状态', '400')
         }
@@ -287,7 +287,7 @@ export default defineMock([
         }
 
         repair.assignedWorker = body.assignedWorker
-        repair.status = RepairStatus.ASSIGNED
+        repair.status = 'ASSIGNED'
         repair.updateTime = new Date().toISOString()
 
         console.log('🚀 Mock API: assignWorker', body, '→', repair)
@@ -315,10 +315,13 @@ export default defineMock([
         const allRepairs = mockRepairDatabase.repairs
 
         // 按状态统计
-        const statusStats = Object.values(RepairStatus).reduce((acc, status) => {
-          acc[status] = allRepairs.filter(repair => repair.status === status).length
-          return acc
-        }, {} as Record<string, number>)
+        const statusStats: Record<RepairStatus, number> = {
+          PENDING: allRepairs.filter(repair => repair.status === 'PENDING').length,
+          ASSIGNED: allRepairs.filter(repair => repair.status === 'ASSIGNED').length,
+          IN_PROGRESS: allRepairs.filter(repair => repair.status === 'IN_PROGRESS').length,
+          COMPLETED: allRepairs.filter(repair => repair.status === 'COMPLETED').length,
+          CANCELLED: allRepairs.filter(repair => repair.status === 'CANCELLED').length,
+        }
 
         // 按类型统计
         const typeStats = allRepairs.reduce((acc, repair) => {
