@@ -45,9 +45,10 @@ url: '/app/ownerRepair.listOwnerRepairs'
 
 **规则说明**:
 
-- Mock 插件会自动处理路径拦截，无需手动添加 `/api` 前缀
+- 使用自定义的 `defineUniAppMock` 函数，它会自动添加环境变量前缀
+- `defineUniAppMock` 会从 `import.meta.env.VITE_APP_PROXY_PREFIX` 获取前缀并自动拼接到 URL
 - 直接使用后端真实的业务路径结构（如 `/app/模块.方法`）
-- 这样可以确保 Mock 接口与实际后端接口路径保持一致
+- 这样可以确保 Mock 接口与实际后端接口路径保持一致，并且环境配置灵活
 
 ## 技术栈对比
 
@@ -297,7 +298,7 @@ export const deleteMaintainanceTask = (taskId: string) =>
 
 ### 2. 模拟接口实现策略
 
-⚠️ **重要说明**: 本项目使用 `vite-plugin-mock-dev-server` 插件进行模拟接口开发。
+⚠️ **重要说明**: 本项目使用 `vite-plugin-mock-dev-server` 插件进行模拟接口开发，但使用自定义的 `defineUniAppMock` 函数代替原生的 `defineMock` 函数。
 
 #### 2.1 Mock 文件结构要求
 
@@ -306,6 +307,7 @@ export const deleteMaintainanceTask = (taskId: string) =>
 - **文件格式**: 必须使用 `*.mock.ts` 格式，不得使用其他格式
 - **文件位置**: 模拟接口文件必须放在 `src/api/mock` 目录下
 - **注意**: Mock 文件与 API 接口文件在同一目录层级，便于管理和维护
+- **必须使用**: `defineUniAppMock` 函数代替 `defineMock` 函数，自动处理 URL 前缀
 
 **🆕 Mock 数据存储规则 (新增规范)**:
 
@@ -585,7 +587,7 @@ export const mockDb = MockDatabase.getInstance()
 
 ```typescript
 // src/api/mock/maintainance.mock.ts
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { defineUniAppMock } from '@/api/mock/shared/utils'
 // 1. 🔴 必须：从 shared/mockData.ts 导入数据生成函数
 import { createMockRepair } from './shared/mockData'
 // 2. 🔴 必须：导入拆分后的业务类型
@@ -652,8 +654,8 @@ const mockRepairDatabase = {
 // 模拟请求延迟
 const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms))
 
-// 4. 🔴 必须：使用 defineMock 定义接口路由
-export default defineMock([
+// 4. 🔴 必须：使用 defineUniAppMock 定义接口路由
+export default defineUniAppMock([
   // 获取维修工单列表
   {
     url: '/app/ownerRepair.listOwnerRepairs',
@@ -785,9 +787,9 @@ export default defineMock([
 
 ```typescript
 // src/api/mock/advanced.mock.ts
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { defineUniAppMock } from '@/api/mock/shared/utils'
 
-export default defineMock([
+export default defineUniAppMock([
   // 条件响应示例
   {
     url: '/app/task/conditional',
@@ -850,7 +852,7 @@ export default defineMock([
 
 ```typescript
 // src/api/mock/activity.mock.ts
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { defineUniAppMock } from '@/api/mock/shared/utils'
 
 // 活动模拟数据
 const mockActivities = [
@@ -876,7 +878,7 @@ const mockActivities = [
   // ... 更多模拟数据
 ]
 
-export default defineMock([
+export default defineUniAppMock([
   // 获取活动列表/详情
   {
     url: '/app/activities.listActivitiess',
@@ -1055,7 +1057,7 @@ export default defineMock([
 **1. 响应延迟模拟**:
 
 ```typescript
-export default defineMock([
+export default defineUniAppMock([
   {
     url: '/api/slow-endpoint',
     delay: [500, 2000], // 随机延迟 500-2000ms
@@ -1067,7 +1069,7 @@ export default defineMock([
 **2. 条件响应**:
 
 ```typescript
-export default defineMock([
+export default defineUniAppMock([
   {
     url: '/api/conditional',
     validator: { query: { type: 'admin' } },
@@ -1083,7 +1085,7 @@ export default defineMock([
 **3. 错误模拟**:
 
 ```typescript
-export default defineMock([
+export default defineUniAppMock([
   {
     url: '/api/error-demo',
     body: ({ query }) => {
@@ -1132,6 +1134,7 @@ export default defineMock([
 ```bash
 # 安装插件
 pnpm add -D vite-plugin-mock-dev-server
+# 注意：已配置自定义 defineUniAppMock 函数
 ```
 
 ```typescript
@@ -1176,10 +1179,10 @@ export default defineConfig({
 
 ```typescript
 // src/api/mock/test.mock.ts
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { defineUniAppMock } from '@/api/mock/shared/utils'
 
-export default defineMock({
-  url: '/api/test',
+export default defineUniAppMock({
+  url: '/test', // 注意：无需 /api 前缀，defineUniAppMock 会自动添加环境变量前缀
   delay: 300,
   body: {
     message: 'Mock 插件工作正常！',
@@ -1230,7 +1233,7 @@ export const getActivityList = (params: ActivityListParams) =>
   http.Get<ActivityListResponse>('/app/activities.listActivitiess', { params })
 
 // Step 4: 创建 Mock 文件 (src/api/mock/activity.mock.ts)
-export default defineMock([
+export default defineUniAppMock([
   {
     url: '/app/activities.listActivitiess',
     method: ['GET', 'POST'],
@@ -1277,7 +1280,7 @@ const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
 
 - ✅ 所有 Mock 文件使用 `*.mock.ts` 格式
 - ✅ Mock 文件都在 `src/api/mock` 目录下
-- ✅ 使用 `defineMock()` 而非自定义函数
+- ✅ 使用 `defineUniAppMock()` 而非原生 `defineMock()` 函数
 - ✅ API 接口保持与原项目相同的 URL 路径
 
 **🆕 类型安全要求**:

@@ -151,8 +151,6 @@
 
 ### 014 自定义 mock 转换器
 
-<!-- TODO: 待使用 -->
-
 `api-migration` 子代理定义的 mock 写法，有变化。按照以下要求更改：
 
 1. 在 `src\api\mock\shared\utils.ts` 目录内，使用 vite-plugin-mock-dev-server 包的 `createDefineMock` 函数，定义一个 `defineUniAppMock` 函数，并对外导出。其语法请阅读： https://vite-plugin-mock-dev-server.netlify.app/zh/guide/create-define-mock 文档。

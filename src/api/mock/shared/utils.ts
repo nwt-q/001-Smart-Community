@@ -2,6 +2,14 @@
  * Mock 工具函数
  */
 
+import { createDefineMock } from 'vite-plugin-mock-dev-server'
+
+// 自定义 Mock 定义函数，自动添加环境变量前缀
+export const defineUniAppMock = createDefineMock((mock) => {
+  const prefix = import.meta.env.VITE_APP_PROXY_PREFIX || ''
+  mock.url = `${prefix}${mock.url}`
+})
+
 // 模拟请求延迟
 export const delay = (ms: number = 300) => new Promise(resolve => setTimeout(resolve, ms))
 
