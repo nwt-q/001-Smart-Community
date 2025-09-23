@@ -198,3 +198,13 @@
 1. 请阅读 https://wot-ui.cn/component/img.html 文档。
 2. 针对 `component-migration` 子代理，在迁移原生 `<image>` 组件时，换成 `wd-img` 智能图片组件。请在 `component-migration` 子代理内，增加该项作为迁移要求。请不要使用不存在的 `<wd-image>` 组件，而是 `<wd-img>` 组件。
 3. 更新 `.claude\agents\component-migration.md` 文件。
+
+### 018 更新 `api-migration` 子代理
+
+<!-- TODO: 待使用 -->
+
+请深度思考。
+
+1. 请阅读 `.claude\agents\api-migration.md` 文档。
+2. 数据生成导入的规则，改了。我**不希望**所有数据生成函数必须从 `src/api/mock/shared/mockData.ts` 导入，这很容易导致该文件冗余，膨胀。
+3. 请你更新子代理的核心规则，要求在生成 `*.mock.ts` mock 接口数据时，数据直接写在具体的 `*.mock.ts` 模拟接口内。既然每个 `*.mock.ts` 文件必须包含**数据库对象**，那么我希望具体的模拟业务数据可以存储在你设计的**数据库对象**内。请思考并理解该要求，更新 `api-migration` 子代理文档。
