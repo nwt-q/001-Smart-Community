@@ -10,6 +10,8 @@ import { getActivityDetail } from '@/api/activity'
 definePage({
   style: {
     navigationBarTitleText: '活动详情',
+    navigationBarBackgroundColor: '#368CFE',
+    navigationBarTextStyle: 'white',
   },
 })
 
