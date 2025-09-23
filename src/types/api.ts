@@ -34,7 +34,7 @@ export interface PaginationResponse<T> {
 // ========== 通用枚举类型 ==========
 
 // 状态枚举
-export type StatusType = 'ACTIVE' | 'INACTIVE' | 'DRAFT'
+export type StatusType = '0' | '1' // 0: 草稿/未发布, 1: 已发布
 
 // 优先级枚举
 export type PriorityType = 'HIGH' | 'MEDIUM' | 'LOW'
