@@ -22,3 +22,10 @@
 
 1. 请阅读 `src\pages\activity` 文件夹内的 vue 组件。
 2. 请使用 `api-migration` 子代理，更新 `src\api\mock\activity.mock.ts` 和 `src\api\mock\shared\mockData.ts` 文件的数据存储方式。并确保这些 mock 数据能够满足 `src\pages\activity` 文件夹内的页面的业务需求。
+
+## 004 使用 `component-migration` 子代理更新错误的组件使用
+
+<!-- TODO: 等待使用 先完成 `component-migration` 子代理 的重新改设计 -->
+
+1. 请阅读 `src\pages\activity` 文件夹内的 vue 组件。
+2. 请使用 `component-migration` 子代理，检查是否有使用错误的，不存在的组件。如果有，请更换成正确的组件。
