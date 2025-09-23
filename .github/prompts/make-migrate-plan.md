@@ -190,3 +190,11 @@
 将该 markdown 文档涉及到的 table 表格，改成每一列居中对齐的效果。使用 markdown 的表格语法实现表格列居中对齐。
 
 仅需要阅读并修改表格即可。
+
+### 017 更新 `component-migration` 子代理
+
+<!-- TODO: 待使用 -->
+
+1. 请阅读 https://wot-ui.cn/component/img.html 文档。
+2. 针对 `component-migration` 子代理，在迁移原生 `<image>` 组件时，换成 `wd-img` 智能图片组件。请在 `component-migration` 子代理内，增加该项作为迁移要求。请不要使用不存在的 `<wd-image>` 组件，而是 `<wd-img>` 组件。
+3. 更新 `.claude\agents\component-migration.md` 文件。
