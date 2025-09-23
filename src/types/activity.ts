@@ -20,6 +20,13 @@ export interface Activity {
   status: StatusType
   viewCount: number
   likeCount: number
+  // 兼容原有属性名
+  readCount: number
+  collectCount: number
+  // 格式化后的时间字段（运行时添加）
+  formattedStartTime?: string
+  formattedCreateTime?: string
+  formattedEndTime?: string
 }
 
 // 活动列表查询参数

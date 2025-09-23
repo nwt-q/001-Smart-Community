@@ -13,7 +13,9 @@ export const LOGIN_PAGE_LIST = [LOGIN_PAGE, REGISTER_PAGE]
 
 // 排除在外的列表，白名单策略指白名单列表，黑名单策略指黑名单列表
 export const EXCLUDE_PAGE_LIST = [
-  '/pages/xxx/index',
+  '/pages/activity/activities', // 社区活动列表需要登录
+  '/pages/activity/detail', // 活动详情需要登录
+  '/pages/me/me', // 个人中心需要登录
 ]
 
 // 在微信小程序里面是否使用小程序默认的登录，默认为true
