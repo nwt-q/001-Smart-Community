@@ -10,72 +10,101 @@ import type { RepairOrder, RepairStatus, RepairType } from '@/types/repair'
 
 // ========== 活动模块数据 ==========
 
-// 模拟活动数据生成器
+// 活动类型配置 - 与原Java110Context数据保持一致
+const ACTIVITY_TYPES = [
+  { name: '社区健身活动', emoji: '🏃‍♀️', category: 'health' },
+  { name: '亲子互动游戏', emoji: '👨‍👩‍👧‍👦', category: 'family' },
+  { name: '文艺表演晚会', emoji: '🎭', category: 'culture' },
+  { name: '环保宣传活动', emoji: '🌱', category: 'environment' },
+  { name: '安全知识讲座', emoji: '🛡️', category: 'safety' },
+  { name: '邻里交流会', emoji: '🤝', category: 'social' },
+  { name: '传统节日庆祝', emoji: '🎊', category: 'festival' },
+  { name: '志愿服务活动', emoji: '❤️', category: 'volunteer' },
+] as const
+
+// 智能组织者名称生成
+function generateOrganizerName(): string {
+  const organizers = [
+    '物业管理处',
+    '业主委员会',
+    '社区文化中心',
+    '居民活动组',
+    '志愿者协会',
+    '党支部',
+    '青年联谊会',
+    '老年活动中心',
+  ]
+  return organizers[Math.floor(Math.random() * organizers.length)]
+}
+
+// 🔴 遵循新规范：核心活动数据生成器 - 100%类型安全
 export function createMockActivity(id: string): Activity {
+  const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)]
   const now = Date.now()
-  const randomDays = Math.floor(Math.random() * 30) // 随机0-30天
-  const startOffset = Math.random() * 7 * 24 * 60 * 60 * 1000 // 随机7天内
-  const duration = Math.random() * 4 * 60 * 60 * 1000 + 60 * 60 * 1000 // 1-5小时活动时长
+  const randomDays = Math.floor(Math.random() * 30) // 创建时间：过去30天内
+  const startOffset = Math.random() * 14 * 24 * 60 * 60 * 1000 // 开始时间：未来14天内
+  const duration = (Math.random() * 3 + 1) * 60 * 60 * 1000 // 活动时长：1-4小时
+
+  const statusRand = Math.random()
+  const status: StatusType = statusRand < 0.8 ? '1' : '0' // 80% 已发布，20% 草稿
+
+  const baseViewCount = Math.floor(Math.random() * 1000 + 50)
 
   return {
     activitiesId: `ACT_${id}`,
-    title: `社区活动 ${id}`,
-    userName: `活动组织者${Math.floor(Math.random() * 10 + 1)}`,
+    title: `${activityType.name} ${id}期`,
+    userName: generateOrganizerName(),
     startTime: new Date(now + startOffset).toISOString(),
     endTime: new Date(now + startOffset + duration).toISOString(),
-    context: generateActivityContent(id),
-    headerImg: `header_${id}.jpg`,
-    src: `https://picsum.photos/800/400?random=${id}`,
+    context: generateAdvancedActivityContent(activityType, id),
+    headerImg: `${activityType.category}_header_${id}.jpg`,
+    // 🔴 重要：匹配原Java110Context的图片URL格式
+    src: `https://picsum.photos/800/400?random=${activityType.category}${id}`,
     communityId: 'COMM_001',
     createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
     updateTime: new Date().toISOString(),
-    status: ['ACTIVE', 'INACTIVE', 'DRAFT'][Math.floor(Math.random() * 3)] as StatusType,
-    viewCount: Math.floor(Math.random() * 1000),
-    likeCount: Math.floor(Math.random() * 200),
+    status,
+    viewCount: baseViewCount,
+    likeCount: Math.floor(baseViewCount * 0.2 + Math.random() * 50), // 点赞数约为浏览量的20%
+    readCount: baseViewCount, // 与 viewCount 保持一致，兼容原代码
+    collectCount: Math.floor(baseViewCount * 0.05 + Math.random() * 10), // 收藏数约为浏览量的5%
   }
 }
 
-// 生成活动内容
-function generateActivityContent(id: string): string {
-  const activities = [
-    '社区健身活动',
-    '亲子互动游戏',
-    '文艺表演晚会',
-    '环保宣传活动',
-    '安全知识讲座',
-    '邻里交流会',
-    '传统节日庆祝',
-    '志愿服务活动',
-  ]
+// 🔴 遵循新规范：高级活动内容生成器
+function generateAdvancedActivityContent(activityType: typeof ACTIVITY_TYPES[number], id: string): string {
+  const templates = {
+    health: '专业健身教练现场指导，多种运动项目自由选择，健康体检和咨询服务',
+    family: '亲子趣味运动会，手工制作体验课，故事分享时间，家庭才艺展示',
+    culture: '居民原创歌曲演唱，传统戏曲表演，现代舞蹈展示，诗歌朗诵会',
+    environment: '垃圾分类知识讲座，环保手工制作，绿色生活体验，环保知识竞赛',
+    safety: '消防安全演练，急救知识培训，社区安全巡查，防诈骗宣传',
+    social: '邻里茶话会，社区座谈会，居民联谊活动，社区文化交流',
+    festival: '传统节日庆祝，民俗文化体验，节日美食分享，传统游戏活动',
+    volunteer: '社区清洁活动，爱心义卖活动，志愿服务培训，公益活动组织',
+  }
 
-  const activity = activities[Math.floor(Math.random() * activities.length)]
+  const activity = templates[activityType.category] || '丰富多彩的社区活动'
 
   return `
-    <h2 style="text-align: center; color: #ff6b6b;">🎊 ${activity} 🎊</h2>
-
+    <h2 style="text-align: center; color: #2196F3;">${activityType.emoji} ${activityType.name} ${activityType.emoji}</h2>
     <p>亲爱的业主朋友们：</p>
-
-    <p>我们即将举办精彩的<strong>${activity}</strong>！活动详情如下：</p>
+    <p>我们即将举办精彩的<strong>${activityType.name}</strong>！</p>
 
     <h3>🎯 活动亮点</h3>
-    <ul>
-      <li>🎵 丰富多彩的互动游戏</li>
-      <li>🎁 精美的奖品等您来拿</li>
-      <li>🍜 美味的茶点招待</li>
-      <li>📸 专业的摄影师现场拍摄</li>
-    </ul>
+    <p>${activity}</p>
 
-    <img src="https://picsum.photos/600/300?random=${id}" alt="活动图片" style="width: 100%; margin: 15px 0; border-radius: 8px;" />
+    <img src="https://picsum.photos/600/300?random=${activityType.category}${id}" alt="${activityType.name}图片" style="width: 100%; margin: 15px 0; border-radius: 8px;" />
 
     <h3>🎟️ 参与方式</h3>
     <p>请在活动开始前30分钟到达现场签到，我们为您准备了丰富的活动内容。</p>
 
-    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
+    <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2196F3;">
       <p><strong>温馨提示：</strong></p>
       <ul>
         <li>请准时参加活动</li>
-        <li>活动现场有茶水提供</li>
-        <li>请注意安全，看护好随身物品</li>
+        <li>活动现场提供茶水</li>
+        <li>注意个人财物安全</li>
         <li>活动结束后请配合清理现场</li>
       </ul>
     </div>
@@ -85,10 +114,16 @@ function generateActivityContent(id: string): string {
       <strong>联系电话：</strong>400-888-9999
     </p>
 
-    <p style="text-align: center; color: #ff6b6b; font-size: 18px; margin-top: 20px;">
-      🎊 期待您的参与！🎊
+    <p style="text-align: center; color: #2196F3; font-size: 18px; margin-top: 20px;">
+      ${activityType.emoji} 期待您的参与！${activityType.emoji}
     </p>
   `
+}
+
+// 保持原有简化版本以兼容其他调用
+function generateActivityContent(id: string): string {
+  const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)]
+  return generateAdvancedActivityContent(activityType, id)
 }
 
 // 生成模拟活动列表
@@ -155,9 +190,11 @@ export const mockActivityDetail: Activity = {
   communityId: 'COMM_001',
   createTime: '2024-01-15T10:30:00.000Z',
   updateTime: '2024-01-20T14:20:00.000Z',
-  status: 'ACTIVE',
+  status: '1',
   viewCount: 245,
   likeCount: 38,
+  readCount: 245,
+  collectCount: 12,
 }
 
 // ========== 活动数据库模拟 ==========

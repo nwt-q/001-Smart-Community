@@ -1,118 +1,21 @@
-import type { Activity, ActivityListParams, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
-import type { StatusType } from '@/types/api'
-import { createPaginationResponse, defineUniAppMock, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
+// 🔴 遵循新规范：必须导入拆分后的业务类型
+import type { Activity, ActivityListParams, ActivityListResponse, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
+// 🔴 遵循新规范：必须从 shared/mockData.ts 导入数据生成函数
+import { generateMockActivityList } from './shared/mockData'
+import { defineUniAppMock, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
 
 /**
- * 活动模块 Mock 接口
- * 基于 Java110Context + uni.request 架构向 Alova + TypeScript + Mock 的现代化迁移
+ * 🆕 活动模块 Mock 接口 - 完全遵循新Mock数据存储规范
+ *
+ * ✅ 单文件完整性原则：数据库对象 + 接口定义
+ * ✅ 数据生成导入规则：从 shared/mockData.ts 导入
+ * ✅ 业务类型强制使用：使用 @/types/activity 中的类型
+ * ✅ URL前缀规范：移除 /api 前缀，使用 /app 路径
+ *
+ * 基于原 Java110Context 请求格式的现代化迁移
  */
 
-// 活动类型配置 - 现代化数据驱动设计
-const ACTIVITY_TYPES = [
-  { name: '社区健身活动', emoji: '🏃‍♀️', category: 'health' },
-  { name: '亲子互动游戏', emoji: '👨‍👩‍👧‍👦', category: 'family' },
-  { name: '文艺表演晚会', emoji: '🎭', category: 'culture' },
-  { name: '环保宣传活动', emoji: '🌱', category: 'environment' },
-  { name: '安全知识讲座', emoji: '🛡️', category: 'safety' },
-  { name: '邻里交流会', emoji: '🤝', category: 'social' },
-  { name: '传统节日庆祝', emoji: '🎊', category: 'festival' },
-  { name: '志愿服务活动', emoji: '❤️', category: 'volunteer' },
-] as const
-
-// 活动内容模板生成
-function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id: string): string {
-  const templates = {
-    health: '专业健身教练现场指导，多种运动项目自由选择，健康体检和咨询服务',
-    family: '亲子趣味运动会，手工制作体验课，故事分享时间，家庭才艺展示',
-    culture: '居民原创歌曲演唱，传统戏曲表演，现代舞蹈展示，诗歌朗诵会',
-    environment: '垃圾分类知识讲座，环保手工制作，绿色生活体验，环保知识竞赛',
-    safety: '消防安全演练，急救知识培训，社区安全巡查，防诈骗宣传',
-    social: '邻里茶话会，社区座谈会，居民联谊活动，社区文化交流',
-    festival: '传统节日庆祝，民俗文化体验，节日美食分享，传统游戏活动',
-    volunteer: '社区清洁活动，爱心义卖活动，志愿服务培训，公益活动组织',
-  }
-
-  const activity = templates[activityType.category] || '丰富多彩的社区活动'
-
-  return `
-    <h2 style="text-align: center; color: #2196F3;">${activityType.emoji} ${activityType.name} ${activityType.emoji}</h2>
-    <p>亲爱的业主朋友们：</p>
-    <p>我们即将举办精彩的<strong>${activityType.name}</strong>！</p>
-
-    <h3>🎯 活动亮点</h3>
-    <p>${activity}</p>
-
-    <img src="https://picsum.photos/600/300?random=${activityType.category}${id}" alt="${activityType.name}图片" style="width: 100%; margin: 15px 0; border-radius: 8px;" />
-
-    <h3>🎟️ 参与方式</h3>
-    <p>请在活动开始前30分钟到达现场签到，我们为您准备了丰富的活动内容。</p>
-
-    <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2196F3;">
-      <p><strong>温馨提示：</strong></p>
-      <ul>
-        <li>请准时参加活动</li>
-        <li>活动现场提供茶水</li>
-        <li>注意个人财物安全</li>
-        <li>活动结束后请配合清理现场</li>
-      </ul>
-    </div>
-
-    <p style="text-align: center;">
-      <strong>联系人：</strong>物业管理处<br>
-      <strong>联系电话：</strong>400-888-9999
-    </p>
-
-    <p style="text-align: center; color: #2196F3; font-size: 18px; margin-top: 20px;">
-      ${activityType.emoji} 期待您的参与！${activityType.emoji}
-    </p>
-  `
-}
-
-// 智能组织者名称生成
-function generateOrganizerName(): string {
-  const organizers = [
-    '物业管理处',
-    '业主委员会',
-    '社区文化中心',
-    '居民活动组',
-    '志愿者协会',
-    '党支部',
-    '青年联谊会',
-    '老年活动中心',
-  ]
-  return organizers[Math.floor(Math.random() * organizers.length)]
-}
-
-// 现代化活动数据生成器
-function createMockActivity(id: string): Activity {
-  const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)] as typeof ACTIVITY_TYPES[number]
-  const now = Date.now()
-  const randomDays = Math.floor(Math.random() * 30) // 创建时间：过去30天内
-  const startOffset = Math.random() * 14 * 24 * 60 * 60 * 1000 // 开始时间：未来14天内
-  const duration = (Math.random() * 3 + 1) * 60 * 60 * 1000 // 活动时长：1-4小时
-
-  const statusRand = Math.random()
-  const status: StatusType = statusRand < 0.6 ? 'ACTIVE' : statusRand < 0.8 ? 'INACTIVE' : 'DRAFT'
-
-  return {
-    activitiesId: `ACT_${id}`,
-    title: `${activityType.name} ${id}期`,
-    userName: generateOrganizerName(),
-    startTime: new Date(now + startOffset).toISOString(),
-    endTime: new Date(now + startOffset + duration).toISOString(),
-    context: generateActivityContent(activityType, id),
-    headerImg: `${activityType.category}_header_${id}.jpg`,
-    src: `https://picsum.photos/800/400?random=${activityType.category}${id}`,
-    communityId: 'COMM_001',
-    createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
-    updateTime: new Date().toISOString(),
-    status,
-    viewCount: Math.floor(Math.random() * 1000 + 50),
-    likeCount: Math.floor(Math.random() * 200 + 10),
-  }
-}
-
-// 特色活动详情展示
+// 🔴 遵循新规范：特色活动详情数据（展示原Java110Context的复杂数据结构）
 const featuredActivity: Activity = {
   activitiesId: 'ACT_001',
   title: '社区春节联欢会',
@@ -158,44 +61,46 @@ const featuredActivity: Activity = {
   communityId: 'COMM_001',
   createTime: '2024-01-15T10:30:00.000Z',
   updateTime: '2024-01-20T14:20:00.000Z',
-  status: 'ACTIVE',
+  status: '1',
   viewCount: 245,
   likeCount: 38,
+  readCount: 245, // 与 viewCount 保持一致
+  collectCount: 12, // 收藏数
 }
 
-// 模拟活动数据库
+// 🔴 遵循新规范：Mock数据库对象 - 必须包含完整的数据库操作
 const mockActivityDatabase = {
-  activities: [featuredActivity, ...Array.from({ length: 20 }, (_, index) =>
-    createMockActivity((index + 2).toString().padStart(3, '0')))],
+  // 🔴 使用从 shared/mockData.ts 导入的数据生成函数
+  activities: [featuredActivity, ...generateMockActivityList(25)] as Activity[], // 明确类型注解
 
-  // 获取活动详情
-  getActivityById(activitiesId: string) {
+  // 🔴 数据库操作：获取活动详情 - 明确返回类型
+  getActivityById(activitiesId: string): Activity | undefined {
     return this.activities.find(activity => activity.activitiesId === activitiesId)
   },
 
-  // 获取活动列表（支持筛选和分页）
+  // 🔴 数据库操作：获取活动列表 - 匹配原Java110Context的查询逻辑
   getActivityList(params: {
     page: number
     row: number
     communityId: string
     keyword?: string
     status?: string
-  }) {
+  }): ActivityListResponse {
     let filteredActivities = [...this.activities]
 
-    // 社区ID筛选
+    // 社区ID筛选 - 严格匹配原始参数格式
     if (params.communityId) {
       filteredActivities = filteredActivities.filter(
         activity => activity.communityId === params.communityId,
       )
     }
 
-    // 状态筛选
+    // 状态筛选 - 只显示已发布的活动（默认行为）
     if (params.status) {
       filteredActivities = filteredActivities.filter(activity => activity.status === params.status)
     }
 
-    // 关键词筛选（标题和内容）
+    // 关键词筛选（标题、内容、组织者）
     if (params.keyword) {
       const keyword = params.keyword.toLowerCase()
       filteredActivities = filteredActivities.filter(activity =>
@@ -205,12 +110,24 @@ const mockActivityDatabase = {
       )
     }
 
-    // 按创建时间倒序排序
+    // 🔴 重要：按创建时间倒序排序，匹配原Java110Context行为
     filteredActivities.sort((a, b) =>
       new Date(b.createTime).getTime() - new Date(a.createTime).getTime(),
     )
 
-    return createPaginationResponse(filteredActivities, params.page, params.row)
+    // 分页处理 - 与原接口格式保持一致
+    const total = filteredActivities.length
+    const start = (params.page - 1) * params.row
+    const end = start + params.row
+    const activitiess = filteredActivities.slice(start, end)
+
+    // 🔴 重要：保持与原Java110Context相同的响应格式
+    return {
+      activitiess, // 注意：原接口使用 'activitiess' 而不是 'activities'
+      total,
+      page: params.page,
+      row: params.row,
+    }
   },
 
   // 增加浏览量
@@ -259,48 +176,45 @@ const mockActivityDatabase = {
   },
 }
 
+// 🔴 遵循新规范：Mock接口定义 - 使用defineUniAppMock
 export default defineUniAppMock([
-  // 获取活动列表/详情
+  // 🔴 核心接口：获取活动列表/详情 - 完全匹配原Java110Context行为
   {
-    url: '/app/activities.listActivitiess',
+    url: '/app/activities.listActivitiess', // 🔴 URL前缀规范：移除/api，直接使用业务路径
     method: ['GET', 'POST'],
-    delay: [300, 800],
+    delay: [300, 800], // 模拟真实网络延迟
     body: async ({ query, body }) => {
       await randomDelay(300, 800)
 
       const params = { ...query, ...body } as ActivityListParams
 
       try {
-        // 如果有 activitiesId，返回单个活动详情
+        // 🔴 处理活动详情查询（当有activitiesId参数时）
         if (params.activitiesId) {
           const activity = mockActivityDatabase.getActivityById(params.activitiesId)
           if (activity) {
-            // 增加浏览量
+            // 自动增加浏览量，匹配原系统行为
             mockActivityDatabase.increaseView(params.activitiesId)
           }
           const result = {
-            activitiess: activity ? [activity] : [],
+            activitiess: activity ? [activity] : [], // 保持原始响应格式
           }
           console.log('🚀 Mock API: getActivityDetail', params, '→', result)
-          return successResponse(result, '获取活动详情成功')
+          return result // 直接返回数据，无需包装response
         }
 
-        // 返回活动列表
+        // 🔴 处理活动列表查询 - 严格匹配原Java110Context的参数处理
         const result = mockActivityDatabase.getActivityList({
           page: Number(params.page) || 1,
-          row: Number(params.row) || 10,
+          row: Number(params.row) || 15, // 原系统默认15条
           communityId: params.communityId || 'COMM_001',
           keyword: params.keyword,
-          status: params.status,
+          status: params.status || '1', // 默认只显示已发布的活动
         })
 
-        console.log('🚀 Mock API: getActivityList', params, '→', `${result.list.length} items`)
-        return successResponse({
-          activitiess: result.list,
-          total: result.total,
-          page: result.page,
-          row: result.pageSize,
-        }, '获取活动列表成功')
+        console.log('🚀 Mock API: getActivityList', params, '→', `${result.activitiess.length} items`)
+        // 🔴 重要：直接返回与原Java110Context相同的数据结构
+        return result
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getActivityList', error)
@@ -343,7 +257,9 @@ export default defineUniAppMock([
           updateTime: new Date().toISOString(),
           viewCount: 0,
           likeCount: 0,
-          status: data.status || 'DRAFT',
+          readCount: 0, // 初始浏览次数
+          collectCount: 0, // 初始收藏次数
+          status: data.status || '0',
           headerImg: data.headerImg,
           src: data.headerImg ? `/file?fileId=${data.headerImg}` : undefined,
         }
@@ -508,7 +424,7 @@ export default defineUniAppMock([
           return errorResponse('活动不存在', '404')
         }
 
-        const validStatuses = ['ACTIVE', 'INACTIVE', 'DRAFT']
+        const validStatuses = ['0', '1'] // 0: 草稿/未发布, 1: 已发布
         if (!validStatuses.includes(data.status)) {
           return errorResponse('无效的活动状态', '400')
         }
