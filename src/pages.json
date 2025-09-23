@@ -70,10 +70,25 @@
       }
     },
     {
+      "path": "pages/activity/activities",
+      "type": "page",
+      "name": "Activities",
+      "style": {
+        "navigationBarTitleText": "社区活动",
+        "navigationBarBackgroundColor": "#368CFE",
+        "navigationBarTextStyle": "white",
+        "enablePullDownRefresh": true,
+        "backgroundTextStyle": "light",
+        "onReachBottomDistance": 50
+      }
+    },
+    {
       "path": "pages/activity/detail",
       "type": "page",
       "style": {
-        "navigationBarTitleText": "活动详情"
+        "navigationBarTitleText": "活动详情",
+        "navigationBarBackgroundColor": "#368CFE",
+        "navigationBarTextStyle": "white"
       }
     },
     {
