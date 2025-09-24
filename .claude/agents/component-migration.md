@@ -121,6 +121,16 @@ color: blue
 | `text-orange` | 橙色文字 | UnoCSS `text-orange-500` |    使用语义化颜色    |
 |  `bg-white`   | 白色背景 |    UnoCSS `bg-white`     |   直接使用 UnoCSS    |
 
+### 图片组件映射
+
+|     旧组件/类名      |   使用场景   |        新组件         |              迁移说明               |
+| :------------------: | :----------: | :-------------------: | :---------------------------------: |
+|    `<image>` 原生    |   图片显示   |      `<wd-img>`       |   使用增强版智能图片组件替代原生    |
+|    `image` 懒加载    |  性能优化图  |      `<wd-img>`       |     内置懒加载功能无需额外配置      |
+| `image` 填充模式控制 | 图片适配显示 | `<wd-img mode="xxx">` |  支持多种填充模式，与原生 API 兼容  |
+|   图片加载失败处理   | 错误状态显示 |    `<wd-img>` 插槽    |  通过 error 插槽自定义失败显示内容  |
+|    图片加载中状态    |   加载提示   |    `<wd-img>` 插槽    | 通过 loading 插槽自定义加载显示内容 |
+
 ### 上传组件映射
 
 |      旧组件/类名       | 使用场景 |       新组件       |           迁移说明           |
@@ -229,7 +239,49 @@ color: blue
 </template>
 ```
 
-### 示例 4: 弹窗组件迁移
+### 示例 4: 图片组件迁移
+
+**旧代码 (原生 image)**:
+
+```vue
+<template>
+  <!-- 基础图片显示 -->
+  <image :src="userAvatar" mode="aspectFill" style="width: 100px; height: 100px;" @error="handleImageError" />
+
+  <!-- 带加载状态的图片 -->
+  <view class="image-container">
+    <image :src="productImage" mode="scaleToFill" @load="onImageLoad" @error="onImageError" />
+    <view v-if="imageLoading" class="loading">加载中...</view>
+    <view v-if="imageError" class="error">加载失败</view>
+  </view>
+</template>
+```
+
+**新代码 (wot-design-uni)**:
+
+```vue
+<template>
+  <!-- 基础图片显示 -->
+  <wd-img :src="userAvatar" mode="aspectFill" :width="100" :height="100" round />
+
+  <!-- 带加载状态和错误处理的图片 -->
+  <wd-img :src="productImage" mode="scaleToFill" :width="200" :height="200" @load="onImageLoad" @error="onImageError">
+    <template #loading>
+      <view class="flex items-center justify-center w-full h-full">
+        <wd-loading />
+      </view>
+    </template>
+    <template #error>
+      <view class="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400"> 加载失败 </view>
+    </template>
+  </wd-img>
+
+  <!-- 可预览的图片 -->
+  <wd-img :src="galleryImage" :enable-preview="true" :width="150" :height="150" />
+</template>
+```
+
+### 示例 5: 弹窗组件迁移
 
 **旧代码 (ColorUI)**:
 
@@ -277,7 +329,23 @@ color: blue
 - 保持样式的一致性和可维护性
 - 利用 UnoCSS 的预设和自定义规则
 
-### 4. 平台兼容性处理
+### 4. 图片组件迁移要点
+
+- **强制使用 `<wd-img>` 替换 `<image>`**: 在迁移原生 `<image>` 组件时，必须使用 `<wd-img>` 智能图片组件
+- **属性映射**:
+  - `src` 属性保持不变
+  - `mode` 属性直接兼容，支持所有原生填充模式
+  - `width`、`height` 使用数值或字符串，支持 px、rpx 等单位
+- **增强功能利用**:
+  - 使用 `round` 属性实现圆形图片
+  - 使用 `radius` 属性设置圆角
+  - 使用 `enable-preview` 启用点击预览功能
+- **状态处理优化**:
+  - 用 `loading` 插槽替代手动加载状态管理
+  - 用 `error` 插槽替代手动错误处理
+  - 保持原有的 `@load`、`@error` 事件处理
+
+### 5. 平台兼容性处理
 
 - 使用条件编译处理平台差异
 - 确保组件在不同平台的一致表现
