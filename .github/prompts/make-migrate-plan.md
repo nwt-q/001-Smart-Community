@@ -204,3 +204,24 @@
 1. 请阅读 `.claude\agents\api-migration.md` 文档。
 2. 数据生成导入的规则，改了。我**不希望**所有数据生成函数必须从 `src/api/mock/shared/mockData.ts` 导入，这很容易导致该文件冗余，膨胀。
 3. 请你更新子代理的核心规则，要求在生成 `*.mock.ts` mock 接口数据时，数据直接写在具体的 `*.mock.ts` 模拟接口内。既然每个 `*.mock.ts` 文件必须包含**数据库对象**，那么我希望具体的模拟业务数据可以存储在你设计的**数据库对象**内。请思考并理解该要求，更新 `api-migration` 子代理文档。
+
+### 019 为 `component-migration` 子代理增加关于 `<wd-status-tip>` 组件的使用情况
+
+首先，我需要你**全面的**、**有策略的**阅读满足一下 glob 匹配的文件。
+
+你仅仅阅读关于空占位符，默认留空的代码实现。
+
+- `gitee-example\components\**\*.vue`
+- `gitee-example\pages\**\*.vue`
+
+请深度思考。
+
+1. 思考在 `gitee-example` 这个旧项目内，是如何实现空占位符的？如果接口请求没有数据时，在 vue 页面内是如何展示的？
+2. 思考如何使用 `<wd-status-tip>` 组件的 api 实现替换。我的核心需求是实现项目写法迁移。
+
+然后请你按照以下步骤和要求修改代理文件：
+
+1. 请阅读 https://wot-ui.cn/component/status-tip.html 文档。
+2. 针对 `component-migration` 子代理，在实现空状态的时候，请使用 `<wd-status-tip>` 组件。
+3. 请不要使用不存在的 `<wd-empty>` 组件，而是 `<wd-status-tip>` 组件。
+4. 更新 `.claude\agents\component-migration.md` 文件。重点说明该子代理要在何种情况下使用 `<wd-status-tip>` 组件，并完成组件迁移。
