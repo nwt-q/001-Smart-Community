@@ -16,8 +16,6 @@
 
 ## 003 应用 `api-migration` 子代理更新 mock 数据存储方式
 
-<!-- TODO: 等待使用 先完成 `api-migration` 子代理 的重新改设计 -->
-
 请深度思考。
 
 1. 请阅读 `src\pages\activity` 文件夹内的 vue 组件。
