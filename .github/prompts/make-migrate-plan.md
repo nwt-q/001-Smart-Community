@@ -199,8 +199,6 @@
 
 ### 018 更新 `api-migration` 子代理
 
-<!-- TODO: 待使用 -->
-
 请深度思考。
 
 1. 请阅读 `.claude\agents\api-migration.md` 文档。
