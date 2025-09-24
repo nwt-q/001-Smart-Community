@@ -460,42 +460,36 @@ onReachBottom(() => {
 
     <!-- 空状态 -->
     <view v-if="isEmpty" class="flex flex-col items-center justify-center py-20">
-      <wd-empty
-        description="暂无活动"
-        image-type="data"
-        image-size="120px"
-      >
-        <template #description>
-          <view class="text-center">
-            <text class="mb-2 block text-gray-400">暂时没有社区活动</text>
-            <text class="block text-sm text-gray-300">请稍后再来看看吧</text>
-          </view>
-        </template>
-      </wd-empty>
+      <wd-status-tip
+        image="content"
+        tip="暂无活动"
+        :image-size="{ height: 120, width: 120 }"
+      />
+      <view class="mt-4 text-center">
+        <text class="mb-2 block text-gray-400">暂时没有社区活动</text>
+        <text class="block text-sm text-gray-300">请稍后再来看看吧</text>
+      </view>
     </view>
 
     <!-- 错误状态 -->
     <view v-if="error && isEmpty" class="flex flex-col items-center justify-center py-20">
-      <wd-empty
-        description="加载失败"
-        image-type="error"
-        image-size="120px"
-      >
-        <template #description>
-          <view class="text-center">
-            <text class="mb-2 block text-red-400">{{ error }}</text>
-            <wd-button
-              type="primary"
-              size="small"
-              plain
-              round
-              @click="refreshActivities"
-            >
-              重新加载
-            </wd-button>
-          </view>
-        </template>
-      </wd-empty>
+      <wd-status-tip
+        image="network"
+        tip="加载失败"
+        :image-size="{ height: 120, width: 120 }"
+      />
+      <view class="mt-4 text-center">
+        <text class="mb-2 block text-red-400">{{ error }}</text>
+        <wd-button
+          type="primary"
+          size="small"
+          plain
+          round
+          @click="refreshActivities"
+        >
+          重新加载
+        </wd-button>
+      </view>
     </view>
   </view>
 </template>
