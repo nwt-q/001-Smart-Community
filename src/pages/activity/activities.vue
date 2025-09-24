@@ -325,7 +325,7 @@ onReachBottom(() => {
         <!-- 活动图片区域 -->
         <template #header>
           <view class="relative">
-            <wd-image
+            <wd-img
               :src="item.src"
               width="100%"
               height="180px"
@@ -401,7 +401,7 @@ onReachBottom(() => {
                 <!-- 活动时间信息 -->
                 <view class="mb-3 rounded-lg bg-gray-50 p-3">
                   <view class="mb-1 flex items-center">
-                    <wd-icon name="time-filled" size="14px" color="#368CFE" class="mr-1" />
+                    <text class="i-carbon-time mr-1 text-14px text-[#368CFE]" />
                     <text class="text-xs text-gray-500">活动时间</text>
                   </view>
                   <text class="text-sm text-gray-700 font-medium">
@@ -416,19 +416,19 @@ onReachBottom(() => {
                   <view class="flex items-center gap-4 text-sm text-gray-500">
                     <!-- 浏览量 -->
                     <view class="flex items-center gap-1">
-                      <wd-icon name="view" size="14px" color="#9ca3af" />
+                      <text class="i-carbon-view text-14px text-[#9ca3af]" />
                       <text>{{ formatNumber(item.readCount) }}</text>
                     </view>
 
                     <!-- 点赞数 -->
                     <view class="flex items-center gap-1">
-                      <wd-icon name="thumb-up" size="14px" color="#9ca3af" />
+                      <text class="i-carbon-thumbs-up text-14px text-[#9ca3af]" />
                       <text>{{ formatNumber(item.likeCount) }}</text>
                     </view>
 
                     <!-- 评论数（预留） -->
                     <view class="flex items-center gap-1">
-                      <wd-icon name="chat" size="14px" color="#9ca3af" />
+                      <text class="i-carbon-chat text-14px text-[#9ca3af]" />
                       <text>{{ formatNumber(item.collectCount) }}</text>
                     </view>
                   </view>

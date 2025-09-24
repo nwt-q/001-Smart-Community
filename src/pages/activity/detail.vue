@@ -99,11 +99,14 @@ onLoad((options: PageOptions) => {
 <template>
   <view class="activity-detail">
     <!-- 活动头图 -->
-    <image
+    <wd-img
       v-if="showHeadImage"
       :src="activity.src"
-      class="h-100 w-full"
-      mode="aspectFill"
+      width="100%"
+      height="200px"
+      fit="cover"
+      loading-type="default"
+      error-type="image"
       @error="hideHeadImage"
     />
 
