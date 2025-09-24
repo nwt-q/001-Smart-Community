@@ -17,11 +17,11 @@ color: blue
 **强制执行的核心规则**:
 
 1. **📁 单文件完整性**: 每个 `*.mock.ts` 文件必须包含**数据库对象** + **接口定义**
-2. **🔗 数据生成导入**: 所有数据生成函数必须从 `src/api/mock/shared/mockData.ts` 导入
+2. **💾 内联数据存储**: 模拟业务数据直接存储在各自的 `*.mock.ts` 文件的数据库对象内，避免共享文件膨胀
 3. **🎯 业务类型使用**: 强制使用 `src/types` 文件夹内拆分后的业务类型，确保 Mock 数据 100%类型安全
 4. **🌐 URL 前缀规范**: Mock 接口的 URL 必须**移除** `/api` 前缀，直接使用 `/app` 等路径
 
-> **⚠️ 注意**: 这些规范是为了确保 Mock 接口的类型安全性和可维护性，必须严格遵守。
+> **⚠️ 注意**: 这些规范是为了确保 Mock 接口的类型安全性和可维护性，同时保持每个 Mock 文件的自包含性，必须严格遵守。
 
 ### URL 前缀变更规则
 
@@ -309,7 +309,7 @@ export const deleteMaintainanceTask = (taskId: string) =>
 - **注意**: Mock 文件与 API 接口文件在同一目录层级，便于管理和维护
 - **必须使用**: `defineUniAppMock` 函数代替 `defineMock` 函数，自动处理 URL 前缀
 
-**🆕 Mock 数据存储规则 (新增规范)**:
+**🆕 Mock 数据存储规则 (更新规范)**:
 
 1. **单文件完整性原则**:
    - 每一个 `*.mock.ts` 单文件必须包含：**数据库对象** + **接口定义**
@@ -317,10 +317,11 @@ export const deleteMaintainanceTask = (taskId: string) =>
    - 接口定义负责 HTTP 路由和请求响应处理
    - 确保每个 Mock 文件都是功能完整的独立模块
 
-2. **数据生成函数导入规则**:
-   - 所有数据生成函数必须从 `src/api/mock/shared/mockData.ts` 导入
-   - 禁止在 Mock 文件内部定义数据生成逻辑
-   - 确保数据生成的一致性和可复用性
+2. **内联数据存储规则**:
+   - 模拟业务数据直接定义在各自的 `*.mock.ts` 文件的数据库对象内
+   - 每个 Mock 文件自包含所需的模拟数据，无需外部导入
+   - 数据生成逻辑可以直接在数据库对象的方法中实现
+   - 避免所有模块数据集中到共享文件导致文件膨胀
 
 3. **业务类型强制使用规则**:
    - 必须主动使用来自 `src/types` 文件夹内拆分后的业务类型
@@ -335,11 +336,10 @@ export const deleteMaintainanceTask = (taskId: string) =>
 ├── src/
 │   └── api/                       # API 目录
 │       ├── mock/                  # Mock 文件目录
-│       │   ├── maintainance.mock.ts    # 维修模块 Mock 接口
-│       │   ├── complaint.mock.ts       # 投诉模块 Mock 接口
-│       │   ├── activity.mock.ts        # 活动模块 Mock 接口
-│       │   └── shared/                 # 共享 Mock 数据
-│       │       ├── mockData.ts         # 通用模拟数据生成器
+│       │   ├── maintainance.mock.ts    # 维修模块 Mock 接口（含内联数据）
+│       │   ├── complaint.mock.ts       # 投诉模块 Mock 接口（含内联数据）
+│       │   ├── activity.mock.ts        # 活动模块 Mock 接口（含内联数据）
+│       │   └── shared/                 # 共享工具（可选）
 │       │       └── utils.ts            # Mock 工具函数
 │       ├── maintainance.ts        # 维修相关接口定义
 │       ├── complaint.ts           # 投诉相关接口定义
@@ -373,213 +373,42 @@ export default defineConfig({
 })
 ```
 
-#### 2.3 模拟数据生成器
+#### 2.3 工具函数（可选）
 
-**遵循新规范的共享数据生成器**:
+**如需共享工具函数，可在 shared/utils.ts 中定义**:
 
 ```typescript
-// src/api/mock/shared/mockData.ts
-// 🔴 必须：导入拆分后的业务类型
-import type { RepairOrder, RepairStatus, RepairType } from '@/types/repair'
-import type { Activity, ActivityListResponse } from '@/types/activity'
-import type { Contact, DepartmentType } from '@/types/contact'
-import type { StatusType, PriorityType } from '@/types/api'
+// src/api/mock/shared/utils.ts - 仅用于工具函数，不存储数据
+import { defineMock } from 'vite-plugin-mock-dev-server'
 
-// 🔴 必须：为每个业务模块创建类型安全的数据生成函数
+// 自定义的 Mock 定义函数，自动处理 URL 前缀
+export function defineUniAppMock(mockConfig: any) {
+  return defineMock(mockConfig)
+}
 
-// 维修模块数据生成器
-export const createMockRepair = (id: string): RepairOrder => {
-  const repairTypes: RepairType[] = ['水电维修', '门窗维修', '空调维修', '电梯维修', '管道疏通', '墙面修补', '其他维修']
-  const statuses: RepairStatus[] = ['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
-  const priorities: PriorityType[] = ['HIGH', 'MEDIUM', 'LOW']
-  const now = Date.now()
-  const randomDays = Math.floor(Math.random() * 30)
+// 其他工具函数，如延迟、响应格式化等
+export const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms))
 
+export function formatResponse<T>(data: T, message: string = 'success') {
   return {
-    repairId: `REP_${id}`,
-    title: `${repairTypes[Math.floor(Math.random() * repairTypes.length)]}维修`,
-    description: `业主报修：${repairTypes[Math.floor(Math.random() * repairTypes.length)]}出现问题，需要及时处理。`,
-    ownerName: `业主${Math.floor(Math.random() * 100 + 1)}`,
-    ownerPhone: `138${Math.floor(Math.random() * 100000000)
-      .toString()
-      .padStart(8, '0')}`,
-    address: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
-    repairType: repairTypes[Math.floor(Math.random() * repairTypes.length)],
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    priority: priorities[Math.floor(Math.random() * 3)],
-    createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
-    updateTime: new Date().toISOString(),
-    assignedWorker: Math.random() > 0.5 ? `维修工${Math.floor(Math.random() * 10 + 1)}` : null,
-    estimatedCost: Math.floor(Math.random() * 500 + 50),
-    actualCost: Math.random() > 0.5 ? Math.floor(Math.random() * 500 + 50) : null,
-    images: [`https://picsum.photos/400/300?random=${id}`],
-    communityId: 'COMM_001',
+    code: '0000',
+    message,
+    data,
+    timestamp: Date.now(),
   }
 }
 
-// 活动模块数据生成器
-export const createMockActivity = (id: string): Activity => {
-  const statuses: StatusType[] = ['ACTIVE', 'INACTIVE', 'DRAFT']
-  const now = Date.now()
-  const randomDays = Math.floor(Math.random() * 30)
-  const startOffset = Math.random() * 7 * 24 * 60 * 60 * 1000
-  const duration = Math.random() * 4 * 60 * 60 * 1000 + 60 * 60 * 1000
-
+export function formatErrorResponse(message: string, code: string = '9999') {
   return {
-    activitiesId: `ACT_${id}`,
-    title: `社区活动 ${id}`,
-    userName: `活动组织者${Math.floor(Math.random() * 10 + 1)}`,
-    startTime: new Date(now + startOffset).toISOString(),
-    endTime: new Date(now + startOffset + duration).toISOString(),
-    context: generateActivityContent(id),
-    headerImg: `header_${id}.jpg`,
-    src: `https://picsum.photos/800/400?random=${id}`,
-    communityId: 'COMM_001',
-    createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
-    updateTime: new Date().toISOString(),
-    status: statuses[Math.floor(Math.random() * 3)],
-    viewCount: Math.floor(Math.random() * 1000),
-    likeCount: Math.floor(Math.random() * 200),
+    code,
+    message,
+    data: null,
+    timestamp: Date.now(),
   }
 }
-
-// 通讯录模块数据生成器
-export const createMockContact = (id: string): Contact => {
-  const departments: DepartmentType[] = ['物业管理处', '保安部', '清洁部', '维修部', '客服部', '财务部']
-  const positions = ['主管', '专员', '助理', '经理']
-
-  return {
-    contactId: `CON_${id}`,
-    name: `员工${id}`,
-    position: positions[Math.floor(Math.random() * positions.length)],
-    department: departments[Math.floor(Math.random() * departments.length)],
-    phone: `138${Math.floor(Math.random() * 100000000)
-      .toString()
-      .padStart(8, '0')}`,
-    email: `employee${id}@property.com`,
-    workTime: '09:00-18:00',
-    avatar: `https://picsum.photos/100/100?random=${id}`,
-    description: '负责相关业务处理，为业主提供优质服务。',
-    isOnline: Math.random() > 0.3,
-  }
-}
-
-// 工具函数：生成活动内容
-function generateActivityContent(id: string): string {
-  const activities = [
-    '社区健身活动',
-    '亲子互动游戏',
-    '文艺表演晚会',
-    '环保宣传活动',
-    '安全知识讲座',
-    '邻里交流会',
-    '传统节日庆祝',
-    '志愿服务活动',
-  ]
-
-  const activity = activities[Math.floor(Math.random() * activities.length)]
-  return `<h2>🎊 ${activity} 🎊</h2><p>活动详情内容 ${id}...</p>`
-}
-
-// 生成模拟任务列表
-export const generateMockTaskList = (count: number = 20): MaintainanceTask[] => {
-  return Array.from({ length: count }, (_, index) =>
-    createMockMaintainanceTask((index + 1).toString().padStart(3, '0')),
-  )
-}
-
-// 创建内存数据库
-export class MockDatabase {
-  private static instance: MockDatabase
-  public maintainanceTasks: MaintainanceTask[] = generateMockTaskList(50)
-
-  static getInstance(): MockDatabase {
-    if (!MockDatabase.instance) {
-      MockDatabase.instance = new MockDatabase()
-    }
-    return MockDatabase.instance
-  }
-
-  // 获取任务列表（支持分页和筛选）
-  getTaskList(params: {
-    page: number
-    pageSize: number
-    status?: string
-    keyword?: string
-  }): PaginationResponse<MaintainanceTask> {
-    let filteredTasks = [...this.maintainanceTasks]
-
-    // 状态筛选
-    if (params.status) {
-      filteredTasks = filteredTasks.filter((task) => task.status === params.status)
-    }
-
-    // 关键词筛选
-    if (params.keyword) {
-      filteredTasks = filteredTasks.filter(
-        (task) => task.title.includes(params.keyword!) || task.description.includes(params.keyword!),
-      )
-    }
-
-    // 分页处理
-    const total = filteredTasks.length
-    const start = (params.page - 1) * params.pageSize
-    const end = start + params.pageSize
-    const list = filteredTasks.slice(start, end)
-
-    return {
-      list,
-      total,
-      page: params.page,
-      pageSize: params.pageSize,
-      hasMore: end < total,
-    }
-  }
-
-  // 其他数据库操作方法...
-  getTaskById(taskId: string): MaintainanceTask | undefined {
-    return this.maintainanceTasks.find((task) => task.taskId === taskId)
-  }
-
-  updateTask(taskId: string, updateData: Partial<MaintainanceTask>): MaintainanceTask | null {
-    const index = this.maintainanceTasks.findIndex((task) => task.taskId === taskId)
-    if (index === -1) return null
-
-    this.maintainanceTasks[index] = {
-      ...this.maintainanceTasks[index],
-      ...updateData,
-      updateTime: new Date().toISOString(),
-    }
-
-    return this.maintainanceTasks[index]
-  }
-
-  createTask(taskData: Omit<MaintainanceTask, 'id' | 'taskId' | 'createTime' | 'updateTime'>): MaintainanceTask {
-    const newId = (this.maintainanceTasks.length + 1).toString().padStart(3, '0')
-    const newTask: MaintainanceTask = {
-      ...taskData,
-      id: newId,
-      taskId: `TASK_${newId}`,
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
-    }
-
-    this.maintainanceTasks.unshift(newTask)
-    return newTask
-  }
-
-  deleteTask(taskId: string): boolean {
-    const index = this.maintainanceTasks.findIndex((task) => task.taskId === taskId)
-    if (index === -1) return false
-
-    this.maintainanceTasks.splice(index, 1)
-    return true
-  }
-}
-
-// 导出数据库实例
-export const mockDb = MockDatabase.getInstance()
 ```
+
+> **💡 架构说明**: 新架构下，每个 `*.mock.ts` 文件都是自包含的，包含自己的模拟数据和数据库对象。这避免了共享数据文件的膨胀，提高了维护性。
 
 #### 2.4 Mock 接口定义
 
@@ -588,18 +417,92 @@ export const mockDb = MockDatabase.getInstance()
 ```typescript
 // src/api/mock/maintainance.mock.ts
 import { defineUniAppMock } from '@/api/mock/shared/utils'
-// 1. 🔴 必须：从 shared/mockData.ts 导入数据生成函数
-import { createMockRepair } from './shared/mockData'
-// 2. 🔴 必须：导入拆分后的业务类型
+// 1. 🔴 必须：导入拆分后的业务类型
 import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from '@/types/repair'
 import type { PaginationResponse } from '@/types/api'
 
-// 3. 🔴 必须：Mock 数据库对象定义（每个 .mock.ts 文件都要有）
+// 2. 🔴 必须：Mock 数据库对象定义（每个 .mock.ts 文件都要有，包含内联数据）
 const mockRepairDatabase = {
-  // 使用导入的数据生成函数创建初始数据
-  repairs: Array.from({ length: 50 }, (_, index) =>
-    createMockRepair((index + 1).toString().padStart(3, '0')),
-  ) as RepairOrder[], // 强制类型注解
+  // 直接在此文件内定义模拟数据，避免外部依赖
+  repairs: [
+    {
+      repairId: 'REP_001',
+      title: '水电维修',
+      description: '业主报修：水电出现问题，需要及时处理。',
+      ownerName: '业主001',
+      ownerPhone: '13812345678',
+      address: '1栋101A室',
+      repairType: '水电维修',
+      status: 'PENDING' as RepairStatus,
+      priority: 'HIGH' as const,
+      createTime: '2024-01-15T10:30:00Z',
+      updateTime: '2024-01-20T14:20:00Z',
+      assignedWorker: null,
+      estimatedCost: 200,
+      actualCost: null,
+      images: ['https://picsum.photos/400/300?random=1'],
+      communityId: 'COMM_001',
+    },
+    {
+      repairId: 'REP_002',
+      title: '门窗维修',
+      description: '业主报修：门窗出现问题，需要及时处理。',
+      ownerName: '业主002',
+      ownerPhone: '13823456789',
+      address: '2栋202B室',
+      repairType: '门窗维修',
+      status: 'IN_PROGRESS' as RepairStatus,
+      priority: 'MEDIUM' as const,
+      createTime: '2024-01-16T09:15:00Z',
+      updateTime: '2024-01-22T16:30:00Z',
+      assignedWorker: '维修工张师傅',
+      estimatedCost: 150,
+      actualCost: 120,
+      images: ['https://picsum.photos/400/300?random=2'],
+      communityId: 'COMM_001',
+    },
+    // 可以继续添加更多模拟数据...
+  ] as RepairOrder[], // 强制类型注解
+
+  // 数据生成工具方法，直接在此对象内定义
+  createMockRepair(id: string): RepairOrder {
+    const repairTypes = ['水电维修', '门窗维修', '空调维修', '电梯维修', '管道疏通', '墙面修补', '其他维修']
+    const statuses: RepairStatus[] = ['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
+    const priorities = ['HIGH', 'MEDIUM', 'LOW'] as const
+    const now = Date.now()
+    const randomDays = Math.floor(Math.random() * 30)
+
+    return {
+      repairId: `REP_${id}`,
+      title: `${repairTypes[Math.floor(Math.random() * repairTypes.length)]}`,
+      description: `业主报修：${repairTypes[Math.floor(Math.random() * repairTypes.length)]}出现问题，需要及时处理。`,
+      ownerName: `业主${Math.floor(Math.random() * 100 + 1)}`,
+      ownerPhone: `138${Math.floor(Math.random() * 100000000)
+        .toString()
+        .padStart(8, '0')}`,
+      address: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
+      repairType: repairTypes[Math.floor(Math.random() * repairTypes.length)],
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      priority: priorities[Math.floor(Math.random() * 3)],
+      createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
+      updateTime: new Date().toISOString(),
+      assignedWorker: Math.random() > 0.5 ? `维修工${Math.floor(Math.random() * 10 + 1)}` : null,
+      estimatedCost: Math.floor(Math.random() * 500 + 50),
+      actualCost: Math.random() > 0.5 ? Math.floor(Math.random() * 500 + 50) : null,
+      images: [`https://picsum.photos/400/300?random=${id}`],
+      communityId: 'COMM_001',
+    }
+  },
+
+  // 初始化更多数据的方法
+  initMoreData() {
+    if (this.repairs.length < 50) {
+      const additionalData = Array.from({ length: 48 }, (_, index) =>
+        this.createMockRepair((index + 3).toString().padStart(3, '0')),
+      )
+      this.repairs.push(...additionalData)
+    }
+  },
 
   // 获取工单详情 - 返回类型必须明确
   getRepairById(repairId: string): RepairOrder | undefined {
@@ -1020,23 +923,23 @@ export default defineUniAppMock([
 
 #### 3.1 开发流程规范
 
-**标准开发流程 (新增规范要求)**:
+**标准开发流程 (更新规范要求)**:
 
 1. **分析原 Vue2 接口** - 理解业务逻辑和数据结构
 2. **🆕 创建拆分后的 TypeScript 类型定义** - 在 `src/types/{模块名}.ts` 中定义业务类型
-3. **🆕 在 shared/mockData.ts 中创建数据生成函数** - 确保数据生成的一致性
+3. **🆕 创建完整的 Mock 文件** - 必须包含内联数据 + 数据库对象 + 接口定义
 4. **创建 Alova API 接口** - 现代化的请求定义，使用拆分后的类型
-5. **🆕 创建完整的 Mock 文件** - 必须包含数据库对象 + 接口定义
-6. **🆕 类型安全验证** - 确保所有 Mock 数据 100%符合业务类型
-7. **测试验证** - 确保 Mock 接口正常工作
+5. **🆕 类型安全验证** - 确保所有 Mock 数据 100%符合业务类型
+6. **测试验证** - 确保 Mock 接口正常工作
 
-**🔴 新增强制要求**:
+**🔴 更新后的强制要求**:
 
 - **类型导入**: 必须从 `@/types/{模块名}` 导入业务类型
-- **数据生成**: 必须从 `./shared/mockData` 导入数据生成函数
-- **数据库对象**: 每个 `*.mock.ts` 文件必须包含完整的数据库操作对象
+- **内联数据存储**: 模拟数据直接定义在各自的 `*.mock.ts` 文件的数据库对象内
+- **数据库对象**: 每个 `*.mock.ts` 文件必须包含完整的数据库操作对象和内联数据
 - **类型注解**: 所有函数参数和返回值必须有明确的类型注解
 - **禁用 any**: 严禁使用 `any` 类型，确保类型安全
+- **自包含原则**: 每个 Mock 文件应该是功能完整的独立模块，避免外部数据依赖
 
 #### 3.2 文件组织原则
 
@@ -1286,17 +1189,18 @@ const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
 **🆕 类型安全要求**:
 
 - ✅ 必须从 `@/types/{模块名}` 导入拆分后的业务类型
-- ✅ 必须从 `./shared/mockData` 导入数据生成函数
-- ✅ 禁止在 Mock 文件内部定义数据生成逻辑
+- ✅ 模拟数据直接定义在各自的 `*.mock.ts` 文件的数据库对象内
+- ✅ 数据生成逻辑可以直接在数据库对象的方法中实现，保持文件自包含
 - ✅ 所有函数参数和返回值都有明确的 TypeScript 类型注解
 - ✅ 严禁使用 `any` 类型，确保 100%类型安全
 
 **🆕 文件结构要求**:
 
-- ✅ 每个 `*.mock.ts` 文件必须包含：数据库对象 + 接口定义
-- ✅ 数据库对象包含完整的 CRUD 操作方法
+- ✅ 每个 `*.mock.ts` 文件必须包含：内联数据 + 数据库对象 + 接口定义
+- ✅ 数据库对象包含完整的 CRUD 操作方法和模拟数据存储
 - ✅ 数据库对象的所有方法都有明确的类型定义
 - ✅ Mock 生成的假数据 100%符合业务类型定义
+- ✅ 每个 Mock 文件是功能完整的独立模块，无需外部数据依赖
 
 **🔴 功能完整性要求**:
 
