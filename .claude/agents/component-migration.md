@@ -138,6 +138,15 @@ color: blue
 | `vc-upload` 自定义上传 | 图片上传 |    `wd-upload`     | 使用 wot-design-uni 上传组件 |
 |      图片预览功能      | 图片查看 | `wd-image-preview` |       专用图片预览组件       |
 
+### 空状态组件映射
+
+|         旧组件/类名         |   使用场景   |          新组件          |            迁移说明            |
+| :-------------------------: | :----------: | :----------------------: | :----------------------------: |
+|     `no-data-page` 组件     |  通用空状态  |     `wd-status-tip`      | 使用 wot-design-uni 空状态组件 |
+|      `cuIcon-warnfill`      |   警告图标   | `wd-status-tip` 默认图标 |      组件内置多种状态图标      |
+| 内联空状态处理（文本+图标） |  列表空状态  |     `wd-status-tip`      |      统一的空状态展示方式      |
+|     `text-gray` 空提示      | 灰色提示文字 | `wd-status-tip` tip 属性 |   使用 tip 属性设置提示文字    |
+
 ## 🚀 迁移策略
 
 ### 1. 渐进式迁移原则
@@ -309,6 +318,74 @@ color: blue
 </template>
 ```
 
+### 示例 6: 空状态组件迁移
+
+**旧代码 (no-data-page 组件)**:
+
+```vue
+<template>
+  <!-- 原来的 no-data-page 组件用法 -->
+  <view v-if="dataList.length > 0">
+    <view v-for="(item, index) in dataList" :key="index">
+      <!-- 数据列表内容 -->
+    </view>
+  </view>
+  <view v-else>
+    <no-data-page></no-data-page>
+  </view>
+</template>
+
+<!-- 或者内联空状态处理 -->
+<template>
+  <view class="cu-list menu" v-if="notices.length === 0">
+    <view class="cu-item">
+      <view class="content">
+        <text class="cuIcon-notification text-grey"></text>
+        <text class="text-grey">暂无公告信息</text>
+      </view>
+    </view>
+  </view>
+</template>
+```
+
+**新代码 (wd-status-tip 组件)**:
+
+```vue
+<template>
+  <!-- 基础空状态用法 -->
+  <view v-if="dataList.length > 0">
+    <view v-for="(item, index) in dataList" :key="index">
+      <!-- 数据列表内容 -->
+    </view>
+  </view>
+  <view v-else>
+    <wd-status-tip image="search" tip="当前没有数据" />
+  </view>
+</template>
+
+<!-- 不同状态的空状态 -->
+<template>
+  <!-- 搜索无结果 -->
+  <wd-status-tip image="search" tip="搜索无结果" />
+
+  <!-- 网络错误 -->
+  <wd-status-tip image="network" tip="网络连接失败" />
+
+  <!-- 内容为空 -->
+  <wd-status-tip image="content" tip="暂无内容" />
+
+  <!-- 自定义图片大小 -->
+  <wd-status-tip image="search" tip="当前没有数据" :image-size="{ height: 200, width: 200 }" />
+
+  <!-- 自定义图片内容 -->
+  <wd-status-tip tip="当前没有数据">
+    <template #image>
+      <wd-icon name="warn-outline" size="100px"></wd-icon>
+    </template>
+  </wd-status-tip>
+</template>
+```
+
 ## 🔧 技术要点
 
 ### 1. Vue3 Composition API 迁移
@@ -350,6 +427,28 @@ color: blue
 - 使用条件编译处理平台差异
 - 确保组件在不同平台的一致表现
 - 优化小程序和 APP 的性能
+
+### 6. 空状态组件迁移要点
+
+- **强制使用 `<wd-status-tip>` 替换 `no-data-page`**: 在迁移空状态组件时，必须使用 `<wd-status-tip>` 组件替代原有的 `no-data-page` 组件
+- **属性映射**:
+  - `tip` 属性：设置提示文字，替代原有的固定文本"当前没有数据"
+  - `image` 属性：设置状态图片类型，支持 `search`、`network`、`content` 等内置类型
+  - `image-size` 属性：自定义图片尺寸，格式为 `{height: number, width: number}`
+  - `image-mode` 属性：图片填充模式，默认为 `aspectFit`
+- **状态类型支持**:
+  - `search`: 搜索无结果状态
+  - `network`: 网络连接失败状态
+  - `content`: 内容为空状态
+  - 自定义图片 URL：支持传入本地或网络图片路径
+- **自定义能力**:
+  - 使用 `image` 插槽可以完全自定义图片内容
+  - 支持与 `wd-icon` 组件结合使用
+  - 可根据业务场景设置不同的提示文字
+- **兼容性处理**:
+  - 替换原有的 `v-if="notices.length === 0"` 内联空状态处理
+  - 统一使用 `wd-status-tip` 保持视觉一致性
+  - 支持响应式数据绑定，动态切换空状态类型
 
 ## 🎯 迁移检查清单
 
