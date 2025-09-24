@@ -1,16 +1,48 @@
 import type { Contact, DepartmentType } from '@/types/contact'
-import { createMockContact, DepartmentTypes } from './shared/mockData'
-import { createPaginationResponse, defineUniAppMock, errorResponse, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
+import { createPaginationResponse, defineUniAppMock, errorResponse, generateChineseName, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
 
 /**
- * 通讯录模块 Mock 接口
- * 基于现代化接口架构设计，提供完整的员工通讯录管理功能
+ * 通讯录模块 Mock 接口 - 完全自包含架构
+ * 数据库对象 + 接口定义 + 数据生成器全部集成在此文件中
  */
 
-// 模拟通讯录数据库
+// ==================== 通讯录数据生成器 ====================
+
+// 部门类型配置
+const DEPARTMENT_TYPES: DepartmentType[] = [
+  '物业管理处',
+  '保安部',
+  '清洁部',
+  '维修部',
+  '客服部',
+  '财务部',
+]
+
+// 职位配置
+const POSITIONS = ['主管', '专员', '助理', '经理', '组长', '副主管']
+
+// 核心联系人数据生成器
+function createMockContact(id: string): Contact {
+  return {
+    contactId: `CON_${id}`,
+    name: generateChineseName(),
+    position: POSITIONS[Math.floor(Math.random() * POSITIONS.length)],
+    department: DEPARTMENT_TYPES[Math.floor(Math.random() * DEPARTMENT_TYPES.length)],
+    phone: generatePhoneNumber(),
+    email: `employee${id}@property.com`,
+    workTime: '09:00-18:00',
+    avatar: `https://picsum.photos/100/100?random=${id}`,
+    description: '负责相关业务处理，为业主提供优质服务。',
+    isOnline: Math.random() > 0.3,
+  }
+}
+
+// ==================== 通讯录数据库对象 ====================
+
 const mockContactDatabase = {
+  // 初始化数据
   contacts: Array.from({ length: 30 }, (_, index) =>
-    createMockContact((index + 1).toString().padStart(3, '0'))),
+    createMockContact((index + 1).toString().padStart(3, '0'))) as Contact[],
 
   // 获取联系人详情
   getContactById(contactId: string) {
@@ -253,7 +285,7 @@ export default defineUniAppMock([
       await randomDelay(100, 200)
 
       try {
-        const departments = DepartmentTypes.map((deptName) => {
+        const departments = DEPARTMENT_TYPES.map((deptName) => {
           const deptContacts = mockContactDatabase.contacts.filter(c => c.department === deptName)
           return {
             departmentName: deptName,

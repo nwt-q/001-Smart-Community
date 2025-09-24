@@ -17,7 +17,7 @@ color: blue
 **强制执行的核心规则**:
 
 1. **📁 单文件完整性**: 每个 `*.mock.ts` 文件必须包含**数据库对象** + **接口定义**
-2. **💾 内联数据存储**: 模拟业务数据直接存储在各自的 `*.mock.ts` 文件的数据库对象内，避免共享文件膨胀
+2. **💾 内联数据存储**: 模拟业务数据直接存储在各自的 `*.mock.ts` 文件的数据库对象内。
 3. **🎯 业务类型使用**: 强制使用 `src/types` 文件夹内拆分后的业务类型，确保 Mock 数据 100%类型安全
 4. **🌐 URL 前缀规范**: Mock 接口的 URL 必须**移除** `/api` 前缀，直接使用 `/app` 等路径
 
@@ -321,7 +321,7 @@ export const deleteMaintainanceTask = (taskId: string) =>
    - 模拟业务数据直接定义在各自的 `*.mock.ts` 文件的数据库对象内
    - 每个 Mock 文件自包含所需的模拟数据，无需外部导入
    - 数据生成逻辑可以直接在数据库对象的方法中实现
-   - 避免所有模块数据集中到共享文件导致文件膨胀
+   - 避免所有模块数据集中到唯一一个文件内，导致文件膨胀
 
 3. **业务类型强制使用规则**:
    - 必须主动使用来自 `src/types` 文件夹内拆分后的业务类型
@@ -946,7 +946,6 @@ export default defineUniAppMock([
 **Mock 文件命名规范**:
 
 - 业务模块：`{模块名}.mock.ts`（如：`activity.mock.ts`、`maintainance.mock.ts`）
-- 共享数据：`shared/mockData.ts`
 - 工具函数：`shared/utils.ts`
 
 **数据管理策略**:
@@ -1065,7 +1064,6 @@ export default defineConfig({
 │   ├── api/
 │   │   ├── mock/
 │   │   │   ├── shared/
-│   │   │   │   ├── mockData.ts     # 通用数据生成器
 │   │   │   │   └── utils.ts        # Mock 工具函数
 │   │   │   ├── activity.mock.ts    # 活动模块 Mock
 │   │   │   └── README.md           # Mock 开发说明

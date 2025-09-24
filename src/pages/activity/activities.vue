@@ -117,6 +117,27 @@ function showErrorToast(message: string) {
 }
 
 /**
+ * 清理HTML标签并截断文本，用于活动内容预览
+ */
+function stripHtmlAndTruncate(html: string, maxLength: number = 80): string {
+  if (!html)
+    return ''
+
+  // 移除所有HTML标签
+  let text = html.replace(/<[^>]*>/g, '')
+
+  // 清理多余的空白字符
+  text = text.replace(/\s+/g, ' ').trim()
+
+  // 截断文本并添加省略号
+  if (text.length > maxLength) {
+    text = `${text.substring(0, maxLength).trim()}...`
+  }
+
+  return text
+}
+
+/**
  * 处理活动数据 - 完全匹配原Java110Context的数据处理逻辑
  */
 function processActivitiesData(newActivities: Activity[], response: ActivityListResponse) {
@@ -374,7 +395,7 @@ onReachBottom(() => {
               <template #label>
                 <!-- 活动内容预览 -->
                 <view v-if="item.context" class="mb-3 mt-2">
-                  <text class="line-clamp-2 text-sm text-gray-600 leading-relaxed">{{ item.context }}</text>
+                  <text class="line-clamp-2 text-sm text-gray-600 leading-relaxed">{{ stripHtmlAndTruncate(item.context, 80) }}</text>
                 </view>
 
                 <!-- 活动时间信息 -->
