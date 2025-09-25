@@ -28,3 +28,10 @@
 1. 请阅读 `src\pages\activity` 文件夹内的 vue 组件。
 2. 请使用 `component-migration` 子代理，检查是否有使用错误的，不存在的组件。如果有，请更换成正确的组件。
 3. 请你帮我把错误的 `<wd-empty>` 组件换成子代理说要求的组件。
+
+## 005 `addressList`
+
+请深度思考。
+
+1. 请阅读 `gitee-example\pages\addressList` 目录。
+2. 请使用 `.claude\agents` 目录下面的全部的子代理 ，实现 `gitee-example\pages\addressList\addressList.vue` 页面的迁移。
