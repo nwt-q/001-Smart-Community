@@ -556,30 +556,27 @@ export function navigateTo<T extends keyof RouteParams>(url: T, params?: RoutePa
 }
 ```
 
-#### 4.2 路由守卫和权限控制
+#### 4.2 路由跳转优化（无鉴权版本）
+
+**⚠️ 重要**: 根据项目要求，路由系统不实施任何登录验证和权限控制
 
 ```typescript
-// src/router/guards.ts
-export function setupRouteGuards() {
-  // 页面显示前的权限检查
+// src/router/navigation.ts - 无鉴权的路由跳转优化
+export function setupRouteOptimization() {
+  // 路由跳转性能优化 (不包含任何鉴权逻辑)
   uni.addInterceptor('navigateTo', {
     invoke(args) {
       const url = args.url
 
-      // 需要登录的页面
-      const authRequiredPages = ['/pages/repair', '/pages/complaint', '/pages/inspection']
+      // 只做性能优化，不做权限检查
+      console.log('🚀 Navigate to:', url)
 
-      if (authRequiredPages.some((page) => url.includes(page))) {
-        const token = uni.getStorageSync('token')
-        if (!token) {
-          uni.redirectTo({
-            url: '/pages/login/login',
-          })
-          return false
-        }
+      // 优化页面跳转动画
+      if (!args.animationType) {
+        args.animationType = 'slide-in-right'
       }
 
-      return true
+      return true // 所有页面都允许访问
     },
   })
 }
@@ -661,7 +658,7 @@ graph LR
 - [ ] **TabBar 导航**: 底部导航工作正常
 - [ ] **页面配置**: 导航栏标题和样式正确
 - [ ] **分包加载**: 分包页面按需加载
-- [ ] **路由权限**: 登录拦截正常工作
+- [ ] **路由优化**: 页面跳转性能良好（无需登录拦截）
 - [ ] **返回逻辑**: 页面返回逻辑正确
 
 ### 2. 性能优化建议
