@@ -251,3 +251,14 @@
 2. 有策略的阅读，你只需要阅读文件的名称，文件路径即可。不需要阅读文件内容本身。避免消耗过多的 token。
 3. 根据文件的路径名称，结合现有的 `route-migration` 路由迁移子代理文件，补全针对 `gitee-example\pages` 旧项目的页面路由迁移清单表。
 4. 请认真**思考**其路由地址映射关系。确保未来每次使用 `route-migration` 子代理时，迁移来自 `gitee-example\pages\**\*.vue` 的页面时，都能够从 `route-migration` 子代理内找到对应的路径，并知道如何新建对应的新路径。并在 `src\pages` 内新建新页面。
+
+### 023 更新 `route-migration` 子代理
+
+请深度思考。
+
+1. 阅读 `Vue2 到 Vue3 uni-app 路由迁移映射表` 和 `route-migration` 文件。
+2. 更新 `route-migration` 子代理，告诉子代理，以后实现路由迁移时，请严格遵照 `Vue2 到 Vue3 uni-app 路由迁移映射表` 。我希望以后使用 `route-migration` 子代理时，子代理能够主动的阅读并使用 `Vue2 到 Vue3 uni-app 路由迁移映射表` 的路由地址，实现正确的路由迁移。
+3. 更新 `route-migration` 子代理的文档，将 `主要业务模块路由映射` 这一部分换成主动阅读 `Vue2 到 Vue3 uni-app 路由迁移映射表` 文件。
+4. 请你认真思考，请你以 `Vue2 到 Vue3 uni-app 路由迁移映射表` 为中心，重新优化 `route-migration` 子代理，以便于更好的实现路由迁移任务。请思考不要删掉原来有的路由迁移逻辑。
+5. 请你以 `Vue2 到 Vue3 uni-app 路由迁移映射表` 为待办记录的方向做思考，每当完成一个路由地址迁移时，该文件就应该作为进度表，适当的、及时的更新进度表。
+6. `route-migration` 子代理应该作为实施方，作为指导原则，不应该包含任何进度表。
