@@ -238,3 +238,9 @@
 4. 将 `docs\style-migration\guide.md` 和 `docs\style-migration\addressList-migration.md` 的内容迁移整合到 `style-migration` 子代理内。并让 `style-migration` 子代理知道如何实现具体的样式类迁移规则。明确清楚完整的样式映射规则。
 5. 对 `style-migration` 子代理文件做 markdown 表格的格式化，其 table 表格改成**居中对齐**格式。
 6. 最后删除掉 `docs\style-migration` 目录内全部的 markdown 文件，我希望集合整合全部关于样式迁移的内容到 `.claude\agents\style-migration.md` 文件内，即 `style-migration` 子代理内。
+
+### 021 uno.config.ts 应用 `style-migration` 子代理
+
+对 `uno.config.ts` 应用 `style-migration` 子代理，确保该配置文件遵循 `style-migration` 子代理的指导原则。
+
+请深度思考。思考如何发挥 `uno.config.ts` 的优势，实现更加完整的样式迁移配置？
