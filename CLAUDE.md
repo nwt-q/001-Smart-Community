@@ -17,6 +17,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
 - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 
+## 迁移任务的重要原则
+
+在实现 `vue3项目` 迁移到 `vue2项目` 时，请遵守以下几条重要原则：
+
+1. 所有的接口都是mock假接口： 全部的接口都是使用本地的 vite-plugin-mock-dev-server 插件实现的假接口。
+2. 不考虑严格的登录逻辑： 我们不做任何登录功能。关于token的存储，读取，管理，使用的功能与逻辑，在 `vue3项目` 内都不做。
+3. 不考虑严格的鉴权逻辑： 我们不做任何鉴权功能。在跳转路由的时候，`vue3项目` 不做任何形式的鉴权处理。任何页面都可以随意跳转，任意访问。
+
+## markdown文档的table编写格式
+
+每当你在markdown文档内编写表格时，表格的格式一定是**居中对齐**的，必须满足**居中对齐**的格式要求。
+
 ## 项目概述
 
 这是基于 unibest 框架的智慧社区物业管理系统，使用 uniapp + Vue3 + TypeScript + Vite5 + UnoCSS 技术栈开发，支持 H5、小程序、APP 多平台。
