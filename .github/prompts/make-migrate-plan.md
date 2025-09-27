@@ -244,3 +244,10 @@
 对 `uno.config.ts` 应用 `style-migration` 子代理，确保该配置文件遵循 `style-migration` 子代理的指导原则。
 
 请深度思考。思考如何发挥 `uno.config.ts` 的优势，实现更加完整的样式迁移配置？
+
+### 022 补全完整的路由映射表
+
+1. 请全面的阅读 `gitee-example\pages` 内的全部 `*.vue` 文件。阅读全部的页面文件。
+2. 有策略的阅读，你只需要阅读文件的名称，文件路径即可。不需要阅读文件内容本身。避免消耗过多的 token。
+3. 根据文件的路径名称，结合现有的 `route-migration` 路由迁移子代理文件，补全针对 `gitee-example\pages` 旧项目的页面路由迁移清单表。
+4. 确保未来每次使用 `route-migration` 子代理时，迁移来自 `gitee-example\pages\**\*.vue` 的页面时，都能够从 `route-migration` 子代理内找到对应的路径，并知道如何新建对应的新路径。并在 `src\pages` 内新建新页面。
