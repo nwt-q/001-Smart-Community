@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 对话沟通术语表
+
+在我和你沟通时，我会使用以下术语，便于你理解。
+
+- `vue3项目` ： 即 `package.json` 指代的 uniapp 项目。
+- `本项目`： 即 `vue3项目` 。
+- `vue2项目`： `gitee-example` 目录下的 uniapp 项目。
+- `旧项目`： 即 `vue2项目` 。
+- `Vue2 到 Vue3 uni-app 路由迁移映射表`： `.github\prompts\route-migration-map.yml` 文件。
+- `api-migration`： api 迁移子代理。位于 `.claude\agents` 目录内。
+- `code-migration`： 代码写法迁移子代理。位于 `.claude\agents` 目录内。
+- `component-migration`： 组件迁移子代理。位于 `.claude\agents` 目录内。
+- `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
+- `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
+
 ## 项目概述
 
 这是基于 unibest 框架的智慧社区物业管理系统，使用 uniapp + Vue3 + TypeScript + Vite5 + UnoCSS 技术栈开发，支持 H5、小程序、APP 多平台。
