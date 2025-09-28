@@ -272,11 +272,9 @@
 
 ### 025 应用 `route-migration` 子代理更新目录结构，检查路由函数
 
-<!-- TODO -->
-
 1. 阅读 activity 和 addressList 页面。即 `src\pages\activity\*.vue` 和 `src\pages\addressList\*.vue` 的组件。
-2. 主动运行并使用 `route-migration` 子代理，检查他们是否满足 `route-migration` 子代理的目录结构要求？如果不满足，请移动调整文件的目录结构。
-3. 运行 `route-migration` 子代理，检查 `src\router` 目录下的 ts 文件，是否能满足子代理的路由跳转功能？是否满足强类型推断要求？
+2. 主动运行并使用 `route-migration` 子代理，并认真思考，检查他们是否满足 `route-migration` 子代理的目录结构要求？如果不满足，请移动调整文件的目录结构。
+3. 运行 `route-migration` 子代理，检查 `src\router` 目录下的 ts 文件，并认真思考这些 ts 文件，是否能满足子代理的路由跳转功能？是否满足强类型推断要求？
 
 ### 026 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
 
