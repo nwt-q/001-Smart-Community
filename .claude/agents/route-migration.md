@@ -8,11 +8,42 @@ color: orange
 
 从 Vue2 项目的 **传统 pages.json 路由配置** 迁移到 Vue3 项目的 **约定式路由系统 + 自动路由生成** 现代化路由管理模式。
 
+## ⚠️ 重要工作原则
+
+**必须严格遵照 `Vue2 到 Vue3 uni-app 路由迁移映射表` 执行所有路由迁移任务**
+
+### 映射表文件位置
+
+```plain
+.github\prompts\route-migration-map.yml
+```
+
+### 工作流程
+
+1. **任务开始前**: 必须首先读取完整的路由迁移映射表
+2. **路径查询**: 根据旧路径在映射表中查找对应的新路径
+3. **严格执行**: 所有迁移必须按照映射表的路径执行，不允许自行决定路径
+4. **进度追踪**: 映射表文件本身作为进度表，完成迁移后需要标记状态
+5. **映射表优先**: 如有冲突，一切以映射表为准
+
+### 映射表使用方法
+
+```bash
+# 1. 首先读取映射表文件
+Read: .github\prompts\route-migration-map.yml
+
+# 2. 在 route_mappings 中查找对应的路径映射
+# 例如：gitee-example/pages/repairOrder/repairOrder.vue → src/pages-sub/repair/order-list.vue
+
+# 3. 严格按照映射表执行迁移
+# 4. 完成后在映射表相应模块添加 ✅ 标记
+```
+
 ## 路由架构对比
 
 ### Vue2 项目路由架构
 
-```
+```plain
 传统路由配置模式 (pages.json)
 ├── pages.json                    # 手动维护的集中式路由配置
 │   ├── pages[]                   # 主包页面配置数组
@@ -33,7 +64,7 @@ color: orange
 
 ### Vue3 项目路由架构
 
-```
+```plain
 约定式路由系统 (文件系统路由)
 ├── pages.config.ts               # 全局配置和组件自动导入
 ├── src/pages/                    # 页面目录结构即路由结构
@@ -105,8 +136,8 @@ color: orange
 // 使用 definePage API
 definePage({
   style: {
-    navigationBarTitleText: '首页'
-  }
+    navigationBarTitleText: '首页',
+  },
 })
 </script>
 
@@ -146,7 +177,7 @@ definePage({
 
 **Vue3 项目 - 自动分包识别**:
 
-```
+```plain
 src/pages-sub/                    # 自动识别为分包目录
 ├── maintenance/                  # 分包名称
 │   ├── maintainance.vue         # 自动生成路径: pages-sub/maintenance/maintainance
@@ -218,97 +249,81 @@ export const tabBar = {
       pagePath: 'pages/index/index',
       iconPath: '/static/tabbar/home_default.png',
       selectedIconPath: '/static/tabbar/home_selected.png',
-      text: '首页'
+      text: '首页',
     },
     {
       pagePath: 'pages/me/me',
       iconPath: '/static/tabbar/mine_default.png',
       selectedIconPath: '/static/tabbar/mine_selected.png',
-      text: '我的'
-    }
-  ]
+      text: '我的',
+    },
+  ],
 }
 ```
 
 ## 业务路由迁移分析
 
-### 1. 主要业务模块路由映射
+### 1. 路由映射查询方法
 
-**工单管理模块路由迁移**:
+**⚠️ 重要**: 所有路由迁移必须基于 `.github\prompts\route-migration-map.yml` 映射表执行
 
-| Vue2 路由 (gitee-example)             | Vue3 路由 (本项目)          | 页面功能   |
-| ------------------------------------- | --------------------------- | ---------- |
-| `pages/repairOrder/repairOrder`       | `src/pages/repair/order`    | 维修工单池 |
-| `pages/repairDispatch/repairDispatch` | `src/pages/repair/dispatch` | 维修待办单 |
-| `pages/repairDetail/repairDetail`     | `src/pages/repair/detail`   | 维修详情   |
-| `pages/repairHandle/repairHandle`     | `src/pages/repair/handle`   | 订单处理   |
-| `pages/repairAdd/repairAdd`           | `src/pages/repair/add`      | 添加记录   |
+**映射表结构说明**:
 
-**投诉管理模块路由迁移**:
+- `route_mappings`: 包含 13 个业务模块的完整路由映射
+- 总计 140 个页面的完整迁移路径
+- 按功能模块分组：basic_modules、repair_modules、complaint_modules 等
 
-| Vue2 路由                                         | Vue3 路由                    | 页面功能   |
-| ------------------------------------------------- | ---------------------------- | ---------- |
-| `pages/complaintList/complaintList`               | `src/pages/complaint/list`   | 投诉受理单 |
-| `pages/complaintOrder/complaintOrder`             | `src/pages/complaint/order`  | 投诉录单   |
-| `pages/complaintOrderDetail/complaintOrderDetail` | `src/pages/complaint/detail` | 投诉单详情 |
-| `pages/complaintHandle/complaintHandle`           | `src/pages/complaint/handle` | 投诉处理   |
-| `pages/auditComplaintOrder/auditComplaintOrder`   | `src/pages/complaint/audit`  | 处理投诉单 |
+**查询示例**:
 
-**巡检管理模块路由迁移**:
-
-| Vue2 路由                                       | Vue3 路由                          | 页面功能 |
-| ----------------------------------------------- | ---------------------------------- | -------- |
-| `pages/inspection/inspection`                   | `src/pages/inspection/index`       | 巡检打卡 |
-| `pages/excuteInspection/excuteInspection`       | `src/pages/inspection/execute`     | 巡检过程 |
-| `pages/excuteOneInspection/excuteOneInspection` | `src/pages/inspection/execute-one` | 执行巡检 |
-| `pages/inspectionTransfer/inspectionTransfer`   | `src/pages/inspection/transfer`    | 任务流转 |
-| `pages/inspectionReexamine/inspectionReexamine` | `src/pages/inspection/reexamine`   | 巡检补检 |
-
-### 2. 路由层次结构优化
-
-**Vue2 项目 - 扁平化路由结构**:
-
-```
-pages/
-├── repairOrder.vue
-├── repairDispatch.vue
-├── repairDetail.vue
-├── repairHandle.vue
-├── repairAdd.vue
-├── complaintList.vue
-├── complaintOrder.vue
-├── complaintOrderDetail.vue
-└── ...
+```yaml
+# 在映射表的 repair_modules 中查找
+repair_modules:
+  gitee-example/pages/repairOrder/repairOrder.vue: src/pages-sub/repair/order-list.vue
+  gitee-example/pages/repairAdd/repairAdd.vue: src/pages-sub/repair/add-order.vue
+  gitee-example/pages/repairDetail/repairDetail.vue: src/pages-sub/repair/order-detail.vue
+  # ... 更多映射
 ```
 
-**Vue3 项目 - 层次化路由结构**:
+**使用方法**:
 
-```
-src/pages/
-├── repair/                    # 维修模块
-│   ├── order.vue             # 工单池
-│   ├── dispatch.vue          # 待办单
-│   ├── detail.vue            # 详情
-│   ├── handle.vue            # 处理
-│   └── add.vue               # 添加
-├── complaint/                 # 投诉模块
-│   ├── list.vue              # 列表
-│   ├── order.vue             # 录单
-│   ├── detail.vue            # 详情
-│   ├── handle.vue            # 处理
-│   └── audit.vue             # 审核
-├── inspection/                # 巡检模块
-│   ├── index.vue             # 主页
-│   ├── execute.vue           # 执行
-│   ├── execute-one.vue       # 单项执行
-│   ├── transfer.vue          # 转移
-│   └── reexamine.vue         # 复验
-└── ...
-```
+1. 接收到迁移任务时，先读取映射表文件
+2. 在对应的模块中查找旧路径
+3. 获取精确的新路径进行迁移
+4. 完成后在映射表对应模块标记 ✅
+
+### 2. 基于映射表的模块化迁移策略
+
+**映射表包含的 13 个业务模块**:
+
+1. `basic_modules` (8 个页面) - 基础模块
+2. `address_modules` (1 个页面) - 通讯录模块 ✅ 已完成
+3. `repair_modules` (10 个页面) - 维修管理模块
+4. `complaint_modules` (7 个页面) - 投诉管理模块
+5. `inspection_modules` (8 个页面) - 巡检管理模块
+6. `resource_modules` (29 个页面) - 资源采购模块
+7. `fee_modules` (14 个页面) - 费用管理模块
+8. `property_modules` (19 个页面) - 房屋管理模块
+9. `oa_modules` (8 个页面) - OA 工作流模块
+10. `notice_modules` (4 个页面) - 公告管理模块
+11. `parking_modules` (5 个页面) - 车辆管理模块
+12. `work_modules` (8 个页面) - 工作管理模块
+13. `other_modules` (30 个页面) - 其他功能模块
+
+**迁移优先级** (基于映射表的 migration_priority):
+
+- **高优先级**: basic_modules, address_modules, repair_modules, complaint_modules
+- **中优先级**: inspection_modules, resource_modules, oa_modules, notice_modules
+- **低优先级**: fee_modules, property_modules, parking_modules, work_modules, other_modules
+
+**模块迁移原则**:
+
+- 严格按照映射表中的路径执行迁移
+- 每完成一个模块，在映射表对应模块标记 ✅
+- 保持映射表作为唯一的权威进度追踪文件
 
 ## 路由迁移实施策略
 
-### 第一阶段：基础路由框架搭建（1-2天）
+### 第一阶段：基础路由框架搭建（1-2 天）
 
 #### 1.1 配置约定式路由系统
 
@@ -384,267 +399,210 @@ export const tabBar = {
       pagePath: 'pages/index/index',
       iconPath: '/static/tabbar/home.png',
       selectedIconPath: '/static/tabbar/home-selected.png',
-      text: '首页'
+      text: '首页',
     },
     {
       pagePath: 'pages/index/work', // 工作台 (新增)
       iconPath: '/static/tabbar/work.png',
       selectedIconPath: '/static/tabbar/work-selected.png',
-      text: '工作台'
+      text: '工作台',
     },
     {
       pagePath: 'pages/address/index',
       iconPath: '/static/tabbar/address.png',
       selectedIconPath: '/static/tabbar/address-selected.png',
-      text: '通讯录'
+      text: '通讯录',
     },
     {
       pagePath: 'pages/me/me',
       iconPath: '/static/tabbar/me.png',
       selectedIconPath: '/static/tabbar/me-selected.png',
-      text: '我的'
-    }
-  ]
+      text: '我的',
+    },
+  ],
 }
 ```
 
-### 第二阶段：核心业务模块路由迁移（3-5天）
+### 第二阶段：基于映射表的模块化迁移（3-5 天）
 
-#### 2.1 维修管理模块迁移
+#### 2.1 映射表驱动的迁移流程
 
-**创建维修模块路由结构**:
+**标准迁移步骤**:
+
+```bash
+# 1. 读取映射表
+Read: .github\prompts\route-migration-map.yml
+
+# 2. 选择迁移模块 (例如: repair_modules)
+# 3. 获取该模块的所有路径映射
+# 4. 逐一执行迁移
+# 5. 在映射表中标记完成状态
+```
+
+#### 2.2 高优先级模块迁移
+
+**维修管理模块 (repair_modules - 10 个页面)**:
+
+- 根据映射表，从 `gitee-example/pages/repairOrder/` 迁移到 `src/pages-sub/repair/`
+- 所有页面路径严格按照映射表执行
+- 完成后在映射表 `repair_modules` 区域标记 ✅
+
+**投诉管理模块 (complaint_modules - 7 个页面)**:
+
+- 根据映射表，从 `gitee-example/pages/complaint*` 迁移到 `src/pages-sub/complaint/`
+- 注意路径重命名规则（kebab-case）
+- 完成后在映射表 `complaint_modules` 区域标记 ✅
+
+**基础模块 (basic_modules - 8 个页面)**:
+
+- 包含首页、登录、个人中心等核心页面
+- 主要迁移到 `src/pages/` 主包
+- 完成后在映射表 `basic_modules` 区域标记 ✅
+
+#### 2.3 页面迁移模板
+
+**使用映射表路径的标准模板**:
 
 ```vue
-<!-- src/pages/repair/order.vue - 维修工单池 -->
+<!-- 示例: 根据映射表迁移维修工单页面 -->
+<!-- 映射: gitee-example/pages/repairOrder/repairOrder.vue → src/pages-sub/repair/order-list.vue -->
+
 <script setup lang="ts">
-// 使用 definePage API (推荐方式)
 definePage({
   style: {
-    navigationBarTitleText: '维修工单池',
-    enablePullDownRefresh: true
-  }
+    navigationBarTitleText: '维修工单池', // 保持原有标题
+    enablePullDownRefresh: true,
+  },
 })
-
-// 页面逻辑
 </script>
 
 <template>
   <view class="repair-order-page">
-    <!-- 维修工单列表 -->
+    <!-- 迁移原有页面内容 -->
   </view>
 </template>
 ```
 
-```vue
-<!-- src/pages/repair/dispatch.vue - 维修待办 -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '维修待办单'
-  }
-})
-</script>
-```
+### 第三阶段：中等优先级模块迁移（2-3 天）
 
-```vue
-<!-- src/pages/repair/detail.vue - 维修详情 -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '维修详情'
-  }
-})
-</script>
-```
+#### 3.1 基于映射表的中优先级模块
 
-#### 2.2 投诉管理模块迁移
+**巡检管理模块 (inspection_modules - 8 个页面)**:
 
-```vue
-<!-- src/pages/complaint/list.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '投诉受理单'
-  }
-})
-</script>
-```
+- 严格按照映射表从 `gitee-example/pages/inspection/` 迁移到 `src/pages-sub/inspection/`
+- 完成后在映射表标记 ✅
 
-```vue
-<!-- src/pages/complaint/order.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '投诉录单'
-  }
-})
-</script>
-```
+**资源采购模块 (resource_modules - 29 个页面)**:
 
-#### 2.3 巡检管理模块迁移
+- 最大的模块，包含采购申请、资源管理、物品管理等 5 个子模块
+- 全部迁移到 `src/pages-sub/resource/` 和 `src/pages-sub/purchase/`
+- 完成后在映射表标记 ✅
 
-```vue
-<!-- src/pages/inspection/index.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '巡检打卡'
-  }
-})
-</script>
-```
+**OA 工作流模块 (oa_modules - 8 个页面)**:
 
-```vue
-<!-- src/pages/inspection/execute.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '巡检过程'
-  }
-})
-</script>
-```
+- 从 `gitee-example/pages/oaWorkflow/` 等迁移到 `src/pages-sub/oa/`
+- 包含工作流表单、审核等功能
+- 完成后在映射表标记 ✅
 
-### 第三阶段：分包页面迁移（2-3天）
+**公告管理模块 (notice_modules - 4 个页面)**:
 
-#### 3.1 OA 办公分包迁移
+- 从 `gitee-example/pages/notice/` 迁移到 `src/pages/notice/`
+- 主包页面，非分包
+- 完成后在映射表标记 ✅
 
-```vue
-<!-- src/pages-sub/oa/workflow.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: 'OA流程',
-    enablePullDownRefresh: false
-  }
-})
-</script>
-```
+#### 3.2 模块迁移检查清单
 
-```vue
-<!-- src/pages-sub/oa/form.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '起草流程',
-    enablePullDownRefresh: false
-  }
-})
-</script>
-```
+每完成一个模块迁移后，必须：
 
-#### 3.2 报表统计分包迁移
+- [ ] 验证所有页面路径与映射表完全一致
+- [ ] 检查页面配置（navigationBarTitleText 等）正确迁移
+- [ ] 在映射表对应模块区域添加 ✅ 标记
+- [ ] 确认分包/主包策略符合映射表规划
 
-```vue
-<!-- src/pages-sub/report/data-report.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '数据统计',
-    enablePullDownRefresh: false
-  }
-})
-</script>
-```
+### 第四阶段：基于映射表的路由优化（1-2 天）
 
-```vue
-<!-- src/pages-sub/report/fee-summary.vue -->
-<script setup lang="ts">
-definePage({
-  style: {
-    navigationBarTitleText: '费用汇总表',
-    enablePullDownRefresh: false
-  }
-})
-</script>
-```
+#### 4.1 映射表驱动的路由类型定义
 
-### 第四阶段：路由导航和跳转优化（1-2天）
-
-#### 4.1 类型安全的路由跳转
+**根据映射表生成类型安全的路由跳转**:
 
 ```typescript
-// src/types/routes.ts - 路由类型定义
+// src/types/routes.ts - 基于映射表的路由类型定义
+// 注意: 路径必须与映射表中的新路径完全一致
+
 export interface RouteParams {
-  '/pages/repair/detail': {
+  // 基于映射表的维修模块路径
+  '/pages-sub/repair/order-detail': {
     repairId: string
     status?: string
   }
-  '/pages/complaint/detail': {
+  // 基于映射表的投诉模块路径
+  '/pages-sub/complaint/detail': {
     complaintId: string
   }
-  '/pages/inspection/execute': {
+  // 基于映射表的巡检模块路径
+  '/pages-sub/inspection/execute': {
     taskId: string
     type: 'normal' | 'reexamine'
   }
+  // 更多路径根据映射表添加...
 }
 
 // 类型安全的路由跳转工具
-export function navigateTo<T extends keyof RouteParams>(
-  url: T,
-  params?: RouteParams[T]
-) {
+export function navigateTo<T extends keyof RouteParams>(url: T, params?: RouteParams[T]) {
   const query = params ? '?' + new URLSearchParams(params as any).toString() : ''
   uni.navigateTo({
-    url: url + query
+    url: url + query,
   })
 }
 ```
 
-#### 4.2 路由守卫和权限控制
+#### 4.2 路由跳转优化（无鉴权版本）
+
+**⚠️ 重要**: 根据项目要求，路由系统不实施任何登录验证和权限控制
 
 ```typescript
-// src/router/guards.ts
-export function setupRouteGuards() {
-  // 页面显示前的权限检查
+// src/router/navigation.ts - 无鉴权的路由跳转优化
+export function setupRouteOptimization() {
+  // 路由跳转性能优化 (不包含任何鉴权逻辑)
   uni.addInterceptor('navigateTo', {
     invoke(args) {
       const url = args.url
 
-      // 需要登录的页面
-      const authRequiredPages = [
-        '/pages/repair',
-        '/pages/complaint',
-        '/pages/inspection'
-      ]
+      // 只做性能优化，不做权限检查
+      console.log('🚀 Navigate to:', url)
 
-      if (authRequiredPages.some(page => url.includes(page))) {
-        const token = uni.getStorageSync('token')
-        if (!token) {
-          uni.redirectTo({
-            url: '/pages/login/login'
-          })
-          return false
-        }
+      // 优化页面跳转动画
+      if (!args.animationType) {
+        args.animationType = 'slide-in-right'
       }
 
-      return true
-    }
+      return true // 所有页面都允许访问
+    },
   })
 }
 ```
 
-#### 4.3 路由跳转工具函数
+#### 4.3 基于映射表的路由跳转工具函数
 
 ```typescript
-// src/utils/navigation.ts
+// src/utils/navigation.ts - 严格遵循映射表路径
 export class NavigationUtils {
-  // 跳转到维修详情
+  // 跳转到维修详情 (映射表路径: src/pages-sub/repair/order-detail.vue)
   static toRepairDetail(repairId: string, status?: string) {
-    navigateTo('/pages/repair/detail', { repairId, status })
+    navigateTo('/pages-sub/repair/order-detail', { repairId, status })
   }
 
-  // 跳转到投诉处理
+  // 跳转到投诉处理 (映射表路径: src/pages-sub/complaint/handle.vue)
   static toComplaintHandle(complaintId: string) {
-    navigateTo('/pages/complaint/handle', { complaintId })
+    navigateTo('/pages-sub/complaint/handle', { complaintId })
   }
 
-  // 跳转到巡检执行
+  // 跳转到巡检执行 (映射表路径: src/pages-sub/inspection/execute.vue)
   static toInspectionExecute(taskId: string, type: 'normal' | 'reexamine' = 'normal') {
-    navigateTo('/pages/inspection/execute', { taskId, type })
+    navigateTo('/pages-sub/inspection/execute', { taskId, type })
   }
 
-  // 返回上一页或指定页面
+  // 返回首页 (映射表路径: src/pages/index/index.vue)
   static goBack(delta: number = 1) {
     if (getCurrentPages().length > delta) {
       uni.navigateBack({ delta })
@@ -655,6 +613,42 @@ export class NavigationUtils {
 }
 ```
 
+## 📋 映射表驱动的迁移总结
+
+### 映射表的核心作用
+
+1. **唯一权威路径来源**: 所有路由迁移必须以映射表为准
+2. **进度追踪中心**: 映射表文件本身就是迁移进度表
+3. **完整性保证**: 140 个页面的完整映射，确保无遗漏
+4. **模块化管理**: 13 个业务模块的清晰分组
+
+### 子代理的职责边界
+
+**子代理专注于实施**:
+
+- 提供技术方法和最佳实践
+- 执行具体的路由迁移操作
+- 确保代码质量和性能优化
+
+**不包含进度管理**:
+
+- 不维护任何进度信息
+- 不包含具体的路径映射数据
+- 一切以映射表文件为准
+
+### 标准工作流程
+
+```mermaid
+graph LR
+    A[接收迁移任务] --> B[读取映射表]
+    B --> C[查找路径映射]
+    C --> D[执行迁移]
+    D --> E[更新映射表进度]
+    E --> F[验证完成]
+```
+
+**每次任务必须遵循**: 读取映射表 → 查找路径 → 执行迁移 → 标记进度
+
 ## 迁移完成验证和优化
 
 ### 1. 路由功能验证清单
@@ -664,7 +658,7 @@ export class NavigationUtils {
 - [ ] **TabBar 导航**: 底部导航工作正常
 - [ ] **页面配置**: 导航栏标题和样式正确
 - [ ] **分包加载**: 分包页面按需加载
-- [ ] **路由权限**: 登录拦截正常工作
+- [ ] **路由优化**: 页面跳转性能良好（无需登录拦截）
 - [ ] **返回逻辑**: 页面返回逻辑正确
 
 ### 2. 性能优化建议
@@ -674,12 +668,12 @@ export class NavigationUtils {
 export function preloadCriticalPages() {
   // 预加载工作台页面
   uni.preloadPage({
-    url: '/pages/index/work'
+    url: '/pages/index/work',
   })
 
   // 预加载常用功能页面
   uni.preloadPage({
-    url: '/pages/repair/order'
+    url: '/pages/repair/order',
   })
 }
 
@@ -702,14 +696,14 @@ if (process.env.NODE_ENV === 'development') {
   uni.addInterceptor('navigateTo', {
     invoke(args) {
       console.log('🚀 Navigate to:', args.url)
-    }
+    },
   })
 
   // 页面性能监控
   uni.addInterceptor('navigateTo', {
     complete() {
       console.log('⏱️ Page load time:', performance.now())
-    }
+    },
   })
 }
 ```

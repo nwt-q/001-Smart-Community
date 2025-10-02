@@ -35,3 +35,12 @@
 
 1. 请阅读 `gitee-example\pages\addressList` 目录。
 2. 请使用 `.claude\agents` 目录下面的全部的子代理 ，实现 `gitee-example\pages\addressList\addressList.vue` 页面的迁移。
+
+## 006 迁移整合 useAddressList.ts 文件
+
+请深度思考。
+
+阅读 `src\hooks\useAddressList.ts` 和 `src\pages\addressList\index.vue` 文件。
+
+1. 请确保 `src\hooks\useAddressList.ts` 实现了 `gitee-example\pages\activityes\activityes.vue` 页面的迁移，实现了其业务逻辑。
+2. 让 `src\pages\addressList\index.vue` 全面地使用 `src\hooks\useAddressList.ts` 提供的函数。将该页面全部的复杂逻辑迁移到这个组合式 api 内，并让页面使用该组合式 api。

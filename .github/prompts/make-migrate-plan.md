@@ -237,3 +237,61 @@
 3. 我需要你实现样式迁移，请你认真**思考**如何从 ColorUI 迁移到 UnoCSS + wot-design-uni 样式系统。
 4. 将 `docs\style-migration\guide.md` 和 `docs\style-migration\addressList-migration.md` 的内容迁移整合到 `style-migration` 子代理内。并让 `style-migration` 子代理知道如何实现具体的样式类迁移规则。明确清楚完整的样式映射规则。
 5. 对 `style-migration` 子代理文件做 markdown 表格的格式化，其 table 表格改成**居中对齐**格式。
+6. 最后删除掉 `docs\style-migration` 目录内全部的 markdown 文件，我希望集合整合全部关于样式迁移的内容到 `.claude\agents\style-migration.md` 文件内，即 `style-migration` 子代理内。
+
+### 021 uno.config.ts 应用 `style-migration` 子代理
+
+对 `uno.config.ts` 应用 `style-migration` 子代理，确保该配置文件遵循 `style-migration` 子代理的指导原则。
+
+请深度思考。思考如何发挥 `uno.config.ts` 的优势，实现更加完整的样式迁移配置？
+
+### 022 补全完整的路由映射表
+
+1. 请全面的阅读 `gitee-example\pages` 内的全部 `*.vue` 文件。阅读全部的页面文件。
+2. 有策略的阅读，你只需要阅读文件的名称，文件路径即可。不需要阅读文件内容本身。避免消耗过多的 token。
+3. 根据文件的路径名称，结合现有的 `route-migration` 路由迁移子代理文件，补全针对 `gitee-example\pages` 旧项目的页面路由迁移清单表。
+4. 请认真**思考**其路由地址映射关系。确保未来每次使用 `route-migration` 子代理时，迁移来自 `gitee-example\pages\**\*.vue` 的页面时，都能够从 `route-migration` 子代理内找到对应的路径，并知道如何新建对应的新路径。并在 `src\pages` 内新建新页面。
+
+### 023 更新 `route-migration` 子代理
+
+请深度思考。
+
+1. 阅读 `Vue2 到 Vue3 uni-app 路由迁移映射表` 和 `route-migration` 文件。
+2. 更新 `route-migration` 子代理，告诉子代理，以后实现路由迁移时，请严格遵照 `Vue2 到 Vue3 uni-app 路由迁移映射表` 。我希望以后使用 `route-migration` 子代理时，子代理能够主动的阅读并使用 `Vue2 到 Vue3 uni-app 路由迁移映射表` 的路由地址，实现正确的路由迁移。
+3. 更新 `route-migration` 子代理的文档，将 `主要业务模块路由映射` 这一部分换成主动阅读 `Vue2 到 Vue3 uni-app 路由迁移映射表` 文件。
+4. 请你认真思考，请你以 `Vue2 到 Vue3 uni-app 路由迁移映射表` 为中心，重新优化 `route-migration` 子代理，以便于更好的实现路由迁移任务。请思考不要删掉原来有的路由迁移逻辑。
+5. 请你以 `Vue2 到 Vue3 uni-app 路由迁移映射表` 为待办记录的方向做思考，每当完成一个路由地址迁移时，该文件就应该作为进度表，适当的、及时的更新进度表。
+6. `route-migration` 子代理应该作为实施方，作为指导原则，不应该包含任何进度表。
+
+### 024 增加严格的无需登录原则
+
+在实现 `旧项目` 迁移到 `本项目` 的代码迁移时，请确保子代理遵循 `CLAUDE.md` 提及的**无需登录和路由鉴权**的原则。
+
+1. 修改 `route-migration` 子代理。确保路由子代理不做任何鉴权，任何路由都可以轻松跳转。只考虑路由跳转的类型，和参数获取。
+2. 修改 `api-migration` 子代理。确保 api 子代理不处理任何登录逻辑，token 获取与使用逻辑，任何业务接口都是 mock 模拟接口。
+
+### 025 应用 `route-migration` 子代理更新目录结构，检查路由函数
+
+1. 阅读 activity 和 addressList 页面。即 `src\pages\activity\*.vue` 和 `src\pages\addressList\*.vue` 的组件。
+2. 主动运行并使用 `route-migration` 子代理，并认真思考，检查他们是否满足 `route-migration` 子代理的目录结构要求？如果不满足，请移动调整文件的目录结构。
+3. 运行 `route-migration` 子代理，检查 `src\router` 目录下的 ts 文件，并认真思考这些 ts 文件，是否能满足子代理的路由跳转功能？是否满足强类型推断要求？
+
+### 026 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
+
+<!-- TODO: -->
+
+文件 `src\pages\activity\activities.vue` 不满足 `route-migration` 子代理的设计要求。
+
+文件 `src\pages\activity\activities.vue` 原本是从 `gitee-example/pages/activityes/activityes.vue` 文件迁移过来的，预期应该是 `src/pages/activity/index.vue` 文件。
+
+1. 请你思考，并修改 `route-migration` 子代理。`route-migration` 子代理现在是基于 `Vue2 到 Vue3 uni-app 路由迁移映射表` 来执行路由迁移任务的，那么未来在执行 `组件迁移子代理` 时，应该首先检查清楚当前被处理的 `src\pages\**\*.vue` 页面文件，是否严格遵守 `Vue2 到 Vue3 uni-app 路由迁移映射表` 的迁移设计。请你确保 `组件迁移子代理` 未来工作时，不会出现这样的错误。
+2. 请你首先修改子代理，然后运行子代理，并用子代理修复这个路由更新映射不正确的问题。
+3. 请你确保文件移动后，其他引用的文件路径都正确，避免出现找不到的错误。
+
+### 027 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
+
+<!-- TODO -->
+
+请深度思考。
+
+请使用 `api-migration` 子代理，读取 `src\api` 目录下的文件，或者是其他相关的代码文件，确保项目满足严格的无鉴权原则。
