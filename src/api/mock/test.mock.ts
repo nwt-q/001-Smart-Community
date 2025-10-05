@@ -1,4 +1,4 @@
-import { defineUniAppMock } from './shared/utils'
+import { defineUniAppMock, errorResponse, mockLog, successResponse } from './shared/utils'
 
 /**
  * 测试 Mock 插件是否正常工作
@@ -9,14 +9,13 @@ export default defineUniAppMock([
     url: '/test',
     method: 'GET',
     delay: 300,
-    body: {
-      success: true,
-      message: 'Mock 插件工作正常！',
-      data: {
+    body: () => {
+      mockLog('test', 'Mock 插件测试')
+      return successResponse({
         timestamp: Date.now(),
         version: '1.0.0',
         plugin: 'vite-plugin-mock-dev-server',
-      },
+      }, 'Mock 插件工作正常！')
     },
   },
 
@@ -26,13 +25,11 @@ export default defineUniAppMock([
     method: ['GET', 'POST'],
     delay: [200, 500],
     body: ({ query, body }) => {
-      return {
-        success: true,
-        message: '参数测试成功',
+      mockLog('test/params', { query, body })
+      return successResponse({
         receivedQuery: query,
         receivedBody: body,
-        timestamp: Date.now(),
-      }
+      }, '参数测试成功')
     },
   },
 
@@ -41,21 +38,11 @@ export default defineUniAppMock([
     url: '/test/error',
     method: 'GET',
     body: ({ query }) => {
+      mockLog('test/error', query)
       if (query.trigger === 'error') {
-        return {
-          status: 500,
-          statusText: 'Internal Server Error',
-          body: {
-            success: false,
-            message: '模拟服务器错误',
-            error: 'MOCK_ERROR',
-          },
-        }
+        return errorResponse('模拟服务器错误', '500')
       }
-      return {
-        success: true,
-        message: '正常响应',
-      }
+      return successResponse(null, '正常响应')
     },
   },
 ])

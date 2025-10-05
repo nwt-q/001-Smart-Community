@@ -1,6 +1,6 @@
 import type { Activity, ActivityListParams, ActivityListResponse, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
 import type { StatusType } from '@/types/api'
-import { defineUniAppMock, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
+import { defineUniAppMock, errorResponse, generateId, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 活动模块 Mock 接口 - 完全自包含架构
@@ -323,6 +323,8 @@ export default defineUniAppMock([
       try {
         // 处理活动详情查询
         if (params.activitiesId) {
+          mockLog('getActivityDetail', params)
+
           const activity = mockActivityDatabase.getActivityById(params.activitiesId)
           if (activity) {
             mockActivityDatabase.increaseView(params.activitiesId)
@@ -330,14 +332,16 @@ export default defineUniAppMock([
           const result = {
             activitiess: activity ? [activity] : [],
           }
-          console.log('🚀 Mock API: getActivityDetail', params, '→', result)
-          return result
+          mockLog('getActivityDetail result', activity ? activity.title : 'not found')
+          return successResponse(result, '获取活动详情成功')
         }
 
         // 参数验证
         const page = Math.max(1, Number(params.page) || 1)
         const row = Math.min(Math.max(1, Number(params.row) || 15), 100)
         const communityId = params.communityId?.trim()
+
+        mockLog('getActivityList', { page, row, communityId, keyword: params.keyword, status: params.status })
 
         if (!communityId) {
           return errorResponse('社区ID不能为空', '400')
@@ -352,8 +356,8 @@ export default defineUniAppMock([
           status: params.status || '1',
         })
 
-        console.log('🚀 Mock API: getActivityList', params, '→', `${result.activitiess.length} items`)
-        return result
+        mockLog('getActivityList result', `${result.activitiess.length} items`)
+        return successResponse(result, '获取活动列表成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getActivityList', error)
@@ -373,6 +377,8 @@ export default defineUniAppMock([
       const data = body as CreateActivityReq
 
       try {
+        mockLog('createActivity', { title: data.title })
+
         // 数据验证
         if (!data.title?.trim()) {
           return errorResponse('活动标题不能为空', '400')
@@ -404,7 +410,7 @@ export default defineUniAppMock([
         }
 
         mockActivityDatabase.addActivity(newActivity)
-        console.log('🚀 Mock API: createActivity', data, '→', newActivity)
+        mockLog('createActivity result', newActivity.activitiesId)
         return successResponse(newActivity, '创建活动成功')
       }
       catch (error: any) {
@@ -425,6 +431,8 @@ export default defineUniAppMock([
       const data = body as UpdateActivityReq
 
       try {
+        mockLog('updateActivity', { activitiesId: data.activitiesId })
+
         if (!data.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -440,7 +448,7 @@ export default defineUniAppMock([
           updateTime: new Date().toISOString(),
         })
 
-        console.log('🚀 Mock API: updateActivity', data, '→', activity)
+        mockLog('updateActivity result', activity.title)
         return successResponse(activity, '更新活动成功')
       }
       catch (error: any) {
@@ -461,6 +469,8 @@ export default defineUniAppMock([
       const params = body as { activitiesId: string }
 
       try {
+        mockLog('deleteActivity', params)
+
         if (!params.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -471,7 +481,7 @@ export default defineUniAppMock([
         }
 
         const result = { success: true }
-        console.log('🚀 Mock API: deleteActivity', params, '→', result)
+        mockLog('deleteActivity result', 'success')
         return successResponse(result, '删除活动成功')
       }
       catch (error: any) {
@@ -492,6 +502,8 @@ export default defineUniAppMock([
       const data = body as { activitiesId: string }
 
       try {
+        mockLog('increaseView', data)
+
         if (!data.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -502,7 +514,7 @@ export default defineUniAppMock([
         }
 
         const result = { success: true }
-        console.log('🚀 Mock API: increaseView', data, '→', result)
+        mockLog('increaseView result', 'success')
         return successResponse(result, '浏览量增加成功')
       }
       catch (error: any) {
@@ -523,6 +535,8 @@ export default defineUniAppMock([
       const data = body as { activitiesId: string }
 
       try {
+        mockLog('likeActivity', data)
+
         if (!data.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -533,7 +547,7 @@ export default defineUniAppMock([
         }
 
         const result = { success: true }
-        console.log('🚀 Mock API: likeActivity', data, '→', result)
+        mockLog('likeActivity result', 'success')
         return successResponse(result, '点赞成功')
       }
       catch (error: any) {
@@ -554,6 +568,8 @@ export default defineUniAppMock([
       const data = body as { activitiesId: string, status: string }
 
       try {
+        mockLog('updateActivityStatus', data)
+
         if (!data.activitiesId || !data.status) {
           return errorResponse('活动ID和状态不能为空', '400')
         }
@@ -571,7 +587,7 @@ export default defineUniAppMock([
         activity.status = data.status as StatusType
         activity.updateTime = new Date().toISOString()
 
-        console.log('🚀 Mock API: updateActivityStatus', data, '→', activity)
+        mockLog('updateActivityStatus result', { title: activity.title, status: activity.status })
         return successResponse(activity, '活动状态更新成功')
       }
       catch (error: any) {
