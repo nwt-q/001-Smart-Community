@@ -331,9 +331,14 @@
 
 请修改 `api-migration` 子代理，增加要求，要求 mock 日志输出的时候，统一使用 `src\api\mock\shared\utils.ts` 的 `mockLog` 函数。
 
-### 032
+### 032 修改 javascript / typescript 的代码注释写法
 
-<!-- TODO: -->
+代码注释写法应该写成 jsdoc 格式。而不是单纯的双斜杠注释。
+
+1. 请你修改 `src/api/**/*.ts` glob 匹配下的全部 ts 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+2. 请你修改 `src/router/**/*.ts` glob 匹配下的全部 ts 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+3. 请你修改 `src/types/**/*.ts` glob 匹配下的全部 ts 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+4. 请你修改 `src/pages/**/*.ts` glob 匹配下的全部 vue 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
 
 ### 031 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
 
