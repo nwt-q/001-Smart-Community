@@ -14,11 +14,11 @@ definePage({
 
 const userStore = useUserStore()
 const tokenStore = useTokenStore()
-// 使用storeToRefs解构userInfo
+/** 使用storeToRefs解构userInfo */
 const { userInfo } = storeToRefs(userStore)
 
 // #ifndef MP-WEIXIN
-// 上传头像
+/** 上传头像 */
 const { run: uploadAvatar } = useUpload<IUploadSuccessInfo>(
   import.meta.env.VITE_UPLOAD_BASEURL,
   {},
@@ -31,11 +31,11 @@ const { run: uploadAvatar } = useUpload<IUploadSuccessInfo>(
 )
 // #endif
 
-// 微信小程序下登录
+/** 微信小程序下登录 */
 async function handleLogin() {
   // #ifdef MP-WEIXIN
 
-  // 微信登录
+  /** 微信登录 */
   await tokenStore.wxLogin()
   // #endif
   // #ifndef MP-WEIXIN
@@ -45,7 +45,7 @@ async function handleLogin() {
 
 // #ifdef MP-WEIXIN
 
-// 微信小程序下选择头像事件
+/** 微信小程序下选择头像事件 */
 function onChooseAvatar(e: any) {
   console.log('选择头像', e.detail)
   const { avatarUrl } = e.detail
@@ -64,32 +64,32 @@ function onChooseAvatar(e: any) {
 }
 // #endif
 // #ifdef MP-WEIXIN
-// 微信小程序下设置用户名
+/** 微信小程序下设置用户名 */
 function getUserInfo(e: any) {
   console.log(e.detail)
 }
 // #endif
 
-// 退出登录
+/** 退出登录 */
 function handleLogout() {
   uni.showModal({
     title: '提示',
     content: '确定要退出登录吗？',
     success: (res) => {
       if (res.confirm) {
-        // 清空用户信息
+        /** 清空用户信息 */
         useTokenStore().logout()
-        // 执行退出登录逻辑
+        /** 执行退出登录逻辑 */
         uni.showToast({
           title: '退出登录成功',
           icon: 'success',
         })
         // #ifdef MP-WEIXIN
-        // 微信小程序，去首页
+        /** 微信小程序，去首页 */
         // uni.reLaunch({ url: '/pages/index/index' })
         // #endif
         // #ifndef MP-WEIXIN
-        // 非微信小程序，去登录页
+        /** 非微信小程序，去登录页 */
         uni.navigateTo({ url: LOGIN_PAGE })
         // #endif
       }

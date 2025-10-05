@@ -4,7 +4,7 @@
 
 import type { PageParams, PageRoute, TabRoute } from '@/types/routes'
 
-// 类型安全的路由跳转函数
+/** 类型安全的路由跳转函数 */
 export function navigateToTyped<T extends keyof PageParams>(
   url: T,
   params?: PageParams[T],
@@ -30,7 +30,7 @@ export function navigateToTyped<T extends keyof PageParams>(
   })
 }
 
-// 类型安全的重定向函数
+/** 类型安全的重定向函数 */
 export function redirectToTyped<T extends keyof PageParams>(
   url: T,
   params?: PageParams[T],
@@ -49,7 +49,7 @@ export function redirectToTyped<T extends keyof PageParams>(
   })
 }
 
-// 类型安全的Tab切换函数
+/** 类型安全的Tab切换函数 */
 export function switchTabTyped(url: TabRoute) {
   return uni.switchTab({
     url,
@@ -59,7 +59,7 @@ export function switchTabTyped(url: TabRoute) {
   })
 }
 
-// 返回上一页或指定页面
+/** 返回上一页或指定页面 */
 export function goBack(delta: number = 1) {
   const pages = getCurrentPages()
   if (pages.length > delta) {
@@ -78,9 +78,9 @@ export function goBack(delta: number = 1) {
   }
 }
 
-// 路由工具类
+/** 路由工具类 */
 export class TypedRouter {
-  // 维修模块导航
+  /** 维修模块导航 */
   static toRepairList(params?: PageParams['/pages-sub/repair/order-list']) {
     return navigateToTyped('/pages-sub/repair/order-list', params)
   }
@@ -93,7 +93,7 @@ export class TypedRouter {
     return navigateToTyped('/pages-sub/repair/add-order', { communityId })
   }
 
-  // 投诉模块导航
+  /** 投诉模块导航 */
   static toComplaintList(params?: PageParams['/pages-sub/complaint/list']) {
     return navigateToTyped('/pages-sub/complaint/list', params)
   }
@@ -106,7 +106,7 @@ export class TypedRouter {
     return navigateToTyped('/pages-sub/complaint/handle', { complaintId })
   }
 
-  // 巡检模块导航
+  /** 巡检模块导航 */
   static toInspectionList(params?: PageParams['/pages-sub/inspection/list']) {
     return navigateToTyped('/pages-sub/inspection/list', params)
   }
@@ -115,7 +115,7 @@ export class TypedRouter {
     return navigateToTyped('/pages-sub/inspection/execute', { taskId, type })
   }
 
-  // 基础页面导航
+  /** 基础页面导航 */
   static toLogin(redirect?: string) {
     return navigateToTyped('/pages/login/login', { redirect })
   }
@@ -124,7 +124,7 @@ export class TypedRouter {
     return navigateToTyped('/pages/activity/detail', { activitiesId, currentCommunityId })
   }
 
-  // Tab页面切换
+  /** Tab页面切换 */
   static toHome() {
     return switchTabTyped('/pages/index/index')
   }
@@ -138,7 +138,7 @@ export class TypedRouter {
   }
 }
 
-// 路由参数解析工具
+/** 路由参数解析工具 */
 export function parseRouteParams<T extends keyof PageParams>(
   url: string,
 ): { path: T, params: PageParams[T] } | null {
@@ -164,7 +164,7 @@ export function parseRouteParams<T extends keyof PageParams>(
   }
 }
 
-// 路由验证工具
+/** 路由验证工具 */
 export function isValidRoute(path: string): path is PageRoute {
   const validRoutes: PageRoute[] = [
     '/pages/index/index',
@@ -187,7 +187,7 @@ export function isValidRoute(path: string): path is PageRoute {
   return validRoutes.includes(path as PageRoute)
 }
 
-// 通用导航工具类
+/** 通用导航工具类 */
 export class NavigationUtils {
   /**
    * 预加载页面
@@ -265,5 +265,5 @@ export class NavigationUtils {
   }
 }
 
-// 导出便捷别名
+/** 导出便捷别名 */
 export { NavigationUtils as Nav }

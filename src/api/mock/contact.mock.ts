@@ -8,7 +8,7 @@ import { createPaginationResponse, defineUniAppMock, errorResponse, generateChin
 
 // ==================== 通讯录数据生成器 ====================
 
-// 部门类型配置
+/** 部门类型配置 */
 const DEPARTMENT_TYPES: DepartmentType[] = [
   '物业管理处',
   '保安部',
@@ -18,10 +18,10 @@ const DEPARTMENT_TYPES: DepartmentType[] = [
   '财务部',
 ]
 
-// 职位配置
+/** 职位配置 */
 const POSITIONS = ['主管', '专员', '助理', '经理', '组长', '副主管']
 
-// 核心联系人数据生成器
+/** 核心联系人数据生成器 */
 function createMockContact(id: string): Contact {
   return {
     contactId: `CON_${id}`,
@@ -40,16 +40,16 @@ function createMockContact(id: string): Contact {
 // ==================== 通讯录数据库对象 ====================
 
 const mockContactDatabase = {
-  // 初始化数据
+  /** 初始化数据 */
   contacts: Array.from({ length: 30 }, (_, index) =>
     createMockContact((index + 1).toString().padStart(3, '0'))) as Contact[],
 
-  // 获取联系人详情
+  /** 获取联系人详情 */
   getContactById(contactId: string) {
     return this.contacts.find(contact => contact.contactId === contactId)
   },
 
-  // 获取联系人列表（支持筛选）
+  /** 获取联系人列表（支持筛选） */
   getContactList(params: {
     page: number
     row: number
@@ -92,7 +92,7 @@ const mockContactDatabase = {
     return createPaginationResponse(filteredContacts, params.page, params.row)
   },
 
-  // 按部门分组获取联系人
+  /** 按部门分组获取联系人 */
   getContactsByDepartment() {
     const grouped = this.contacts.reduce((acc, contact) => {
       if (!acc[contact.department]) {
@@ -110,7 +110,7 @@ const mockContactDatabase = {
     return grouped
   },
 
-  // 更新联系人在线状态
+  /** 更新联系人在线状态 */
   updateOnlineStatus(contactId: string, isOnline: boolean) {
     const contact = this.getContactById(contactId)
     if (contact) {
@@ -122,7 +122,7 @@ const mockContactDatabase = {
 }
 
 export default defineUniAppMock([
-  // 获取通讯录列表
+  /** 获取通讯录列表 */
   {
     url: '/app/contact.listContacts',
     method: ['GET', 'POST'],
@@ -156,7 +156,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取联系人详情
+  /** 获取联系人详情 */
   {
     url: '/app/contact.getContactDetail',
     method: ['GET', 'POST'],
@@ -188,7 +188,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 按部门分组获取通讯录
+  /** 按部门分组获取通讯录 */
   {
     url: '/app/contact.getContactsByDepartment',
     method: ['GET', 'POST'],
@@ -224,7 +224,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 搜索联系人
+  /** 搜索联系人 */
   {
     url: '/app/contact.searchContacts',
     method: ['GET', 'POST'],
@@ -276,7 +276,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取部门列表
+  /** 获取部门列表 */
   {
     url: '/app/contact.getDepartments',
     method: ['GET', 'POST'],
@@ -306,7 +306,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 更新联系人在线状态（模拟实时状态）
+  /** 更新联系人在线状态（模拟实时状态） */
   {
     url: '/app/contact.updateOnlineStatus',
     method: 'POST',
@@ -340,7 +340,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取常用联系人
+  /** 获取常用联系人 */
   {
     url: '/app/contact.getFavoriteContacts',
     method: ['GET', 'POST'],
@@ -366,7 +366,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取紧急联系人
+  /** 获取紧急联系人 */
   {
     url: '/app/contact.getEmergencyContacts',
     method: ['GET', 'POST'],

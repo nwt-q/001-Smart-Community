@@ -7,7 +7,7 @@ import { computed, ref, watch } from 'vue'
 import { getActivityList, increaseActivityView } from '@/api/activity'
 import { TypedRouter } from '@/router'
 
-// 页面配置
+/** 页面配置 */
 definePage({
   name: 'Activities',
   style: {
@@ -20,12 +20,12 @@ definePage({
   },
 })
 
-// 接口参数类型
+/** 接口参数类型 */
 interface PageOptions {
   currentCommunityId: string
 }
 
-// 响应式数据状态
+/** 响应式数据状态 */
 const currentCommunityId = ref<string>('')
 const activities = ref<Activity[]>([])
 const currentPage = ref<number>(1)
@@ -34,7 +34,7 @@ const hasMore = ref<boolean>(true)
 const isLoadingMore = ref<boolean>(false)
 const error = ref<string>('')
 
-// API请求管理 - 优化请求参数
+/** API请求管理 - 优化请求参数 */
 const {
   loading,
   data: activitiesResponse,
@@ -48,11 +48,11 @@ const {
   },
 )
 
-// 计算属性
+/** 计算属性 */
 const isEmpty = computed(() => !loading.value && activities.value.length === 0)
 const showLoadMore = computed(() => hasMore.value && !loading.value)
 
-// 请求成功处理
+/** 请求成功处理 */
 onSuccess((event) => {
   const response = event.data as ActivityListResponse
   if (response?.activitiess) {
@@ -60,7 +60,7 @@ onSuccess((event) => {
   }
 })
 
-// 请求错误处理
+/** 请求错误处理 */
 onError((event) => {
   const err = event.error
   console.error('获取活动列表失败:', err)
@@ -68,7 +68,7 @@ onError((event) => {
   showErrorToast('加载失败，请稍后重试')
 })
 
-// 工具函数
+/** 工具函数 */
 /**
  * 格式化时间显示
  */
@@ -97,11 +97,11 @@ function formatNumber(num: number): string {
 function getImageUrl(headerImg: string): string {
   if (!headerImg)
     return ''
-  // 检查是否为完整URL（Mock接口返回的图片）
+  /** 检查是否为完整URL（Mock接口返回的图片） */
   if (headerImg.startsWith('http')) {
     return headerImg
   }
-  // 🔴 兼容原Java110Context的文件路径格式
+  /** 🔴 兼容原Java110Context的文件路径格式 */
   return `/api/file?fileId=${headerImg}&communityId=${currentCommunityId.value}&time=${Date.now()}`
 }
 
@@ -123,13 +123,13 @@ function stripHtmlAndTruncate(html: string, maxLength: number = 80): string {
   if (!html)
     return ''
 
-  // 移除所有HTML标签
+  /** 移除所有HTML标签 */
   let text = html.replace(/<[^>]*>/g, '')
 
-  // 清理多余的空白字符
+  /** 清理多余的空白字符 */
   text = text.replace(/\s+/g, ' ').trim()
 
-  // 截断文本并添加省略号
+  /** 截断文本并添加省略号 */
   if (text.length > maxLength) {
     text = `${text.substring(0, maxLength).trim()}...`
   }
@@ -143,19 +143,19 @@ function stripHtmlAndTruncate(html: string, maxLength: number = 80): string {
 function processActivitiesData(newActivities: Activity[], response: ActivityListResponse) {
   const processedActivities = newActivities.map((item: Activity) => ({
     ...item,
-    // 🔴 重要：图片URL处理逻辑匹配原Java110Context
-    src: item.src || getImageUrl(item.headerImg || ''), // 优先使用Mock接口提供的src
-    // 🔴 数据格式兼容性处理 - 保持与原系统一致
-    readCount: item.readCount || item.viewCount || 0, // readCount优先，向后兼容viewCount
+    /** 🔴 重要：图片URL处理逻辑匹配原Java110Context */
+    src: item.src || getImageUrl(item.headerImg || ''), /** 优先使用Mock接口提供的src */
+    /** 🔴 数据格式兼容性处理 - 保持与原系统一致 */
+    readCount: item.readCount || item.viewCount || 0, /** readCount优先，向后兼容viewCount */
     likeCount: item.likeCount || 0,
-    collectCount: item.collectCount || 0, // 收藏功能
-    // 时间格式化处理
+    collectCount: item.collectCount || 0, /** 收藏功能 */
+    /** 时间格式化处理 */
     formattedStartTime: formatTime(item.startTime),
     formattedCreateTime: formatTime(item.createTime),
     formattedEndTime: item.endTime ? formatTime(item.endTime) : '',
   }))
 
-  // 🔴 分页数据处理逻辑
+  /** 🔴 分页数据处理逻辑 */
   if (currentPage.value === 1) {
     activities.value = processedActivities
   }
@@ -163,11 +163,11 @@ function processActivitiesData(newActivities: Activity[], response: ActivityList
     activities.value.push(...processedActivities)
   }
 
-  // 🔴 分页状态更新 - 基于实际返回的数据量判断是否还有更多
+  /** 🔴 分页状态更新 - 基于实际返回的数据量判断是否还有更多 */
   hasMore.value = processedActivities.length >= pageSize.value
   error.value = ''
 
-  // 输出处理结果用于调试
+  /** 输出处理结果用于调试 */
   console.log('🎯 Activities processed:', {
     total: response.total,
     currentPage: currentPage.value,
@@ -187,7 +187,7 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
   }
 
   try {
-    // 设置加载状态
+    /** 设置加载状态 */
     if (page > 1) {
       isLoadingMore.value = true
     }
@@ -196,7 +196,7 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
       page,
       row: pageSize.value,
       communityId: currentCommunityId.value,
-      status: '1', // 只获取已发布的活动
+      status: '1', /** 只获取已发布的活动 */
     }
 
     await fetchActivities(params)
@@ -204,7 +204,7 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
   }
   catch (err: any) {
     console.error('加载活动失败:', err)
-    // 错误已在 onError 中处理
+    /** 错误已在 onError 中处理 */
   }
   finally {
     if (page > 1) {
@@ -236,15 +236,15 @@ async function loadMoreActivities() {
  */
 async function navigateToDetail(item: Activity) {
   try {
-    // 异步增加浏览量，不阻塞跳转
+    /** 异步增加浏览量，不阻塞跳转 */
     increaseActivityView(item.activitiesId).catch((err) => {
       console.warn('增加浏览量失败:', err)
     })
 
-    // 立即跳转到详情页
+    /** 立即跳转到详情页 */
     await TypedRouter.toActivityDetail(item.activitiesId, currentCommunityId.value)
 
-    // 乐观更新本地浏览量
+    /** 乐观更新本地浏览量 */
     const index = activities.value.findIndex(activity => activity.activitiesId === item.activitiesId)
     if (index !== -1) {
       activities.value[index].readCount += 1
@@ -257,7 +257,7 @@ async function navigateToDetail(item: Activity) {
   }
 }
 
-// 监听社区ID变化，自动刷新数据
+/** 监听社区ID变化，自动刷新数据 */
 watch(
   () => currentCommunityId.value,
   (newCommunityId) => {
@@ -268,7 +268,7 @@ watch(
   { immediate: false },
 )
 
-// 生命周期钩子
+/** 生命周期钩子 */
 onLoad((options: PageOptions) => {
   console.log('Activities页面加载，参数:', options)
 
@@ -278,19 +278,19 @@ onLoad((options: PageOptions) => {
   }
 
   currentCommunityId.value = options.currentCommunityId
-  // 首次加载数据
+  /** 首次加载数据 */
   loadActivities(1)
 })
 
-// 页面显示时刷新数据（从详情页返回时）
+/** 页面显示时刷新数据（从详情页返回时） */
 onShow(() => {
-  // 如果已有数据，则静默刷新
+  /** 如果已有数据，则静默刷新 */
   if (activities.value.length > 0) {
     refreshActivities()
   }
 })
 
-// 下拉刷新
+/** 下拉刷新 */
 onPullDownRefresh(async () => {
   try {
     await refreshActivities()
@@ -300,7 +300,7 @@ onPullDownRefresh(async () => {
   }
 })
 
-// 上拉加载更多
+/** 上拉加载更多 */
 onReachBottom(() => {
   loadMoreActivities()
 })

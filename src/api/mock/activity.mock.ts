@@ -9,7 +9,7 @@ import { defineUniAppMock, errorResponse, generateId, randomDelay, successRespon
 
 // ==================== 活动数据生成器 ====================
 
-// 活动类型配置
+/** 活动类型配置 */
 const ACTIVITY_TYPES = [
   { name: '社区健身活动', emoji: '🏃‍♀️', category: 'health' },
   { name: '亲子互动游戏', emoji: '👨‍👩‍👧‍👦', category: 'family' },
@@ -21,7 +21,7 @@ const ACTIVITY_TYPES = [
   { name: '志愿服务活动', emoji: '❤️', category: 'volunteer' },
 ] as const
 
-// 组织者名称生成
+/** 组织者名称生成 */
 const ORGANIZERS = [
   '物业管理处',
   '业主委员会',
@@ -33,7 +33,7 @@ const ORGANIZERS = [
   '老年活动中心',
 ]
 
-// 生成活动标题
+/** 生成活动标题 */
 function generateActivityTitle(activityType: typeof ACTIVITY_TYPES[number], index: number): string {
   const titleTemplates = {
     health: ['春季健身操培训班', '社区太极拳晨练', '健康体检义诊活动', '亲子瑜伽体验课', '老年人健康讲座'],
@@ -55,7 +55,7 @@ function generateActivityTitle(activityType: typeof ACTIVITY_TYPES[number], inde
   return `${baseTitle}${suffix}`
 }
 
-// 生成活动内容
+/** 生成活动内容 */
 function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id: string): string {
   const detailedTemplates = {
     health: {
@@ -164,7 +164,7 @@ function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id
   `
 }
 
-// 核心活动数据生成器
+/** 核心活动数据生成器 */
 function createMockActivity(id: string): Activity {
   const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)]
   const now = Date.now()
@@ -201,16 +201,16 @@ function createMockActivity(id: string): Activity {
 // ==================== 活动数据库对象 ====================
 
 const mockActivityDatabase = {
-  // 初始化数据
+  /** 初始化数据 */
   activities: Array.from({ length: 30 }, (_, index) =>
     createMockActivity((index + 1).toString().padStart(3, '0'))) as Activity[],
 
-  // 获取活动详情
+  /** 获取活动详情 */
   getActivityById(activitiesId: string): Activity | undefined {
     return this.activities.find(activity => activity.activitiesId === activitiesId)
   },
 
-  // 获取活动列表（支持筛选和分页）
+  /** 获取活动列表（支持筛选和分页） */
   getActivityList(params: {
     page: number
     row: number
@@ -261,7 +261,7 @@ const mockActivityDatabase = {
     }
   },
 
-  // 增加浏览量
+  /** 增加浏览量 */
   increaseView(activitiesId: string): boolean {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
@@ -272,7 +272,7 @@ const mockActivityDatabase = {
     return false
   },
 
-  // 增加点赞量
+  /** 增加点赞量 */
   increaseLike(activitiesId: string): boolean {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
@@ -283,7 +283,7 @@ const mockActivityDatabase = {
     return false
   },
 
-  // 添加活动
+  /** 添加活动 */
   addActivity(activity: Activity): boolean {
     try {
       this.activities.unshift(activity)
@@ -294,7 +294,7 @@ const mockActivityDatabase = {
     }
   },
 
-  // 删除活动
+  /** 删除活动 */
   removeActivity(activitiesId: string): boolean {
     const index = this.activities.findIndex(
       activity => activity.activitiesId === activitiesId,
@@ -310,7 +310,7 @@ const mockActivityDatabase = {
 // ==================== Mock 接口定义 ====================
 
 export default defineUniAppMock([
-  // 获取活动列表/详情
+  /** 获取活动列表/详情 */
   {
     url: '/app/activities.listActivitiess',
     method: ['GET', 'POST'],
@@ -362,7 +362,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 创建活动
+  /** 创建活动 */
   {
     url: '/app/activities.saveActivities',
     method: 'POST',
@@ -414,7 +414,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 更新活动
+  /** 更新活动 */
   {
     url: '/app/activities.updateActivities',
     method: 'POST',
@@ -450,7 +450,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 删除活动
+  /** 删除活动 */
   {
     url: '/app/activities.deleteActivities',
     method: 'POST',
@@ -481,7 +481,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 增加浏览量
+  /** 增加浏览量 */
   {
     url: '/app/activities.increaseView',
     method: 'POST',
@@ -512,7 +512,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 活动点赞
+  /** 活动点赞 */
   {
     url: '/app/activities.likeActivity',
     method: 'POST',
@@ -543,7 +543,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 活动状态管理
+  /** 活动状态管理 */
   {
     url: '/app/activities.updateStatus',
     method: 'POST',

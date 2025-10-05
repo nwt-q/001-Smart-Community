@@ -4,13 +4,13 @@
 
 import type { PaginationParams, PriorityType } from './api'
 
-// 投诉状态
+/** 投诉状态 */
 export type ComplaintStatus = 'SUBMITTED' | 'PROCESSING' | 'RESOLVED' | 'CLOSED'
 
-// 投诉类型
+/** 投诉类型 */
 export type ComplaintType = '噪音投诉' | '卫生问题' | '设施损坏' | '服务态度' | '收费问题' | '其他投诉'
 
-// 投诉工单
+/** 投诉工单 */
 export interface Complaint {
   complaintId: string
   title: string
@@ -38,7 +38,7 @@ export interface Complaint {
   }
 }
 
-// 投诉列表查询参数
+/** 投诉列表查询参数 */
 export interface ComplaintListParams extends PaginationParams {
   communityId?: string
   status?: ComplaintStatus
@@ -48,7 +48,7 @@ export interface ComplaintListParams extends PaginationParams {
   endDate?: string
 }
 
-// 创建投诉请求
+/** 创建投诉请求 */
 export interface CreateComplaintReq {
   title: string
   description: string

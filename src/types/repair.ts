@@ -4,13 +4,13 @@
 
 import type { PaginationParams, PriorityType } from './api'
 
-// 维修状态枚举
+/** 维修状态枚举 */
 export type RepairStatus = 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
 
-// 维修类型
+/** 维修类型 */
 export type RepairType = '水电维修' | '门窗维修' | '空调维修' | '电梯维修' | '管道疏通' | '墙面修补' | '其他维修'
 
-// 维修工单信息
+/** 维修工单信息 */
 export interface RepairOrder {
   repairId: string
   title: string
@@ -35,7 +35,7 @@ export interface RepairOrder {
   }
 }
 
-// 维修工单列表查询参数
+/** 维修工单列表查询参数 */
 export interface RepairListParams extends PaginationParams {
   communityId?: string
   status?: RepairStatus
@@ -46,7 +46,7 @@ export interface RepairListParams extends PaginationParams {
   assignedWorker?: string
 }
 
-// 维修工单列表响应
+/** 维修工单列表响应 */
 export interface RepairListResponse {
   ownerRepairs: RepairOrder[]
   total: number
@@ -54,7 +54,7 @@ export interface RepairListResponse {
   row: number
 }
 
-// 创建维修工单请求
+/** 创建维修工单请求 */
 export interface CreateRepairReq {
   title: string
   description: string
@@ -68,12 +68,12 @@ export interface CreateRepairReq {
   communityId?: string
 }
 
-// 更新维修工单请求
+/** 更新维修工单请求 */
 export interface UpdateRepairReq extends Partial<CreateRepairReq> {
   repairId: string
 }
 
-// 维修工单统计
+/** 维修工单统计 */
 export interface RepairStatistics {
   total: number
   statusStats: Record<RepairStatus, number>

@@ -1,13 +1,13 @@
-// 认证模式类型
+/** 认证模式类型 */
 export type AuthMode = 'single' | 'double'
 
-// 单Token响应类型
+/** 单Token响应类型 */
 export interface ISingleTokenRes {
   token: string
   expiresIn: number // 有效期(秒)
 }
 
-// 双Token响应类型
+/** 双Token响应类型 */
 export interface IDoubleTokenRes {
   accessToken: string
   refreshToken: string
@@ -31,7 +31,7 @@ export interface IUserInfoRes {
   [key: string]: any // 允许其他扩展字段
 }
 
-// 认证存储数据结构
+/** 认证存储数据结构 */
 export interface AuthStorage {
   mode: AuthMode
   tokens: ISingleTokenRes | IDoubleTokenRes

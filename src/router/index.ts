@@ -7,9 +7,9 @@ import { removeRouteGuards, setupRouteGuards } from './guards'
 import { TypedRouter } from './helpers'
 import { routeInterceptor } from './interceptor'
 
-// 导出配置
+/** 导出配置 */
 export * from './config'
-// 导出类型安全的路由工具
+/** 导出类型安全的路由工具 */
 export {
   goBack,
   isValidRoute,
@@ -24,7 +24,7 @@ export {
 
 export type { PageParams, PageRoute, TabRoute } from '@/types/routes'
 
-// 路由管理器类
+/** 路由管理器类 */
 export class RouterManager {
   private static instance: RouterManager
   private isInitialized = false
@@ -102,7 +102,7 @@ export class RouterManager {
   }
 }
 
-// 便捷的导出函数
+/** 便捷的导出函数 */
 export const router = RouterManager.getInstance()
 
 /**
@@ -119,7 +119,7 @@ export function destroyRouter() {
   router.destroy()
 }
 
-// 导出常用的路由跳转函数（向后兼容）
+/** 导出常用的路由跳转函数（向后兼容） */
 export const {
   toRepairList,
   toRepairDetail,
@@ -136,7 +136,7 @@ export const {
   toMe,
 } = TypedRouter
 
-// 路由工具函数
+/** 路由工具函数 */
 export function getCurrentRoute() {
   const pages = getCurrentPages()
   if (pages.length === 0)

@@ -4,10 +4,10 @@
 
 import type { PaginationParams, StatusType } from './api'
 
-// 公告类型
+/** 公告类型 */
 export type AnnouncementType = 'NOTICE' | 'EVENT' | 'MAINTENANCE' | 'URGENT'
 
-// 公告信息
+/** 公告信息 */
 export interface Announcement {
   announcementId: string
   title: string
@@ -22,10 +22,10 @@ export interface Announcement {
   viewCount: number
   communityId: string
   attachments?: string[]
-  targetAudience?: string[] // 目标受众（全体/特定楼栋等）
+  targetAudience?: string[]
 }
 
-// 公告列表查询参数
+/** 公告列表查询参数 */
 export interface AnnouncementListParams extends PaginationParams {
   communityId?: string
   type?: AnnouncementType

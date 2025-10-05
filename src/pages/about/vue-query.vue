@@ -9,13 +9,13 @@ definePage({
   },
 })
 
-// 简单使用
+/** 简单使用 */
 onShow(async () => {
   const res = await foo()
   console.log('res: ', res)
 })
 
-// vue-query 版
+/** vue-query 版 */
 const {
   data,
   error,

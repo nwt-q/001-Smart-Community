@@ -9,7 +9,7 @@ import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddr
 
 // ==================== 维修数据生成器 ====================
 
-// 维修类型配置
+/** 维修类型配置 */
 const REPAIR_TYPES: RepairType[] = [
   '水电维修',
   '门窗维修',
@@ -20,7 +20,7 @@ const REPAIR_TYPES: RepairType[] = [
   '其他维修',
 ]
 
-// 维修状态配置
+/** 维修状态配置 */
 const REPAIR_STATUSES: RepairStatus[] = [
   'PENDING',
   'ASSIGNED',
@@ -29,7 +29,7 @@ const REPAIR_STATUSES: RepairStatus[] = [
   'CANCELLED',
 ]
 
-// 生成维修描述
+/** 生成维修描述 */
 function generateRepairDescription(repairType: RepairType): string {
   const descriptions = {
     水电维修: [
@@ -87,7 +87,7 @@ function generateRepairDescription(repairType: RepairType): string {
   return typeDescriptions[Math.floor(Math.random() * typeDescriptions.length)]
 }
 
-// 核心维修数据生成器
+/** 核心维修数据生成器 */
 function createMockRepair(id: string): RepairOrder {
   const repairType = REPAIR_TYPES[Math.floor(Math.random() * REPAIR_TYPES.length)]
   const status = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
@@ -123,16 +123,16 @@ function createMockRepair(id: string): RepairOrder {
 // ==================== 维修数据库对象 ====================
 
 const mockRepairDatabase = {
-  // 初始化数据
+  /** 初始化数据 */
   repairs: Array.from({ length: 50 }, (_, index) =>
     createMockRepair((index + 1).toString().padStart(3, '0'))) as RepairOrder[],
 
-  // 获取工单详情
+  /** 获取工单详情 */
   getRepairById(repairId: string): RepairOrder | undefined {
     return this.repairs.find(repair => repair.repairId === repairId)
   },
 
-  // 获取工单列表（支持筛选和分页）
+  /** 获取工单列表（支持筛选和分页） */
   getRepairList(params: {
     page: number
     row: number
@@ -186,13 +186,13 @@ const mockRepairDatabase = {
     return createPaginationResponse(filteredRepairs, params.page, params.row)
   },
 
-  // 添加工单
+  /** 添加工单 */
   addRepair(repair: RepairOrder): RepairOrder {
     this.repairs.unshift(repair)
     return repair
   },
 
-  // 更新工单状态
+  /** 更新工单状态 */
   updateRepairStatus(repairId: string, status: RepairStatus, assignedWorker?: string): RepairOrder | null {
     const repair = this.getRepairById(repairId)
     if (repair) {
@@ -206,7 +206,7 @@ const mockRepairDatabase = {
     return null
   },
 
-  // 更新工单信息
+  /** 更新工单信息 */
   updateRepair(repairId: string, updateData: Partial<RepairOrder>): RepairOrder | null {
     const repair = this.getRepairById(repairId)
     if (repair) {
@@ -219,7 +219,7 @@ const mockRepairDatabase = {
     return null
   },
 
-  // 删除工单
+  /** 删除工单 */
   deleteRepair(repairId: string): boolean {
     const index = this.repairs.findIndex(repair => repair.repairId === repairId)
     if (index !== -1) {
@@ -233,7 +233,7 @@ const mockRepairDatabase = {
 // ==================== Mock 接口定义 ====================
 
 export default defineUniAppMock([
-  // 获取维修工单列表
+  /** 获取维修工单列表 */
   {
     url: '/app/ownerRepair.listOwnerRepairs',
     method: ['GET', 'POST'],
@@ -270,7 +270,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取维修工单详情
+  /** 获取维修工单详情 */
   {
     url: '/app/ownerRepair.queryOwnerRepair',
     method: ['GET', 'POST'],
@@ -302,7 +302,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 创建维修工单
+  /** 创建维修工单 */
   {
     url: '/app/ownerRepair.saveOwnerRepair',
     method: 'POST',
@@ -360,7 +360,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 更新维修工单状态
+  /** 更新维修工单状态 */
   {
     url: '/app/ownerRepair.updateRepairStatus',
     method: 'POST',
@@ -404,7 +404,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 分配维修工
+  /** 分配维修工 */
   {
     url: '/app/ownerRepair.assignWorker',
     method: 'POST',
@@ -441,7 +441,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 维修工单统计
+  /** 维修工单统计 */
   {
     url: '/app/ownerRepair.getRepairStatistics',
     method: ['GET', 'POST'],
@@ -501,7 +501,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 维修工单评价
+  /** 维修工单评价 */
   {
     url: '/app/ownerRepair.evaluateRepair',
     method: 'POST',
@@ -542,7 +542,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 更新维修工单
+  /** 更新维修工单 */
   {
     url: '/app/ownerRepair.updateOwnerRepair',
     method: 'POST',
@@ -572,7 +572,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 删除维修工单
+  /** 删除维修工单 */
   {
     url: '/app/ownerRepair.deleteOwnerRepair',
     method: ['DELETE', 'POST'],

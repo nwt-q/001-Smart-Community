@@ -4,7 +4,7 @@ import { defineUniAppMock } from './shared/utils'
  * 测试 Mock 插件是否正常工作
  */
 export default defineUniAppMock([
-  // 基础测试接口
+  /** 基础测试接口 */
   {
     url: '/test',
     method: 'GET',
@@ -20,7 +20,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 带参数的测试接口
+  /** 带参数的测试接口 */
   {
     url: '/test/params',
     method: ['GET', 'POST'],
@@ -36,7 +36,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 模拟错误响应
+  /** 模拟错误响应 */
   {
     url: '/test/error',
     method: 'GET',

@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { reactive, ref } from 'vue'
 import { getActivityDetail } from '@/api/activity'
 
-// 页面配置
+/** 页面配置 */
 definePage({
   style: {
     navigationBarTitleText: '活动详情',
@@ -15,13 +15,13 @@ definePage({
   },
 })
 
-// 接口参数
+/** 接口参数 */
 interface PageOptions {
   activitiesId: string
   currentCommunityId: string
 }
 
-// 响应式数据
+/** 响应式数据 */
 const activitiesId = ref<string>('')
 const currentCommunityId = ref<string>('')
 const showHeadImage = ref<boolean>(true)
@@ -36,7 +36,7 @@ const activity = reactive<Partial<Activity>>({
   src: '',
 })
 
-// 请求管理
+/** 请求管理 */
 const {
   loading,
   data: activityData,
@@ -53,7 +53,7 @@ const {
   },
 )
 
-// 方法
+/** 方法 */
 function hideHeadImage() {
   console.log('图片加载失败')
   showHeadImage.value = false
@@ -71,10 +71,10 @@ async function loadActivities() {
     if (result?.activitiess?.length > 0) {
       const activityItem = result.activitiess[0]
 
-      // 处理图片路径
+      /** 处理图片路径 */
       activityItem.src = `/api/file?fileId=${activityItem.headerImg}&communityId=${currentCommunityId.value}&time=${Date.now()}`
 
-      // 更新活动数据
+      /** 更新活动数据 */
       Object.assign(activity, activityItem)
     }
   }
@@ -88,7 +88,7 @@ async function loadActivities() {
   }
 }
 
-// 生命周期
+/** 生命周期 */
 onLoad((options: PageOptions) => {
   activitiesId.value = options.activitiesId
   currentCommunityId.value = options.currentCommunityId

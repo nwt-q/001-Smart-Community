@@ -10,7 +10,7 @@ import { defineUniAppMock, randomDelay } from './shared/utils'
 
 // ==================== 员工数据生成器 ====================
 
-// 职位配置（基于原项目的物业管理体系）
+/** 职位配置（基于原项目的物业管理体系） */
 const POSITIONS = [
   '项目经理',
   '物业主管',
@@ -22,7 +22,7 @@ const POSITIONS = [
   '行政助理',
 ]
 
-// 部门/组织配置
+/** 部门/组织配置 */
 const ORGANIZATIONS = [
   '物业管理处',
   '客服部',
@@ -33,7 +33,7 @@ const ORGANIZATIONS = [
   '行政部',
 ]
 
-// 中文姓名生成器
+/** 中文姓名生成器 */
 function generateChineseName(): string {
   const surnames = ['张', '王', '李', '赵', '刘', '陈', '杨', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗']
   const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞', '平', '刚', '桂英']
@@ -43,7 +43,7 @@ function generateChineseName(): string {
   return surname + name
 }
 
-// 电话号码生成器
+/** 电话号码生成器 */
 function generatePhoneNumber(): string {
   const prefixes = ['138', '139', '136', '137', '135', '159', '158', '150', '151', '152']
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
@@ -51,7 +51,7 @@ function generatePhoneNumber(): string {
   return prefix + suffix
 }
 
-// 获取拼音首字母（简化版）
+/** 获取拼音首字母（简化版） */
 function getInitials(name: string): string {
   const initialMap: Record<string, string> = {
     张: 'Z',
@@ -80,7 +80,7 @@ function getInitials(name: string): string {
   return initialMap[firstChar] || firstChar.toUpperCase()
 }
 
-// 核心员工数据生成器（完全匹配原项目的数据结构）
+/** 核心员工数据生成器（完全匹配原项目的数据结构） */
 function createMockStaff(id: string): Staff {
   const name = generateChineseName()
   const initials = getInitials(name)
@@ -101,16 +101,16 @@ function createMockStaff(id: string): Staff {
 // ==================== 员工数据库对象 ====================
 
 const mockStaffDatabase = {
-  // 初始化员工数据（模拟原项目的数据量）
+  /** 初始化员工数据（模拟原项目的数据量） */
   staffs: Array.from({ length: 50 }, (_, index) =>
     createMockStaff((index + 1).toString().padStart(3, '0'))) as Staff[],
 
-  // 获取员工详情
+  /** 获取员工详情 */
   getStaffById(staffId: string): Staff | undefined {
     return this.staffs.find(staff => staff.id === staffId)
   },
 
-  // 查询员工列表（完全匹配原项目的 queryStaffInfos 逻辑）
+  /** 查询员工列表（完全匹配原项目的 queryStaffInfos 逻辑） */
   queryStaffInfos(params: StaffQueryParams): StaffListResponse {
     let filteredStaffs = [...this.staffs]
 
@@ -158,18 +158,18 @@ const mockStaffDatabase = {
     }
   },
 
-  // 按部门获取员工
+  /** 按部门获取员工 */
   getStaffsByDepartment(orgName: string): Staff[] {
     return this.staffs.filter(staff => staff.orgName === orgName)
   },
 
-  // 获取所有组织
+  /** 获取所有组织 */
   getAllOrganizations(): string[] {
     const orgSet = new Set(this.staffs.map(staff => staff.orgName))
     return Array.from(orgSet).sort()
   },
 
-  // 搜索员工（增强版搜索）
+  /** 搜索员工（增强版搜索） */
   searchStaffs(keyword: string): Staff[] {
     if (!keyword?.trim()) {
       return []
@@ -185,12 +185,12 @@ const mockStaffDatabase = {
     )
   },
 
-  // 获取在线员工
+  /** 获取在线员工 */
   getOnlineStaffs(): Staff[] {
     return this.staffs.filter(staff => staff.isOnline)
   },
 
-  // 更新员工在线状态（模拟实时状态变化）
+  /** 更新员工在线状态（模拟实时状态变化） */
   updateStaffOnlineStatus(staffId: string, isOnline: boolean): Staff | null {
     const staff = this.getStaffById(staffId)
     if (staff) {
@@ -200,7 +200,7 @@ const mockStaffDatabase = {
     return null
   },
 
-  // 添加新员工（模拟数据增长）
+  /** 添加新员工（模拟数据增长） */
   addStaff(staff: Omit<Staff, 'id'>): Staff {
     const newStaff: Staff = {
       ...staff,
@@ -213,7 +213,7 @@ const mockStaffDatabase = {
 
 export default defineUniAppMock([
   // ==================== 核心接口：queryStaffInfos ====================
-  // 对应原项目的 queryStaffInfos 接口
+  /** 对应原项目的 queryStaffInfos 接口 */
   {
     url: '/app/query.staff.infos',
     method: ['GET', 'POST'],
@@ -264,6 +264,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 获取员工详情 ====================
+  /** 获取员工详情 */
   {
     url: '/app/staff/:staffId',
     method: 'GET',
@@ -289,6 +290,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 按部门获取员工列表 ====================
+  /** 按部门获取员工列表 */
   {
     url: '/app/staff/by-department',
     method: ['GET', 'POST'],
@@ -319,6 +321,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 搜索员工（增强版） ====================
+  /** 搜索员工（增强版） */
   {
     url: '/app/staff/search',
     method: ['GET', 'POST'],
@@ -351,6 +354,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 获取组织列表 ====================
+  /** 获取组织列表 */
   {
     url: '/app/staff/organizations',
     method: 'GET',
@@ -384,6 +388,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 更新员工在线状态 ====================
+  /** 更新员工在线状态 */
   {
     url: '/app/staff/update-online-status',
     method: 'POST',
@@ -420,6 +425,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 获取在线员工列表 ====================
+  /** 获取在线员工列表 */
   {
     url: '/app/staff/online',
     method: 'GET',
@@ -446,6 +452,7 @@ export default defineUniAppMock([
   },
 
   // ==================== 添加新员工（测试用） ====================
+  /** 添加新员工（测试用） */
   {
     url: '/app/staff/add',
     method: 'POST',
