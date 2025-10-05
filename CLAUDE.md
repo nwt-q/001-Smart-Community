@@ -25,9 +25,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 2. 不考虑严格的登录逻辑： 我们不做任何登录功能。关于token的存储，读取，管理，使用的功能与逻辑，在 `vue3项目` 内都不做。
 3. 不考虑严格的鉴权逻辑： 我们不做任何鉴权功能。在跳转路由的时候，`vue3项目` 不做任何形式的鉴权处理。任何页面都可以随意跳转，任意访问。
 
-## markdown文档的table编写格式
+## markdown 文档的 table 编写格式
 
-每当你在markdown文档内编写表格时，表格的格式一定是**居中对齐**的，必须满足**居中对齐**的格式要求。
+每当你在 markdown 文档内编写表格时，表格的格式一定是**居中对齐**的，必须满足**居中对齐**的格式要求。
+
+## javascript / typescript 的代码注释写法
+
+代码注释写法应该写成jsdoc格式。而不是单纯的双斜杠注释。比如：
+
+不合适的双斜线注释写法如下：
+
+```ts
+// 模拟成功响应
+export function successResponse<T>(data: T, message: string = '操作成功') {
+  return {
+    success: true,
+    code: ResultEnum.Success,
+    message,
+    data,
+    timestamp: Date.now(),
+  }
+}
+```
+
+合适的，满足期望的 jsdoc 注释写法如下：
+
+```ts
+/** 模拟成功响应 */
+export function successResponse<T>(data: T, message: string = '操作成功') {
+  return {
+    success: true,
+    code: ResultEnum.Success,
+    message,
+    data,
+    timestamp: Date.now(),
+  }
+}
+```
 
 ## 项目概述
 
