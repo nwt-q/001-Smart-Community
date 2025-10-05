@@ -300,6 +300,15 @@
 
 最终，我预期希望看到 `navigation.ts` 文件的内容被迁移到其他文件内。且该文件被删除。
 
+### 028 迁移 `ActivityNavigation` 为 `TypedRouter`
+
+请阅读以下文件：
+
+- ROUTE-MIGRATION-REPORT.md
+- src\router\helpers.ts
+
+在 `本项目` 内，将 ActivityNavigation 全部替换成 TypedRouter 提供的路由跳转工具。然后删掉 ActivityNavigation 。实现对 ActivityNavigation 的全量替换
+
 ### 027 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 
 <!-- TODO: -->
