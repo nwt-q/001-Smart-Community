@@ -172,7 +172,7 @@ export function isValidRoute(path: string): path is PageRoute {
     '/pages/me/me',
     '/pages/login/login',
     '/pages/address/list',
-    '/pages/activity/activities',
+    '/pages/activity/index',
     '/pages/activity/detail',
     '/pages-sub/repair/order-list',
     '/pages-sub/repair/add-order',

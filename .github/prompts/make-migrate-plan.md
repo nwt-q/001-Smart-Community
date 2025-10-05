@@ -311,8 +311,6 @@
 
 ### 029 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 
-<!-- TODO: -->
-
 文件 `src\pages\activity\activities.vue` 不满足 `route-migration` 子代理的设计要求。
 
 文件 `src\pages\activity\activities.vue` 原本是从 `gitee-example/pages/activityes/activityes.vue` 文件迁移过来的，预期应该是 `src/pages/activity/index.vue` 文件。

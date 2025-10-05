@@ -16,7 +16,7 @@ export const LOGIN_PAGE_LIST = [LOGIN_PAGE, REGISTER_PAGE]
 export const EXCLUDE_PAGE_LIST: string[] = [
   // 根据项目原则：不做任何鉴权处理，任何页面都可以随意跳转
   // 以下配置保留供未来扩展使用：
-  // '/pages/activity/activities', // 社区活动列表需要登录
+  // '/pages/activity/index', // 社区活动列表需要登录
   // '/pages/activity/detail', // 活动详情需要登录
   // '/pages/me/me', // 个人中心需要登录
 ]

@@ -70,7 +70,7 @@
       }
     },
     {
-      "path": "pages/activity/activities",
+      "path": "pages/activity/index",
       "type": "page",
       "name": "Activities",
       "style": {

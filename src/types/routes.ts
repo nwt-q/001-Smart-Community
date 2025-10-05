@@ -11,7 +11,7 @@ export type PageRoute
     | '/pages/me/me'
     | '/pages/login/login'
     | '/pages/address/list'
-    | '/pages/activity/activities'
+    | '/pages/activity/index'
     | '/pages/activity/detail'
   // 分包页面
     | '/pages-sub/repair/order-list'
@@ -38,7 +38,7 @@ export interface PageParams {
     redirect?: string
   }
   '/pages/address/list': {}
-  '/pages/activity/activities': {
+  '/pages/activity/index': {
     currentCommunityId: string
   }
   '/pages/activity/detail': {
