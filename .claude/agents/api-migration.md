@@ -50,6 +50,126 @@ url: '/app/ownerRepair.listOwnerRepairs'
 - 直接使用后端真实的业务路径结构（如 `/app/模块.方法`）
 - 这样可以确保 Mock 接口与实际后端接口路径保持一致，并且环境配置灵活
 
+### Mock 接口返回值格式规范
+
+**🔴 强制要求**: 所有 Mock 接口的返回值必须使用统一的响应格式函数进行包装。
+
+#### 响应格式函数说明
+
+从 `./shared/utils` 导入两个核心函数：
+
+```typescript
+import { successResponse, errorResponse } from './shared/utils'
+```
+
+**1. successResponse - 成功响应函数**
+
+```typescript
+/**
+ * 生成成功响应
+ * @param data - 返回的业务数据
+ * @param message - 成功提示信息（可选，默认 '操作成功'）
+ */
+successResponse<T>(data: T, message?: string)
+```
+
+**返回格式**:
+
+```typescript
+{
+  success: true,
+  code: '0',
+  message: '操作成功',
+  data: T,
+  timestamp: number
+}
+```
+
+**2. errorResponse - 失败响应函数**
+
+```typescript
+/**
+ * 生成错误响应
+ * @param message - 错误提示信息
+ * @param code - 错误代码（可选，默认 '500'）
+ */
+errorResponse(message: string, code?: string)
+```
+
+**返回格式**:
+
+```typescript
+{
+  success: false,
+  code: string,
+  message: string,
+  data: null,
+  timestamp: number
+}
+```
+
+#### 使用示例
+
+**✅ 正确的返回值写法**:
+
+```typescript
+// 成功情况 - 返回列表数据
+return successResponse(
+  {
+    list: activities,
+    total: 100,
+    page: 1,
+    pageSize: 10,
+  },
+  '查询成功',
+)
+
+// 成功情况 - 返回单个对象
+return successResponse(activity, '获取活动详情成功')
+
+// 失败情况 - 资源不存在
+if (!activity) {
+  return errorResponse('活动不存在', '404')
+}
+
+// 失败情况 - 参数错误
+if (!params.activityId) {
+  return errorResponse('活动ID不能为空', '400')
+}
+
+// 失败情况 - 业务逻辑错误
+if (activity.status === 'CLOSED') {
+  return errorResponse('活动已关闭，无法修改', '403')
+}
+```
+
+**❌ 错误的返回值写法**:
+
+```typescript
+// ❌ 错误：手动构造返回对象
+return {
+  code: '0',
+  message: '成功',
+  data: activity,
+}
+
+// ❌ 错误：直接返回数据
+return activity
+
+// ❌ 错误：使用不一致的字段名
+return {
+  status: 'success',
+  result: activity,
+}
+```
+
+#### 强制规范说明
+
+1. **100% 使用规范函数**: 禁止手动构造返回对象
+2. **字段一致性**: 确保所有接口响应格式完全一致
+3. **类型安全**: `successResponse<T>` 支持泛型，确保数据类型正确
+4. **语义清晰**: `success` 字段明确标识请求成功/失败状态
+
 ## 技术栈对比
 
 ### Vue2 项目网络请求架构
@@ -418,7 +538,7 @@ export function formatErrorResponse(message: string, code: string = '9999') {
 
 ```typescript
 // src/api/mock/maintainance.mock.ts
-import { defineUniAppMock } from '@/api/mock/shared/utils'
+import { defineUniAppMock, successResponse, errorResponse } from '@/api/mock/shared/utils'
 // 1. 🔴 必须：导入拆分后的业务类型
 import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from '@/types/repair'
 import type { PaginationResponse } from '@/types/api'
@@ -582,13 +702,16 @@ export default defineUniAppMock([
       })
 
       console.log('🚀 Mock API: listOwnerRepairs', params, '→', `${result.list.length} items`)
-      // 返回类型必须符合 PaginationResponse<RepairOrder>
-      return {
-        ownerRepairs: result.list,
-        total: result.total,
-        page: result.page,
-        row: result.pageSize,
-      }
+      // 🔴 必须：使用 successResponse 函数包装返回值
+      return successResponse(
+        {
+          ownerRepairs: result.list,
+          total: result.total,
+          page: result.page,
+          row: result.pageSize,
+        },
+        '查询成功',
+      )
     },
   },
 
@@ -599,18 +722,16 @@ export default defineUniAppMock([
     delay: 200,
     body: async ({ query, body }) => {
       const params = { ...query, ...body }
-      const task = mockDb.getTaskById(params.taskId)
+      const task = mockRepairDatabase.getRepairById(params.repairId)
 
+      // 🔴 必须：失败情况使用 errorResponse 函数
       if (!task) {
-        return {
-          status: 404,
-          statusText: 'Not Found',
-          body: { error: '任务不存在' },
-        }
+        return errorResponse('维修工单不存在', '404')
       }
 
       console.log('🚀 Mock API: getOwnerRepair', params, '→', task.title)
-      return task
+      // 🔴 必须：成功情况使用 successResponse 函数
+      return successResponse(task, '查询成功')
     },
   },
 
@@ -620,19 +741,17 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 600,
     body: async ({ body }) => {
-      const data = body as UpdateMaintainanceTaskReq
-      const updatedTask = mockDb.updateTask(data.taskId, data)
+      const data = body as UpdateRepairReq
+      const updatedTask = mockRepairDatabase.updateRepairStatus(data.repairId, data.status, data.assignedWorker)
 
+      // 🔴 必须：失败情况使用 errorResponse 函数
       if (!updatedTask) {
-        return {
-          status: 400,
-          statusText: 'Bad Request',
-          body: { error: '更新失败，任务不存在' },
-        }
+        return errorResponse('更新失败，维修工单不存在', '400')
       }
 
       console.log('🚀 Mock API: updateOwnerRepair', data, '→', updatedTask.title)
-      return updatedTask
+      // 🔴 必须：成功情况使用 successResponse 函数
+      return successResponse(updatedTask, '更新成功')
     },
   },
 
@@ -642,9 +761,10 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 800,
     body: async ({ body }) => {
-      const newTask = mockDb.createTask(body)
+      const newTask = mockRepairDatabase.createRepair(body as CreateRepairReq)
       console.log('🚀 Mock API: saveOwnerRepair', body.title, '→', newTask)
-      return newTask
+      // 🔴 必须：使用 successResponse 函数包装返回值
+      return successResponse(newTask, '创建成功')
     },
   },
 
@@ -655,11 +775,16 @@ export default defineUniAppMock([
     delay: 400,
     body: async ({ query, body }) => {
       const params = { ...query, ...body }
-      const success = mockDb.deleteTask(params.taskId)
-      const result = { success }
+      const success = mockRepairDatabase.deleteRepair(params.repairId)
 
-      console.log('🚀 Mock API: deleteOwnerRepair', params.taskId, '→', success)
-      return result
+      // 🔴 必须：根据结果使用对应的响应函数
+      console.log('🚀 Mock API: deleteOwnerRepair', params.repairId, '→', success)
+
+      if (success) {
+        return successResponse({ success: true }, '删除成功')
+      } else {
+        return errorResponse('删除失败，维修工单不存在', '400')
+      }
     },
   },
 
@@ -1185,6 +1310,11 @@ const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
 - ✅ Mock 文件都在 `src/api/mock` 目录下
 - ✅ 使用 `defineUniAppMock()` 而非原生 `defineMock()` 函数
 - ✅ API 接口保持与原项目相同的 URL 路径
+- ✅ **Mock 接口返回值必须使用统一的响应格式函数**:
+  - 成功响应: 必须使用 `successResponse<T>(data, message?)` 函数包装
+  - 失败响应: 必须使用 `errorResponse(message, code?)` 函数包装
+  - 这两个函数从 `./shared/utils` 导入
+  - 禁止手动构造返回对象，确保响应格式的一致性
 
 **🆕 类型安全要求**:
 

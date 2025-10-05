@@ -321,8 +321,6 @@
 
 ### 030 修改 `api-migration` api 迁移子代理，正确约束 mock 返回字段
 
-<!-- TODO: -->
-
 请深度思考。
 
 请修改 `api-migration` 子代理，在`基础格式要求`一栏，增加要求。要求以后生成 mock 接口时，其返回值格式必须用统一的 `successResponse` 和 `errorResponse` 函数来约束。
