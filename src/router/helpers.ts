@@ -187,23 +187,6 @@ export function isValidRoute(path: string): path is PageRoute {
   return validRoutes.includes(path as PageRoute)
 }
 
-// 活动模块路由导航工具类
-export class ActivityNavigation {
-  /**
-   * 跳转到社区活动列表
-   */
-  static toActivityList(currentCommunityId: string) {
-    return navigateToTyped('/pages/activity/activities', { currentCommunityId })
-  }
-
-  /**
-   * 跳转到活动详情
-   */
-  static toActivityDetail(activitiesId: string, currentCommunityId: string) {
-    return navigateToTyped('/pages/activity/detail', { activitiesId, currentCommunityId })
-  }
-}
-
 // 通用导航工具类
 export class NavigationUtils {
   /**
@@ -283,5 +266,4 @@ export class NavigationUtils {
 }
 
 // 导出便捷别名
-export { ActivityNavigation as Activity }
 export { NavigationUtils as Nav }

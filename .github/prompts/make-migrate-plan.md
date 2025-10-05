@@ -302,12 +302,12 @@
 
 ### 028 迁移 `ActivityNavigation` 为 `TypedRouter`
 
-请阅读以下文件：
+请深度思考。请阅读以下文件：
 
 - ROUTE-MIGRATION-REPORT.md
 - src\router\helpers.ts
 
-在 `本项目` 内，将 ActivityNavigation 全部替换成 TypedRouter 提供的路由跳转工具。然后删掉 ActivityNavigation 。实现对 ActivityNavigation 的全量替换
+在 `本项目` 内，将 ActivityNavigation 全部替换成 TypedRouter 提供的路由跳转工具。然后删掉 ActivityNavigation 。实现对 ActivityNavigation 的全量替换。
 
 ### 027 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 

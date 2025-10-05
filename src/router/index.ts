@@ -11,8 +11,6 @@ import { routeInterceptor } from './interceptor'
 export * from './config'
 // 导出类型安全的路由工具
 export {
-  Activity,
-  ActivityNavigation,
   goBack,
   isValidRoute,
   Nav,

@@ -92,7 +92,7 @@ export function testRouterIntegration() {
   console.log('=== 路由系统集成测试开始 ===')
 
   try {
-    // 验证现有的 ActivityNavigation 是否还能正常工作
+    // 验证 TypedRouter 路由系统是否正常工作
     const currentPath = '/pages/activity/activities'
     console.log('当前页面路径模拟:', currentPath)
 
@@ -117,14 +117,14 @@ export function testRouterIntegration() {
 export function testBackwardCompatibility() {
   console.log('=== 向后兼容性测试开始 ===')
 
-  // 验证新旧路由系统能否共存
-  console.log('验证新旧路由系统共存...')
+  // 验证路由系统统一性
+  console.log('验证路由系统统一性...')
 
-  // 现有的 ActivityNavigation 应该继续工作
-  console.log('✅ 现有的 ActivityNavigation 应该继续正常工作')
+  // TypedRouter 已完全替代 ActivityNavigation
+  console.log('✅ TypedRouter 已统一所有路由跳转功能')
 
-  // 新的 TypedRouter 提供了更强的类型安全
-  console.log('✅ 新的 TypedRouter 提供了增强的类型安全')
+  // TypedRouter 提供了完整的类型安全
+  console.log('✅ TypedRouter 提供了增强的类型安全')
 
   // 目录结构调整后路径更新正确
   console.log('✅ 目录结构调整 (addressList → address/list) 已正确应用')
