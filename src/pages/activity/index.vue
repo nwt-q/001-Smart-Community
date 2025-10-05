@@ -1,3 +1,8 @@
+<!--
+  快速访问地址 请不要删除
+  /pages/activity/index?currentCommunityId=COMM_001
+-->
+
 <script setup lang="ts">
 import type { Activity, ActivityListParams, ActivityListResponse } from '@/types/activity'
 import { onLoad, onPullDownRefresh, onReachBottom, onShow } from '@dcloudio/uni-app'
@@ -307,43 +312,39 @@ onReachBottom(() => {
 </script>
 
 <template>
-  <view class="activities-container min-h-screen bg-gray-50">
+  <view class="activities-page">
     <!-- 顶部加载状态 -->
-    <view v-if="loading && currentPage === 1" class="flex justify-center py-8">
+    <view v-if="loading && currentPage === 1" class="loading-container">
       <wd-loading size="24px" color="#368CFE" />
-      <text class="ml-2 text-sm text-gray-600">加载中...</text>
+      <text class="loading-text">加载中...</text>
     </view>
 
     <!-- 活动列表 -->
-    <view v-if="activities.length > 0" class="pb-4">
-      <wd-card
+    <view v-if="activities.length > 0" class="activities-list">
+      <view
         v-for="(item, index) in activities"
         :key="`${item.activitiesId}_${index}`"
-        class="mx-4 mt-4 cursor-pointer overflow-hidden transition-shadow hover:shadow-lg"
+        class="activity-card-wrapper"
         @click="navigateToDetail(item)"
       >
-        <!-- 活动图片区域 -->
-        <template #header>
-          <view class="relative">
-            <wd-img
+        <!-- 活动卡片 -->
+        <view class="activity-card">
+          <!-- 活动图片区域 -->
+          <view class="image-container">
+            <image
               :src="item.src"
-              width="100%"
-              height="180px"
-              fit="cover"
-              loading-type="default"
-              error-type="image"
-              class="block"
-              :lazy="true"
+              class="activity-image"
+              mode="aspectFill"
             />
 
             <!-- 活动状态标签 -->
-            <view class="absolute right-2 top-2">
+            <view class="status-tag-wrapper">
               <wd-tag
                 v-if="dayjs().isAfter(dayjs(item.endTime))"
                 type="primary"
                 size="small"
                 plain
-                class="bg-black/50 text-white"
+                class="status-tag"
               >
                 已结束
               </wd-tag>
@@ -352,7 +353,7 @@ onReachBottom(() => {
                 type="warning"
                 size="small"
                 plain
-                class="bg-black/50 text-white"
+                class="status-tag"
               >
                 未开始
               </wd-tag>
@@ -361,75 +362,69 @@ onReachBottom(() => {
                 type="success"
                 size="small"
                 plain
-                class="bg-black/50 text-white"
+                class="status-tag"
               >
                 进行中
               </wd-tag>
             </view>
 
             <!-- 底部渐变遮罩和标题 -->
-            <view class="absolute bottom-0 left-0 right-0 from-black/70 to-transparent bg-gradient-to-t px-4 py-3">
-              <text class="line-clamp-2 text-base text-white font-medium leading-relaxed">{{ item.title }}</text>
+            <view class="title-overlay">
+              <text class="activity-title line-clamp-2">{{ item.title }}</text>
             </view>
           </view>
-        </template>
 
-        <!-- 活动信息区域 -->
-        <template #body>
-          <wd-cell-group :border="false">
-            <wd-cell>
-              <template #icon>
-                <!-- 发布者头像（可以后续替换为真实头像） -->
-                <view class="mr-3 h-12 w-12 flex flex-shrink-0 items-center justify-center rounded-full from-blue-400 to-purple-500 bg-gradient-to-br text-white">
-                  <text class="text-sm font-medium">{{ item.userName?.charAt(0) || 'A' }}</text>
+          <!-- 活动信息区域 -->
+          <view class="card-body">
+            <view class="user-section">
+              <!-- 发布者头像 -->
+              <view class="user-avatar">
+                <text class="avatar-text">{{ item.userName?.charAt(0) || 'A' }}</text>
+              </view>
+
+              <view class="user-content">
+                <view class="user-info">
+                  <text class="user-name">{{ item.userName || '管理员' }}</text>
+                  <text class="create-time">{{ item.formattedCreateTime }}</text>
                 </view>
-              </template>
 
-              <template #title>
-                <view class="flex items-center justify-between">
-                  <text class="text-sm text-gray-600 font-medium">{{ item.userName || '管理员' }}</text>
-                  <text class="text-xs text-gray-400">{{ item.formattedCreateTime }}</text>
-                </view>
-              </template>
-
-              <template #label>
                 <!-- 活动内容预览 -->
-                <view v-if="item.context" class="mb-3 mt-2">
-                  <text class="line-clamp-2 text-sm text-gray-600 leading-relaxed">{{ stripHtmlAndTruncate(item.context, 80) }}</text>
+                <view v-if="item.context" class="activity-context">
+                  <text class="context-text line-clamp-2">{{ stripHtmlAndTruncate(item.context, 80) }}</text>
                 </view>
 
                 <!-- 活动时间信息 -->
-                <view class="mb-3 rounded-lg bg-gray-50 p-3">
-                  <view class="mb-1 flex items-center">
-                    <text class="i-carbon-time mr-1 text-14px text-[#368CFE]" />
-                    <text class="text-xs text-gray-500">活动时间</text>
+                <view class="time-info-box">
+                  <view class="time-label">
+                    <text class="i-carbon-time time-icon" />
+                    <text class="time-label-text">活动时间</text>
                   </view>
-                  <text class="text-sm text-gray-700 font-medium">
+                  <text class="time-value">
                     {{ item.formattedStartTime }}
-                    <text v-if="item.endTime" class="text-gray-400"> ~ {{ formatTime(item.endTime) }}</text>
+                    <text v-if="item.endTime" class="time-separator"> ~ {{ formatTime(item.endTime) }}</text>
                   </text>
                 </view>
 
                 <!-- 统计信息栏 -->
-                <view class="flex items-center justify-between border-t border-gray-100 pt-2">
+                <view class="stats-bar">
                   <!-- 统计数据 -->
-                  <view class="flex items-center gap-4 text-sm text-gray-500">
+                  <view class="stats-list">
                     <!-- 浏览量 -->
-                    <view class="flex items-center gap-1">
-                      <text class="i-carbon-view text-14px text-[#9ca3af]" />
-                      <text>{{ formatNumber(item.readCount) }}</text>
+                    <view class="stat-item">
+                      <text class="i-carbon-view stat-icon" />
+                      <text class="stat-value">{{ formatNumber(item.readCount) }}</text>
                     </view>
 
                     <!-- 点赞数 -->
-                    <view class="flex items-center gap-1">
-                      <text class="i-carbon-thumbs-up text-14px text-[#9ca3af]" />
-                      <text>{{ formatNumber(item.likeCount) }}</text>
+                    <view class="stat-item">
+                      <text class="i-carbon-thumbs-up stat-icon" />
+                      <text class="stat-value">{{ formatNumber(item.likeCount) }}</text>
                     </view>
 
-                    <!-- 评论数（预留） -->
-                    <view class="flex items-center gap-1">
-                      <text class="i-carbon-chat text-14px text-[#9ca3af]" />
-                      <text>{{ formatNumber(item.collectCount) }}</text>
+                    <!-- 收藏数 -->
+                    <view class="stat-item">
+                      <text class="i-carbon-chat stat-icon" />
+                      <text class="stat-value">{{ formatNumber(item.collectCount) }}</text>
                     </view>
                   </view>
 
@@ -439,47 +434,47 @@ onReachBottom(() => {
                     size="small"
                     plain
                     round
-                    class="px-4"
+                    class="detail-button"
                   >
                     查看详情
                   </wd-button>
                 </view>
-              </template>
-            </wd-cell>
-          </wd-cell-group>
-        </template>
-      </wd-card>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
     </view>
 
     <!-- 加载更多状态 -->
-    <view v-if="showLoadMore" class="flex justify-center py-4">
+    <view v-if="showLoadMore" class="load-more-container">
       <wd-loading v-if="isLoadingMore" size="20px" color="#368CFE" />
-      <text v-if="isLoadingMore" class="ml-2 text-sm text-gray-500">加载更多...</text>
-      <text v-else-if="!hasMore && activities.length > 0" class="text-sm text-gray-400">没有更多了</text>
+      <text v-if="isLoadingMore" class="load-more-text">加载更多...</text>
+      <text v-else-if="!hasMore && activities.length > 0" class="no-more-text">没有更多了</text>
     </view>
 
     <!-- 空状态 -->
-    <view v-if="isEmpty" class="flex flex-col items-center justify-center py-20">
+    <view v-if="isEmpty" class="empty-container">
       <wd-status-tip
         image="content"
         tip="暂无活动"
         :image-size="{ height: 120, width: 120 }"
       />
-      <view class="mt-4 text-center">
-        <text class="mb-2 block text-gray-400">暂时没有社区活动</text>
-        <text class="block text-sm text-gray-300">请稍后再来看看吧</text>
+      <view class="empty-tip">
+        <text class="empty-text">暂时没有社区活动</text>
+        <text class="empty-sub-text">请稍后再来看看吧</text>
       </view>
     </view>
 
     <!-- 错误状态 -->
-    <view v-if="error && isEmpty" class="flex flex-col items-center justify-center py-20">
+    <view v-if="error && isEmpty" class="error-container">
       <wd-status-tip
         image="network"
         tip="加载失败"
         :image-size="{ height: 120, width: 120 }"
       />
-      <view class="mt-4 text-center">
-        <text class="mb-2 block text-red-400">{{ error }}</text>
+      <view class="error-tip">
+        <text class="error-text">{{ error }}</text>
         <wd-button
           type="primary"
           size="small"
@@ -495,58 +490,307 @@ onReachBottom(() => {
 </template>
 
 <style scoped>
-.activities-container {
-  @apply bg-gray-50 min-h-screen;
+/** 页面容器 */
+.activities-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 20rpx;
 }
 
-/* wot-design-uni 组件样式优化 */
-.activities-container :deep(.wd-loading) {
-  @apply flex justify-center items-center;
+/** 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60rpx 0;
 }
 
-.activities-container :deep(.wd-card) {
-  @apply shadow-sm border-0 rounded-xl;
-  transition: box-shadow 0.2s ease-in-out;
+.loading-text {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #666;
 }
 
-.activities-container :deep(.wd-card:hover) {
-  @apply shadow-md;
+/** 活动列表容器 */
+.activities-list {
+  width: 100%;
+  padding: 0;
 }
 
-.activities-container :deep(.wd-card__header) {
-  @apply p-0 overflow-hidden rounded-t-xl;
+/** 活动卡片包装器 */
+.activity-card-wrapper {
+  margin: 24rpx 32rpx;
 }
 
-.activities-container :deep(.wd-card__body) {
-  @apply p-0;
+/** 活动卡片样式 */
+.activity-card {
+  background-color: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
-.activities-container :deep(.wd-cell) {
-  @apply px-4 py-3;
+.activity-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.12);
 }
 
-.activities-container :deep(.wd-cell__body) {
-  @apply items-start;
+/** 图片容器 */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 360rpx;
+  overflow: hidden;
 }
 
-.activities-container :deep(.wd-cell__icon) {
-  @apply flex items-start pt-1;
+.activity-image {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-/* Tag 组件优化 */
-.activities-container :deep(.wd-tag) {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+/** 状态标签定位 */
+.status-tag-wrapper {
+  position: absolute;
+  right: 16rpx;
+  top: 16rpx;
+  z-index: 2;
 }
 
-/* Button 组件优化 */
-.activities-container :deep(.wd-button--mini.wd-button--plain) {
-  @apply border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600;
-  font-size: 12px;
-  padding: 4px 12px;
+.status-tag {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  backdrop-filter: blur(16rpx);
+  -webkit-backdrop-filter: blur(16rpx);
 }
 
-/* 文本截断样式 */
+/** 标题遮罩层 */
+.title-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 32rpx;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  z-index: 1;
+}
+
+.activity-title {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/** 卡片内容区域 */
+.card-body {
+  padding: 24rpx 32rpx;
+}
+
+/** 用户区域 */
+.user-section {
+  display: flex;
+  align-items: flex-start;
+}
+
+/** 用户头像 */
+.user-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.avatar-text {
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/** 用户内容区 */
+.user-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/** 用户信息 */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.user-name {
+  color: #4b5563;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.create-time {
+  color: #9ca3af;
+  font-size: 24rpx;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+/** 活动内容预览 */
+.activity-context {
+  margin-top: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.context-text {
+  color: #4b5563;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/** 时间信息框 */
+.time-info-box {
+  margin-bottom: 24rpx;
+  padding: 24rpx;
+  background-color: #f9fafb;
+  border-radius: 16rpx;
+}
+
+.time-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.time-icon {
+  font-size: 28rpx;
+  color: #368cfe;
+  margin-right: 8rpx;
+}
+
+.time-label-text {
+  color: #6b7280;
+  font-size: 24rpx;
+}
+
+.time-value {
+  color: #374151;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.time-separator {
+  color: #9ca3af;
+}
+
+/** 统计信息栏 */
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1rpx solid #f3f4f6;
+  padding-top: 16rpx;
+}
+
+.stats-list {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  color: #6b7280;
+  font-size: 28rpx;
+}
+
+.stat-icon {
+  font-size: 28rpx;
+  color: #9ca3af;
+}
+
+.stat-value {
+  color: #6b7280;
+}
+
+.detail-button {
+  flex-shrink: 0;
+}
+
+/** 加载更多状态 */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32rpx 0;
+}
+
+.load-more-text {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #9ca3af;
+}
+
+.no-more-text {
+  font-size: 28rpx;
+  color: #d1d5db;
+}
+
+/** 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 0;
+}
+
+.empty-tip {
+  margin-top: 32rpx;
+  text-align: center;
+}
+
+.empty-text {
+  display: block;
+  margin-bottom: 16rpx;
+  color: #9ca3af;
+  font-size: 28rpx;
+}
+
+.empty-sub-text {
+  display: block;
+  color: #d1d5db;
+  font-size: 24rpx;
+}
+
+/** 错误状态 */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 0;
+}
+
+.error-tip {
+  margin-top: 32rpx;
+  text-align: center;
+}
+
+.error-text {
+  display: block;
+  margin-bottom: 16rpx;
+  color: #f87171;
+  font-size: 28rpx;
+}
+
+/** 文本截断工具类 */
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -567,81 +811,5 @@ onReachBottom(() => {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* 过渡动画 */
-.transition-shadow {
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.hover\:shadow-lg:hover {
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-/* 渐变背景优化 */
-.bg-gradient-to-t {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
-}
-
-.bg-gradient-to-br {
-  background: linear-gradient(to bottom right, var(--tw-gradient-stops));
-}
-
-/* 响应式优化 */
-@media (min-width: 640px) {
-  .activities-container {
-    @apply px-6;
-  }
-}
-
-@media (min-width: 768px) {
-  .activities-container {
-    @apply px-8;
-  }
-
-  .activities-container :deep(.wd-card) {
-    @apply max-w-2xl mx-auto;
-  }
-}
-
-@media (min-width: 1024px) {
-  .activities-container {
-    @apply px-12;
-  }
-
-  .activities-container :deep(.wd-card) {
-    @apply max-w-3xl;
-  }
-}
-
-/* 暗黑模式支持（预留） */
-@media (prefers-color-scheme: dark) {
-  .activities-container {
-    @apply bg-gray-900;
-  }
-
-  .activities-container :deep(.wd-card) {
-    @apply bg-gray-800 border-gray-700;
-  }
-}
-
-/* 高对比度模式支持 */
-@media (prefers-contrast: high) {
-  .activities-container :deep(.wd-card) {
-    @apply border-2 border-gray-900;
-  }
-}
-
-/* 减少动画模式 */
-@media (prefers-reduced-motion: reduce) {
-  .transition-shadow {
-    transition: none;
-  }
-
-  .activities-container :deep(.wd-card) {
-    transition: none;
-  }
 }
 </style>

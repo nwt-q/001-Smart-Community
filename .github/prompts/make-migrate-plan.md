@@ -349,7 +349,7 @@
 1. 确保 mock 接口文件，其返回的 mock 接口，都充分的使用了 `src\api\mock\shared\utils.ts` 提供的工具。比如 `successResponse` 和 `errorResponse` 函数。请规范接口返回的数据格式。
 2. 确保 mock 接口文件，都使用了 `mockLog` 函数来规范日志输出结果。
 
-### 031 出示报告
+### 032
 
 <!-- TODO -->
 
