@@ -309,7 +309,7 @@
 
 在 `本项目` 内，将 ActivityNavigation 全部替换成 TypedRouter 提供的路由跳转工具。然后删掉 ActivityNavigation 。实现对 ActivityNavigation 的全量替换。
 
-### 027 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
+### 029 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 
 <!-- TODO: -->
 
@@ -321,10 +321,26 @@
 2. 请你首先修改子代理，然后运行子代理，并用子代理修复这个路由更新映射不正确的问题。
 3. 请你确保文件移动后，其他引用的文件路径都正确，避免出现找不到的错误。
 
-### 028 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
+### 030 修改 `api-migration` api 迁移子代理，正确约束 mock 返回字段
+
+<!-- TODO: -->
+
+请深度思考。
+
+请修改 `api-migration` 子代理，在`基础格式要求`一栏，增加要求。要求以后生成 mock 接口时，其返回值格式必须用统一的 `successResponse` 和 `errorResponse` 函数来约束。
+
+### 031 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
 
 <!-- TODO -->
 
 请深度思考。
 
 请使用 `api-migration` 子代理，读取 `src\api` 目录下的文件，或者是其他相关的代码文件，确保项目满足严格的无鉴权原则。
+
+1. 确保 mock 接口文件，其返回的 mock 接口，都充分的使用了 `src\api\mock\shared\utils.ts` 提供的工具。比如 `successResponse` 和 `errorResponse` 函数。请规范接口返回的数据格式。
+
+### 031 出示报告
+
+<!-- TODO -->
+
+请深度思考。
