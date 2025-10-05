@@ -325,6 +325,16 @@
 
 请修改 `api-migration` 子代理，在`基础格式要求`一栏，增加要求。要求以后生成 mock 接口时，其返回值格式必须用统一的 `successResponse` 和 `errorResponse` 函数来约束。
 
+### 031 修改 `api-migration` api 迁移子代理，正确使用统一的 mock 日志输出工具函数
+
+请深度思考。
+
+请修改 `api-migration` 子代理，增加要求，要求 mock 日志输出的时候，统一使用 `src\api\mock\shared\utils.ts` 的 `mockLog` 函数。
+
+### 032
+
+<!-- TODO: -->
+
 ### 031 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
 
 <!-- TODO -->
@@ -334,6 +344,7 @@
 请使用 `api-migration` 子代理，读取 `src\api` 目录下的文件，或者是其他相关的代码文件，确保项目满足严格的无鉴权原则。
 
 1. 确保 mock 接口文件，其返回的 mock 接口，都充分的使用了 `src\api\mock\shared\utils.ts` 提供的工具。比如 `successResponse` 和 `errorResponse` 函数。请规范接口返回的数据格式。
+2. 确保 mock 接口文件，都使用了 `mockLog` 函数来规范日志输出结果。
 
 ### 031 出示报告
 
