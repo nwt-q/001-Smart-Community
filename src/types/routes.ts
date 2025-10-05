@@ -1,23 +1,35 @@
 /**
  * 路由系统类型定义
+ * 支持约定式路由和强类型推断
  */
 
-// 页面路由类型
+// 页面路由类型（完整版本，包含主包和分包）
 export type PageRoute
+  // 主包页面
   = | '/pages/index/index'
     | '/pages/about/about'
     | '/pages/me/me'
     | '/pages/login/login'
+    | '/pages/address/list'
     | '/pages/activity/activities'
     | '/pages/activity/detail'
+  // 分包页面
+    | '/pages-sub/repair/order-list'
+    | '/pages-sub/repair/add-order'
+    | '/pages-sub/repair/order-detail'
+    | '/pages-sub/complaint/list'
+    | '/pages-sub/complaint/detail'
+    | '/pages-sub/complaint/handle'
+    | '/pages-sub/inspection/list'
+    | '/pages-sub/inspection/execute'
 
 // Tab页面路由类型
 export type TabRoute
   = | '/pages/index/index'
-    | '/pages/about/about'
+    | '/pages/address/list'
     | '/pages/me/me'
 
-// 页面参数类型映射
+// 页面参数类型映射（强类型约束）
 export interface PageParams {
   '/pages/index/index': {}
   '/pages/about/about': {}
@@ -25,12 +37,43 @@ export interface PageParams {
   '/pages/login/login': {
     redirect?: string
   }
+  '/pages/address/list': {}
   '/pages/activity/activities': {
     currentCommunityId: string
   }
   '/pages/activity/detail': {
     activitiesId: string
     currentCommunityId: string
+  }
+  // 维修模块参数
+  '/pages-sub/repair/order-list': {
+    status?: 'pending' | 'processing' | 'completed'
+    type?: string
+  }
+  '/pages-sub/repair/add-order': {
+    communityId?: string
+  }
+  '/pages-sub/repair/order-detail': {
+    repairId: string
+    status?: string
+  }
+  // 投诉模块参数
+  '/pages-sub/complaint/list': {
+    status?: 'pending' | 'processing' | 'resolved'
+  }
+  '/pages-sub/complaint/detail': {
+    complaintId: string
+  }
+  '/pages-sub/complaint/handle': {
+    complaintId: string
+  }
+  // 巡检模块参数
+  '/pages-sub/inspection/list': {
+    status?: 'pending' | 'completed'
+  }
+  '/pages-sub/inspection/execute': {
+    taskId: string
+    type?: 'normal' | 'reexamine'
   }
 }
 

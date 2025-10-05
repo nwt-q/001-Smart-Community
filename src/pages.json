@@ -92,6 +92,15 @@
       }
     },
     {
+      "path": "pages/address/list",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "员工通讯录",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
       "path": "pages/login/login",
       "type": "page",
       "style": {
