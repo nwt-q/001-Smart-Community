@@ -289,6 +289,17 @@
 
 最终，我预期希望看到 `routes.enhanced.ts` 文件的内容被迁移到其他文件内。且该文件被删除。
 
+### 027 删减迁移 navigation.ts 文件
+
+和 `routes.enhanced.ts` 的处理方式一样，请迁移删减掉 `src\utils\navigation.ts` 文件。
+
+我希望你先阅读以下的文件，然后将 `navigation.ts` 的内容拆分到以下部分内：
+
+- `src\router` 目录下的 ts 文件。
+- `src\types\routes.ts` 类型安全的 路由系统类型定义 文件。
+
+最终，我预期希望看到 `navigation.ts` 文件的内容被迁移到其他文件内。且该文件被删除。
+
 ### 027 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 
 <!-- TODO: -->
