@@ -5,7 +5,7 @@ import { useRequest } from 'alova/client'
 import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
 import { getActivityList, increaseActivityView } from '@/api/activity'
-import { ActivityNavigation } from '@/utils/navigation'
+import { TypedRouter } from '@/router'
 
 // 页面配置
 definePage({
@@ -242,7 +242,7 @@ async function navigateToDetail(item: Activity) {
     })
 
     // 立即跳转到详情页
-    await ActivityNavigation.toActivityDetail(item.activitiesId, currentCommunityId.value)
+    await TypedRouter.toActivityDetail(item.activitiesId, currentCommunityId.value)
 
     // 乐观更新本地浏览量
     const index = activities.value.findIndex(activity => activity.activitiesId === item.activitiesId)
