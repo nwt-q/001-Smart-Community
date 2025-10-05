@@ -276,6 +276,19 @@
 2. 主动运行并使用 `route-migration` 子代理，并认真思考，检查他们是否满足 `route-migration` 子代理的目录结构要求？如果不满足，请移动调整文件的目录结构。
 3. 运行 `route-migration` 子代理，检查 `src\router` 目录下的 ts 文件，并认真思考这些 ts 文件，是否能满足子代理的路由跳转功能？是否满足强类型推断要求？
 
+### 026 删减，移除多余的 routes.enhanced.ts 文件
+
+请深度思考。
+
+我不喜欢看到你新建了多余的 `routes.enhanced.ts` 文件，请你阅读该文件，并将内部的类型、和满足类型安全的跳转函数，拆分到其他文件内。
+
+我希望你先阅读以下的文件，然后将 `routes.enhanced.ts` 的内容拆分到以下部分内：
+
+- `src\router` 目录下的 ts 文件。
+- `src\types\routes.ts` 类型安全的 路由系统类型定义 文件。
+
+最终，我预期希望看到 `routes.enhanced.ts` 文件的内容被迁移到其他文件内。且该文件被删除。
+
 ### 026 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 
 <!-- TODO: -->
