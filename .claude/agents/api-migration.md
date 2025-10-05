@@ -56,10 +56,10 @@ url: '/app/ownerRepair.listOwnerRepairs'
 
 #### 响应格式函数说明
 
-从 `./shared/utils` 导入两个核心函数：
+从 `./shared/utils` 导入三个核心函数：
 
 ```typescript
-import { successResponse, errorResponse } from './shared/utils'
+import { successResponse, errorResponse, mockLog } from './shared/utils'
 ```
 
 **1. successResponse - 成功响应函数**
@@ -108,42 +108,76 @@ errorResponse(message: string, code?: string)
 }
 ```
 
+**3. mockLog - Mock 日志输出函数**
+
+```typescript
+/**
+ * 统一的 Mock 日志输出函数
+ * @param apiName - API 接口名称或标识
+ * @param data - 要输出的数据（可选）
+ */
+mockLog(apiName: string, data?: any)
+```
+
+**功能说明**:
+
+- 统一的 Mock 接口日志输出格式
+- 自动添加时间戳和格式化输出
+- 便于开发调试和追踪接口调用
+- 替代手动的 `console.log('🚀 Mock API: ...')` 写法
+
+**输出格式**:
+
+```typescript
+// 控制台输出示例
+🚀 Mock API: [queryStaffInfos] { page: 1, row: 10 }
+📋 Mock API Result: [queryStaffInfos] 50 items
+```
+
 #### 使用示例
 
 **✅ 正确的返回值写法**:
 
 ```typescript
-// 成功情况 - 返回列表数据
-return successResponse(
-  {
-    list: activities,
-    total: 100,
-    page: 1,
-    pageSize: 10,
-  },
-  '查询成功',
-)
+// 1. 接口开始时记录请求参数
+mockLog('getActivityList', params)
 
-// 成功情况 - 返回单个对象
+// 2. 成功情况 - 返回列表数据
+const result = {
+  list: activities,
+  total: 100,
+  page: 1,
+  pageSize: 10,
+}
+mockLog('getActivityList result', `${result.list.length} items`)
+return successResponse(result, '查询成功')
+
+// 3. 成功情况 - 返回单个对象
+mockLog('getActivityDetail', activityId)
+const activity = getActivityById(activityId)
+mockLog('getActivityDetail result', activity ? activity.title : 'not found')
 return successResponse(activity, '获取活动详情成功')
 
-// 失败情况 - 资源不存在
+// 4. 失败情况 - 资源不存在
+mockLog('deleteActivity', params)
 if (!activity) {
   return errorResponse('活动不存在', '404')
 }
 
-// 失败情况 - 参数错误
+// 5. 失败情况 - 参数错误
+mockLog('createActivity', params)
 if (!params.activityId) {
   return errorResponse('活动ID不能为空', '400')
 }
 
-// 失败情况 - 业务逻辑错误
+// 6. 失败情况 - 业务逻辑错误
+mockLog('updateActivity', { activityId, status })
 if (activity.status === 'CLOSED') {
   return errorResponse('活动已关闭，无法修改', '403')
 }
 ```
 
-**❌ 错误的返回值写法**:
+**❌ 错误的返回值和日志写法**:
 
 ```typescript
 // ❌ 错误：手动构造返回对象
@@ -161,6 +195,14 @@ return {
   status: 'success',
   result: activity,
 }
+
+// ❌ 错误：使用手动的 console.log
+console.log('🚀 Mock API: getActivityList', params)
+console.log('📋 Mock Response:', result)
+
+// ❌ 错误：使用其他格式的日志
+console.info('API called:', params)
+console.debug('Result:', result)
 ```
 
 #### 强制规范说明
@@ -169,6 +211,10 @@ return {
 2. **字段一致性**: 确保所有接口响应格式完全一致
 3. **类型安全**: `successResponse<T>` 支持泛型，确保数据类型正确
 4. **语义清晰**: `success` 字段明确标识请求成功/失败状态
+5. **🆕 统一日志输出**: 所有 Mock 接口必须使用 `mockLog()` 函数输出日志
+   - 禁止使用手动的 `console.log('🚀 Mock API: ...')` 格式
+   - 禁止使用其他 console 方法（info、debug、warn 等）用于常规日志
+   - 确保日志格式统一、便于调试和追踪
 
 ## 技术栈对比
 
@@ -538,7 +584,7 @@ export function formatErrorResponse(message: string, code: string = '9999') {
 
 ```typescript
 // src/api/mock/maintainance.mock.ts
-import { defineUniAppMock, successResponse, errorResponse } from '@/api/mock/shared/utils'
+import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
 // 1. 🔴 必须：导入拆分后的业务类型
 import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from '@/types/repair'
 import type { PaginationResponse } from '@/types/api'
@@ -701,7 +747,10 @@ export default defineUniAppMock([
         endDate: params.endDate,
       })
 
-      console.log('🚀 Mock API: listOwnerRepairs', params, '→', `${result.list.length} items`)
+      // 🔴 必须：使用 mockLog 函数输出日志
+      mockLog('listOwnerRepairs', params)
+      mockLog('listOwnerRepairs result', `${result.list.length} items`)
+
       // 🔴 必须：使用 successResponse 函数包装返回值
       return successResponse(
         {
@@ -722,6 +771,8 @@ export default defineUniAppMock([
     delay: 200,
     body: async ({ query, body }) => {
       const params = { ...query, ...body }
+      mockLog('getOwnerRepair', params)
+
       const task = mockRepairDatabase.getRepairById(params.repairId)
 
       // 🔴 必须：失败情况使用 errorResponse 函数
@@ -729,7 +780,7 @@ export default defineUniAppMock([
         return errorResponse('维修工单不存在', '404')
       }
 
-      console.log('🚀 Mock API: getOwnerRepair', params, '→', task.title)
+      mockLog('getOwnerRepair result', task.title)
       // 🔴 必须：成功情况使用 successResponse 函数
       return successResponse(task, '查询成功')
     },
@@ -742,6 +793,8 @@ export default defineUniAppMock([
     delay: 600,
     body: async ({ body }) => {
       const data = body as UpdateRepairReq
+      mockLog('updateOwnerRepair', data)
+
       const updatedTask = mockRepairDatabase.updateRepairStatus(data.repairId, data.status, data.assignedWorker)
 
       // 🔴 必须：失败情况使用 errorResponse 函数
@@ -749,7 +802,7 @@ export default defineUniAppMock([
         return errorResponse('更新失败，维修工单不存在', '400')
       }
 
-      console.log('🚀 Mock API: updateOwnerRepair', data, '→', updatedTask.title)
+      mockLog('updateOwnerRepair result', updatedTask.title)
       // 🔴 必须：成功情况使用 successResponse 函数
       return successResponse(updatedTask, '更新成功')
     },
@@ -761,8 +814,11 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 800,
     body: async ({ body }) => {
+      mockLog('saveOwnerRepair', { title: body.title })
+
       const newTask = mockRepairDatabase.createRepair(body as CreateRepairReq)
-      console.log('🚀 Mock API: saveOwnerRepair', body.title, '→', newTask)
+
+      mockLog('saveOwnerRepair result', newTask.repairId)
       // 🔴 必须：使用 successResponse 函数包装返回值
       return successResponse(newTask, '创建成功')
     },
@@ -775,10 +831,12 @@ export default defineUniAppMock([
     delay: 400,
     body: async ({ query, body }) => {
       const params = { ...query, ...body }
+      mockLog('deleteOwnerRepair', params.repairId)
+
       const success = mockRepairDatabase.deleteRepair(params.repairId)
 
       // 🔴 必须：根据结果使用对应的响应函数
-      console.log('🚀 Mock API: deleteOwnerRepair', params.repairId, '→', success)
+      mockLog('deleteOwnerRepair result', success ? 'success' : 'failed')
 
       if (success) {
         return successResponse({ success: true }, '删除成功')
@@ -794,18 +852,16 @@ export default defineUniAppMock([
     method: 'GET',
     delay: 300,
     body: async ({ params }) => {
+      mockLog('getTaskById', params.taskId)
+
       const task = mockDb.getTaskById(params.taskId)
 
       if (!task) {
-        return {
-          status: 404,
-          statusText: 'Not Found',
-          body: { error: '任务不存在' },
-        }
+        return errorResponse('任务不存在', '404')
       }
 
-      console.log('🚀 Mock API: getTaskById', params.taskId, '→', task.title)
-      return task
+      mockLog('getTaskById result', task.title)
+      return successResponse(task, '查询成功')
     },
   },
 ])
@@ -817,7 +873,7 @@ export default defineUniAppMock([
 
 ```typescript
 // src/api/mock/advanced.mock.ts
-import { defineUniAppMock } from '@/api/mock/shared/utils'
+import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
 
 export default defineUniAppMock([
   // 条件响应示例
@@ -826,18 +882,30 @@ export default defineUniAppMock([
     method: 'POST',
     // 使用 validator 根据不同条件返回不同数据
     validator: { body: { type: 'urgent' } },
-    body: {
-      message: '紧急任务处理',
-      priority: 'HIGH',
+    body: ({ body }) => {
+      mockLog('conditional task', { type: body.type })
+      return successResponse(
+        {
+          message: '紧急任务处理',
+          priority: 'HIGH',
+        },
+        '紧急任务创建成功',
+      )
     },
   },
   {
     url: '/app/task/conditional',
     method: 'POST',
     validator: { body: { type: 'normal' } },
-    body: {
-      message: '普通任务处理',
-      priority: 'MEDIUM',
+    body: ({ body }) => {
+      mockLog('conditional task', { type: body.type })
+      return successResponse(
+        {
+          message: '普通任务处理',
+          priority: 'MEDIUM',
+        },
+        '普通任务创建成功',
+      )
     },
   },
 
@@ -847,14 +915,18 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 1000,
     body: ({ body }) => {
-      // 模拟文件上传成功
-      return {
-        success: true,
-        fileId: `FILE_${Date.now()}`,
+      mockLog('uploadImage', { name: body.name })
+
+      const fileId = `FILE_${Date.now()}`
+      const result = {
+        fileId,
         url: `https://picsum.photos/400/300?random=${Date.now()}`,
         size: Math.floor(Math.random() * 1000000) + 50000,
         originalName: body.name || 'uploaded_file.jpg',
       }
+
+      mockLog('uploadImage result', fileId)
+      return successResponse(result, '文件上传成功')
     },
   },
 
@@ -863,14 +935,13 @@ export default defineUniAppMock([
     url: '/app/error/demo',
     method: 'GET',
     body: ({ query }) => {
+      mockLog('errorDemo', query)
+
       if (query.trigger === 'error') {
-        return {
-          status: 500,
-          statusText: 'Internal Server Error',
-          body: { error: '模拟服务器错误' },
-        }
+        return errorResponse('模拟服务器错误', '500')
       }
-      return { message: '正常响应' }
+
+      return successResponse({ message: '正常响应' }, '请求成功')
     },
   },
 ])
@@ -882,7 +953,7 @@ export default defineUniAppMock([
 
 ```typescript
 // src/api/mock/activity.mock.ts
-import { defineUniAppMock } from '@/api/mock/shared/utils'
+import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
 
 // 活动模拟数据
 const mockActivities = [
@@ -919,15 +990,20 @@ export default defineUniAppMock([
 
       // 如果有 activitiesId，返回单个活动详情
       if (params.activitiesId) {
+        mockLog('getActivityDetail', params)
+
         const activity = mockActivities.find((a) => a.activitiesId === params.activitiesId)
         const result = {
           activitiess: activity ? [activity] : [],
         }
-        console.log('🚀 Mock API: getActivityDetail', params, '→', result)
-        return result
+
+        mockLog('getActivityDetail result', activity ? activity.title : 'not found')
+        return successResponse(result, '获取活动详情成功')
       }
 
       // 否则返回活动列表（支持分页和筛选）
+      mockLog('getActivityList', params)
+
       let filteredActivities = [...mockActivities]
 
       if (params.status) {
@@ -952,8 +1028,8 @@ export default defineUniAppMock([
         row,
       }
 
-      console.log('🚀 Mock API: getActivityList', params, '→', `${result.activitiess.length} items`)
-      return result
+      mockLog('getActivityList result', `${result.activitiess.length} items`)
+      return successResponse(result, '获取活动列表成功')
     },
   },
 
@@ -963,6 +1039,8 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 800,
     body: ({ body }) => {
+      mockLog('createActivity', { title: body.title })
+
       const newId = `ACT_${Date.now()}`
       const newActivity = {
         activitiesId: newId,
@@ -975,8 +1053,8 @@ export default defineUniAppMock([
       }
 
       mockActivities.unshift(newActivity)
-      console.log('🚀 Mock API: createActivity', body, '→', newActivity)
-      return newActivity
+      mockLog('createActivity result', newId)
+      return successResponse(newActivity, '创建活动成功')
     },
   },
 
@@ -986,13 +1064,11 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 600,
     body: ({ body }) => {
+      mockLog('updateActivity', { activitiesId: body.activitiesId })
+
       const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId)
       if (!activity) {
-        return {
-          status: 404,
-          statusText: 'Not Found',
-          body: { error: '活动不存在' },
-        }
+        return errorResponse('活动不存在', '404')
       }
 
       Object.assign(activity, {
@@ -1000,8 +1076,8 @@ export default defineUniAppMock([
         updateTime: new Date().toISOString(),
       })
 
-      console.log('🚀 Mock API: updateActivity', body, '→', activity)
-      return activity
+      mockLog('updateActivity result', activity.title)
+      return successResponse(activity, '更新活动成功')
     },
   },
 
@@ -1012,6 +1088,8 @@ export default defineUniAppMock([
     delay: 400,
     body: ({ query, body }) => {
       const params = { ...query, ...body }
+      mockLog('deleteActivity', params)
+
       const index = mockActivities.findIndex((a) => a.activitiesId === params.activitiesId)
 
       const success = index !== -1
@@ -1020,8 +1098,8 @@ export default defineUniAppMock([
       }
 
       const result = { success }
-      console.log('🚀 Mock API: deleteActivity', params, '→', result)
-      return result
+      mockLog('deleteActivity result', success ? 'success' : 'failed')
+      return successResponse(result, success ? '删除活动成功' : '活动不存在')
     },
   },
 
@@ -1031,6 +1109,8 @@ export default defineUniAppMock([
     method: 'POST',
     delay: 200,
     body: ({ body }) => {
+      mockLog('increaseView', body)
+
       const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId)
       const success = !!activity
 
@@ -1039,8 +1119,8 @@ export default defineUniAppMock([
       }
 
       const result = { success }
-      console.log('🚀 Mock API: increaseView', body, '→', result)
-      return result
+      mockLog('increaseView result', success ? 'success' : 'failed')
+      return successResponse(result, success ? '浏览量增加成功' : '活动不存在')
     },
   },
 ])
@@ -1313,8 +1393,10 @@ const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
 - ✅ **Mock 接口返回值必须使用统一的响应格式函数**:
   - 成功响应: 必须使用 `successResponse<T>(data, message?)` 函数包装
   - 失败响应: 必须使用 `errorResponse(message, code?)` 函数包装
-  - 这两个函数从 `./shared/utils` 导入
+  - 日志输出: 必须使用 `mockLog(apiName, data?)` 函数输出日志
+  - 这三个函数从 `./shared/utils` 导入
   - 禁止手动构造返回对象，确保响应格式的一致性
+  - 禁止使用手动的 `console.log('🚀 Mock API: ...')` 格式，必须统一使用 `mockLog()` 函数
 
 **🆕 类型安全要求**:
 
