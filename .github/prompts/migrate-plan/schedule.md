@@ -143,3 +143,24 @@
 2. `查看详情按钮` 显示太小了。文本显示的太小了。请将其放大一些。
 
 请你主动使用 `chrome-devtools` mcp 工具，以 H5 方式启动项目，预期在 `http://localhost:9000/#/pages/activity/index?currentCommunityId=COMM_001` 这个访问地址内，访问到活动列表页。请你在 `chrome-devtools` mcp 工具的帮助下，阅读代码显示效果。并确保只修改我所说的部分的样式，其他部分的样式不作处理。
+
+## 009 优化 `活动详情页` 的显示效果
+
+请深度思考。
+
+阅读以下文件：
+
+- gitee-example/pages/activityDetail/activityDetail.vue
+- src/pages/activity/detail.vue
+
+在 `src/pages/activity/detail.vue` `活动详情页`内，显示效果如下图所示：
+
+![2025-10-06-10-10-07](https://s2.loli.net/2025/10/06/LnjamMf2XPBwc1I.png)
+
+显示效果很不美观，不好看。请你在先阅读旧代码的前提下，针对性的优化 `src/pages/activity/detail.vue` `活动详情页` 的样式展示效果。
+
+请你发挥样式想象力，制作出好看的 UI 效果。加油！
+
+请你在 `style-migration` 和 `component-migration` 这两个子代理的约束下，完成任务。
+
+请你主动使用 `chrome-devtools` mcp 工具，针对具体的一个活动详情，其 `活动详情页` 的访问地址为： `http://localhost:9000/#/pages/activity/index?currentCommunityId=COMM_001` 。请访问该地址来检验 UI 样式风格。
