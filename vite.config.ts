@@ -2,6 +2,8 @@ import path from 'node:path'
 import process from 'node:process'
 import Uni from '@uni-helper/plugin-uni'
 import Components from '@uni-helper/vite-plugin-uni-components'
+/** @see https://wot-ui.cn/guide/quick-use.html#基于-vite-配置自动引入组件方案-2 */
+import { WotResolver } from '@uni-helper/vite-plugin-uni-components/resolvers'
 // @see https://uni-helper.js.org/vite-plugin-uni-layouts
 import UniLayouts from '@uni-helper/vite-plugin-uni-layouts'
 // @see https://github.com/uni-helper/vite-plugin-uni-manifest
@@ -135,6 +137,7 @@ export default ({ command, mode }) => {
         deep: true, // 是否递归扫描子目录，
         directoryAsNamespace: false, // 是否把目录名作为命名空间前缀，true 时组件名为 目录名+组件名，
         dts: 'src/types/components.d.ts', // 自动生成的组件类型声明文件路径（用于 TypeScript 支持）
+        resolvers: [WotResolver()],
       }),
       // 若存在改变 pages.json 的插件，请将 UniKuRoot 放置其后
       UniKuRoot(),
