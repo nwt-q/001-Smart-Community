@@ -164,3 +164,9 @@
 请你在 `style-migration` 和 `component-migration` 这两个子代理的约束下，完成任务。
 
 请你主动使用 `chrome-devtools` mcp 工具，针对具体的一个活动详情，其 `活动详情页` 的访问地址为： `http://localhost:9000/#/pages/activity/index?currentCommunityId=COMM_001` 。请访问该地址来检验 UI 样式风格。
+
+### 01 避免出现滥用 unocss 的 shortcuts 功能的情况
+
+请深度思考。
+
+阅读 uno.config.ts 文件，在你实现样式优化时，很多业务性质的样式都被你改写迁移到 unocss 内。请你将这具体样式写入到具体的组件内，而不是集中到 uno.config.ts 文件内。
