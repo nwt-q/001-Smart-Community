@@ -186,58 +186,18 @@ export default defineConfig({
   },
 
   /**
-   * 快捷方式配置 - 基于 style-migration 最佳实践
-   * 预定义的常用样式组合，提升开发效率
+   * 快捷方式配置 - 仅包含最基础的全局样式
+   * 避免业务性质样式，保持配置的通用性
    */
   shortcuts: [
     {
-      /** 通用布局快捷方式 */
+      /** 通用布局快捷方式 - 基础布局 */
       'center': 'flex justify-center items-center',
       'flex-center': 'flex justify-center items-center',
       'flex-between': 'flex justify-between items-center',
       'flex-around': 'flex justify-around items-center',
       'flex-start': 'flex justify-start items-center',
       'flex-end': 'flex justify-end items-center',
-
-      /** ColorUI 风格组件快捷方式 */
-      'cu-card': 'bg-white rounded-lg shadow-sm p-4 m-4',
-      'cu-bar': 'flex items-center justify-between p-4 bg-white',
-      'cu-btn': 'px-6 py-2 rounded-full text-center cursor-pointer transition-all',
-      'cu-list': 'bg-white divide-y divide-gray-100',
-      'cu-item': 'flex items-center p-4 hover:bg-gray-50 transition-colors',
-      'cu-avatar': 'w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-lg font-semibold',
-
-      /** 智慧社区专用快捷方式 */
-      'address-search': 'flex items-center bg-gray-100 rounded-full px-4 py-2',
-      'letter-header': 'px-4 py-3 text-sm font-semibold text-gray-600 bg-gray-50',
-      'staff-item': 'flex items-center px-4 py-3 border-b border-gray-100',
-      'index-bar': 'w-10 bg-white shadow-md rounded-xl',
-      'index-item': 'w-10 h-10 flex items-center justify-center text-xs text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors cursor-pointer',
-      'index-toast': 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/70 w-20 h-20 rounded-lg text-white text-center leading-20 text-2xl font-bold z-50',
-
-      /** 页面布局快捷方式 */
-      'page-container': 'min-h-screen bg-gray-50',
-      'content-wrapper': 'max-w-screen-xl mx-auto px-4',
-      'section-header': 'py-4 border-b border-gray-200 bg-white',
-      'section-content': 'p-4 bg-white',
-
-      /** 表单组件快捷方式 */
-      'form-item': 'flex items-center py-3 border-b border-gray-100',
-      'form-label': 'w-20 text-sm text-gray-600 flex-shrink-0',
-      'form-input': 'flex-1 text-sm text-gray-800 outline-none',
-      'form-button': 'w-full py-3 rounded-lg text-center font-medium transition-colors',
-
-      /** 动画相关快捷方式 */
-      'fade-in': 'animate-fade-in',
-      'slide-up': 'animate-slide-up',
-      'bounce-in': 'animate-bounce-in',
-      'scale-in': 'animate-scale-in',
-
-      /** 状态样式快捷方式 */
-      'loading-spinner': 'animate-spin-slow text-primary text-xl',
-      'skeleton-line': 'h-4 bg-gray-200 rounded animate-pulse',
-      'skeleton-avatar': 'w-10 h-10 bg-gray-200 rounded-full animate-pulse',
-      'skeleton-text': 'h-3 bg-gray-200 rounded animate-pulse',
     },
   ],
 
@@ -288,6 +248,24 @@ export default defineConfig({
       'animate-spin-slow',
       {
         animation: 'spin 2s linear infinite',
+      },
+    ],
+    [
+      'animate-pulse-once',
+      {
+        animation: 'pulseOnce 0.3s ease-in-out',
+      },
+    ],
+    [
+      'animate-float',
+      {
+        animation: 'float 3s ease-in-out infinite',
+      },
+    ],
+    [
+      'animate-shine',
+      {
+        animation: 'shine 2s ease-in-out infinite',
       },
     ],
 
@@ -384,6 +362,21 @@ export default defineConfig({
         @keyframes scaleIn {
           from { transform: scale(0.9); opacity: 0; }
           to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulseOnce {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shine {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
         }
 
         /* 全局样式重置 */
