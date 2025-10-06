@@ -378,7 +378,7 @@ onReachBottom(() => {
 
             <!-- 底部渐变遮罩和标题 -->
             <view class="title-overlay absolute bottom-0 left-0 right-0 z-1 px-32rpx py-24rpx">
-              <text class="line-clamp-2 text-white font-medium leading-1.5 text-32rpx">{{ item.title }}</text>
+              <text class="activity-title line-clamp-2 text-white font-medium text-32rpx">{{ item.title }}</text>
             </view>
           </view>
 
@@ -422,7 +422,7 @@ onReachBottom(() => {
                 <!-- 活动时间信息 -->
                 <view class="bg-gray-50 p-24rpx mb-24rpx rounded-16rpx">
                   <view class="flex items-center mb-8rpx">
-                    <text class="time-icon mr-8rpx">⏰</text>
+                    <wd-icon name="" custom-class="i-carbon-time text-28rpx text-#368cfe mr-8rpx" />
                     <text class="text-gray-500 text-24rpx">活动时间</text>
                   </view>
                   <view class="time-value-container">
@@ -437,19 +437,19 @@ onReachBottom(() => {
                   <view class="flex items-center">
                     <!-- 浏览量 -->
                     <view class="flex items-center mr-32rpx">
-                      <text class="stat-icon mr-8rpx">👁</text>
+                      <wd-icon name="" custom-class="i-carbon-view text-28rpx text-gray-400 mr-8rpx" />
                       <text class="text-gray-500 text-24rpx">{{ formatNumber(item.readCount) }}</text>
                     </view>
 
                     <!-- 点赞数 -->
                     <view class="flex items-center mr-32rpx">
-                      <text class="stat-icon mr-8rpx">👍</text>
+                      <wd-icon name="" custom-class="i-carbon-thumbs-up text-28rpx text-gray-400 mr-8rpx" />
                       <text class="text-gray-500 text-24rpx">{{ formatNumber(item.likeCount) }}</text>
                     </view>
 
                     <!-- 收藏数 -->
                     <view class="flex items-center">
-                      <text class="stat-icon mr-8rpx">💬</text>
+                      <wd-icon name="" custom-class="i-carbon-chat text-28rpx text-gray-400 mr-8rpx" />
                       <text class="text-gray-500 text-24rpx">{{ formatNumber(item.collectCount) }}</text>
                     </view>
                   </view>
@@ -538,17 +538,17 @@ onReachBottom(() => {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
 }
 
+/** 活动标题样式 - 确保行高正常显示 */
+.activity-title {
+  line-height: 1.5;
+  word-wrap: break-word;
+  word-break: break-all;
+  display: block;
+}
+
 /** 用户头像渐变背景 */
 .user-avatar {
   background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-}
-
-/** 图标样式 */
-.time-icon,
-.stat-icon {
-  font-size: 28rpx;
-  line-height: 1;
-  display: inline-block;
 }
 
 /** 内容文本样式 - 确保行高正常 */
