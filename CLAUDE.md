@@ -72,8 +72,9 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 
 ### vue组件编写规则
 
-1. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
-2. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
+1. vue组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
+2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
+3. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
 
 ## 项目概述
 
