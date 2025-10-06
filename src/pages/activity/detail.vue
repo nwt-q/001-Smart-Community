@@ -16,7 +16,6 @@ import ActivityError from '@/components/activity/error.vue'
 import ActivityHeroImage from '@/components/activity/hero-image.vue'
 import ActivityInfo from '@/components/activity/info.vue'
 import ActivitySkeleton from '@/components/activity/skeleton.vue'
-import { getImageUrl } from '@/utils'
 
 /** 页面配置 */
 definePage({
@@ -110,8 +109,13 @@ async function loadActivities() {
     if (result?.activitiess?.length > 0) {
       const activityItem = result.activitiess[0]
 
-      /** 处理图片路径 */
-      activityItem.src = getImageUrl(activityItem.headerImg, currentCommunityId.value)
+      /**
+       * 处理图片路径
+       * @description
+       * 这里无需处理图片路径 根据mock数据的返回格式 有意义的输出结果是 src ，而不是 headerImg 。
+       * getImageUrl 事实上失去设计意义
+       */
+      // activityItem.src = getImageUrl(activityItem.headerImg, currentCommunityId.value)
 
       /** 更新活动数据 */
       Object.assign(activity, activityItem)
