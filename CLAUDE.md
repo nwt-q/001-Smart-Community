@@ -63,6 +63,10 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 ```
 
+## unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
+
+在你做样式迁移的时候，**不允许滥用** unocss 的 shortcuts 功能。不要把那么多样式类都设计成公共全局级别的快捷方式。
+
 ## 项目概述
 
 这是基于 unibest 框架的智慧社区物业管理系统，使用 uniapp + Vue3 + TypeScript + Vite5 + UnoCSS 技术栈开发，支持 H5、小程序、APP 多平台。
