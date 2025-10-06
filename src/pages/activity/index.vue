@@ -350,27 +350,27 @@ onReachBottom(() => {
               <wd-tag
                 v-if="dayjs().isAfter(dayjs(item.endTime))"
                 type="primary"
-                size="small"
+                size="large"
                 plain
-                class="status-tag bg-black/50 text-white"
+                class="status-tag bg-black/50 text-white text-30rpx!"
               >
                 已结束
               </wd-tag>
               <wd-tag
                 v-else-if="dayjs().isBefore(dayjs(item.startTime))"
                 type="warning"
-                size="small"
+                size="large"
                 plain
-                class="status-tag bg-black/50 text-white"
+                class="status-tag bg-black/50 text-white text-30rpx!"
               >
                 未开始
               </wd-tag>
               <wd-tag
                 v-else
                 type="success"
-                size="small"
+                size="large"
                 plain
-                class="status-tag bg-black/50 text-white"
+                class="status-tag bg-black/50 text-white text-30rpx!"
               >
                 进行中
               </wd-tag>
@@ -457,10 +457,10 @@ onReachBottom(() => {
                   <!-- 查看详情按钮 -->
                   <wd-button
                     type="primary"
-                    size="small"
+                    size="large"
                     plain
                     round
-                    class="shrink-0"
+                    class="shrink-0 text-26rpx!"
                   >
                     查看详情
                   </wd-button>

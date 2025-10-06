@@ -132,3 +132,14 @@
 2. `<wd-icon>` 组件的要求是 name 属性必填。这里你固定填写为空字符串即可。
 3. `i-carbon-*` 图标类在 custom-class 内就可以生效了。请你用 custom-class 来解决 `i-carbon-*` 图标类不生效的故障。
 4. 按钮大小调整等功能，请主动使用 `custom-class` 加上 unocss 的方式解决。
+
+## 008 调整 `activityes` 活动列表页 的文本样式，放大文本样式
+
+如下图所示：
+
+![2025-10-06-09-51-27](https://s2.loli.net/2025/10/06/B985vTJSleayG6d.png)
+
+1. `活动状态标签` 显示太小了。文本显示的太小了。请将其放大一些。
+2. `查看详情按钮` 显示太小了。文本显示的太小了。请将其放大一些。
+
+请你主动使用 `chrome-devtools` mcp 工具，以 H5 方式启动项目，预期在 `http://localhost:9000/#/pages/activity/index?currentCommunityId=COMM_001` 这个访问地址内，访问到活动列表页。请你在 `chrome-devtools` mcp 工具的帮助下，阅读代码显示效果。并确保只修改我所说的部分的样式，其他部分的样式不作处理。
