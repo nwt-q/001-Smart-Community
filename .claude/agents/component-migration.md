@@ -97,12 +97,67 @@ color: blue
 
 ### 图标映射
 
-|      旧组件/类名      |   使用场景   |          新组件          |         迁移说明         |
-| :-------------------: | :----------: | :----------------------: | :----------------------: |
-| `cuIcon-notification` |   通知图标   |  `wd-icon name="bell"`   | 使用 wot-design-uni 图标 |
-|    `cuIcon-close`     |   关闭图标   |  `wd-icon name="close"`  |       关闭操作图标       |
-|  `cuIcon-cameraadd`   | 相机添加图标 | `wd-icon name="camera"`  |       相机相关图标       |
-|   `cuIcon-warnfill`   | 警告填充图标 | `wd-icon name="warning"` |       警告状态图标       |
+#### Icon 迁移的核心方针
+
+各类迁移子代理在实现 icon 标签迁移时，需要从 `cuIcon-*` ColorUI 图标迁移到基于 `<wd-icon>` 组件的 `custom-class` 自定义样式实现。
+
+**技术实现要点**:
+
+1. **Icon 实现方式**: 新的 icon 图标使用基于类名生成的 iconify 图标系统
+2. **类名格式要求**: 编写格式满足 UnoCSS 的 icon 图标类格式要求，图标类型来自 `Iconify`
+3. **Iconify 图标集**: 本项目使用 `@iconify-json/carbon` 库，即 `carbon` 图标集
+4. **Icon 类名规范**: 按照 UnoCSS 使用 iconify 图标集的要求，本项目的 `carbon` 图标集类名为 `i-carbon-*` 格式
+
+**实现示例**:
+
+```html
+<!-- 旧的 ColorUI 图标 -->
+<text class="cuIcon-notification"></text>
+
+<!-- 新的实现方式 -->
+<wd-icon name="" custom-class="i-carbon-notification" />
+```
+
+**使用 `<wd-icon>` 组件的必要条件**:
+
+1. **使用 `<wd-icon>` 组件**: 必须使用 wot-design-uni 的 `<wd-icon>` 组件
+2. **name 属性必填**: `<wd-icon>` 组件要求 name 属性必填，迁移时固定填写为空字符串 `""`
+3. **custom-class 属性**: `i-carbon-*` 图标类必须在 `custom-class` 属性中才能生效
+4. **样式调整**: 图标大小、颜色、间距等样式修改需求，使用 `custom-class` 配合 UnoCSS 原子式样式实现
+
+**完整实现示例**:
+
+```vue
+<!-- 基础图标 -->
+<wd-icon name="" custom-class="i-carbon-notification" />
+
+<!-- 带样式的图标 -->
+<wd-icon name="" custom-class="i-carbon-time text-28rpx text-#368cfe mr-8rpx" />
+
+<!-- 多种样式组合 -->
+<wd-icon name="" custom-class="i-carbon-thumbs-up text-28rpx text-gray-400 mr-8rpx" />
+```
+
+#### ColorUI 图标到 Carbon 图标映射表
+
+|      旧组件/类名      |   使用场景   |                      新组件                       |            Carbon 图标映射             |
+| :-------------------: | :----------: | :-----------------------------------------------: | :------------------------------------: |
+| `cuIcon-notification` |   通知图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |        `i-carbon-notification`         |
+|    `cuIcon-close`     |   关闭图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-close`            |
+|  `cuIcon-cameraadd`   | 相机添加图标 | `<wd-icon name="" custom-class="i-carbon-..." />` |           `i-carbon-camera`            |
+|   `cuIcon-warnfill`   | 警告填充图标 | `<wd-icon name="" custom-class="i-carbon-..." />` |           `i-carbon-warning`           |
+|     `cuIcon-add`      |   添加图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |             `i-carbon-add`             |
+|    `cuIcon-delete`    |   删除图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-trash-can`          |
+|    `cuIcon-search`    |   搜索图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |           `i-carbon-search`            |
+|     `cuIcon-edit`     |   编辑图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-edit`             |
+|   `cuIcon-dianhua`    |   电话图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-phone`            |
+|     `cuIcon-home`     |   首页图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-home`             |
+|     `cuIcon-user`     |   用户图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |         `i-carbon-user-avatar`         |
+|   `cuIcon-setting`    |   设置图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-settings`           |
+|     `cuIcon-time`     |   时间图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-time`             |
+|     `cuIcon-view`     |   浏览图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-view`             |
+|  `cuIcon-thumbs-up`   |   点赞图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-thumbs-up`          |
+|     `cuIcon-chat`     |   评论图标   | `<wd-icon name="" custom-class="i-carbon-..." />` | `i-carbon-chat` 或 `i-carbon-chat-bot` |
 
 ### 布局组件映射
 

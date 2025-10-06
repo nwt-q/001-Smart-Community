@@ -105,18 +105,13 @@ UnoCSS + wot-design-uni
 |   `text-lg`   |            `text-lg`             |  大号文本  |   18px 文字    |
 |   `text-xl`   |            `text-xl`             | 超大号文本 |   20px 文字    |
 
-### 5. 图标系统映射
+### 5. 图标系统迁移
 
-|   ColorUI 图标   |   wot-design-uni 图标    | 功能描述 |
-| :--------------: | :----------------------: | :------: |
-|   `cuIcon-add`   |   `wd-icon name="add"`   | 添加图标 |
-| `cuIcon-delete`  | `wd-icon name="delete"`  | 删除图标 |
-| `cuIcon-search`  | `wd-icon name="search"`  | 搜索图标 |
-|  `cuIcon-edit`   |  `wd-icon name="edit"`   | 编辑图标 |
-| `cuIcon-dianhua` |  `wd-icon name="phone"`  | 电话图标 |
-|  `cuIcon-home`   |  `wd-icon name="home"`   | 首页图标 |
-|  `cuIcon-user`   |  `wd-icon name="user"`   | 用户图标 |
-| `cuIcon-setting` | `wd-icon name="setting"` | 设置图标 |
+**重要**: 所有图标迁移任务统一由 `component-migration` 子代理处理。
+
+图标迁移涉及从 ColorUI 的 `cuIcon-*` 类迁移到基于 `<wd-icon>` 组件的 `custom-class` 实现方式，使用 `i-carbon-*` iconify 图标集。
+
+详细的图标映射表和迁移方针请参考 `component-migration` 子代理的"图标映射"章节。
 
 ## 迁移策略详解
 
