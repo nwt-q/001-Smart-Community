@@ -225,3 +225,14 @@
 也可以参考下图，把握清楚卡片和页面两侧之间的间距：
 
 ![2025-10-06-19-43-10](https://s2.loli.net/2025/10/06/MQdB6Z3kPYmaDbj.png)
+
+### 07 重做 `showInteractionFeedback` 显示交互反馈函数
+
+请深度思考。
+
+1. 请你有策略地，针对性的，只阅读文档信息，避免出现上下文超限的情况。阅读以下文档地址：
+
+- https://wot-ui.cn/component/toast.html
+- https://wot-ui.cn/component/use-toast.html
+
+2. 文件 `src\pages\activity\detail.vue` `活动详情页` ，根本就没有使用 wot-design-uni 的 toast 组件。请你阅读并改写该函数，使其使用 wot-design-uni 的 toast 组件实现弹框效果。
