@@ -213,3 +213,15 @@
 3. 重构抽离该函数，将该函数迁移到 `src\utils\index.ts` 文件内。
 4. 修改 `code-migration` 子代理，并告诉 `code-migration` 子代理，何时使用专门的`图片路径处理函数`。并确保以后执行该代理时，能够恰当的使用该`图片路径处理函数`。
 5. 对 `src\pages\activity\detail.vue` 和 `src\pages\activity\index.vue` 文件，应用 `code-migration` 子代理，并使用统一的`图片路径处理函数`来实现图片加载的功能。
+
+### 06 对齐骨架屏和实际展示内容的容器宽度
+
+请深度思考。
+
+现在的显示效果不好看。原本卡片之间的间距丢失了，请你在保证 unocss 原子样式的前提下，恢复卡片之间的间距。
+
+请参考 `activity-detail-fixed-shortcuts.png` 截图。
+
+也可以参考下图，把握清楚卡片和页面两侧之间的间距：
+
+![2025-10-06-19-43-10](https://s2.loli.net/2025/10/06/MQdB6Z3kPYmaDbj.png)

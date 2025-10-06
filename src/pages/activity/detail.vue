@@ -397,7 +397,7 @@ onPullDownRefresh(() => {
       />
 
       <!-- 活动信息组件 -->
-      <view class="relative z-20 -mt-8">
+      <view class="relative z-20 mx-4 -mt-8">
         <ActivityInfo
           :title="activity.title"
           :author="activity.userName"
@@ -410,7 +410,7 @@ onPullDownRefresh(() => {
       </view>
 
       <!-- 活动内容组件 -->
-      <view class="relative z-10">
+      <view class="relative z-10 mx-4 mt-4">
         <ActivityContent
           :content="activity.context"
           :show-expand-button="true"
@@ -419,21 +419,23 @@ onPullDownRefresh(() => {
       </view>
 
       <!-- 操作按钮组件 -->
-      <ActivityActions
-        :activity-id="activity.activitiesId"
-        :is-liked="isLiked"
-        :is-collected="isCollected"
-        :is-registered="isRegistered"
-        :like-count="activity.likeCount"
-        :collect-count="activity.collectCount"
-        :register-count="0"
-        :status="activity.status"
-        :show-register-button="true"
-        @like="handleLike"
-        @collect="handleCollect"
-        @register="handleRegister"
-        @share="handleShare"
-      />
+      <view class="mt-4">
+        <ActivityActions
+          :activity-id="activity.activitiesId"
+          :is-liked="isLiked"
+          :is-collected="isCollected"
+          :is-registered="isRegistered"
+          :like-count="activity.likeCount"
+          :collect-count="activity.collectCount"
+          :register-count="0"
+          :status="activity.status"
+          :show-register-button="true"
+          @like="handleLike"
+          @collect="handleCollect"
+          @register="handleRegister"
+          @share="handleShare"
+        />
+      </view>
 
       <!-- 底部间距 -->
       <view class="h-20" />

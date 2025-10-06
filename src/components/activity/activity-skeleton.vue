@@ -21,7 +21,7 @@ defineProps<Props>()
       </view>
 
       <!-- 活动信息卡片骨架 -->
-      <view class="relative z-20 mx-4 mb-4 rounded-2xl bg-white p-6 shadow-lg -mt-8 max-sm:p-4">
+      <view class="relative z-20 mx-4 rounded-2xl bg-white p-6 shadow-lg -mt-8 max-sm:p-4">
         <!-- 标题和状态标签 -->
         <view class="mb-4">
           <wd-skeleton :row-num="1" row-width="80%" row-height="32px" animation="flashed" />
@@ -59,7 +59,7 @@ defineProps<Props>()
       </view>
 
       <!-- 内容卡片骨架 -->
-      <view class="relative z-10 mx-4 mb-4 rounded-2xl bg-white shadow-sm">
+      <view class="relative z-10 mx-4 mt-4 rounded-2xl bg-white shadow-sm">
         <!-- 内容标题栏 -->
         <view class="border-b border-gray-100 bg-gray-50 p-6 pb-4 max-sm:p-4 max-sm:pb-3">
           <view class="flex items-center justify-between">
@@ -83,8 +83,10 @@ defineProps<Props>()
       </view>
 
       <!-- 操作按钮骨架 -->
-      <view class="mx-4 mb-4">
-        <wd-skeleton :row-num="1" row-height="48px" animation="flashed" />
+      <view class="mt-4">
+        <view class="mx-4">
+          <wd-skeleton :row-num="1" row-height="48px" animation="flashed" />
+        </view>
       </view>
 
       <!-- 底部间距 -->
