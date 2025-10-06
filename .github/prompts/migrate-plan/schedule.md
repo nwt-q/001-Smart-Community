@@ -236,3 +236,14 @@
 - https://wot-ui.cn/component/use-toast.html
 
 2. 文件 `src\pages\activity\detail.vue` `活动详情页` ，根本就没有使用 wot-design-uni 的 toast 组件。请你阅读并改写该函数，使其使用 wot-design-uni 的 toast 组件实现弹框效果。
+
+### 08 重做 `activity-actions.vue` `活动操作按钮组件`
+
+这个组件有非常多的功能、事件、函数、属性。都是被暴露在父组件 `活动详情页` 内。这个耦合程度很高，是很糟糕的代码实践。请你仔细阅读`活动操作按钮组件`的实现功能，将这些内部功能都封装到内部组件内。就比如 `showInteractionFeedback` 显示交互反馈函数，这个函数就应该存放在 `活动操作按钮组件` 内，而不是暴露在 `活动详情页` 内。
+
+请你仔细思考这两个组件的数据通信关系，将该组件的功能集中封装到 `活动操作按钮组件` 内。增强内聚性。避免这两个组件的高耦合。
+
+1. 阅读 `活动详情页` src\pages\activity\detail.vue
+2. 阅读 `活动操作按钮组件` src\components\activity\activity-actions.vue
+3. 重构优化 `activity-actions.vue` `活动操作按钮组件` 。
+4. 必须保证 `showInteractionFeedback` 显示交互反馈函数被迁移到 `活动操作按钮组件` 内。`showInteractionFeedback` 显示交互反馈函数就不应该出现在父组件 `活动详情页` 内。
