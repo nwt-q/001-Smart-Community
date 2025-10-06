@@ -175,3 +175,20 @@ export function getEnvBaseUploadUrl() {
  * 是否是双token模式
  */
 export const isDoubleTokenMode = import.meta.env.VITE_AUTH_MODE === 'double'
+
+/**
+ * 处理图片路径 - 面向 mock 场景的图片路径处理函数
+ * @param headerImg 图片标识或完整URL
+ * @param communityId 社区ID（可选）
+ * @returns 处理后的图片URL
+ */
+export function getImageUrl(headerImg: string, communityId?: string): string {
+  if (!headerImg)
+    return ''
+  /** 检查是否为完整URL（Mock接口返回的图片） */
+  if (headerImg.startsWith('http')) {
+    return headerImg
+  }
+  /** 兼容原Java110Context的文件路径格式 */
+  return `/api/file?fileId=${headerImg}&communityId=${communityId || ''}&time=${Date.now()}`
+}

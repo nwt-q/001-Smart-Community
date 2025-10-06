@@ -9,13 +9,14 @@ import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import { computed, nextTick, reactive, ref } from 'vue'
 import { getActivityDetail, increaseActivityView } from '@/api/activity'
-
 import ActivityActions from '@/components/activity/actions.vue'
+
 import ActivityContent from '@/components/activity/content.vue'
 import ActivityError from '@/components/activity/error.vue'
 import ActivityHeroImage from '@/components/activity/hero-image.vue'
 import ActivityInfo from '@/components/activity/info.vue'
 import ActivitySkeleton from '@/components/activity/skeleton.vue'
+import { getImageUrl } from '@/utils'
 
 /** 页面配置 */
 definePage({
@@ -110,7 +111,7 @@ async function loadActivities() {
       const activityItem = result.activitiess[0]
 
       /** 处理图片路径 */
-      activityItem.src = `/api/file?fileId=${activityItem.headerImg}&communityId=${currentCommunityId.value}&time=${Date.now()}`
+      activityItem.src = getImageUrl(activityItem.headerImg, currentCommunityId.value)
 
       /** 更新活动数据 */
       Object.assign(activity, activityItem)

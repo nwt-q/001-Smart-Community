@@ -11,6 +11,7 @@ import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
 import { getActivityList, increaseActivityView } from '@/api/activity'
 import { TypedRouter } from '@/router'
+import { getImageUrl } from '@/utils'
 
 /** 页面配置 */
 definePage({
@@ -97,20 +98,6 @@ function formatNumber(num: number): string {
 }
 
 /**
- * 处理图片路径 - 优化以匹配Mock接口的图片处理逻辑
- */
-function getImageUrl(headerImg: string): string {
-  if (!headerImg)
-    return ''
-  /** 检查是否为完整URL（Mock接口返回的图片） */
-  if (headerImg.startsWith('http')) {
-    return headerImg
-  }
-  /** 🔴 兼容原Java110Context的文件路径格式 */
-  return `/api/file?fileId=${headerImg}&communityId=${currentCommunityId.value}&time=${Date.now()}`
-}
-
-/**
  * 显示错误提示
  */
 function showErrorToast(message: string) {
@@ -149,7 +136,7 @@ function processActivitiesData(newActivities: Activity[], response: ActivityList
   const processedActivities = newActivities.map((item: Activity) => ({
     ...item,
     /** 🔴 重要：图片URL处理逻辑匹配原Java110Context */
-    src: item.src || getImageUrl(item.headerImg || ''), /** 优先使用Mock接口提供的src */
+    src: item.src || getImageUrl(item.headerImg || '', currentCommunityId.value), /** 优先使用Mock接口提供的src */
     /** 🔴 数据格式兼容性处理 - 保持与原系统一致 */
     readCount: item.readCount || item.viewCount || 0, /** readCount优先，向后兼容viewCount */
     likeCount: item.likeCount || 0,
