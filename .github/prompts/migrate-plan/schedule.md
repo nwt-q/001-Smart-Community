@@ -201,10 +201,12 @@
 2. 重构 `交互反馈` 功能。阅读 `src\components\activity\InteractionFeedback.vue` 组件。请改成使用 `<wd-toast>` 组件实现 Toast 轻提示的效果。`src\components\activity\InteractionFeedback.vue` 组件本质上属于交互提示效果的集成组件，请你用 https://wot-ui.cn/component/toast.html 来重构交互提示的效果。
 3. 重构完成 `交互反馈` 功能后，请删除掉 `src\components\activity\InteractionFeedback.vue` 组件。
 
-### 05 抽离独立的，面向 mock 的图片路径处理函数
-
-<!-- TODO: 用claude code模型 -->
+### 05 抽离独立的，面向 mock 的`图片路径处理函数`
 
 请深度思考。
 
-<!-- function getImageUrl(headerImg: string) -->
+1. 阅读 `src\pages\activity\detail.vue` 和 `src\pages\activity\index.vue` 。
+2. 找到关于 `function getImageUrl(headerImg: string)` 的`图片路径处理函数`。保留其针对 mock 场景下的路径处理逻辑。
+3. 重构抽离该函数，将该函数迁移到 `src\utils\index.ts` 文件内。
+4. 修改 `code-migration` 子代理，并告诉 `code-migration` 子代理，何时使用专门的`图片路径处理函数`。并确保以后执行该代理时，能够恰当的使用该`图片路径处理函数`。
+5. 对 `src\pages\activity\detail.vue` 和 `src\pages\activity\index.vue` 文件，应用 `code-migration` 子代理，并使用统一的`图片路径处理函数`来实现图片加载的功能。
