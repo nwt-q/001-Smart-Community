@@ -186,9 +186,8 @@ if (props.showError && props.retryCount > 0) {
         <!-- 错误图标 -->
         <view class="mb-6">
           <view
-            class="mx-auto h-24 w-24 flex items-center justify-center rounded-full animate-bounce-in max-sm:h-20 max-sm:w-20"
+            class="mx-auto h-24 w-24 flex items-center justify-center rounded-full shadow-lg backdrop-blur-md animate-bounce-in max-sm:h-20 max-sm:w-20"
             :class="`bg-${errorConfig.color}-100`"
-            style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);"
           >
             <wd-icon
               :name="errorConfig.icon"
@@ -200,14 +199,11 @@ if (props.showError && props.retryCount > 0) {
 
         <!-- 错误信息 -->
         <view class="mb-8">
-          <text class="mb-2 block text-xl text-gray-900 font-semibold tracking-[0.3rpx] max-sm:text-lg">
+          <text class="mb-2 block text-xl text-gray-900 font-semibold tracking-wide max-sm:text-lg">
             {{ errorConfig.title }}
           </text>
 
-          <text
-            class="block text-sm text-gray-600 leading-relaxed tracking-[0.2rpx]"
-            style="line-height: 1.6;"
-          >
+          <text class="block text-sm text-gray-600 leading-relaxed tracking-wide">
             {{ props.errorMessage || errorConfig.description }}
           </text>
 
@@ -281,36 +277,31 @@ if (props.showError && props.retryCount > 0) {
 
         <!-- 错误详情（开发模式显示） -->
         <view
-          v-if="props.errorMessage" class="mt-6 rounded-lg p-3 text-xs text-gray-500 font-mono"
-          style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 8rpx;"
+          v-if="props.errorMessage"
+          class="mt-6 border border-black/5 rounded-lg p-3 text-xs text-gray-500 font-mono"
+          style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);"
         >
           {{ props.errorMessage }}
         </view>
 
         <!-- 帮助提示 -->
         <view
-          class="mt-6 rounded-lg p-4 text-left"
-          style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid rgba(59, 130, 246, 0.2);"
+          class="mt-6 border border-blue-500/20 rounded-lg p-4 text-left"
+          style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);"
         >
-          <view class="mb-3 last:mb-0">
+          <view class="mb-3">
             <view class="flex items-start">
-              <wd-icon name="check" size="14" custom-class="i-carbon-checkmark text-green-500 mr-2 mt-0.5" />
-              <text
-                class="text-xs text-gray-600 tracking-[0.1rpx]"
-                style="line-height: 1.5;"
-              >
+              <wd-icon name="check" size="14" custom-class="i-carbon-checkmark text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <text class="flex-1 text-xs text-gray-600 leading-relaxed tracking-wide">
                 检查网络连接是否正常
               </text>
             </view>
           </view>
 
-          <view class="mb-3 last:mb-0">
+          <view class="mb-3">
             <view class="flex items-start">
-              <wd-icon name="check" size="14" custom-class="i-carbon-checkmark text-green-500 mr-2 mt-0.5" />
-              <text
-                class="text-xs text-gray-600 tracking-[0.1rpx]"
-                style="line-height: 1.5;"
-              >
+              <wd-icon name="check" size="14" custom-class="i-carbon-checkmark text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <text class="flex-1 text-xs text-gray-600 leading-relaxed tracking-wide">
                 尝试刷新页面或重新加载
               </text>
             </view>
@@ -318,11 +309,8 @@ if (props.showError && props.retryCount > 0) {
 
           <view class="mb-0">
             <view class="flex items-start">
-              <wd-icon name="check" size="14" custom-class="i-carbon-checkmark text-green-500 mr-2 mt-0.5" />
-              <text
-                class="text-xs text-gray-600 tracking-[0.1rpx]"
-                style="line-height: 1.5;"
-              >
+              <wd-icon name="check" size="14" custom-class="i-carbon-checkmark text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <text class="flex-1 text-xs text-gray-600 leading-relaxed tracking-wide">
                 如问题持续，请联系客服协助
               </text>
             </view>
@@ -334,7 +322,13 @@ if (props.showError && props.retryCount > 0) {
 </template>
 
 <style scoped>
-/* 动画定义 */
+/**
+ * 活动详情错误组件样式
+ * 只保留必须用 CSS 编写的动画 keyframes
+ * 其他样式已迁移至 UnoCSS 原子类
+ */
+
+/** 淡入上移动画 */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -350,6 +344,7 @@ if (props.showError && props.retryCount > 0) {
   animation: fadeInUp 0.6s ease-out;
 }
 
+/** 弹跳进入动画 */
 @keyframes bounceIn {
   0% {
     opacity: 0;
@@ -372,7 +367,7 @@ if (props.showError && props.retryCount > 0) {
   animation: bounceIn 0.8s ease-out;
 }
 
-/* 按钮颜色样式 */
+/** 按钮颜色样式（动态类名） */
 .bg-orange-500 {
   background-color: #f97316;
 }
@@ -385,7 +380,7 @@ if (props.showError && props.retryCount > 0) {
   background-color: #6b7280;
 }
 
-/* 无障碍支持 */
+/** 无障碍支持 - 减少动画 */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
   .animate-bounce-in {

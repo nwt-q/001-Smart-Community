@@ -9,13 +9,12 @@ import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import { computed, nextTick, reactive, ref } from 'vue'
 import { getActivityDetail, increaseActivityView } from '@/api/activity'
-import ActivityActions from '@/components/activity/actions.vue'
-
-import ActivityContent from '@/components/activity/content.vue'
-import ActivityError from '@/components/activity/error.vue'
-import ActivityHeroImage from '@/components/activity/hero-image.vue'
-import ActivityInfo from '@/components/activity/info.vue'
-import ActivitySkeleton from '@/components/activity/skeleton.vue'
+import ActivityActions from '@/components/activity/activity-actions.vue'
+import ActivityContent from '@/components/activity/activity-content.vue'
+import ActivityError from '@/components/activity/activity-error.vue'
+import ActivityHeroImage from '@/components/activity/activity-hero.vue'
+import ActivityInfo from '@/components/activity/activity-info.vue'
+import ActivitySkeleton from '@/components/activity/activity-skeleton.vue'
 
 /** 页面配置 */
 definePage({
@@ -366,7 +365,7 @@ onPullDownRefresh(() => {
 </script>
 
 <template>
-  <view class="activity-detail min-h-screen bg-gray-50">
+  <view class="activity-detail min-h-screen bg-gray-50 animate-fade-in">
     <!-- 错误状态显示 -->
     <ActivityError
       v-if="errorState.show"
@@ -387,7 +386,7 @@ onPullDownRefresh(() => {
     />
 
     <!-- 主要内容显示 -->
-    <view v-else-if="activity.title" class="content-wrapper relative mx-auto max-w-screen-xl px-4">
+    <view v-else-if="activity.title" class="content-wrapper relative mx-auto">
       <!-- 头部图片组件 -->
       <ActivityHeroImage
         :src="activity.src"
@@ -437,11 +436,11 @@ onPullDownRefresh(() => {
       />
 
       <!-- 底部间距 -->
-      <view class="bottom-spacing h-20" />
+      <view class="h-20" />
     </view>
 
     <!-- 空状态 -->
-    <view v-else class="empty-state min-h-screen flex items-center justify-center px-8">
+    <view v-else class="min-h-screen flex items-center justify-center px-8">
       <wd-status-tip
         image="content"
         tip="暂无活动信息"
@@ -452,36 +451,18 @@ onPullDownRefresh(() => {
 </template>
 
 <style scoped>
-/* 页面容器样式 */
+/** 页面平滑滚动 */
 .activity-detail {
-  background-color: #f9fafb;
-  min-height: 100vh;
   scroll-behavior: smooth;
 }
 
-/* 内容包装器样式 */
+/** 内容包装器基础样式 */
 .content-wrapper {
-  position: relative;
   max-width: 750rpx;
-  margin: 0 auto;
 }
 
-/* 底部间距样式 */
-.bottom-spacing {
-  height: 80rpx;
-}
-
-/* 空状态样式 */
-.empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 0 32rpx;
-}
-
-/* 页面级动画 */
-.activity-detail {
+/** 页面级淡入动画 */
+.animate-fade-in {
   animation: fadeIn 0.6s ease-out;
 }
 
@@ -496,14 +477,10 @@ onPullDownRefresh(() => {
   }
 }
 
-/* 响应式适配 */
+/** 响应式适配 - 小屏幕 */
 @media (max-width: 750rpx) {
   .content-wrapper {
     @apply px-3;
-  }
-
-  .bottom-spacing {
-    @apply h-16;
   }
 }
 
@@ -513,25 +490,21 @@ onPullDownRefresh(() => {
   }
 }
 
-/* 横屏适配 */
+/** 横屏适配 */
 @media (orientation: landscape) and (max-height: 600rpx) {
   .content-wrapper {
     @apply px-4 py-2;
   }
-
-  .bottom-spacing {
-    @apply h-12;
-  }
 }
 
-/* 暗色模式适配 */
+/** 暗色模式适配 */
 @media (prefers-color-scheme: dark) {
   .activity-detail {
     @apply bg-gray-900;
   }
 }
 
-/* 高对比度模式 */
+/** 高对比度模式 */
 @media (prefers-contrast: high) {
   .activity-detail {
     @apply bg-white;
@@ -542,7 +515,7 @@ onPullDownRefresh(() => {
   }
 }
 
-/* 无障碍支持 */
+/** 无障碍支持 - 减少动画 */
 @media (prefers-reduced-motion: reduce) {
   .activity-detail {
     animation: none;
@@ -553,20 +526,16 @@ onPullDownRefresh(() => {
   }
 }
 
-/* 焦点可见性增强 */
+/** 焦点可见性增强 */
 .content-wrapper:focus-within {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-/* 打印样式 */
+/** 打印样式 */
 @media print {
   .activity-detail {
     @apply bg-white text-black;
-  }
-
-  .bottom-spacing {
-    @apply hidden;
   }
 
   .content-wrapper {
@@ -575,43 +544,36 @@ onPullDownRefresh(() => {
   }
 }
 
-/* 触摸设备优化 */
+/** 触摸设备优化 */
 @media (hover: none) and (pointer: coarse) {
   .content-wrapper {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
-
-  /* 增大触摸目标 */
-  .bottom-spacing {
-    @apply h-24;
-  }
 }
 
-/* 小屏幕设备适配 */
+/** 小屏幕设备适配 */
 @media (max-device-width: 375px) {
   .content-wrapper {
     @apply px-2;
   }
 }
 
-/* 大屏幕设备适配 */
+/** 大屏幕设备适配 */
 @media (min-device-width: 1024px) {
   .content-wrapper {
     max-width: 600rpx;
-    @apply mx-auto;
+    @apply mx-auto overflow-hidden;
     box-shadow: 0 0 40rpx rgba(0, 0, 0, 0.05);
     border-radius: 16rpx;
     margin-top: 32rpx;
     margin-bottom: 32rpx;
-    overflow: hidden;
   }
 }
 
-/* 网络状态适配 */
+/** 网络状态适配 - 节省数据 */
 @media (prefers-reduced-data) {
   .activity-detail {
-    /* 减少动画和过渡效果以节省数据 */
     animation: none;
   }
 }

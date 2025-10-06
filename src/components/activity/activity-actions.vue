@@ -258,7 +258,7 @@ function handleContact() {
 </script>
 
 <template>
-  <view class="mx-4 animate-slide-up max-sm:mx-3">
+  <view class="activity-actions-container mx-4 max-sm:mx-3">
     <!-- 主操作按钮区域 -->
     <view class="mb-4 flex gap-3">
       <!-- 报名按钮 -->
@@ -311,15 +311,15 @@ function handleContact() {
     >
       <!-- 点赞按钮 -->
       <view
-        class="flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-red-500': isLikedLocal, 'text-gray-600': !isLikedLocal }"
+        class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
+        :class="{ 'text-red-500 like-active': isLikedLocal, 'text-gray-600': !isLikedLocal }"
         @click="handleLike"
       >
         <view class="group relative">
           <wd-icon
             :name="isLikedLocal ? 'like-filled' : 'like'"
             size="24"
-            :custom-class="`i-carbon-${isLikedLocal ? 'thumbs-up-filled' : 'thumbs-up'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isLikedLocal ? 'thumbs-up-filled' : 'thumbs-up'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isLiking" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
@@ -330,15 +330,15 @@ function handleContact() {
 
       <!-- 收藏按钮 -->
       <view
-        class="flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-yellow-500': isCollectedLocal, 'text-gray-600': !isCollectedLocal }"
+        class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
+        :class="{ 'text-yellow-500 collect-active': isCollectedLocal, 'text-gray-600': !isCollectedLocal }"
         @click="handleCollect"
       >
         <view class="group relative">
           <wd-icon
             :name="isCollectedLocal ? 'star-filled' : 'star'"
             size="24"
-            :custom-class="`i-carbon-${isCollectedLocal ? 'star-filled' : 'star'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isCollectedLocal ? 'star-filled' : 'star'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isCollecting" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
@@ -349,7 +349,7 @@ function handleContact() {
 
       <!-- 分享按钮 -->
       <view
-        class="flex flex-col cursor-pointer items-center rounded-xl p-2 text-gray-600 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
+        class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 text-gray-600 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
         @click="handleShare"
       >
         <view class="group">
@@ -394,7 +394,7 @@ function handleContact() {
 </template>
 
 <style scoped>
-/* 动画定义 */
+/* 滑入动画定义 */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -406,11 +406,11 @@ function handleContact() {
   }
 }
 
-.animate-slide-up {
+.activity-actions-container {
   animation: slideUp 0.6s ease-out 0.2s both;
 }
 
-/* 按钮自定义样式 */
+/* 报名按钮样式 - 使用深度选择器 */
 .register-button :deep(.wd-button) {
   font-weight: 600;
   box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
@@ -426,6 +426,7 @@ function handleContact() {
   transform: translateY(0);
 }
 
+/* 联系客服按钮样式 - 使用深度选择器 */
 .contact-button :deep(.wd-button) {
   font-weight: 600;
   box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
@@ -437,8 +438,8 @@ function handleContact() {
   box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
 }
 
-/* 点赞动画 */
-.text-red-500 .action-icon {
+/* 点赞动画效果 */
+.like-active .action-icon {
   animation: likeAnimation 0.6s ease-out;
 }
 
@@ -460,8 +461,8 @@ function handleContact() {
   }
 }
 
-/* 收藏动画 */
-.text-yellow-500 .action-icon {
+/* 收藏动画效果 */
+.collect-active .action-icon {
   animation: collectAnimation 0.6s ease-out;
 }
 
@@ -477,9 +478,9 @@ function handleContact() {
   }
 }
 
-/* 无障碍支持 */
+/* 无障碍支持 - 减少动画 */
 @media (prefers-reduced-motion: reduce) {
-  .animate-slide-up {
+  .activity-actions-container {
     animation: none;
   }
 
@@ -493,8 +494,8 @@ function handleContact() {
     transform: none;
   }
 
-  .text-red-500 .action-icon,
-  .text-yellow-500 .action-icon {
+  .like-active .action-icon,
+  .collect-active .action-icon {
     animation: none;
   }
 }

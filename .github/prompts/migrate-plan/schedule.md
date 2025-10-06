@@ -173,11 +173,14 @@
 
 ### 02 使用 `style-migration` 子代理优化组件
 
-阅读 `src\components\activity` 目录内的全部 vue 组件。
+阅读以下代码：
+
+- `src\pages\activity\detail.vue`
+- `src/components/activity/**/*.vue`
 
 1. 将这些组件的命名风格改掉。严格遵循短横杠规范，并移除掉冗余多余的文件名单词。
 2. 对这些 vue 组件使用 `style-migration` 子代理，用 `style-migration` 子代理实现对这些组件的样式优化。集中使用 unocss，避免出现组件长度过长的情况。简化优化 css 实现。请你认真思考，该如何将 css 样式逐步改写成 unocss，且不更改掉原有的样式。
-3. 请主动使用 `chrome-devtools` mcp 工具，自主检查其 `活动详情页` 的样式情况。避免出现在改造成 unocss 时，页面整体样式出现大幅度的扭曲变化的情况。
+3. 请主动使用 `chrome-devtools` mcp 工具，自主检查其 `活动详情页` 的样式情况。其 `活动详情页` 的访问地址为： `http://localhost:9000/#/pages/activity/index?currentCommunityId=COMM_001` 。请访问该地址来检验 UI 样式风格。避免出现在改造成 unocss 时，页面整体样式出现大幅度的扭曲变化的情况。
 
 ### 03 代码重构
 

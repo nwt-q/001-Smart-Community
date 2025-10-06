@@ -83,10 +83,7 @@ function handleTimeClick() {
 </script>
 
 <template>
-  <view
-    class="rounded-2xl bg-white p-6 shadow-lg animate-slide-up max-sm:p-4"
-    style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); backdrop-filter: blur(10px);"
-  >
+  <view class="activity-info-card rounded-2xl bg-white p-6 shadow-lg backdrop-blur-10px animate-slide-up max-sm:p-4">
     <!-- 活动标题 -->
     <view class="mb-4">
       <text class="text-2xl text-gray-900 font-bold leading-tight tracking-[0.5rpx] max-sm:text-xl">
@@ -115,8 +112,7 @@ function handleTimeClick() {
         @click="handleAuthorClick"
       >
         <view
-          class="mr-4 h-10 w-10 flex items-center justify-center rounded-full from-blue-500 to-blue-600 bg-gradient-to-r shadow-md transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
-          style="box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);"
+          class="icon-wrapper-blue mr-4 h-10 w-10 flex items-center justify-center rounded-full from-blue-500 to-blue-600 bg-gradient-to-r shadow-md transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
         >
           <wd-icon name="user" size="18" custom-class="i-carbon-user-avatar text-white max-sm:text-sm" />
         </view>
@@ -137,8 +133,7 @@ function handleTimeClick() {
         @click="handleTimeClick"
       >
         <view
-          class="meta-icon mr-4 h-10 w-10 flex items-center justify-center rounded-full bg-orange-50 shadow-sm transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
-          style="box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);"
+          class="icon-wrapper-orange mr-4 h-10 w-10 flex items-center justify-center rounded-full bg-orange-50 shadow-sm transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
         >
           <wd-icon name="time" size="18" custom-class="i-carbon-time text-orange-500 max-sm:text-sm" />
         </view>
@@ -167,8 +162,7 @@ function handleTimeClick() {
         class="flex items-center py-3"
       >
         <view
-          class="meta-icon mr-4 h-10 w-10 flex items-center justify-center rounded-full bg-purple-50 shadow-sm transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
-          style="box-shadow: 0 2px 8px rgba(147, 51, 234, 0.2);"
+          class="icon-wrapper-purple mr-4 h-10 w-10 flex items-center justify-center rounded-full bg-purple-50 shadow-sm transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
         >
           <wd-icon name="chart" size="18" custom-class="i-carbon-analytics text-purple-500 max-sm:text-sm" />
         </view>
@@ -192,7 +186,27 @@ function handleTimeClick() {
 </template>
 
 <style scoped>
-/* 动画定义 */
+/** 卡片阴影效果 */
+.activity-info-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/** 蓝色图标包装器阴影 */
+.icon-wrapper-blue {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/** 橙色图标包装器阴影 */
+.icon-wrapper-orange {
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+}
+
+/** 紫色图标包装器阴影 */
+.icon-wrapper-purple {
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.2);
+}
+
+/** 滑入动画定义 */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -208,7 +222,7 @@ function handleTimeClick() {
   animation: slideUp 0.6s ease-out;
 }
 
-/* 无障碍支持 */
+/** 无障碍支持 - 减少动画 */
 @media (prefers-reduced-motion: reduce) {
   .animate-slide-up {
     animation: none;

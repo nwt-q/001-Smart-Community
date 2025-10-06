@@ -120,18 +120,12 @@ function shareContent() {
 </script>
 
 <template>
-  <view
-    class="relative overflow-hidden rounded-2xl bg-white shadow-sm animate-slide-up"
-    style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); border: 1px solid rgba(0, 0, 0, 0.02);"
-  >
+  <view class="activity-content relative overflow-hidden rounded-2xl bg-white animate-slide-up">
     <!-- 内容标题栏 -->
-    <view class="border-b border-gray-100 bg-gray-50 p-6 pb-4 max-sm:p-4 max-sm:pb-3">
+    <view class="activity-header border-b border-gray-100 bg-gray-50 p-6 pb-4 max-sm:p-4 max-sm:pb-3">
       <view class="flex items-center justify-between">
         <view class="flex items-center">
-          <view
-            class="mr-3 h-6 w-6 flex items-center justify-center rounded-lg from-blue-500 to-blue-600 bg-gradient-to-r shadow-sm"
-            style="box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);"
-          >
+          <view class="icon-wrapper mr-3 h-6 w-6 flex items-center justify-center rounded-lg from-blue-500 to-blue-600 bg-gradient-to-r">
             <wd-icon name="document" size="14" custom-class="i-carbon-document text-white" />
           </view>
           <text class="text-lg text-gray-900 font-semibold tracking-[0.3rpx] max-sm:text-base">活动详情</text>
@@ -164,18 +158,14 @@ function shareContent() {
       >
         <rich-text
           :nodes="props.content"
-          class="text-base text-gray-700 leading-relaxed tracking-[0.2rpx] max-sm:text-sm"
+          class="content-body text-base text-gray-700 leading-relaxed tracking-[0.2rpx] max-sm:text-sm"
         />
       </view>
 
       <!-- 展开/收起按钮 -->
-      <view
-        v-if="isOverflow"
-        class="mt-4 text-center"
-      >
+      <view v-if="isOverflow" class="mt-4 text-center">
         <view
-          class="inline-flex cursor-pointer items-center rounded-full bg-blue-50 px-4 py-2 text-sm text-blue-600 font-medium transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-blue-100 max-sm:px-3 max-sm:py-1.5 max-sm:text-xs"
-          style="box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15); letter-spacing: 0.2rpx;"
+          class="expand-button inline-flex cursor-pointer items-center rounded-full bg-blue-50 px-4 py-2 text-sm text-blue-600 font-medium transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-blue-100 max-sm:px-3 max-sm:py-1.5 max-sm:text-xs"
           @click="toggleExpand"
         >
           <text class="mr-1">{{ buttonText }}</text>
@@ -190,15 +180,14 @@ function shareContent() {
       <!-- 渐变遮罩 -->
       <view
         v-if="isOverflow && !isExpanded"
-        class="pointer-events-none absolute bottom-0 left-0 right-0 h-20"
-        style="background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.8), white);"
+        class="gradient-mask pointer-events-none absolute bottom-0 left-0 right-0 h-20"
       />
     </view>
   </view>
 </template>
 
 <style scoped>
-/* 动画定义 */
+/** 动画定义 */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -214,7 +203,29 @@ function shareContent() {
   animation: slideUp 0.6s ease-out 0.1s both;
 }
 
-/* Rich Text 内容样式优化 */
+/** 活动内容容器的阴影和边框 */
+.activity-content {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+/** 图标包装器的阴影 */
+.icon-wrapper {
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+}
+
+/** 展开按钮的阴影和间距 */
+.expand-button {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+  letter-spacing: 0.2rpx;
+}
+
+/** 渐变遮罩 */
+.gradient-mask {
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.8), white);
+}
+
+/** Rich Text 内容样式优化 */
 .rich-text-content :deep(.rich-text) {
   color: #374151;
   line-height: 1.8;
@@ -279,7 +290,6 @@ function shareContent() {
 
 .rich-text-content :deep(.rich-text blockquote) {
   border-left: 4px solid #3b82f6;
-  padding-left: 1rem;
   padding: 0.5rem 1rem;
   margin: 1rem 0;
   background-color: #eff6ff;
@@ -351,7 +361,7 @@ function shareContent() {
   color: #111827;
 }
 
-/* 无障碍支持 */
+/** 无障碍支持 */
 @media (prefers-reduced-motion: reduce) {
   .animate-slide-up {
     animation: none;
@@ -366,7 +376,7 @@ function shareContent() {
   }
 }
 
-/* 打印样式 */
+/** 打印样式 */
 @media print {
   .rich-text-content {
     max-height: none !important;

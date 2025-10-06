@@ -47,7 +47,7 @@ function handleImageLoad() {
 </script>
 
 <template>
-  <view class="animate-fade-in-scale relative w-full overflow-hidden" :style="{ height: props.height }">
+  <view class="hero-container relative w-full overflow-hidden" :style="{ height: props.height }">
     <!-- 渐变遮罩层 -->
     <view
       v-if="props.showGradient"
@@ -74,7 +74,7 @@ function handleImageLoad() {
       fit="cover"
       loading-type="skeleton"
       error-type="image"
-      class="h-full w-full object-cover transition-all duration-500 ease-out hover:scale-102 max-sm:hover:scale-100"
+      class="hero-image h-full w-full object-cover transition-all duration-500 ease-out sm:hover:scale-102"
       :class="{ 'opacity-0': isLoading, 'opacity-100': !isLoading }"
       @error="handleImageError"
       @load="handleImageLoad"
@@ -103,7 +103,7 @@ function handleImageLoad() {
 </template>
 
 <style scoped>
-/* 缩放动画 */
+/** 入场动画 - 淡入缩放效果 */
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -115,24 +115,22 @@ function handleImageLoad() {
   }
 }
 
-.animate-fade-in-scale {
+.hero-container {
   animation: fadeInScale 0.6s ease-out;
 }
 
-/* 悬停效果 */
-.hover\:scale-102:hover {
+/** 悬停缩放效果 - 仅在桌面端生效 */
+.hero-image:hover {
   transform: scale(1.02);
-  transition: transform 0.3s ease-out;
 }
 
-/* 无障碍支持 */
+/** 无障碍支持 - 减少动画 */
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-in-scale {
+  .hero-container {
     animation: none;
-    transition: none;
   }
 
-  .hover\:scale-102:hover {
+  .hero-image:hover {
     transform: none;
   }
 }
