@@ -178,3 +178,17 @@
 1. 将这些组件的命名风格改掉。严格遵循短横杠规范，并移除掉冗余多余的文件名单词。
 2. 对这些 vue 组件使用 `style-migration` 子代理，用 `style-migration` 子代理实现对这些组件的样式优化。集中使用 unocss，避免出现组件长度过长的情况。简化优化 css 实现。请你认真思考，该如何将 css 样式逐步改写成 unocss，且不更改掉原有的样式。
 3. 请主动使用 `chrome-devtools` mcp 工具，自主检查其 `活动详情页` 的样式情况。避免出现在改造成 unocss 时，页面整体样式出现大幅度的扭曲变化的情况。
+
+### 03 代码重构
+
+请深度思考。
+
+阅读以下代码：
+
+- `src\pages\activity\detail.vue`
+- `src/components/activity/**/*.vue`
+
+1. 删除掉全部关于性能监控的内容。我们不需要考虑性能监控的东西。
+2. 删除掉开发环境判断的逻辑。
+3. 请认真阅读之前的图片实现逻辑，不需要使用复杂的计算属性来动态计算图片路径。请使用原来的图片显示逻辑即可。
+4. 重构 src\components\activity\skeleton.vue 骨架屏的实现方式，请改成使用 https://wot-ui.cn/component/skeleton.html `<wd-skeleton>` 组件实现骨架屏。避免出现重复冗余的过度封装。
