@@ -192,3 +192,19 @@
 2. 删除掉开发环境判断的逻辑。
 3. 请认真阅读之前的图片实现逻辑，不需要使用复杂的计算属性来动态计算图片路径。请使用原来的图片显示逻辑即可。
 4. 重构 src\components\activity\skeleton.vue 骨架屏的实现方式，请改成使用 https://wot-ui.cn/component/skeleton.html `<wd-skeleton>` 组件实现骨架屏。避免出现重复冗余的过度封装。
+
+### 04 开启骨架屏动态效果和重构`交互反馈`功能的实现方式
+
+请深度思考。
+
+1. 骨架屏 `src\components\activity\skeleton.vue` 组件的 `<wd-skeleton>` 组件，都默认启用动态加载的动画效果。使用 `flashed` 动画效果。
+2. 重构 `交互反馈` 功能。阅读 `src\components\activity\InteractionFeedback.vue` 组件。请改成使用 `<wd-toast>` 组件实现 Toast 轻提示的效果。`src\components\activity\InteractionFeedback.vue` 组件本质上属于交互提示效果的集成组件，请你用 https://wot-ui.cn/component/toast.html 来重构交互提示的效果。
+3. 重构完成 `交互反馈` 功能后，请删除掉 `src\components\activity\InteractionFeedback.vue` 组件。
+
+### 05 抽离独立的，面向 mock 的图片路径处理函数
+
+<!-- TODO: 用claude code模型 -->
+
+请深度思考。
+
+<!-- function getImageUrl(headerImg: string) -->
