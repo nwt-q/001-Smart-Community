@@ -8,6 +8,7 @@ import type { Activity } from '@/types/activity'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import { computed, nextTick, reactive, ref } from 'vue'
+import { useToast } from 'wot-design-uni'
 import { getActivityDetail, increaseActivityView } from '@/api/activity'
 import ActivityActions from '@/components/activity/activity-actions.vue'
 import ActivityContent from '@/components/activity/activity-content.vue'
@@ -15,6 +16,9 @@ import ActivityError from '@/components/activity/activity-error.vue'
 import ActivityHeroImage from '@/components/activity/activity-hero.vue'
 import ActivityInfo from '@/components/activity/activity-info.vue'
 import ActivitySkeleton from '@/components/activity/activity-skeleton.vue'
+
+/** Toast 实例 */
+const toast = useToast()
 
 /** 页面配置 */
 definePage({
@@ -203,17 +207,32 @@ function handleImageLoad() {
   isImageLoading.value = false
 }
 
-/** 显示交互反馈 */
+/**
+ * 显示交互反馈
+ * 使用 wot-design-uni 的 toast 组件
+ */
 function showInteractionFeedback(type: 'like' | 'collect' | 'share' | 'register' | 'success' | 'error', text: string) {
-  // 根据 wd-toast 的类型映射
-  const toastType = type === 'error' ? 'error' : 'success'
-
-  // 使用 wot-design-uni 的 toast 组件
-  uni.showToast({
-    title: text,
-    icon: type === 'error' ? 'error' : 'success',
+  const options = {
+    msg: text,
     duration: 1500,
-  })
+  }
+
+  switch (type) {
+    case 'error':
+      toast.error(options)
+      break
+    case 'success':
+      toast.success(options)
+      break
+    case 'like':
+    case 'collect':
+    case 'share':
+    case 'register':
+      toast.success(options)
+      break
+    default:
+      toast.show(options)
+  }
 }
 
 // 交互方法
@@ -366,6 +385,9 @@ onPullDownRefresh(() => {
 
 <template>
   <view class="activity-detail min-h-screen bg-gray-50 animate-fade-in">
+    <!-- Toast 轻提示挂载点 -->
+    <wd-toast />
+
     <!-- 错误状态显示 -->
     <ActivityError
       v-if="errorState.show"
