@@ -62,3 +62,43 @@
 
 3. `src/pages/activity/index.vue` 是活动列表页，但是目前的代码写法是回退到原生的写法了，没有完全的按照子代理的要求来做。我要求你主动使用 `style-migration` 和 `component-migration` 子代理，将活动列表页的代码写法，改成满足子代理要求的写法。并同时满足 UI 样式不发生任何变化的要求。
 4. 请你主动使用 `chrome-devtools` mcp 工具，以 H5 方式启动项目，预期在 `http://localhost:9000/#/pages/activity/index?currentCommunityId=COMM_001` 这个访问地址内，访问到活动列表页。请你在 `chrome-devtools` mcp 工具的帮助下，阅读代码显示效果。并确保 UI 样式在代码重构的时候，不发生任何变化。
+
+### 01
+
+我选择方案 1。同时你需要满足以下要求：
+
+1. 要求继续使用 `<wd-img>` 组件。请你适当的阅读 https://wot-ui.cn/component/img.html 文档，避免上下文超限。并学会使用 `<wd-img>` 组件。
+2. 按照你的建议，那就不使用 `<wd-card>` 组件。
+3. 用 `<wd-img>` 组件实现 Avatar 头像组件。
+
+### 02
+
+请深度思考。请你继续处理样式错误。
+
+1. 如下图所示：图标没有看到。是空白的，和之前说提供的样式差距过大。
+
+![2025-10-06-07-59-08](https://s2.loli.net/2025/10/06/qadXpLROD8usZo5.png)
+
+2. 如下图所示：文本全部挤压在一起了。
+
+![2025-10-06-08-00-21](https://s2.loli.net/2025/10/06/3zwApsMJXuVDZEG.png)
+
+请你在样式层面上解决此问题，使用 unocss 原子式样式解决。
+
+请你继续使用 `chrome-devtools` mcp 工具，实时检查 UI 样式效果。
+
+### 03
+
+效果很差，请你继续处理样式问题。
+
+1. 如下图所示：文本仍旧是出现严重的挤压。请检查 `text-gray-600 text-28rpx leading-1.6 line-clamp-2` 样式。
+
+![2025-10-06-08-06-18](https://s2.loli.net/2025/10/06/oP1OI7lh3fa6nSt.png)
+
+2. 如下图所示：文本显示不完全。被间距挤压。
+
+![2025-10-06-08-07-24](https://s2.loli.net/2025/10/06/O6HLx7WsTqPE1bz.png)
+
+3. 发布者头像是空白的。没有显示出内容。
+
+![2025-10-06-08-08-19](https://s2.loli.net/2025/10/06/tluoWUy7RnBEj6G.png)
