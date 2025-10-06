@@ -349,8 +349,33 @@
 1. 确保 mock 接口文件，其返回的 mock 接口，都充分的使用了 `src\api\mock\shared\utils.ts` 提供的工具。比如 `successResponse` 和 `errorResponse` 函数。请规范接口返回的数据格式。
 2. 确保 mock 接口文件，都使用了 `mockLog` 函数来规范日志输出结果。
 
-### 032
+### 032 修改子代理使用 icon 的核心准则
 
 <!-- TODO -->
 
-请深度思考。
+请深度思考。请你认真阅读以下`icon迁移的方针思想`，以及实现方式。
+
+各类迁移子代理实现 icon 标签的迁移时，是从 `cuIcon` ColorUI 图标，迁移到基于 `<wd-icon>` 组件的 `custom-class` 自定义样式实现的。
+
+- icon 实现方式：新的 icon 图标用的基于类名生成的 icon。
+- 类名格式要求：其编写格式满足 unocss 的 icon 图标类格式要求。icon 的类型都来自于 `Iconify`。
+- iconify 图标集分类： 本项目用的是 `@iconify-json/carbon` 库，是 `carbon` 图标集。
+- icon 类名格式要求：按照 unocss 使用 iconify 图标集的要求，本项目内的 `carbon` 图标集类名为 `i-carbon-*` 图标类。
+- 具体示例： 比如 icon 的旧类型为 `cuIcon-notification` ，按照上述要求，新的 icon 实现方式为：
+
+```html
+<wd-icon name="" custom-class="i-carbon-notification" />
+```
+
+在使用`<wd-icon>`组件实现 icon 迁移时，请注意满足以下要求：
+
+1. 使用 `<wd-icon>` 组件。
+2. `<wd-icon>` 组件的要求是 name 属性必填。这里你固定填写为空字符串即可。
+3. `i-carbon-*` 图标类在 custom-class 内就可以生效了。请你用 custom-class 来解决 `i-carbon-*` 图标类不生效的故障。
+4. 按钮大小调整等样式修改需求，请主动使用 `custom-class` 加上 unocss 原子式样式的方式实现。
+
+以上就是`icon迁移的方针思想`了。现在请你深度思考，并完成以下任务：
+
+1. 针对性的阅读 `component-migration` 子代理的 `图标映射` 和 `style-migration` 子代理的 `图标系统映射` 部分。这两个部分都在讲 icon 图标映射表。
+2. 以后全部的 icon 迁移任务，都交给 `component-migration` 子代理完成，而不是 `style-migration` 子代理。所以请你将 `style-migration` 子代理的 icon 映射图标表格，都迁移剪切到 `component-migration` 子代理的 `图标映射` 部分。
+3. 将我上面表述的`icon迁移的方针思想`，整理并写入到 `component-migration` 子代理内，我希望 `component-migration` 子代理未来能够严格遵守该方针，实现 icon 迁移。
