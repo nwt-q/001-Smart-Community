@@ -274,3 +274,25 @@
 使用 `api-migration` 子代理优化 `活动操作按钮组件` 的接口请求，优化 `src\components\activity\activity-actions.vue` 组件的写法。
 
 特别是这一段 【用组合式 api 优化这里的接口请求交互过程】，请严格遵循 `api-migration` 子代理的要求，避免写 `try/catch` 来管理接口请求的成功和失败情况。
+
+## 010 处理 `活动操作按钮组件` 内提示框层叠位置不合适的故障
+
+<!-- TODO: -->
+
+请深度思考。
+
+如下图所示：
+
+![2025-10-07-09-26-32](https://s2.loli.net/2025/10/07/mbVJM7Nf4KX1yap.png)
+
+在 `src\components\activity\activity-actions.vue` 活动操作按钮组件 内，Toast 提示弹框的位置出现了遮挡。这是因为在子组件范围内，空间就只有那么大，所以会遮挡。
+
+请你按照我提供的方案和步骤，逐步完成故障修复：
+
+1. **全局组件的格式准备**： 请你对 `src\components\global` 内的 vue 组件做目录层级划分，并对组件做文件重命名，整理好这些文件。
+2. **注册使用全局组件**： 去 `src\App.ku.vue` 内检查这些全局组件是否按照各自的文档要求所述，在根组件内定义好这些全局组件。
+3. **补全 CommonUtil 导入**： 去 `src\hooks\useGlobal*.ts` 这几个组合式 api 文件内，补全从 `wot-design-uni` 模块导入的 CommonUtil 对象。
+4. **及时更新文档说明的路径地址**：去 `src\components\global` 内找到你整理好的 md 文件，找到类似于 `import { useGlobalMessage } from '@/composables/useGlobalMessage'` 的写法，及时的从 composables 改成 hooks 。因为组合式 api 的文件导入地址是 hooks，而不是 composables 。
+5. **更新 component-migration**： 在 `component-migration` 子代理内，更新关于的 Toast 、 Message 、 Loading 这三个组件的用法。以后实现类似的功能时，一律使用全局组件提供的功能，一律使用组合式 api 来实现该功能。子代理提供这几个组合式 api 的使用文档链接即可，不需要写很详细的组件用法，避免 `component-migration` 子代理文件文本过长。
+6. **使用子代理改写组件写法**： 使用 `component-migration` 子代理去改写 活动操作按钮组件对 Toast 组件的用法，改成组合式 api 的用法。
+7. **运行项目并检查**： 主动使用 MCP 工具 `chrome-devtools` ，以 `/pages/activity/detail?activitiesId=ACT_018&currentCommunityId=COMM_001` 地址为例，进入该活动详情页，并模拟用户的点赞、收藏这两个行为，检查提示框是否还会出现遮挡的情况。
