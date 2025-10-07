@@ -283,6 +283,28 @@ const mockActivityDatabase = {
     return false
   },
 
+  /** 更新活动点赞状态 */
+  updateLike(activitiesId: string, isLiked: boolean, likeCount: number): Activity | null {
+    const activity = this.getActivityById(activitiesId)
+    if (activity) {
+      activity.likeCount = likeCount
+      activity.updateTime = new Date().toISOString()
+      return activity
+    }
+    return null
+  },
+
+  /** 更新活动收藏状态 */
+  updateCollect(activitiesId: string, isCollected: boolean, collectCount: number): Activity | null {
+    const activity = this.getActivityById(activitiesId)
+    if (activity) {
+      activity.collectCount = collectCount
+      activity.updateTime = new Date().toISOString()
+      return activity
+    }
+    return null
+  },
+
   /** 添加活动 */
   addActivity(activity: Activity): boolean {
     try {
@@ -593,6 +615,106 @@ export default defineUniAppMock([
       catch (error: any) {
         console.error('❌ Mock API Error: updateActivityStatus', error)
         return errorResponse(error.message || '活动状态更新失败')
+      }
+    },
+  },
+
+  /** 更新活动点赞状态 */
+  {
+    url: '/app/activities.updateLike',
+    method: 'POST',
+    delay: [200, 400],
+    body: async ({ body }) => {
+      await randomDelay(200, 400)
+
+      const data = body as { activitiesId: string, isLiked: boolean, likeCount: number }
+
+      try {
+        mockLog('updateLike', data)
+
+        // 参数验证
+        if (!data.activitiesId) {
+          return errorResponse('活动ID不能为空', '400')
+        }
+
+        if (typeof data.isLiked !== 'boolean') {
+          return errorResponse('点赞状态参数错误', '400')
+        }
+
+        if (typeof data.likeCount !== 'number' || data.likeCount < 0) {
+          return errorResponse('点赞数量参数错误', '400')
+        }
+
+        // 更新点赞状态
+        const updatedActivity = mockActivityDatabase.updateLike(data.activitiesId, data.isLiked, data.likeCount)
+
+        if (!updatedActivity) {
+          return errorResponse('活动不存在', '404')
+        }
+
+        const result = {
+          activitiesId: updatedActivity.activitiesId,
+          isLiked: data.isLiked,
+          likeCount: updatedActivity.likeCount,
+          updateTime: updatedActivity.updateTime,
+        }
+
+        mockLog('updateLike result', result)
+        return successResponse(result, data.isLiked ? '点赞成功' : '取消点赞成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: updateLike', error)
+        return errorResponse(error.message || '点赞状态更新失败')
+      }
+    },
+  },
+
+  /** 更新活动收藏状态 */
+  {
+    url: '/app/activities.updateCollect',
+    method: 'POST',
+    delay: [200, 400],
+    body: async ({ body }) => {
+      await randomDelay(200, 400)
+
+      const data = body as { activitiesId: string, isCollected: boolean, collectCount: number }
+
+      try {
+        mockLog('updateCollect', data)
+
+        // 参数验证
+        if (!data.activitiesId) {
+          return errorResponse('活动ID不能为空', '400')
+        }
+
+        if (typeof data.isCollected !== 'boolean') {
+          return errorResponse('收藏状态参数错误', '400')
+        }
+
+        if (typeof data.collectCount !== 'number' || data.collectCount < 0) {
+          return errorResponse('收藏数量参数错误', '400')
+        }
+
+        // 更新收藏状态
+        const updatedActivity = mockActivityDatabase.updateCollect(data.activitiesId, data.isCollected, data.collectCount)
+
+        if (!updatedActivity) {
+          return errorResponse('活动不存在', '404')
+        }
+
+        const result = {
+          activitiesId: updatedActivity.activitiesId,
+          isCollected: data.isCollected,
+          collectCount: updatedActivity.collectCount,
+          updateTime: updatedActivity.updateTime,
+        }
+
+        mockLog('updateCollect result', result)
+        return successResponse(result, data.isCollected ? '收藏成功' : '取消收藏成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: updateCollect', error)
+        return errorResponse(error.message || '收藏状态更新失败')
       }
     },
   },

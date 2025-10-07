@@ -1,25 +1,34 @@
 <!--
   活动操作按钮组件
   包含点赞、收藏、分享、报名等功能按钮
+  所有交互逻辑和状态管理均在组件内部完成，增强内聚性
 -->
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useToast } from 'wot-design-uni'
+import { updateActivityCollect, updateActivityLike } from '@/api/activity'
 
 interface Props {
   /** 活动ID */
   activityId: string
-  /** 是否已点赞 */
-  isLiked?: boolean
-  /** 是否已收藏 */
-  isCollected?: boolean
-  /** 是否已报名 */
-  isRegistered?: boolean
-  /** 点赞数量 */
-  likeCount?: number
-  /** 收藏数量 */
-  collectCount?: number
-  /** 报名数量 */
-  registerCount?: number
+  /** 活动标题 */
+  activityTitle?: string
+  /** 活动图片 */
+  activityImage?: string
+  /** 分享路径 */
+  sharePath?: string
+  /** 初始点赞状态 */
+  initialLiked?: boolean
+  /** 初始收藏状态 */
+  initialCollected?: boolean
+  /** 初始报名状态 */
+  initialRegistered?: boolean
+  /** 初始点赞数量 */
+  initialLikeCount?: number
+  /** 初始收藏数量 */
+  initialCollectCount?: number
+  /** 初始报名数量 */
+  initialRegisterCount?: number
   /** 活动状态 */
   status?: string
   /** 是否显示报名按钮 */
@@ -27,44 +36,77 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'like', isLiked: boolean): void
-  (e: 'collect', isCollected: boolean): void
-  (e: 'register', isRegistered: boolean): void
-  (e: 'share'): void
+  /** 点赞状态变更事件 - 用于父组件同步数据 */
+  (e: 'update:liked', value: { isLiked: boolean, likeCount: number }): void
+  /** 收藏状态变更事件 - 用于父组件同步数据 */
+  (e: 'update:collected', value: { isCollected: boolean, collectCount: number }): void
+  /** 报名状态变更事件 - 用于父组件同步数据 */
+  (e: 'update:registered', value: { isRegistered: boolean }): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isLiked: false,
-  isCollected: false,
-  isRegistered: false,
-  likeCount: 0,
-  collectCount: 0,
-  registerCount: 0,
+  activityTitle: '精彩活动',
+  activityImage: '',
+  sharePath: '',
+  initialLiked: false,
+  initialCollected: false,
+  initialRegistered: false,
+  initialLikeCount: 0,
+  initialCollectCount: 0,
+  initialRegisterCount: 0,
   status: 'UPCOMING',
   showRegisterButton: true,
 })
 
 const emit = defineEmits<Emits>()
 
-/** 响应式数据 */
-const isLikedLocal = ref<boolean>(props.isLiked)
-const isCollectedLocal = ref<boolean>(props.isCollected)
-const isRegisteredLocal = ref<boolean>(props.isRegistered)
+/** Toast 实例 */
+const toast = useToast()
+
+/** 组件内部状态管理 */
+const isLiked = ref<boolean>(props.initialLiked)
+const isCollected = ref<boolean>(props.initialCollected)
+const isRegistered = ref<boolean>(props.initialRegistered)
+const likeCount = ref<number>(props.initialLikeCount)
+const collectCount = ref<number>(props.initialCollectCount)
+const registerCount = ref<number>(props.initialRegisterCount)
+
+/** 加载状态 */
 const isLiking = ref<boolean>(false)
 const isCollecting = ref<boolean>(false)
 const isRegistering = ref<boolean>(false)
 
+/** 监听 props 变化同步到内部状态 */
+watch(() => props.initialLiked, (val) => {
+  isLiked.value = val
+})
+watch(() => props.initialCollected, (val) => {
+  isCollected.value = val
+})
+watch(() => props.initialRegistered, (val) => {
+  isRegistered.value = val
+})
+watch(() => props.initialLikeCount, (val) => {
+  likeCount.value = val
+})
+watch(() => props.initialCollectCount, (val) => {
+  collectCount.value = val
+})
+watch(() => props.initialRegisterCount, (val) => {
+  registerCount.value = val
+})
+
 /** 计算属性 */
 const formattedLikeCount = computed(() => {
-  return props.likeCount >= 1000 ? `${(props.likeCount / 1000).toFixed(1)}k` : props.likeCount.toString()
+  return likeCount.value >= 1000 ? `${(likeCount.value / 1000).toFixed(1)}k` : likeCount.value.toString()
 })
 
 const formattedCollectCount = computed(() => {
-  return props.collectCount >= 1000 ? `${(props.collectCount / 1000).toFixed(1)}k` : props.collectCount.toString()
+  return collectCount.value >= 1000 ? `${(collectCount.value / 1000).toFixed(1)}k` : collectCount.value.toString()
 })
 
 const formattedRegisterCount = computed(() => {
-  return props.registerCount >= 1000 ? `${(props.registerCount / 1000).toFixed(1)}k` : props.registerCount.toString()
+  return registerCount.value >= 1000 ? `${(registerCount.value / 1000).toFixed(1)}k` : registerCount.value.toString()
 })
 
 const canRegister = computed(() => {
@@ -72,7 +114,7 @@ const canRegister = computed(() => {
 })
 
 const registerButtonText = computed(() => {
-  if (isRegisteredLocal.value)
+  if (isRegistered.value)
     return '取消报名'
   if (props.status === 'ONGOING')
     return '立即报名'
@@ -82,7 +124,7 @@ const registerButtonText = computed(() => {
 })
 
 const registerButtonClass = computed(() => {
-  if (isRegisteredLocal.value)
+  if (isRegistered.value)
     return 'bg-gray-500 text-white'
   if (props.status === 'ONGOING')
     return 'bg-green-500 text-white'
@@ -91,67 +133,119 @@ const registerButtonClass = computed(() => {
   return 'bg-gray-300 text-gray-500 cursor-not-allowed'
 })
 
-/** 方法 */
+/**
+ * 显示交互反馈
+ * 使用 wot-design-uni 的 toast 组件
+ */
+function showInteractionFeedback(type: 'like' | 'collect' | 'share' | 'register' | 'success' | 'error', text: string) {
+  const options = {
+    msg: text,
+    duration: 1500,
+  }
+
+  switch (type) {
+    case 'error':
+      toast.error(options)
+      break
+    case 'success':
+      toast.success(options)
+      break
+    case 'like':
+    case 'collect':
+    case 'share':
+    case 'register':
+      toast.success(options)
+      break
+    default:
+      toast.show(options)
+  }
+}
+
+/** 点赞操作 */
 async function handleLike() {
   if (isLiking.value)
     return
 
   isLiking.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // 计算新的状态
+    const newLikedState = !isLiked.value
+    const newLikeCount = newLikedState
+      ? likeCount.value + 1
+      : Math.max(likeCount.value - 1, 0)
 
-    isLikedLocal.value = !isLikedLocal.value
-    emit('like', isLikedLocal.value)
+    // 调用 API 更新点赞状态
+    const response = await updateActivityLike({
+      activitiesId: props.activityId,
+      isLiked: newLikedState,
+      likeCount: newLikeCount,
+    })
 
-    uni.showToast({
-      title: isLikedLocal.value ? '点赞成功' : '取消点赞',
-      icon: 'success',
-      duration: 1500,
+    // 更新内部状态
+    isLiked.value = response.isLiked
+    likeCount.value = response.likeCount
+
+    // 显示交互反馈
+    showInteractionFeedback('like', isLiked.value ? '点赞成功' : '取消点赞')
+
+    // 通知父组件数据变更
+    emit('update:liked', {
+      isLiked: isLiked.value,
+      likeCount: likeCount.value,
     })
   }
   catch (error) {
-    uni.showToast({
-      title: '操作失败',
-      icon: 'none',
-      duration: 1500,
-    })
+    console.error('点赞操作失败:', error)
+    showInteractionFeedback('error', '操作失败')
   }
   finally {
     isLiking.value = false
   }
 }
 
+/** 收藏操作 */
 async function handleCollect() {
   if (isCollecting.value)
     return
 
   isCollecting.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // 计算新的状态
+    const newCollectedState = !isCollected.value
+    const newCollectCount = newCollectedState
+      ? collectCount.value + 1
+      : Math.max(collectCount.value - 1, 0)
 
-    isCollectedLocal.value = !isCollectedLocal.value
-    emit('collect', isCollectedLocal.value)
+    // 调用 API 更新收藏状态
+    const response = await updateActivityCollect({
+      activitiesId: props.activityId,
+      isCollected: newCollectedState,
+      collectCount: newCollectCount,
+    })
 
-    uni.showToast({
-      title: isCollectedLocal.value ? '收藏成功' : '取消收藏',
-      icon: 'success',
-      duration: 1500,
+    // 更新内部状态
+    isCollected.value = response.isCollected
+    collectCount.value = response.collectCount
+
+    // 显示交互反馈
+    showInteractionFeedback('collect', isCollected.value ? '收藏成功' : '取消收藏')
+
+    // 通知父组件数据变更
+    emit('update:collected', {
+      isCollected: isCollected.value,
+      collectCount: collectCount.value,
     })
   }
   catch (error) {
-    uni.showToast({
-      title: '操作失败',
-      icon: 'none',
-      duration: 1500,
-    })
+    console.error('收藏操作失败:', error)
+    showInteractionFeedback('error', '操作失败')
   }
   finally {
     isCollecting.value = false
   }
 }
 
+/** 报名操作 */
 async function handleRegister() {
   if (isRegistering.value || !canRegister.value)
     return
@@ -159,13 +253,13 @@ async function handleRegister() {
   isRegistering.value = true
   try {
     // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise(resolve => setTimeout(resolve, 500))
 
-    isRegisteredLocal.value = !isRegisteredLocal.value
-    emit('register', isRegisteredLocal.value)
+    // 更新内部状态
+    isRegistered.value = !isRegistered.value
 
-    if (isRegisteredLocal.value) {
-      // 显示报名成功弹窗
+    // 显示交互反馈
+    if (isRegistered.value) {
       uni.showModal({
         title: '报名成功',
         content: '您已成功报名本次活动，请准时参加。',
@@ -175,83 +269,82 @@ async function handleRegister() {
       })
     }
     else {
-      uni.showToast({
-        title: '已取消报名',
-        icon: 'success',
-        duration: 1500,
-      })
+      showInteractionFeedback('register', '已取消报名')
     }
+
+    // 通知父组件数据变更
+    emit('update:registered', {
+      isRegistered: isRegistered.value,
+    })
   }
   catch (error) {
-    uni.showToast({
-      title: '操作失败',
-      icon: 'none',
-      duration: 1500,
-    })
+    console.error('报名操作失败:', error)
+    showInteractionFeedback('error', '操作失败')
   }
   finally {
     isRegistering.value = false
   }
 }
 
+/** 分享操作 */
 function handleShare() {
-  emit('share')
-
-  // 原生分享功能
-  uni.share({
-    provider: 'weixin',
-    scene: 'WXSceneSession',
-    type: 0,
-    href: '',
-    title: '精彩活动分享',
-    summary: '我发现了一个很不错的活动，推荐给你！',
-    success: () => {
-      uni.showToast({
-        title: '分享成功',
-        icon: 'success',
-        duration: 1500,
-      })
-    },
-    fail: () => {
-      // 分享失败，显示其他分享选项
-      uni.showActionSheet({
-        itemList: ['复制链接', '保存图片'],
-        success: (res) => {
-          if (res.tapIndex === 0) {
-            // 复制链接
-            uni.setClipboardData({
-              data: `活动详情链接：${props.activityId}`,
-              success: () => {
-                uni.showToast({
-                  title: '链接已复制',
-                  icon: 'success',
-                  duration: 1500,
-                })
-              },
-            })
-          }
-          else if (res.tapIndex === 1) {
-            uni.showToast({
-              title: '功能开发中',
-              icon: 'none',
-              duration: 1500,
-            })
-          }
-        },
-      })
+  uni.showActionSheet({
+    itemList: ['分享给好友', '复制链接', '保存图片'],
+    success: (res) => {
+      if (res.tapIndex === 0) {
+        // 触发原生分享
+        uni.share({
+          provider: 'weixin',
+          scene: 'WXSceneSession',
+          type: 0,
+          href: '',
+          title: props.activityTitle,
+          summary: `我发现了一个很不错的活动：${props.activityTitle}`,
+          imageUrl: props.activityImage,
+          success: () => {
+            showInteractionFeedback('share', '分享成功')
+          },
+          fail: () => {
+            showInteractionFeedback('error', '分享失败')
+          },
+        })
+      }
+      else if (res.tapIndex === 1) {
+        // 复制链接
+        uni.setClipboardData({
+          data: props.sharePath,
+          success: () => {
+            showInteractionFeedback('success', '链接已复制')
+          },
+        })
+      }
+      else if (res.tapIndex === 2) {
+        // 保存图片
+        if (props.activityImage) {
+          uni.saveImageToPhotosAlbum({
+            filePath: props.activityImage,
+            success: () => {
+              showInteractionFeedback('success', '图片已保存')
+            },
+            fail: () => {
+              showInteractionFeedback('error', '保存失败')
+            },
+          })
+        }
+        else {
+          showInteractionFeedback('error', '暂无图片可保存')
+        }
+      }
     },
   })
 }
 
+/** 联系客服 */
 function handleContact() {
   uni.makePhoneCall({
     phoneNumber: '400-123-4567',
     fail: () => {
-      uni.showToast({
-        title: '拨打失败',
-        icon: 'none',
-        duration: 1500,
-      })
+      showInteractionFeedback('error', '拨打失败')
     },
   })
 }
@@ -259,6 +352,9 @@ function handleContact() {
 
 <template>
   <view class="activity-actions-container mx-4 max-sm:mx-3">
+    <!-- Toast 轻提示挂载点 -->
+    <wd-toast />
+
     <!-- 主操作按钮区域 -->
     <view class="mb-4 flex gap-3">
       <!-- 报名按钮 -->
@@ -278,9 +374,9 @@ function handleContact() {
         >
           <view class="flex items-center justify-center">
             <wd-icon
-              :name="isRegisteredLocal ? 'close' : 'calendar'"
+              :name="isRegistered ? 'close' : 'calendar'"
               size="18"
-              :custom-class="`i-carbon-${isRegisteredLocal ? 'close' : 'calendar'} mr-2`"
+              :custom-class="`i-carbon-${isRegistered ? 'close' : 'calendar'} mr-2`"
             />
             <text class="font-medium tracking-[0.2rpx]">{{ registerButtonText }}</text>
           </view>
@@ -312,14 +408,14 @@ function handleContact() {
       <!-- 点赞按钮 -->
       <view
         class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-red-500 like-active': isLikedLocal, 'text-gray-600': !isLikedLocal }"
+        :class="{ 'text-red-500 like-active': isLiked, 'text-gray-600': !isLiked }"
         @click="handleLike"
       >
         <view class="group relative">
           <wd-icon
-            :name="isLikedLocal ? 'like-filled' : 'like'"
+            :name="isLiked ? 'like-filled' : 'like'"
             size="24"
-            :custom-class="`action-icon i-carbon-${isLikedLocal ? 'thumbs-up-filled' : 'thumbs-up'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isLiked ? 'thumbs-up-filled' : 'thumbs-up'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isLiking" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
@@ -331,14 +427,14 @@ function handleContact() {
       <!-- 收藏按钮 -->
       <view
         class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-yellow-500 collect-active': isCollectedLocal, 'text-gray-600': !isCollectedLocal }"
+        :class="{ 'text-yellow-500 collect-active': isCollected, 'text-gray-600': !isCollected }"
         @click="handleCollect"
       >
         <view class="group relative">
           <wd-icon
-            :name="isCollectedLocal ? 'star-filled' : 'star'"
+            :name="isCollected ? 'star-filled' : 'star'"
             size="24"
-            :custom-class="`action-icon i-carbon-${isCollectedLocal ? 'star-filled' : 'star'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isCollected ? 'star-filled' : 'star'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isCollecting" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
@@ -364,7 +460,7 @@ function handleContact() {
 
       <!-- 统计信息 -->
       <view
-        v-if="canRegister && props.registerCount > 0"
+        v-if="canRegister && registerCount > 0"
         class="flex flex-col items-center p-2 text-gray-600"
       >
         <view class="group">

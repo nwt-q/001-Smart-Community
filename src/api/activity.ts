@@ -44,3 +44,37 @@ export function increaseActivityView(activitiesId: string) {
     activitiesId,
   })
 }
+
+/** 更新活动点赞状态响应类型 */
+export interface UpdateActivityLikeResponse {
+  activitiesId: string
+  isLiked: boolean
+  likeCount: number
+  updateTime: string
+}
+
+/** 更新活动收藏状态响应类型 */
+export interface UpdateActivityCollectResponse {
+  activitiesId: string
+  isCollected: boolean
+  collectCount: number
+  updateTime: string
+}
+
+/** 更新活动点赞状态 */
+export function updateActivityLike(params: {
+  activitiesId: string
+  isLiked: boolean
+  likeCount: number
+}) {
+  return http.Post<UpdateActivityLikeResponse>('/app/activities.updateLike', params)
+}
+
+/** 更新活动收藏状态 */
+export function updateActivityCollect(params: {
+  activitiesId: string
+  isCollected: boolean
+  collectCount: number
+}) {
+  return http.Post<UpdateActivityCollectResponse>('/app/activities.updateCollect', params)
+}

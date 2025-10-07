@@ -10,7 +10,6 @@ import type { Activity } from '@/types/activity'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import { computed, nextTick, reactive, ref } from 'vue'
-import { useToast } from 'wot-design-uni'
 import { getActivityDetail, increaseActivityView } from '@/api/activity'
 import ActivityActions from '@/components/activity/activity-actions.vue'
 import ActivityContent from '@/components/activity/activity-content.vue'
@@ -18,9 +17,6 @@ import ActivityError from '@/components/activity/activity-error.vue'
 import ActivityHeroImage from '@/components/activity/activity-hero.vue'
 import ActivityInfo from '@/components/activity/activity-info.vue'
 import ActivitySkeleton from '@/components/activity/activity-skeleton.vue'
-
-/** Toast 实例 */
-const toast = useToast()
 
 /** 页面配置 */
 definePage({
@@ -70,10 +66,7 @@ const activity = reactive<Partial<Activity>>({
   readCount: 0,
 })
 
-// 交互状态
-const isLiked = ref<boolean>(false)
-const isCollected = ref<boolean>(false)
-const isRegistered = ref<boolean>(false)
+// 图片加载状态
 const isImageLoading = ref<boolean>(true)
 
 const shareData = computed(() => ({
@@ -210,156 +203,31 @@ function handleImageLoad() {
 }
 
 /**
- * 显示交互反馈
- * 使用 wot-design-uni 的 toast 组件
+ * 处理点赞状态变更
+ * 子组件内部已完成 API 调用和交互逻辑，这里仅同步数据到父组件状态
  */
-function showInteractionFeedback(type: 'like' | 'collect' | 'share' | 'register' | 'success' | 'error', text: string) {
-  const options = {
-    msg: text,
-    duration: 1500,
-  }
-
-  switch (type) {
-    case 'error':
-      toast.error(options)
-      break
-    case 'success':
-      toast.success(options)
-      break
-    case 'like':
-    case 'collect':
-    case 'share':
-    case 'register':
-      toast.success(options)
-      break
-    default:
-      toast.show(options)
-  }
+function handleLikeUpdate(data: { isLiked: boolean, likeCount: number }) {
+  // 同步数据到本地状态
+  activity.likeCount = data.likeCount
 }
 
-// 交互方法
-async function handleLike(liked: boolean) {
-  try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 300))
-
-    isLiked.value = liked
-    activity.likeCount = liked
-      ? (activity.likeCount || 0) + 1
-      : Math.max((activity.likeCount || 0) - 1, 0)
-
-    // 显示交互反馈
-    showInteractionFeedback('like', liked ? '点赞成功' : '取消点赞')
-
-    // 这里应该调用实际的点赞API
-  }
-  catch (error) {
-    console.error('点赞操作失败:', error)
-    showInteractionFeedback('error', '操作失败')
-  }
+/**
+ * 处理收藏状态变更
+ * 子组件内部已完成 API 调用和交互逻辑，这里仅同步数据到父组件状态
+ */
+function handleCollectUpdate(data: { isCollected: boolean, collectCount: number }) {
+  // 同步数据到本地状态
+  activity.collectCount = data.collectCount
 }
 
-async function handleCollect(collected: boolean) {
-  try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 300))
-
-    isCollected.value = collected
-    activity.collectCount = collected
-      ? (activity.collectCount || 0) + 1
-      : Math.max((activity.collectCount || 0) - 1, 0)
-
-    // 显示交互反馈
-    showInteractionFeedback('collect', collected ? '收藏成功' : '取消收藏')
-
-    // 这里应该调用实际的收藏API
-  }
-  catch (error) {
-    console.error('收藏操作失败:', error)
-    showInteractionFeedback('error', '操作失败')
-  }
-}
-
-async function handleRegister(registered: boolean) {
-  try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-
-    isRegistered.value = registered
-
-    // 显示交互反馈
-    showInteractionFeedback('register', registered ? '报名成功' : '取消报名')
-
-    // 这里应该调用实际的报名API
-  }
-  catch (error) {
-    console.error('报名操作失败:', error)
-    showInteractionFeedback('error', '操作失败')
-  }
-}
-
-function handleShare() {
-  uni.showActionSheet({
-    itemList: ['分享给好友', '复制链接', '保存图片'],
-    success: (res) => {
-      if (res.tapIndex === 0) {
-        // 触发分享
-        uni.share({
-          provider: 'weixin',
-          scene: 'WXSceneSession',
-          type: 0,
-          href: '',
-          title: shareData.value.title,
-          summary: `我发现了一个很不错的活动：${activity.title}`,
-          imageUrl: shareData.value.imageUrl,
-          success: () => {
-            showInteractionFeedback('share', '分享成功')
-          },
-          fail: () => {
-            uni.showToast({
-              title: '分享失败',
-              icon: 'none',
-              duration: 1500,
-            })
-          },
-        })
-      }
-      else if (res.tapIndex === 1) {
-        // 复制链接
-        uni.setClipboardData({
-          data: shareData.value.path,
-          success: () => {
-            showInteractionFeedback('success', '链接已复制')
-          },
-        })
-      }
-      else if (res.tapIndex === 2) {
-        // 保存图片
-        if (shareData.value.imageUrl) {
-          uni.saveImageToPhotosAlbum({
-            filePath: shareData.value.imageUrl,
-            success: () => {
-              showInteractionFeedback('success', '图片已保存')
-            },
-            fail: () => {
-              uni.showToast({
-                title: '保存失败',
-                icon: 'none',
-                duration: 1500,
-              })
-            },
-          })
-        }
-        else {
-          uni.showToast({
-            title: '暂无图片可保存',
-            icon: 'none',
-            duration: 1500,
-          })
-        }
-      }
-    },
-  })
+/**
+ * 处理报名状态变更
+ * 子组件内部已完成所有交互逻辑，这里仅用于同步数据到服务器
+ */
+function handleRegisterUpdate(data: { isRegistered: boolean }) {
+  // TODO: 调用实际的报名API同步到服务器
+  // 目前不清楚报名相关的api实现 故暂时保留这里的逻辑 未来考虑实现模拟接口
+  console.log('报名状态变更:', data)
 }
 
 /** 生命周期 */
@@ -387,9 +255,6 @@ onPullDownRefresh(() => {
 
 <template>
   <view class="activity-detail min-h-screen bg-gray-50 animate-fade-in">
-    <!-- Toast 轻提示挂载点 -->
-    <wd-toast />
-
     <!-- 错误状态显示 -->
     <ActivityError
       v-if="errorState.show"
@@ -446,18 +311,20 @@ onPullDownRefresh(() => {
       <view class="mt-4">
         <ActivityActions
           :activity-id="activity.activitiesId"
-          :is-liked="isLiked"
-          :is-collected="isCollected"
-          :is-registered="isRegistered"
-          :like-count="activity.likeCount"
-          :collect-count="activity.collectCount"
-          :register-count="0"
+          :activity-title="activity.title"
+          :activity-image="activity.src"
+          :share-path="shareData.path"
+          :initial-liked="false"
+          :initial-collected="false"
+          :initial-registered="false"
+          :initial-like-count="activity.likeCount || 0"
+          :initial-collect-count="activity.collectCount || 0"
+          :initial-register-count="0"
           :status="activity.status"
           :show-register-button="true"
-          @like="handleLike"
-          @collect="handleCollect"
-          @register="handleRegister"
-          @share="handleShare"
+          @update:liked="handleLikeUpdate"
+          @update:collected="handleCollectUpdate"
+          @update:registered="handleRegisterUpdate"
         />
       </view>
 
