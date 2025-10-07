@@ -10,6 +10,16 @@ export function getLastPage() {
 }
 
 /**
+ * 获取当前页面路径
+ * @returns 当前页面路径
+ */
+export function getCurrentPath() {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  return currentPage.route || ''
+}
+
+/**
  * 获取当前页面路由的 path 路径和 redirectPath 路径
  * path 如 '/pages/login/login'
  * redirectPath 如 '/pages/demo/base/route-interceptor'
