@@ -1,6 +1,6 @@
 import type { Activity, ActivityListParams, ActivityListResponse, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
 import type { StatusType } from '@/types/api'
-import { defineUniAppMock, errorResponse, generateId, randomDelay, successResponse } from './shared/utils'
+import { defineUniAppMock, errorResponse, generateId, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 活动模块 Mock 接口 - 完全自包含架构
@@ -9,7 +9,7 @@ import { defineUniAppMock, errorResponse, generateId, randomDelay, successRespon
 
 // ==================== 活动数据生成器 ====================
 
-// 活动类型配置
+/** 活动类型配置 */
 const ACTIVITY_TYPES = [
   { name: '社区健身活动', emoji: '🏃‍♀️', category: 'health' },
   { name: '亲子互动游戏', emoji: '👨‍👩‍👧‍👦', category: 'family' },
@@ -21,7 +21,7 @@ const ACTIVITY_TYPES = [
   { name: '志愿服务活动', emoji: '❤️', category: 'volunteer' },
 ] as const
 
-// 组织者名称生成
+/** 组织者名称生成 */
 const ORGANIZERS = [
   '物业管理处',
   '业主委员会',
@@ -33,7 +33,7 @@ const ORGANIZERS = [
   '老年活动中心',
 ]
 
-// 生成活动标题
+/** 生成活动标题 */
 function generateActivityTitle(activityType: typeof ACTIVITY_TYPES[number], index: number): string {
   const titleTemplates = {
     health: ['春季健身操培训班', '社区太极拳晨练', '健康体检义诊活动', '亲子瑜伽体验课', '老年人健康讲座'],
@@ -55,7 +55,7 @@ function generateActivityTitle(activityType: typeof ACTIVITY_TYPES[number], inde
   return `${baseTitle}${suffix}`
 }
 
-// 生成活动内容
+/** 生成活动内容 */
 function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id: string): string {
   const detailedTemplates = {
     health: {
@@ -164,7 +164,7 @@ function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id
   `
 }
 
-// 核心活动数据生成器
+/** 核心活动数据生成器 */
 function createMockActivity(id: string): Activity {
   const activityType = ACTIVITY_TYPES[Math.floor(Math.random() * ACTIVITY_TYPES.length)]
   const now = Date.now()
@@ -201,16 +201,16 @@ function createMockActivity(id: string): Activity {
 // ==================== 活动数据库对象 ====================
 
 const mockActivityDatabase = {
-  // 初始化数据
+  /** 初始化数据 */
   activities: Array.from({ length: 30 }, (_, index) =>
     createMockActivity((index + 1).toString().padStart(3, '0'))) as Activity[],
 
-  // 获取活动详情
+  /** 获取活动详情 */
   getActivityById(activitiesId: string): Activity | undefined {
     return this.activities.find(activity => activity.activitiesId === activitiesId)
   },
 
-  // 获取活动列表（支持筛选和分页）
+  /** 获取活动列表（支持筛选和分页） */
   getActivityList(params: {
     page: number
     row: number
@@ -261,7 +261,7 @@ const mockActivityDatabase = {
     }
   },
 
-  // 增加浏览量
+  /** 增加浏览量 */
   increaseView(activitiesId: string): boolean {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
@@ -272,7 +272,7 @@ const mockActivityDatabase = {
     return false
   },
 
-  // 增加点赞量
+  /** 增加点赞量 */
   increaseLike(activitiesId: string): boolean {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
@@ -283,7 +283,29 @@ const mockActivityDatabase = {
     return false
   },
 
-  // 添加活动
+  /** 更新活动点赞状态 */
+  updateLike(activitiesId: string, isLiked: boolean, likeCount: number): Activity | null {
+    const activity = this.getActivityById(activitiesId)
+    if (activity) {
+      activity.likeCount = likeCount
+      activity.updateTime = new Date().toISOString()
+      return activity
+    }
+    return null
+  },
+
+  /** 更新活动收藏状态 */
+  updateCollect(activitiesId: string, isCollected: boolean, collectCount: number): Activity | null {
+    const activity = this.getActivityById(activitiesId)
+    if (activity) {
+      activity.collectCount = collectCount
+      activity.updateTime = new Date().toISOString()
+      return activity
+    }
+    return null
+  },
+
+  /** 添加活动 */
   addActivity(activity: Activity): boolean {
     try {
       this.activities.unshift(activity)
@@ -294,7 +316,7 @@ const mockActivityDatabase = {
     }
   },
 
-  // 删除活动
+  /** 删除活动 */
   removeActivity(activitiesId: string): boolean {
     const index = this.activities.findIndex(
       activity => activity.activitiesId === activitiesId,
@@ -310,7 +332,7 @@ const mockActivityDatabase = {
 // ==================== Mock 接口定义 ====================
 
 export default defineUniAppMock([
-  // 获取活动列表/详情
+  /** 获取活动列表/详情 */
   {
     url: '/app/activities.listActivitiess',
     method: ['GET', 'POST'],
@@ -323,6 +345,8 @@ export default defineUniAppMock([
       try {
         // 处理活动详情查询
         if (params.activitiesId) {
+          mockLog('getActivityDetail', params)
+
           const activity = mockActivityDatabase.getActivityById(params.activitiesId)
           if (activity) {
             mockActivityDatabase.increaseView(params.activitiesId)
@@ -330,14 +354,16 @@ export default defineUniAppMock([
           const result = {
             activitiess: activity ? [activity] : [],
           }
-          console.log('🚀 Mock API: getActivityDetail', params, '→', result)
-          return result
+          mockLog('getActivityDetail result', activity ? activity.title : 'not found')
+          return successResponse(result, '获取活动详情成功')
         }
 
         // 参数验证
         const page = Math.max(1, Number(params.page) || 1)
         const row = Math.min(Math.max(1, Number(params.row) || 15), 100)
         const communityId = params.communityId?.trim()
+
+        mockLog('getActivityList', { page, row, communityId, keyword: params.keyword, status: params.status })
 
         if (!communityId) {
           return errorResponse('社区ID不能为空', '400')
@@ -352,8 +378,8 @@ export default defineUniAppMock([
           status: params.status || '1',
         })
 
-        console.log('🚀 Mock API: getActivityList', params, '→', `${result.activitiess.length} items`)
-        return result
+        mockLog('getActivityList result', `${result.activitiess.length} items`)
+        return successResponse(result, '获取活动列表成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getActivityList', error)
@@ -362,7 +388,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 创建活动
+  /** 创建活动 */
   {
     url: '/app/activities.saveActivities',
     method: 'POST',
@@ -373,6 +399,8 @@ export default defineUniAppMock([
       const data = body as CreateActivityReq
 
       try {
+        mockLog('createActivity', { title: data.title })
+
         // 数据验证
         if (!data.title?.trim()) {
           return errorResponse('活动标题不能为空', '400')
@@ -404,7 +432,7 @@ export default defineUniAppMock([
         }
 
         mockActivityDatabase.addActivity(newActivity)
-        console.log('🚀 Mock API: createActivity', data, '→', newActivity)
+        mockLog('createActivity result', newActivity.activitiesId)
         return successResponse(newActivity, '创建活动成功')
       }
       catch (error: any) {
@@ -414,7 +442,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 更新活动
+  /** 更新活动 */
   {
     url: '/app/activities.updateActivities',
     method: 'POST',
@@ -425,6 +453,8 @@ export default defineUniAppMock([
       const data = body as UpdateActivityReq
 
       try {
+        mockLog('updateActivity', { activitiesId: data.activitiesId })
+
         if (!data.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -440,7 +470,7 @@ export default defineUniAppMock([
           updateTime: new Date().toISOString(),
         })
 
-        console.log('🚀 Mock API: updateActivity', data, '→', activity)
+        mockLog('updateActivity result', activity.title)
         return successResponse(activity, '更新活动成功')
       }
       catch (error: any) {
@@ -450,7 +480,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 删除活动
+  /** 删除活动 */
   {
     url: '/app/activities.deleteActivities',
     method: 'POST',
@@ -461,6 +491,8 @@ export default defineUniAppMock([
       const params = body as { activitiesId: string }
 
       try {
+        mockLog('deleteActivity', params)
+
         if (!params.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -471,7 +503,7 @@ export default defineUniAppMock([
         }
 
         const result = { success: true }
-        console.log('🚀 Mock API: deleteActivity', params, '→', result)
+        mockLog('deleteActivity result', 'success')
         return successResponse(result, '删除活动成功')
       }
       catch (error: any) {
@@ -481,7 +513,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 增加浏览量
+  /** 增加浏览量 */
   {
     url: '/app/activities.increaseView',
     method: 'POST',
@@ -492,6 +524,8 @@ export default defineUniAppMock([
       const data = body as { activitiesId: string }
 
       try {
+        mockLog('increaseView', data)
+
         if (!data.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -502,7 +536,7 @@ export default defineUniAppMock([
         }
 
         const result = { success: true }
-        console.log('🚀 Mock API: increaseView', data, '→', result)
+        mockLog('increaseView result', 'success')
         return successResponse(result, '浏览量增加成功')
       }
       catch (error: any) {
@@ -512,7 +546,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 活动点赞
+  /** 活动点赞 */
   {
     url: '/app/activities.likeActivity',
     method: 'POST',
@@ -523,6 +557,8 @@ export default defineUniAppMock([
       const data = body as { activitiesId: string }
 
       try {
+        mockLog('likeActivity', data)
+
         if (!data.activitiesId) {
           return errorResponse('活动ID不能为空', '400')
         }
@@ -533,7 +569,7 @@ export default defineUniAppMock([
         }
 
         const result = { success: true }
-        console.log('🚀 Mock API: likeActivity', data, '→', result)
+        mockLog('likeActivity result', 'success')
         return successResponse(result, '点赞成功')
       }
       catch (error: any) {
@@ -543,7 +579,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 活动状态管理
+  /** 活动状态管理 */
   {
     url: '/app/activities.updateStatus',
     method: 'POST',
@@ -554,6 +590,8 @@ export default defineUniAppMock([
       const data = body as { activitiesId: string, status: string }
 
       try {
+        mockLog('updateActivityStatus', data)
+
         if (!data.activitiesId || !data.status) {
           return errorResponse('活动ID和状态不能为空', '400')
         }
@@ -571,12 +609,112 @@ export default defineUniAppMock([
         activity.status = data.status as StatusType
         activity.updateTime = new Date().toISOString()
 
-        console.log('🚀 Mock API: updateActivityStatus', data, '→', activity)
+        mockLog('updateActivityStatus result', { title: activity.title, status: activity.status })
         return successResponse(activity, '活动状态更新成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: updateActivityStatus', error)
         return errorResponse(error.message || '活动状态更新失败')
+      }
+    },
+  },
+
+  /** 更新活动点赞状态 */
+  {
+    url: '/app/activities.updateLike',
+    method: 'POST',
+    delay: [200, 400],
+    body: async ({ body }) => {
+      await randomDelay(200, 400)
+
+      const data = body as { activitiesId: string, isLiked: boolean, likeCount: number }
+
+      try {
+        mockLog('updateLike', data)
+
+        // 参数验证
+        if (!data.activitiesId) {
+          return errorResponse('活动ID不能为空', '400')
+        }
+
+        if (typeof data.isLiked !== 'boolean') {
+          return errorResponse('点赞状态参数错误', '400')
+        }
+
+        if (typeof data.likeCount !== 'number' || data.likeCount < 0) {
+          return errorResponse('点赞数量参数错误', '400')
+        }
+
+        // 更新点赞状态
+        const updatedActivity = mockActivityDatabase.updateLike(data.activitiesId, data.isLiked, data.likeCount)
+
+        if (!updatedActivity) {
+          return errorResponse('活动不存在', '404')
+        }
+
+        const result = {
+          activitiesId: updatedActivity.activitiesId,
+          isLiked: data.isLiked,
+          likeCount: updatedActivity.likeCount,
+          updateTime: updatedActivity.updateTime,
+        }
+
+        mockLog('updateLike result', result)
+        return successResponse(result, data.isLiked ? '点赞成功' : '取消点赞成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: updateLike', error)
+        return errorResponse(error.message || '点赞状态更新失败')
+      }
+    },
+  },
+
+  /** 更新活动收藏状态 */
+  {
+    url: '/app/activities.updateCollect',
+    method: 'POST',
+    delay: [200, 400],
+    body: async ({ body }) => {
+      await randomDelay(200, 400)
+
+      const data = body as { activitiesId: string, isCollected: boolean, collectCount: number }
+
+      try {
+        mockLog('updateCollect', data)
+
+        // 参数验证
+        if (!data.activitiesId) {
+          return errorResponse('活动ID不能为空', '400')
+        }
+
+        if (typeof data.isCollected !== 'boolean') {
+          return errorResponse('收藏状态参数错误', '400')
+        }
+
+        if (typeof data.collectCount !== 'number' || data.collectCount < 0) {
+          return errorResponse('收藏数量参数错误', '400')
+        }
+
+        // 更新收藏状态
+        const updatedActivity = mockActivityDatabase.updateCollect(data.activitiesId, data.isCollected, data.collectCount)
+
+        if (!updatedActivity) {
+          return errorResponse('活动不存在', '404')
+        }
+
+        const result = {
+          activitiesId: updatedActivity.activitiesId,
+          isCollected: data.isCollected,
+          collectCount: updatedActivity.collectCount,
+          updateTime: updatedActivity.updateTime,
+        }
+
+        mockLog('updateCollect result', result)
+        return successResponse(result, data.isCollected ? '收藏成功' : '取消收藏成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: updateCollect', error)
+        return errorResponse(error.message || '收藏状态更新失败')
       }
     },
   },

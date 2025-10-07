@@ -1,3 +1,8 @@
+<!--
+  快速访问地址 请不要删除
+  /pages/activity/index?currentCommunityId=COMM_001
+-->
+
 <script setup lang="ts">
 import type { Activity, ActivityListParams, ActivityListResponse } from '@/types/activity'
 import { onLoad, onPullDownRefresh, onReachBottom, onShow } from '@dcloudio/uni-app'
@@ -6,8 +11,9 @@ import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
 import { getActivityList, increaseActivityView } from '@/api/activity'
 import { TypedRouter } from '@/router'
+import { getImageUrl } from '@/utils'
 
-// 页面配置
+/** 页面配置 */
 definePage({
   name: 'Activities',
   style: {
@@ -20,12 +26,12 @@ definePage({
   },
 })
 
-// 接口参数类型
+/** 接口参数类型 */
 interface PageOptions {
   currentCommunityId: string
 }
 
-// 响应式数据状态
+/** 响应式数据状态 */
 const currentCommunityId = ref<string>('')
 const activities = ref<Activity[]>([])
 const currentPage = ref<number>(1)
@@ -34,7 +40,7 @@ const hasMore = ref<boolean>(true)
 const isLoadingMore = ref<boolean>(false)
 const error = ref<string>('')
 
-// API请求管理 - 优化请求参数
+/** API请求管理 - 优化请求参数 */
 const {
   loading,
   data: activitiesResponse,
@@ -48,11 +54,11 @@ const {
   },
 )
 
-// 计算属性
+/** 计算属性 */
 const isEmpty = computed(() => !loading.value && activities.value.length === 0)
 const showLoadMore = computed(() => hasMore.value && !loading.value)
 
-// 请求成功处理
+/** 请求成功处理 */
 onSuccess((event) => {
   const response = event.data as ActivityListResponse
   if (response?.activitiess) {
@@ -60,7 +66,7 @@ onSuccess((event) => {
   }
 })
 
-// 请求错误处理
+/** 请求错误处理 */
 onError((event) => {
   const err = event.error
   console.error('获取活动列表失败:', err)
@@ -68,7 +74,7 @@ onError((event) => {
   showErrorToast('加载失败，请稍后重试')
 })
 
-// 工具函数
+/** 工具函数 */
 /**
  * 格式化时间显示
  */
@@ -92,20 +98,6 @@ function formatNumber(num: number): string {
 }
 
 /**
- * 处理图片路径 - 优化以匹配Mock接口的图片处理逻辑
- */
-function getImageUrl(headerImg: string): string {
-  if (!headerImg)
-    return ''
-  // 检查是否为完整URL（Mock接口返回的图片）
-  if (headerImg.startsWith('http')) {
-    return headerImg
-  }
-  // 🔴 兼容原Java110Context的文件路径格式
-  return `/api/file?fileId=${headerImg}&communityId=${currentCommunityId.value}&time=${Date.now()}`
-}
-
-/**
  * 显示错误提示
  */
 function showErrorToast(message: string) {
@@ -123,13 +115,13 @@ function stripHtmlAndTruncate(html: string, maxLength: number = 80): string {
   if (!html)
     return ''
 
-  // 移除所有HTML标签
+  /** 移除所有HTML标签 */
   let text = html.replace(/<[^>]*>/g, '')
 
-  // 清理多余的空白字符
+  /** 清理多余的空白字符 */
   text = text.replace(/\s+/g, ' ').trim()
 
-  // 截断文本并添加省略号
+  /** 截断文本并添加省略号 */
   if (text.length > maxLength) {
     text = `${text.substring(0, maxLength).trim()}...`
   }
@@ -143,19 +135,19 @@ function stripHtmlAndTruncate(html: string, maxLength: number = 80): string {
 function processActivitiesData(newActivities: Activity[], response: ActivityListResponse) {
   const processedActivities = newActivities.map((item: Activity) => ({
     ...item,
-    // 🔴 重要：图片URL处理逻辑匹配原Java110Context
-    src: item.src || getImageUrl(item.headerImg || ''), // 优先使用Mock接口提供的src
-    // 🔴 数据格式兼容性处理 - 保持与原系统一致
-    readCount: item.readCount || item.viewCount || 0, // readCount优先，向后兼容viewCount
+    /** 🔴 重要：图片URL处理逻辑匹配原Java110Context */
+    src: item.src || getImageUrl(item.headerImg || '', currentCommunityId.value), /** 优先使用Mock接口提供的src */
+    /** 🔴 数据格式兼容性处理 - 保持与原系统一致 */
+    readCount: item.readCount || item.viewCount || 0, /** readCount优先，向后兼容viewCount */
     likeCount: item.likeCount || 0,
-    collectCount: item.collectCount || 0, // 收藏功能
-    // 时间格式化处理
+    collectCount: item.collectCount || 0, /** 收藏功能 */
+    /** 时间格式化处理 */
     formattedStartTime: formatTime(item.startTime),
     formattedCreateTime: formatTime(item.createTime),
     formattedEndTime: item.endTime ? formatTime(item.endTime) : '',
   }))
 
-  // 🔴 分页数据处理逻辑
+  /** 🔴 分页数据处理逻辑 */
   if (currentPage.value === 1) {
     activities.value = processedActivities
   }
@@ -163,11 +155,11 @@ function processActivitiesData(newActivities: Activity[], response: ActivityList
     activities.value.push(...processedActivities)
   }
 
-  // 🔴 分页状态更新 - 基于实际返回的数据量判断是否还有更多
+  /** 🔴 分页状态更新 - 基于实际返回的数据量判断是否还有更多 */
   hasMore.value = processedActivities.length >= pageSize.value
   error.value = ''
 
-  // 输出处理结果用于调试
+  /** 输出处理结果用于调试 */
   console.log('🎯 Activities processed:', {
     total: response.total,
     currentPage: currentPage.value,
@@ -187,7 +179,7 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
   }
 
   try {
-    // 设置加载状态
+    /** 设置加载状态 */
     if (page > 1) {
       isLoadingMore.value = true
     }
@@ -196,7 +188,7 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
       page,
       row: pageSize.value,
       communityId: currentCommunityId.value,
-      status: '1', // 只获取已发布的活动
+      status: '1', /** 只获取已发布的活动 */
     }
 
     await fetchActivities(params)
@@ -204,7 +196,7 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
   }
   catch (err: any) {
     console.error('加载活动失败:', err)
-    // 错误已在 onError 中处理
+    /** 错误已在 onError 中处理 */
   }
   finally {
     if (page > 1) {
@@ -236,15 +228,15 @@ async function loadMoreActivities() {
  */
 async function navigateToDetail(item: Activity) {
   try {
-    // 异步增加浏览量，不阻塞跳转
+    /** 异步增加浏览量，不阻塞跳转 */
     increaseActivityView(item.activitiesId).catch((err) => {
       console.warn('增加浏览量失败:', err)
     })
 
-    // 立即跳转到详情页
+    /** 立即跳转到详情页 */
     await TypedRouter.toActivityDetail(item.activitiesId, currentCommunityId.value)
 
-    // 乐观更新本地浏览量
+    /** 乐观更新本地浏览量 */
     const index = activities.value.findIndex(activity => activity.activitiesId === item.activitiesId)
     if (index !== -1) {
       activities.value[index].readCount += 1
@@ -257,7 +249,7 @@ async function navigateToDetail(item: Activity) {
   }
 }
 
-// 监听社区ID变化，自动刷新数据
+/** 监听社区ID变化，自动刷新数据 */
 watch(
   () => currentCommunityId.value,
   (newCommunityId) => {
@@ -268,7 +260,7 @@ watch(
   { immediate: false },
 )
 
-// 生命周期钩子
+/** 生命周期钩子 */
 onLoad((options: PageOptions) => {
   console.log('Activities页面加载，参数:', options)
 
@@ -278,19 +270,19 @@ onLoad((options: PageOptions) => {
   }
 
   currentCommunityId.value = options.currentCommunityId
-  // 首次加载数据
+  /** 首次加载数据 */
   loadActivities(1)
 })
 
-// 页面显示时刷新数据（从详情页返回时）
+/** 页面显示时刷新数据（从详情页返回时） */
 onShow(() => {
-  // 如果已有数据，则静默刷新
+  /** 如果已有数据，则静默刷新 */
   if (activities.value.length > 0) {
     refreshActivities()
   }
 })
 
-// 下拉刷新
+/** 下拉刷新 */
 onPullDownRefresh(async () => {
   try {
     await refreshActivities()
@@ -300,186 +292,202 @@ onPullDownRefresh(async () => {
   }
 })
 
-// 上拉加载更多
+/** 上拉加载更多 */
 onReachBottom(() => {
   loadMoreActivities()
 })
 </script>
 
 <template>
-  <view class="activities-container min-h-screen bg-gray-50">
+  <view class="min-h-screen bg-#f5f5f5 pb-20rpx">
     <!-- 顶部加载状态 -->
-    <view v-if="loading && currentPage === 1" class="flex justify-center py-8">
+    <view v-if="loading && currentPage === 1" class="flex items-center justify-center py-60rpx">
       <wd-loading size="24px" color="#368CFE" />
-      <text class="ml-2 text-sm text-gray-600">加载中...</text>
+      <text class="text-#666 ml-16rpx text-28rpx">加载中...</text>
     </view>
 
     <!-- 活动列表 -->
-    <view v-if="activities.length > 0" class="pb-4">
-      <wd-card
+    <view v-if="activities.length > 0" class="w-full p-0">
+      <view
         v-for="(item, index) in activities"
         :key="`${item.activitiesId}_${index}`"
-        class="mx-4 mt-4 cursor-pointer overflow-hidden transition-shadow hover:shadow-lg"
+        class="mx-32rpx my-24rpx"
         @click="navigateToDetail(item)"
       >
-        <!-- 活动图片区域 -->
-        <template #header>
-          <view class="relative">
+        <!-- 活动卡片 -->
+        <view class="activity-card overflow-hidden bg-white rounded-24rpx">
+          <!-- 活动图片区域 -->
+          <view class="relative w-full overflow-hidden h-360rpx">
             <wd-img
               :src="item.src"
+              mode="aspectFill"
               width="100%"
-              height="180px"
-              fit="cover"
-              loading-type="default"
-              error-type="image"
-              class="block"
-              :lazy="true"
-            />
+              :height="360"
+              class="block h-full w-full"
+            >
+              <template #error>
+                <view class="h-full w-full flex items-center justify-center bg-gray-100">
+                  <text class="text-gray-400 text-24rpx">图片加载失败</text>
+                </view>
+              </template>
+            </wd-img>
 
             <!-- 活动状态标签 -->
-            <view class="absolute right-2 top-2">
+            <view class="absolute right-16rpx top-16rpx z-2">
               <wd-tag
                 v-if="dayjs().isAfter(dayjs(item.endTime))"
                 type="primary"
-                size="small"
+                size="large"
                 plain
-                class="bg-black/50 text-white"
+                class="status-tag bg-black/50 text-white text-30rpx!"
               >
                 已结束
               </wd-tag>
               <wd-tag
                 v-else-if="dayjs().isBefore(dayjs(item.startTime))"
                 type="warning"
-                size="small"
+                size="large"
                 plain
-                class="bg-black/50 text-white"
+                class="status-tag bg-black/50 text-white text-30rpx!"
               >
                 未开始
               </wd-tag>
               <wd-tag
                 v-else
                 type="success"
-                size="small"
+                size="large"
                 plain
-                class="bg-black/50 text-white"
+                class="status-tag bg-black/50 text-white text-30rpx!"
               >
                 进行中
               </wd-tag>
             </view>
 
             <!-- 底部渐变遮罩和标题 -->
-            <view class="absolute bottom-0 left-0 right-0 from-black/70 to-transparent bg-gradient-to-t px-4 py-3">
-              <text class="line-clamp-2 text-base text-white font-medium leading-relaxed">{{ item.title }}</text>
+            <view class="title-overlay absolute bottom-0 left-0 right-0 z-1 px-32rpx py-24rpx">
+              <text class="activity-title line-clamp-2 text-white font-medium text-32rpx">{{ item.title }}</text>
             </view>
           </view>
-        </template>
 
-        <!-- 活动信息区域 -->
-        <template #body>
-          <wd-cell-group :border="false">
-            <wd-cell>
-              <template #icon>
-                <!-- 发布者头像（可以后续替换为真实头像） -->
-                <view class="mr-3 h-12 w-12 flex flex-shrink-0 items-center justify-center rounded-full from-blue-400 to-purple-500 bg-gradient-to-br text-white">
-                  <text class="text-sm font-medium">{{ item.userName?.charAt(0) || 'A' }}</text>
+          <!-- 活动信息区域 -->
+          <view class="px-32rpx py-24rpx">
+            <view class="flex items-start">
+              <!-- 发布者头像 - 使用 wd-img 实现圆形头像 -->
+              <view class="shrink-0 mr-24rpx w-96rpx h-96rpx">
+                <!-- 如果有头像图片，使用 wd-img -->
+                <wd-img
+                  v-if="item.avatar"
+                  :src="item.avatar"
+                  round
+                  :width="96"
+                  :height="96"
+                  mode="aspectFill"
+                >
+                  <template #error>
+                    <view class="user-avatar flex items-center justify-center rounded-full w-96rpx h-96rpx">
+                      <text class="text-white font-medium text-28rpx">{{ item.userName?.charAt(0) || 'A' }}</text>
+                    </view>
+                  </template>
+                </wd-img>
+                <!-- 否则显示文字头像 -->
+                <view v-else class="user-avatar flex items-center justify-center rounded-full w-96rpx h-96rpx">
+                  <text class="text-white font-medium text-28rpx">{{ item.userName?.charAt(0) || 'A' }}</text>
                 </view>
-              </template>
+              </view>
 
-              <template #title>
-                <view class="flex items-center justify-between">
-                  <text class="text-sm text-gray-600 font-medium">{{ item.userName || '管理员' }}</text>
-                  <text class="text-xs text-gray-400">{{ item.formattedCreateTime }}</text>
+              <view class="min-w-0 flex-1">
+                <view class="flex items-center justify-between mb-8rpx">
+                  <text class="text-gray-600 font-medium text-28rpx">{{ item.userName || '管理员' }}</text>
+                  <text class="shrink-0 text-gray-400 ml-16rpx text-24rpx">{{ item.formattedCreateTime }}</text>
                 </view>
-              </template>
 
-              <template #label>
                 <!-- 活动内容预览 -->
-                <view v-if="item.context" class="mb-3 mt-2">
-                  <text class="line-clamp-2 text-sm text-gray-600 leading-relaxed">{{ stripHtmlAndTruncate(item.context, 80) }}</text>
+                <view v-if="item.context" class="mt-16rpx mb-24rpx">
+                  <text class="context-text line-clamp-2 text-gray-600 text-28rpx">{{ stripHtmlAndTruncate(item.context, 80) }}</text>
                 </view>
 
                 <!-- 活动时间信息 -->
-                <view class="mb-3 rounded-lg bg-gray-50 p-3">
-                  <view class="mb-1 flex items-center">
-                    <text class="i-carbon-time mr-1 text-14px text-[#368CFE]" />
-                    <text class="text-xs text-gray-500">活动时间</text>
+                <view class="bg-gray-50 p-24rpx mb-24rpx rounded-16rpx">
+                  <view class="flex items-center mb-8rpx">
+                    <wd-icon name="" custom-class="i-carbon-time text-28rpx text-#368cfe mr-8rpx" />
+                    <text class="text-gray-500 text-24rpx">活动时间</text>
                   </view>
-                  <text class="text-sm text-gray-700 font-medium">
-                    {{ item.formattedStartTime }}
-                    <text v-if="item.endTime" class="text-gray-400"> ~ {{ formatTime(item.endTime) }}</text>
-                  </text>
+                  <view class="time-value-container">
+                    <text class="text-gray-700 font-medium text-28rpx">{{ item.formattedStartTime }}</text>
+                    <text v-if="item.endTime" class="text-gray-400 text-24rpx"> ~ {{ formatTime(item.endTime) }}</text>
+                  </view>
                 </view>
 
                 <!-- 统计信息栏 -->
-                <view class="flex items-center justify-between border-t border-gray-100 pt-2">
+                <view class="flex items-center justify-between border-t border-gray-100 pt-16rpx">
                   <!-- 统计数据 -->
-                  <view class="flex items-center gap-4 text-sm text-gray-500">
+                  <view class="flex items-center">
                     <!-- 浏览量 -->
-                    <view class="flex items-center gap-1">
-                      <text class="i-carbon-view text-14px text-[#9ca3af]" />
-                      <text>{{ formatNumber(item.readCount) }}</text>
+                    <view class="flex items-center mr-32rpx">
+                      <wd-icon name="" custom-class="i-carbon-view text-28rpx text-gray-400 mr-8rpx" />
+                      <text class="text-gray-500 text-24rpx">{{ formatNumber(item.readCount) }}</text>
                     </view>
 
                     <!-- 点赞数 -->
-                    <view class="flex items-center gap-1">
-                      <text class="i-carbon-thumbs-up text-14px text-[#9ca3af]" />
-                      <text>{{ formatNumber(item.likeCount) }}</text>
+                    <view class="flex items-center mr-32rpx">
+                      <wd-icon name="" custom-class="i-carbon-thumbs-up text-28rpx text-gray-400 mr-8rpx" />
+                      <text class="text-gray-500 text-24rpx">{{ formatNumber(item.likeCount) }}</text>
                     </view>
 
-                    <!-- 评论数（预留） -->
-                    <view class="flex items-center gap-1">
-                      <text class="i-carbon-chat text-14px text-[#9ca3af]" />
-                      <text>{{ formatNumber(item.collectCount) }}</text>
+                    <!-- 收藏数 -->
+                    <view class="flex items-center">
+                      <wd-icon name="" custom-class="i-carbon-chat text-28rpx text-gray-400 mr-8rpx" />
+                      <text class="text-gray-500 text-24rpx">{{ formatNumber(item.collectCount) }}</text>
                     </view>
                   </view>
 
                   <!-- 查看详情按钮 -->
                   <wd-button
                     type="primary"
-                    size="small"
+                    size="large"
                     plain
                     round
-                    class="px-4"
+                    class="shrink-0 text-26rpx!"
                   >
                     查看详情
                   </wd-button>
                 </view>
-              </template>
-            </wd-cell>
-          </wd-cell-group>
-        </template>
-      </wd-card>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
     </view>
 
     <!-- 加载更多状态 -->
-    <view v-if="showLoadMore" class="flex justify-center py-4">
+    <view v-if="showLoadMore" class="flex items-center justify-center py-32rpx">
       <wd-loading v-if="isLoadingMore" size="20px" color="#368CFE" />
-      <text v-if="isLoadingMore" class="ml-2 text-sm text-gray-500">加载更多...</text>
-      <text v-else-if="!hasMore && activities.length > 0" class="text-sm text-gray-400">没有更多了</text>
+      <text v-if="isLoadingMore" class="text-gray-400 ml-16rpx text-28rpx">加载更多...</text>
+      <text v-else-if="!hasMore && activities.length > 0" class="text-gray-300 text-28rpx">没有更多了</text>
     </view>
 
     <!-- 空状态 -->
-    <view v-if="isEmpty" class="flex flex-col items-center justify-center py-20">
+    <view v-if="isEmpty" class="flex flex-col items-center justify-center py-160rpx">
       <wd-status-tip
         image="content"
         tip="暂无活动"
         :image-size="{ height: 120, width: 120 }"
       />
-      <view class="mt-4 text-center">
-        <text class="mb-2 block text-gray-400">暂时没有社区活动</text>
-        <text class="block text-sm text-gray-300">请稍后再来看看吧</text>
+      <view class="text-center mt-32rpx">
+        <text class="block text-gray-400 mb-16rpx text-28rpx">暂时没有社区活动</text>
+        <text class="block text-gray-300 text-24rpx">请稍后再来看看吧</text>
       </view>
     </view>
 
     <!-- 错误状态 -->
-    <view v-if="error && isEmpty" class="flex flex-col items-center justify-center py-20">
+    <view v-if="error && isEmpty" class="flex flex-col items-center justify-center py-160rpx">
       <wd-status-tip
         image="network"
         tip="加载失败"
         :image-size="{ height: 120, width: 120 }"
       />
-      <view class="mt-4 text-center">
-        <text class="mb-2 block text-red-400">{{ error }}</text>
+      <view class="text-center mt-32rpx">
+        <text class="block text-red-400 mb-16rpx text-28rpx">{{ error }}</text>
         <wd-button
           type="primary"
           size="small"
@@ -495,58 +503,55 @@ onReachBottom(() => {
 </template>
 
 <style scoped>
-.activities-container {
-  @apply bg-gray-50 min-h-screen;
+/** 卡片样式 - 保留阴影和动画效果 */
+.activity-card {
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
-/* wot-design-uni 组件样式优化 */
-.activities-container :deep(.wd-loading) {
-  @apply flex justify-center items-center;
+.activity-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.12);
 }
 
-.activities-container :deep(.wd-card) {
-  @apply shadow-sm border-0 rounded-xl;
-  transition: box-shadow 0.2s ease-in-out;
+/** 状态标签毛玻璃效果 */
+.status-tag {
+  backdrop-filter: blur(16rpx);
+  -webkit-backdrop-filter: blur(16rpx);
 }
 
-.activities-container :deep(.wd-card:hover) {
-  @apply shadow-md;
+/** 标题遮罩层渐变背景 */
+.title-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
 }
 
-.activities-container :deep(.wd-card__header) {
-  @apply p-0 overflow-hidden rounded-t-xl;
+/** 活动标题样式 - 确保行高正常显示 */
+.activity-title {
+  line-height: 1.5;
+  word-wrap: break-word;
+  word-break: break-all;
+  display: block;
 }
 
-.activities-container :deep(.wd-card__body) {
-  @apply p-0;
+/** 用户头像渐变背景 */
+.user-avatar {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
 }
 
-.activities-container :deep(.wd-cell) {
-  @apply px-4 py-3;
+/** 内容文本样式 - 确保行高正常 */
+.context-text {
+  line-height: 1.6;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
-.activities-container :deep(.wd-cell__body) {
-  @apply items-start;
+/** 时间值容器 - 确保文本不被截断 */
+.time-value-container {
+  width: 100%;
+  word-wrap: break-word;
 }
 
-.activities-container :deep(.wd-cell__icon) {
-  @apply flex items-start pt-1;
-}
-
-/* Tag 组件优化 */
-.activities-container :deep(.wd-tag) {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* Button 组件优化 */
-.activities-container :deep(.wd-button--mini.wd-button--plain) {
-  @apply border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600;
-  font-size: 12px;
-  padding: 4px 12px;
-}
-
-/* 文本截断样式 */
+/** 文本截断工具类 */
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -567,81 +572,5 @@ onReachBottom(() => {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* 过渡动画 */
-.transition-shadow {
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.hover\:shadow-lg:hover {
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-/* 渐变背景优化 */
-.bg-gradient-to-t {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
-}
-
-.bg-gradient-to-br {
-  background: linear-gradient(to bottom right, var(--tw-gradient-stops));
-}
-
-/* 响应式优化 */
-@media (min-width: 640px) {
-  .activities-container {
-    @apply px-6;
-  }
-}
-
-@media (min-width: 768px) {
-  .activities-container {
-    @apply px-8;
-  }
-
-  .activities-container :deep(.wd-card) {
-    @apply max-w-2xl mx-auto;
-  }
-}
-
-@media (min-width: 1024px) {
-  .activities-container {
-    @apply px-12;
-  }
-
-  .activities-container :deep(.wd-card) {
-    @apply max-w-3xl;
-  }
-}
-
-/* 暗黑模式支持（预留） */
-@media (prefers-color-scheme: dark) {
-  .activities-container {
-    @apply bg-gray-900;
-  }
-
-  .activities-container :deep(.wd-card) {
-    @apply bg-gray-800 border-gray-700;
-  }
-}
-
-/* 高对比度模式支持 */
-@media (prefers-contrast: high) {
-  .activities-container :deep(.wd-card) {
-    @apply border-2 border-gray-900;
-  }
-}
-
-/* 减少动画模式 */
-@media (prefers-reduced-motion: reduce) {
-  .transition-shadow {
-    transition: none;
-  }
-
-  .activities-container :deep(.wd-card) {
-    transition: none;
-  }
 }
 </style>

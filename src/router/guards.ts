@@ -5,9 +5,9 @@
 
 import type { PageRoute, RouteGuard } from '@/types/routes'
 
-// 需要登录的页面列表（根据项目实际情况更新）
+/** 需要登录的页面列表（根据项目实际情况更新） */
 const AUTH_REQUIRED_PAGES: PageRoute[] = [
-  '/pages/activity/activities',
+  '/pages/activity/index',
   '/pages/activity/detail',
   '/pages/me/me',
   // 维修模块（根据业务需求调整）
@@ -23,7 +23,7 @@ const AUTH_REQUIRED_PAGES: PageRoute[] = [
   '/pages-sub/inspection/execute',
 ]
 
-// 游客可访问的页面列表
+/** 游客可访问的页面列表 */
 const GUEST_ALLOWED_PAGES = [
   '/pages/index/index',
   '/pages/login/login',

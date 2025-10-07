@@ -13,7 +13,7 @@ export function testTypeInference() {
   // ✅ 正确的用法 - 这些应该通过类型检查
   const validRoutes: PageRoute[] = [
     '/pages/index/index',
-    '/pages/activity/activities',
+    '/pages/activity/index',
     '/pages/activity/detail',
     '/pages/address/list', // 验证目录结构调整后的路径
     '/pages-sub/repair/order-list',
@@ -63,7 +63,7 @@ export function testRouteNavigation() {
     console.log('测试基础类型安全函数...')
 
     // 测试基础的类型安全跳转函数
-    const navigateResult = navigateToTyped('/pages/activity/activities', {
+    const navigateResult = navigateToTyped('/pages/activity/index', {
       currentCommunityId: 'test-community',
     })
     console.log('✅ navigateToTyped 测试通过')
@@ -93,7 +93,7 @@ export function testRouterIntegration() {
 
   try {
     // 验证 TypedRouter 路由系统是否正常工作
-    const currentPath = '/pages/activity/activities'
+    const currentPath = '/pages/activity/index'
     console.log('当前页面路径模拟:', currentPath)
 
     // 验证路径参数解析

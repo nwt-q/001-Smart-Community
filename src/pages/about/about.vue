@@ -11,7 +11,7 @@ definePage({
   },
 })
 
-// 浏览器打印 isH5为true, isWeb为false，大家尽量用 isH5
+/** 浏览器打印 isH5为true, isWeb为false，大家尽量用 isH5 */
 console.log({ isApp, isAppAndroid, isAppHarmony, isAppIOS, isAppPlus, isH5, isMpWeixin, isWeb })
 
 function toLogin() {
@@ -35,19 +35,19 @@ function gotoSubPage() {
     url: '/pages-sub/demo/index',
   })
 }
-// uniLayout里面的变量通过 expose 暴露出来后可以在 onReady 钩子获取到（onLoad 钩子不行）
+/** uniLayout里面的变量通过 expose 暴露出来后可以在 onReady 钩子获取到（onLoad 钩子不行） */
 const uniLayout = ref()
 onLoad(() => {
-  console.log('onLoad:', uniLayout.value) // onLoad: undefined
+  console.log('onLoad:', uniLayout.value) /** onLoad: undefined */
 })
 onReady(() => {
-  console.log('onReady:', uniLayout.value) // onReady: Proxy(Object)
-  console.log('onReady:', uniLayout.value.testUniLayoutExposedData) // onReady: testUniLayoutExposedData
+  console.log('onReady:', uniLayout.value) /** onReady: Proxy(Object) */
+  console.log('onReady:', uniLayout.value.testUniLayoutExposedData) /** onReady: testUniLayoutExposedData */
 })
-// 结论：第一次通过onShow获取不到，但是可以通过 onReady获取到，后面就可以通过onShow获取到了
+/** 结论：第一次通过onShow获取不到，但是可以通过 onReady获取到，后面就可以通过onShow获取到了 */
 onShow(() => {
-  console.log('onShow:', uniLayout.value) // onReady: Proxy(Object)
-  console.log('onShow:', uniLayout.value?.testUniLayoutExposedData) // onReady: testUniLayoutExposedData
+  console.log('onShow:', uniLayout.value) /** onReady: Proxy(Object) */
+  console.log('onShow:', uniLayout.value?.testUniLayoutExposedData) /** onReady: testUniLayoutExposedData */
 })
 
 function gotoTabbar() {
@@ -55,14 +55,14 @@ function gotoTabbar() {
     url: '/pages/index/index',
   })
 }
-// #region setTabbarBadge
+/** #region setTabbarBadge */
 function setTabbarBadge() {
   tabbarStore.setTabbarItemBadge(1, 100)
 }
-// #endregion
+/** #endregion */
 
 const uniKuRoot = ref()
-// 结论：(同上）第一次通过onShow获取不到，但是可以通过 onReady获取到，后面就可以通过onShow获取到了
+/** 结论：(同上）第一次通过onShow获取不到，但是可以通过 onReady获取到，后面就可以通过onShow获取到了 */
 onReady(() => {
   console.log('onReady uniKuRoot exposeRef', uniKuRoot.value?.exposeRef)
 })

@@ -4,10 +4,10 @@
 
 import type { PaginationParams } from './api'
 
-// 部门类型
+/** 部门类型 */
 export type DepartmentType = '物业管理处' | '保安部' | '清洁部' | '维修部' | '客服部' | '财务部'
 
-// 联系人信息
+/** 联系人信息 */
 export interface Contact {
   contactId: string
   name: string
@@ -21,19 +21,19 @@ export interface Contact {
   isOnline: boolean
 }
 
-// 紧急联系人
+/** 紧急联系人 */
 export interface EmergencyContact extends Contact {
   priority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
 }
 
-// 通讯录列表查询参数
+/** 通讯录列表查询参数 */
 export interface ContactListParams extends PaginationParams {
   department?: DepartmentType
   keyword?: string
   isOnline?: boolean
 }
 
-// 通讯录列表响应
+/** 通讯录列表响应 */
 export interface ContactListResponse {
   contacts: Contact[]
   total: number
@@ -41,7 +41,7 @@ export interface ContactListResponse {
   row: number
 }
 
-// 部门信息
+/** 部门信息 */
 export interface Department {
   departmentName: DepartmentType
   totalCount: number
@@ -49,7 +49,7 @@ export interface Department {
   contacts?: Contact[]
 }
 
-// 按部门分组的通讯录响应
+/** 按部门分组的通讯录响应 */
 export interface ContactsByDepartmentResponse {
   departments: Department[]
   totalContacts: number

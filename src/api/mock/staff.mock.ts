@@ -1,5 +1,5 @@
 import type { Staff, StaffListResponse, StaffQueryParams } from '@/types/staff'
-import { defineUniAppMock, randomDelay } from './shared/utils'
+import { defineUniAppMock, errorResponse, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
  * 员工通讯录 Mock 接口 - 完全自包含架构
@@ -10,7 +10,7 @@ import { defineUniAppMock, randomDelay } from './shared/utils'
 
 // ==================== 员工数据生成器 ====================
 
-// 职位配置（基于原项目的物业管理体系）
+/** 职位配置（基于原项目的物业管理体系） */
 const POSITIONS = [
   '项目经理',
   '物业主管',
@@ -22,7 +22,7 @@ const POSITIONS = [
   '行政助理',
 ]
 
-// 部门/组织配置
+/** 部门/组织配置 */
 const ORGANIZATIONS = [
   '物业管理处',
   '客服部',
@@ -33,7 +33,7 @@ const ORGANIZATIONS = [
   '行政部',
 ]
 
-// 中文姓名生成器
+/** 中文姓名生成器 */
 function generateChineseName(): string {
   const surnames = ['张', '王', '李', '赵', '刘', '陈', '杨', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗']
   const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞', '平', '刚', '桂英']
@@ -43,7 +43,7 @@ function generateChineseName(): string {
   return surname + name
 }
 
-// 电话号码生成器
+/** 电话号码生成器 */
 function generatePhoneNumber(): string {
   const prefixes = ['138', '139', '136', '137', '135', '159', '158', '150', '151', '152']
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
@@ -51,7 +51,7 @@ function generatePhoneNumber(): string {
   return prefix + suffix
 }
 
-// 获取拼音首字母（简化版）
+/** 获取拼音首字母（简化版） */
 function getInitials(name: string): string {
   const initialMap: Record<string, string> = {
     张: 'Z',
@@ -80,7 +80,7 @@ function getInitials(name: string): string {
   return initialMap[firstChar] || firstChar.toUpperCase()
 }
 
-// 核心员工数据生成器（完全匹配原项目的数据结构）
+/** 核心员工数据生成器（完全匹配原项目的数据结构） */
 function createMockStaff(id: string): Staff {
   const name = generateChineseName()
   const initials = getInitials(name)
@@ -101,16 +101,16 @@ function createMockStaff(id: string): Staff {
 // ==================== 员工数据库对象 ====================
 
 const mockStaffDatabase = {
-  // 初始化员工数据（模拟原项目的数据量）
+  /** 初始化员工数据（模拟原项目的数据量） */
   staffs: Array.from({ length: 50 }, (_, index) =>
     createMockStaff((index + 1).toString().padStart(3, '0'))) as Staff[],
 
-  // 获取员工详情
+  /** 获取员工详情 */
   getStaffById(staffId: string): Staff | undefined {
     return this.staffs.find(staff => staff.id === staffId)
   },
 
-  // 查询员工列表（完全匹配原项目的 queryStaffInfos 逻辑）
+  /** 查询员工列表（完全匹配原项目的 queryStaffInfos 逻辑） */
   queryStaffInfos(params: StaffQueryParams): StaffListResponse {
     let filteredStaffs = [...this.staffs]
 
@@ -158,18 +158,18 @@ const mockStaffDatabase = {
     }
   },
 
-  // 按部门获取员工
+  /** 按部门获取员工 */
   getStaffsByDepartment(orgName: string): Staff[] {
     return this.staffs.filter(staff => staff.orgName === orgName)
   },
 
-  // 获取所有组织
+  /** 获取所有组织 */
   getAllOrganizations(): string[] {
     const orgSet = new Set(this.staffs.map(staff => staff.orgName))
     return Array.from(orgSet).sort()
   },
 
-  // 搜索员工（增强版搜索）
+  /** 搜索员工（增强版搜索） */
   searchStaffs(keyword: string): Staff[] {
     if (!keyword?.trim()) {
       return []
@@ -185,12 +185,12 @@ const mockStaffDatabase = {
     )
   },
 
-  // 获取在线员工
+  /** 获取在线员工 */
   getOnlineStaffs(): Staff[] {
     return this.staffs.filter(staff => staff.isOnline)
   },
 
-  // 更新员工在线状态（模拟实时状态变化）
+  /** 更新员工在线状态（模拟实时状态变化） */
   updateStaffOnlineStatus(staffId: string, isOnline: boolean): Staff | null {
     const staff = this.getStaffById(staffId)
     if (staff) {
@@ -200,7 +200,7 @@ const mockStaffDatabase = {
     return null
   },
 
-  // 添加新员工（模拟数据增长）
+  /** 添加新员工（模拟数据增长） */
   addStaff(staff: Omit<Staff, 'id'>): Staff {
     const newStaff: Staff = {
       ...staff,
@@ -213,7 +213,7 @@ const mockStaffDatabase = {
 
 export default defineUniAppMock([
   // ==================== 核心接口：queryStaffInfos ====================
-  // 对应原项目的 queryStaffInfos 接口
+  /** 对应原项目的 queryStaffInfos 接口 */
   {
     url: '/app/query.staff.infos',
     method: ['GET', 'POST'],
@@ -225,7 +225,7 @@ export default defineUniAppMock([
       const params = { ...query, ...body }
 
       try {
-        console.log('🚀 Mock API: queryStaffInfos', params)
+        mockLog('queryStaffInfos', params)
 
         // 验证必要参数
         if (!params.storeId) {
@@ -241,29 +241,27 @@ export default defineUniAppMock([
           initials: params.initials,
         })
 
-        console.log('📋 Mock Response:', {
+        mockLog('queryStaffInfos result', {
           total: result.total,
-          page: result.page,
-          row: result.row,
           staffsCount: result.staffs.length,
         })
 
-        // 返回格式完全兼容原项目
-        return {
+        return successResponse({
           staffs: result.staffs,
           total: result.total,
           page: result.page,
           row: result.row,
-        }
+        }, '查询员工信息成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: queryStaffInfos', error)
-        throw new Error(error.message || '查询员工信息失败')
+        return errorResponse(error.message || '查询员工信息失败')
       }
     },
   },
 
   // ==================== 获取员工详情 ====================
+  /** 获取员工详情 */
   {
     url: '/app/staff/:staffId',
     method: 'GET',
@@ -272,23 +270,26 @@ export default defineUniAppMock([
       await randomDelay(200, 400)
 
       try {
+        mockLog('getStaffDetail', params.staffId)
+
         const staff = mockStaffDatabase.getStaffById(params.staffId)
 
         if (!staff) {
-          throw new Error('员工不存在')
+          return errorResponse('员工不存在')
         }
 
-        console.log('🚀 Mock API: getStaffDetail', params.staffId, '→', staff.name)
-        return staff
+        mockLog('getStaffDetail result', staff.name)
+        return successResponse(staff, '获取员工详情成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getStaffDetail', error)
-        throw error
+        return errorResponse(error.message || '获取员工详情失败')
       }
     },
   },
 
   // ==================== 按部门获取员工列表 ====================
+  /** 按部门获取员工列表 */
   {
     url: '/app/staff/by-department',
     method: ['GET', 'POST'],
@@ -300,25 +301,28 @@ export default defineUniAppMock([
 
       try {
         const orgName = params.orgName || ''
+        mockLog('getStaffByDepartment', { orgName })
+
         const staffs = mockStaffDatabase.getStaffsByDepartment(orgName)
 
-        console.log('🚀 Mock API: getStaffByDepartment', { orgName }, '→', `${staffs.length} staffs`)
+        mockLog('getStaffByDepartment result', `${staffs.length} staffs`)
 
-        return {
+        return successResponse({
           staffs,
           total: staffs.length,
           page: 1,
           row: staffs.length,
-        }
+        }, '获取部门员工成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getStaffByDepartment', error)
-        throw error
+        return errorResponse(error.message || '获取部门员工失败')
       }
     },
   },
 
   // ==================== 搜索员工（增强版） ====================
+  /** 搜索员工（增强版） */
   {
     url: '/app/staff/search',
     method: ['GET', 'POST'],
@@ -329,28 +333,31 @@ export default defineUniAppMock([
       const params = { ...query, ...body }
 
       try {
+        mockLog('searchStaffs', { keyword: params.keyword })
+
         if (!params.keyword?.trim()) {
-          throw new Error('搜索关键词不能为空')
+          return errorResponse('搜索关键词不能为空')
         }
 
         const staffs = mockStaffDatabase.searchStaffs(params.keyword)
 
-        console.log('🚀 Mock API: searchStaffs', { keyword: params.keyword }, '→', `${staffs.length} results`)
+        mockLog('searchStaffs result', `${staffs.length} results`)
 
-        return {
+        return successResponse({
           staffs,
           total: staffs.length,
           keyword: params.keyword,
-        }
+        }, '搜索员工成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: searchStaffs', error)
-        throw error
+        return errorResponse(error.message || '搜索员工失败')
       }
     },
   },
 
   // ==================== 获取组织列表 ====================
+  /** 获取组织列表 */
   {
     url: '/app/staff/organizations',
     method: 'GET',
@@ -359,6 +366,8 @@ export default defineUniAppMock([
       await randomDelay(100, 200)
 
       try {
+        mockLog('getOrganizations')
+
         const organizations = mockStaffDatabase.getAllOrganizations()
 
         // 计算每个组织的员工数量
@@ -368,22 +377,23 @@ export default defineUniAppMock([
           onlineCount: mockStaffDatabase.getStaffsByDepartment(orgName).filter(s => s.isOnline).length,
         }))
 
-        console.log('🚀 Mock API: getOrganizations', '→', `${organizations.length} organizations`)
+        mockLog('getOrganizations result', `${organizations.length} organizations`)
 
-        return {
+        return successResponse({
           organizations: orgStats,
           totalOrganizations: organizations.length,
           totalStaffs: mockStaffDatabase.staffs.length,
-        }
+        }, '获取组织列表成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getOrganizations', error)
-        throw error
+        return errorResponse(error.message || '获取组织列表失败')
       }
     },
   },
 
   // ==================== 更新员工在线状态 ====================
+  /** 更新员工在线状态 */
   {
     url: '/app/staff/update-online-status',
     method: 'POST',
@@ -393,33 +403,33 @@ export default defineUniAppMock([
 
       try {
         const { staffId, isOnline } = body
+        mockLog('updateStaffOnlineStatus', body)
 
         if (!staffId) {
-          throw new Error('员工ID不能为空')
+          return errorResponse('员工ID不能为空')
         }
 
         const staff = mockStaffDatabase.updateStaffOnlineStatus(staffId, Boolean(isOnline))
 
         if (!staff) {
-          throw new Error('员工不存在')
+          return errorResponse('员工不存在')
         }
 
-        console.log('🚀 Mock API: updateStaffOnlineStatus', body, '→', staff.name)
+        mockLog('updateStaffOnlineStatus result', staff.name)
 
-        return {
-          success: true,
+        return successResponse({
           staff,
-          message: '更新在线状态成功',
-        }
+        }, '更新在线状态成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: updateStaffOnlineStatus', error)
-        throw error
+        return errorResponse(error.message || '更新在线状态失败')
       }
     },
   },
 
   // ==================== 获取在线员工列表 ====================
+  /** 获取在线员工列表 */
   {
     url: '/app/staff/online',
     method: 'GET',
@@ -428,24 +438,27 @@ export default defineUniAppMock([
       await randomDelay(200, 300)
 
       try {
+        mockLog('getOnlineStaffs')
+
         const onlineStaffs = mockStaffDatabase.getOnlineStaffs()
 
-        console.log('🚀 Mock API: getOnlineStaffs', '→', `${onlineStaffs.length} online staffs`)
+        mockLog('getOnlineStaffs result', `${onlineStaffs.length} online staffs`)
 
-        return {
+        return successResponse({
           staffs: onlineStaffs,
           total: onlineStaffs.length,
           onlineRatio: Math.round((onlineStaffs.length / mockStaffDatabase.staffs.length) * 100),
-        }
+        }, '获取在线员工成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getOnlineStaffs', error)
-        throw error
+        return errorResponse(error.message || '获取在线员工失败')
       }
     },
   },
 
   // ==================== 添加新员工（测试用） ====================
+  /** 添加新员工（测试用） */
   {
     url: '/app/staff/add',
     method: 'POST',
@@ -455,9 +468,10 @@ export default defineUniAppMock([
 
       try {
         const { name, tel, orgName, position } = body
+        mockLog('addStaff', body)
 
         if (!name || !tel || !orgName) {
-          throw new Error('姓名、电话和组织名称不能为空')
+          return errorResponse('姓名、电话和组织名称不能为空')
         }
 
         const newStaff = mockStaffDatabase.addStaff({
@@ -470,17 +484,15 @@ export default defineUniAppMock([
           isOnline: true,
         })
 
-        console.log('🚀 Mock API: addStaff', body, '→', newStaff)
+        mockLog('addStaff result', newStaff)
 
-        return {
-          success: true,
+        return successResponse({
           staff: newStaff,
-          message: '添加员工成功',
-        }
+        }, '添加员工成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: addStaff', error)
-        throw error
+        return errorResponse(error.message || '添加员工失败')
       }
     },
   },

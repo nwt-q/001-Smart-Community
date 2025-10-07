@@ -2,7 +2,7 @@
  * 用户模块类型定义
  */
 
-// 用户信息
+/** 用户信息 */
 export interface User {
   userId: string
   username: string
@@ -25,7 +25,7 @@ export interface User {
   lastLoginTime?: string
 }
 
-// 登录请求
+/** 登录请求 */
 export interface LoginReq {
   username: string
   password: string
@@ -33,7 +33,7 @@ export interface LoginReq {
   remember?: boolean
 }
 
-// 登录响应
+/** 登录响应 */
 export interface LoginResponse {
   user: User
   token: string

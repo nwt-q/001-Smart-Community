@@ -40,8 +40,10 @@ function doLogin() {
   console.log('_path:', _path, 'query:', query, 'path:', path)
   console.log('isPageTabbar(_path):', isPageTabbar(_path))
   if (isPageTabbar(_path)) {
-    // 经过我的测试 switchTab 不能带 query 参数, 不管是放到 url  还是放到 query ,
-    // 最后跳转过去的时候都会丢失 query 信息
+    /**
+     * 经过我的测试 switchTab 不能带 query 参数, 不管是放到 url  还是放到 query ,
+     * 最后跳转过去的时候都会丢失 query 信息
+     */
     uni.switchTab({
       url: path,
     })

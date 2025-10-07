@@ -9,7 +9,7 @@ import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddr
 
 // ==================== 投诉数据生成器 ====================
 
-// 投诉类型配置
+/** 投诉类型配置 */
 const COMPLAINT_TYPES: ComplaintType[] = [
   '噪音投诉',
   '卫生问题',
@@ -19,7 +19,7 @@ const COMPLAINT_TYPES: ComplaintType[] = [
   '其他投诉',
 ]
 
-// 投诉状态配置
+/** 投诉状态配置 */
 const COMPLAINT_STATUSES: ComplaintStatus[] = [
   'SUBMITTED',
   'PROCESSING',
@@ -27,7 +27,7 @@ const COMPLAINT_STATUSES: ComplaintStatus[] = [
   'CLOSED',
 ]
 
-// 生成投诉描述
+/** 生成投诉描述 */
 function generateComplaintDescription(type: ComplaintType): string {
   const descriptions = {
     噪音投诉: [
@@ -78,7 +78,7 @@ function generateComplaintDescription(type: ComplaintType): string {
   return typeDescriptions[Math.floor(Math.random() * typeDescriptions.length)]
 }
 
-// 生成回复内容
+/** 生成回复内容 */
 function generateResponseContent(type: ComplaintType): string {
   const responses = {
     噪音投诉: [
@@ -117,7 +117,7 @@ function generateResponseContent(type: ComplaintType): string {
   return typeResponses[Math.floor(Math.random() * typeResponses.length)]
 }
 
-// 核心投诉数据生成器
+/** 核心投诉数据生成器 */
 function createMockComplaint(id: string): Complaint {
   const complaintType = COMPLAINT_TYPES[Math.floor(Math.random() * COMPLAINT_TYPES.length)]
   const status = COMPLAINT_STATUSES[Math.floor(Math.random() * COMPLAINT_STATUSES.length)]
@@ -155,16 +155,16 @@ function createMockComplaint(id: string): Complaint {
 // ==================== 投诉数据库对象 ====================
 
 const mockComplaintDatabase = {
-  // 初始化数据
+  /** 初始化数据 */
   complaints: Array.from({ length: 40 }, (_, index) =>
     createMockComplaint((index + 1).toString().padStart(3, '0'))) as Complaint[],
 
-  // 获取投诉详情
+  /** 获取投诉详情 */
   getComplaintById(complaintId: string): Complaint | undefined {
     return this.complaints.find(complaint => complaint.complaintId === complaintId)
   },
 
-  // 获取投诉列表（支持筛选和分页）
+  /** 获取投诉列表（支持筛选和分页） */
   getComplaintList(params: ComplaintListParams & {
     status?: ComplaintStatus
     complaintType?: ComplaintType
@@ -209,13 +209,13 @@ const mockComplaintDatabase = {
     return createPaginationResponse(filtered, params.page, params.row)
   },
 
-  // 添加投诉
+  /** 添加投诉 */
   addComplaint(complaint: Complaint): Complaint {
     this.complaints.unshift(complaint)
     return complaint
   },
 
-  // 更新投诉状态
+  /** 更新投诉状态 */
   updateComplaintStatus(complaintId: string, status: ComplaintStatus, assignedHandler?: string): Complaint | null {
     const complaint = this.getComplaintById(complaintId)
     if (complaint) {
@@ -229,7 +229,7 @@ const mockComplaintDatabase = {
     return null
   },
 
-  // 更新投诉信息
+  /** 更新投诉信息 */
   updateComplaint(complaintId: string, updateData: Partial<Complaint>): Complaint | null {
     const complaint = this.getComplaintById(complaintId)
     if (complaint) {
@@ -242,7 +242,7 @@ const mockComplaintDatabase = {
     return null
   },
 
-  // 删除投诉
+  /** 删除投诉 */
   deleteComplaint(complaintId: string): boolean {
     const index = this.complaints.findIndex(c => c.complaintId === complaintId)
     if (index !== -1) {
@@ -256,7 +256,7 @@ const mockComplaintDatabase = {
 // ==================== Mock 接口定义 ====================
 
 export default defineUniAppMock([
-  // 获取投诉列表
+  /** 获取投诉列表 */
   {
     url: '/app/complaint.listComplaints',
     method: ['GET', 'POST'],
@@ -293,7 +293,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取投诉详情
+  /** 获取投诉详情 */
   {
     url: '/app/complaint.getComplaintDetail',
     method: ['GET', 'POST'],
@@ -325,7 +325,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 提交投诉
+  /** 提交投诉 */
   {
     url: '/app/complaint.submitComplaint',
     method: 'POST',
@@ -379,7 +379,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 处理投诉
+  /** 处理投诉 */
   {
     url: '/app/complaint.handleComplaint',
     method: 'POST',
@@ -414,7 +414,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 回复投诉
+  /** 回复投诉 */
   {
     url: '/app/complaint.replyComplaint',
     method: 'POST',
@@ -456,7 +456,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 投诉满意度评价
+  /** 投诉满意度评价 */
   {
     url: '/app/complaint.evaluateComplaint',
     method: 'POST',
@@ -502,7 +502,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 获取投诉统计数据
+  /** 获取投诉统计数据 */
   {
     url: '/app/complaint.getComplaintStatistics',
     method: ['GET', 'POST'],
@@ -566,7 +566,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 更新投诉信息
+  /** 更新投诉信息 */
   {
     url: '/app/complaint.updateComplaint',
     method: 'POST',
@@ -596,7 +596,7 @@ export default defineUniAppMock([
     },
   },
 
-  // 删除投诉
+  /** 删除投诉 */
   {
     url: '/app/complaint.deleteComplaint',
     method: ['DELETE', 'POST'],

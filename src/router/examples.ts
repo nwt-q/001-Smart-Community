@@ -5,7 +5,7 @@
 
 import { navigateToTyped, redirectToTyped, switchTabTyped, TypedRouter } from './helpers'
 
-// 示例 1：使用 TypedRouter 类方法（推荐）
+/** 示例 1：使用 TypedRouter 类方法（推荐） */
 export function navigationExamples() {
   // 跳转到维修工单列表
   TypedRouter.toRepairList({ status: 'pending' })
@@ -47,7 +47,7 @@ export function navigationExamples() {
   TypedRouter.toMe()
 }
 
-// 示例 2：使用基础的类型安全函数
+/** 示例 2：使用基础的类型安全函数 */
 export function basicNavigationExamples() {
   // 跳转到页面（自动类型检查）
   navigateToTyped('/pages-sub/repair/order-detail', {
@@ -64,7 +64,7 @@ export function basicNavigationExamples() {
   switchTabTyped('/pages/index/index')
 }
 
-// 示例 3：错误处理
+/** 示例 3：错误处理 */
 export async function navigationWithErrorHandling() {
   try {
     await TypedRouter.toRepairDetail('repair123')
@@ -79,7 +79,7 @@ export async function navigationWithErrorHandling() {
   }
 }
 
-// 示例 4：条件跳转
+/** 示例 4：条件跳转 */
 export function conditionalNavigation(userRole: 'admin' | 'user') {
   if (userRole === 'admin') {
     // 管理员可以处理投诉
@@ -91,7 +91,7 @@ export function conditionalNavigation(userRole: 'admin' | 'user') {
   }
 }
 
-// 示例 5：批量操作
+/** 示例 5：批量操作 */
 export function batchNavigation(repairIds: string[]) {
   // 遍历维修工单，逐个跳转到详情页
   repairIds.forEach((id, index) => {
@@ -101,7 +101,7 @@ export function batchNavigation(repairIds: string[]) {
   })
 }
 
-// 示例 6：返回逻辑
+/** 示例 6：返回逻辑 */
 export function smartBack() {
   const pages = getCurrentPages()
 
@@ -115,7 +115,7 @@ export function smartBack() {
   }
 }
 
-// 示例 7：页面参数解析
+/** 示例 7：页面参数解析 */
 export function parseCurrentPageParams() {
   const pages = getCurrentPages()
   if (pages.length === 0)
@@ -136,7 +136,7 @@ export function parseCurrentPageParams() {
   }
 }
 
-// 示例 8：预加载页面
+/** 示例 8：预加载页面 */
 export function preloadPages() {
   // 预加载常用页面
   uni.preloadPage({
@@ -148,7 +148,7 @@ export function preloadPages() {
   })
 }
 
-// 示例 9：路由拦截示例
+/** 示例 9：路由拦截示例 */
 export function setupCustomInterceptor() {
   uni.addInterceptor('navigateTo', {
     invoke(args) {

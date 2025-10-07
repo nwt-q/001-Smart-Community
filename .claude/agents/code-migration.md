@@ -1126,6 +1126,142 @@ export function useDebounce<T extends (...args: any[]) => any>(fn: T, delay: num
 }
 ```
 
+#### 7.2 图片路径处理函数迁移
+
+**重要提示**: 项目中已提供统一的图片路径处理函数 `getImageUrl`，位于 `src/utils/index.ts`。
+
+**何时使用 `getImageUrl` 函数**:
+
+1. **处理活动图片**: 当处理活动列表或活动详情的 `headerImg` 字段时
+2. **处理用户头像**: 当处理用户头像等需要通过文件 ID 获取的图片时
+3. **Mock 接口场景**: 在使用 Mock 接口返回的图片标识时
+4. **兼容 Java110Context**: 需要兼容原系统的文件路径格式时
+
+**函数签名**:
+
+```typescript
+/**
+ * 处理图片路径 - 面向 mock 场景的图片路径处理函数
+ * @param headerImg 图片标识或完整URL
+ * @param communityId 社区ID（可选）
+ * @returns 处理后的图片URL
+ */
+export function getImageUrl(headerImg: string, communityId?: string): string
+```
+
+**迁移示例**:
+
+**Vue2 页面内联图片处理**:
+
+```javascript
+// Vue2 - 图片路径处理逻辑分散在各个组件中
+export default {
+  data() {
+    return {
+      currentCommunityId: '',
+      activities: [],
+    }
+  },
+  methods: {
+    processActivityData(item) {
+      // 内联的图片处理逻辑
+      if (item.headerImg) {
+        if (item.headerImg.startsWith('http')) {
+          item.src = item.headerImg
+        } else {
+          item.src = `/api/file?fileId=${item.headerImg}&communityId=${this.currentCommunityId}&time=${Date.now()}`
+        }
+      }
+      return item
+    },
+  },
+}
+```
+
+**Vue3 使用统一工具函数**:
+
+```typescript
+// Vue3 - 使用统一的 getImageUrl 工具函数
+<script setup lang="ts">
+import { ref } from 'vue'
+import { getImageUrl } from '@/utils'
+
+interface Activity {
+  activitiesId: string
+  title: string
+  headerImg: string
+  src?: string
+}
+
+const currentCommunityId = ref<string>('')
+const activities = ref<Activity[]>([])
+
+/** 处理活动数据 */
+function processActivityData(item: Activity): Activity {
+  return {
+    ...item,
+    // ✅ 使用统一的图片路径处理函数
+    src: getImageUrl(item.headerImg, currentCommunityId.value)
+  }
+}
+
+/** 或者在 API 数据处理时使用 */
+const processedActivities = activities.value.map(item => ({
+  ...item,
+  src: getImageUrl(item.headerImg, currentCommunityId.value)
+}))
+</script>
+```
+
+**详情页使用示例**:
+
+```typescript
+<script setup lang="ts">
+import { reactive } from 'vue'
+import { getImageUrl } from '@/utils'
+
+const currentCommunityId = ref<string>('')
+
+const activity = reactive<Partial<Activity>>({
+  activitiesId: '',
+  title: '',
+  headerImg: '',
+  src: '',
+})
+
+/** 加载活动详情 */
+async function loadActivityDetail() {
+  const result = await getActivityDetail({
+    activitiesId: activitiesId.value,
+    communityId: currentCommunityId.value,
+  })
+
+  if (result?.activitiess?.length > 0) {
+    const activityItem = result.activitiess[0]
+
+    // ✅ 使用统一的图片路径处理函数
+    activityItem.src = getImageUrl(activityItem.headerImg, currentCommunityId.value)
+
+    Object.assign(activity, activityItem)
+  }
+}
+</script>
+```
+
+**函数特性**:
+
+1. **智能判断**: 自动识别完整 URL（http 开头）和文件 ID
+2. **Mock 友好**: 完整 URL 直接返回，文件 ID 转换为 API 路径
+3. **时间戳**: 自动添加时间戳参数防止缓存
+4. **可选社区 ID**: 社区 ID 为可选参数，适应不同场景
+
+**迁移原则**:
+
+- ✅ **必须使用**: 所有图片路径处理都使用 `getImageUrl` 函数
+- ❌ **不要内联**: 不要在组件内重复实现图片路径处理逻辑
+- ✅ **导入使用**: 从 `@/utils` 导入函数使用
+- ✅ **保持一致**: 确保所有图片处理逻辑保持一致性
+
 ### 9. 质量检查和测试
 
 #### 9.1 TypeScript 类型检查

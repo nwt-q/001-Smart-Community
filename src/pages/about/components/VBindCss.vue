@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-// root 插件更新到 1.3.4之后，都正常了。
+/** root 插件更新到 1.3.4之后，都正常了。 */
 const testBindCssVariable = ref('red')
 function changeTestBindCssVariable() {
   if (testBindCssVariable.value === 'red') {

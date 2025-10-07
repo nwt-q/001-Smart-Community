@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAddressList } from '@/hooks/useAddressList'
 
-// 页面配置
+/** 页面配置 */
 definePage({
   style: {
     navigationBarTitleText: '员工通讯录',
@@ -10,11 +10,11 @@ definePage({
   },
 })
 
-// ==================== 使用组合式 API ====================
+/** ==================== 使用组合式 API ==================== */
 
-// 使用员工通讯录 hook，自动处理所有业务逻辑
+/** 使用员工通讯录 hook，自动处理所有业务逻辑 */
 const {
-  // 状态
+  /** 状态 */
   list,
   searchKeyword: name,
   hidden,
@@ -26,21 +26,21 @@ const {
   totalStaffCount,
   onlineStaffCount,
 
-  // 方法
+  /** 方法 */
   loadStaffInfo,
   callPhone,
   searchStaff,
   clearSearch,
 
-  // 索引交互方法
+  /** 索引交互方法 */
   getCur,
   setCur,
   tMove,
   tStart,
   tEnd,
 } = useAddressList({
-  autoInitialize: true, // 自动初始化所有功能
-  immediate: true, // 立即加载数据
+  autoInitialize: true, /** 自动初始化所有功能 */
+  immediate: true, /** 立即加载数据 */
 })
 </script>
 

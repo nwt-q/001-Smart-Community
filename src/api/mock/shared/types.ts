@@ -5,7 +5,7 @@
 
 import type { ApiResponse } from '@/types/api'
 
-// Mock 请求上下文
+/** Mock 请求上下文 */
 export interface MockRequestContext {
   query: Record<string, any>
   body: Record<string, any>
@@ -14,7 +14,7 @@ export interface MockRequestContext {
   url: string
 }
 
-// Mock 响应选项
+/** Mock 响应选项 */
 export interface MockResponseOptions {
   status?: number
   statusText?: string
@@ -22,7 +22,7 @@ export interface MockResponseOptions {
   delay?: number | [number, number]
 }
 
-// Mock 处理器函数
+/** Mock 处理器函数 */
 export type MockHandler<T = any> = (
   context: MockRequestContext
 ) => Promise<ApiResponse<T>> | ApiResponse<T>

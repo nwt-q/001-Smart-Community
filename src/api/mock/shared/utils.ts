@@ -24,16 +24,16 @@ export const defineUniAppMock = createDefineMock((mock) => {
   mock.url = `${prefix}${prefix}${mock.url}`
 })
 
-// 模拟请求延迟
+/** 模拟请求延迟 */
 export const delay = (ms: number = 300) => new Promise(resolve => setTimeout(resolve, ms))
 
-// 生成随机延迟
+/** 生成随机延迟 */
 export function randomDelay(min: number = 200, max: number = 800) {
   const ms = Math.floor(Math.random() * (max - min + 1)) + min
   return delay(ms)
 }
 
-// 模拟分页数据
+/** 模拟分页数据 */
 export function createPaginationResponse<T>(
   data: T[],
   page: number = 1,
@@ -52,23 +52,23 @@ export function createPaginationResponse<T>(
   }
 }
 
-// 生成随机 ID（更加真实的业务ID格式）
+/** 生成随机 ID（更加真实的业务ID格式） */
 export function generateId(prefix: string = 'ID') {
   const timestamp = Date.now().toString(36)
   const random = Math.random().toString(36).substring(2, 8)
   return `${prefix}_${timestamp}_${random}`.toUpperCase()
 }
 
-// 生成业务编号（按日期 + 序号格式）
+/** 生成业务编号（按日期 + 序号格式） */
 export function generateBusinessId(prefix: string = 'BIZ') {
   const date = new Date()
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '') // YYYYMMDD
-  const timeStr = date.toTimeString().slice(0, 8).replace(/:/g, '') // HHMMSS
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '') /** YYYYMMDD */
+  const timeStr = date.toTimeString().slice(0, 8).replace(/:/g, '') /** HHMMSS */
   const random = Math.floor(Math.random() * 999).toString().padStart(3, '0')
   return `${prefix}${dateStr}${timeStr}${random}`
 }
 
-// 生成随机中文姓名
+/** 生成随机中文姓名 */
 export function generateChineseName(): string {
   const surnames = ['王', '李', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗']
   const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞']
@@ -77,7 +77,7 @@ export function generateChineseName(): string {
   return surname + name
 }
 
-// 生成随机手机号
+/** 生成随机手机号 */
 export function generatePhoneNumber(): string {
   const prefixes = ['130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '150', '151', '152', '153', '155', '156', '157', '158', '159', '180', '181', '182', '183', '184', '185', '186', '187', '188', '189']
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
@@ -85,7 +85,7 @@ export function generatePhoneNumber(): string {
   return prefix + suffix
 }
 
-// 生成随机地址
+/** 生成随机地址 */
 export function generateAddress(): string {
   const buildings = Array.from({ length: 20 }, (_, i) => (i + 1).toString())
   const units = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -98,7 +98,7 @@ export function generateAddress(): string {
   return `${building}栋${floor}${unit}室`
 }
 
-// 生成随机时间范围
+/** 生成随机时间范围 */
 export function generateTimeRange(startDaysFromNow: number = -30, endDaysFromNow: number = 30): string {
   const now = Date.now()
   const startTime = now + (startDaysFromNow * 24 * 60 * 60 * 1000)
@@ -107,22 +107,22 @@ export function generateTimeRange(startDaysFromNow: number = -30, endDaysFromNow
   return new Date(randomTime).toISOString()
 }
 
-// 生成随机金额
+/** 生成随机金额 */
 export function generateAmount(min: number = 10, max: number = 1000): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-// 生成随机状态
+/** 生成随机状态 */
 export function generateStatus<T extends string>(statuses: T[]): T {
   return statuses[Math.floor(Math.random() * statuses.length)]
 }
 
-// 生成随机优先级
+/** 生成随机优先级 */
 export function generatePriority(): 'HIGH' | 'MEDIUM' | 'LOW' {
   return generateStatus(['HIGH', 'MEDIUM', 'LOW'])
 }
 
-// 模拟成功响应
+/** 模拟成功响应 */
 export function successResponse<T>(data: T, message: string = '操作成功') {
   return {
     success: true,
@@ -133,7 +133,7 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
   }
 }
 
-// 模拟错误响应
+/** 模拟错误响应 */
 export function errorResponse(message: string = '操作失败', code: string = '500') {
   return {
     success: false,
@@ -144,23 +144,23 @@ export function errorResponse(message: string = '操作失败', code: string = '
   }
 }
 
-// 调试日志
+/** 调试日志 */
 export function mockLog(label: string, ...args: any[]) {
   console.log(`🚀 Mock API [${label}]:`, ...args)
 }
 
-// 清理HTML标签，用于活动内容预览
+/** 清理HTML标签，用于活动内容预览 */
 export function stripHtmlTags(html: string, maxLength: number = 120): string {
   if (!html)
     return ''
 
-  // 移除所有HTML标签
+  /** 移除所有HTML标签 */
   let text = html.replace(/<[^>]*>/g, '')
 
-  // 清理多余的空白字符
+  /** 清理多余的空白字符 */
   text = text.replace(/\s+/g, ' ').trim()
 
-  // 截断文本并添加省略号
+  /** 截断文本并添加省略号 */
   if (text.length > maxLength) {
     text = `${text.substring(0, maxLength).trim()}...`
   }
@@ -168,7 +168,7 @@ export function stripHtmlTags(html: string, maxLength: number = 120): string {
   return text
 }
 
-// 生成更真实的活动标题
+/** 生成更真实的活动标题 */
 export function generateRealisticTitle(category: string, index: number): string {
   const titleTemplates = {
     health: [
@@ -232,7 +232,7 @@ export function generateRealisticTitle(category: string, index: number): string 
   const templates = titleTemplates[category as keyof typeof titleTemplates] || ['社区活动']
   const baseTitle = templates[Math.floor(Math.random() * templates.length)]
 
-  // 为标题添加时间或期次信息，让标题更加真实
+  /** 为标题添加时间或期次信息，让标题更加真实 */
   const suffixes = [
     `（第${index}期）`,
     '',

@@ -309,9 +309,7 @@
 
 在 `本项目` 内，将 ActivityNavigation 全部替换成 TypedRouter 提供的路由跳转工具。然后删掉 ActivityNavigation 。实现对 ActivityNavigation 的全量替换。
 
-### 027 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
-
-<!-- TODO: -->
+### 029 处理 `src\pages\activity\activities.vue` 文件的路由迁移地址问题
 
 文件 `src\pages\activity\activities.vue` 不满足 `route-migration` 子代理的设计要求。
 
@@ -321,10 +319,61 @@
 2. 请你首先修改子代理，然后运行子代理，并用子代理修复这个路由更新映射不正确的问题。
 3. 请你确保文件移动后，其他引用的文件路径都正确，避免出现找不到的错误。
 
-### 028 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
+### 030 修改 `api-migration` api 迁移子代理，正确约束 mock 返回字段
 
-<!-- TODO -->
+请深度思考。
+
+请修改 `api-migration` 子代理，在`基础格式要求`一栏，增加要求。要求以后生成 mock 接口时，其返回值格式必须用统一的 `successResponse` 和 `errorResponse` 函数来约束。
+
+### 031 修改 `api-migration` api 迁移子代理，正确使用统一的 mock 日志输出工具函数
+
+请深度思考。
+
+请修改 `api-migration` 子代理，增加要求，要求 mock 日志输出的时候，统一使用 `src\api\mock\shared\utils.ts` 的 `mockLog` 函数。
+
+### 032 修改 javascript / typescript 的代码注释写法
+
+代码注释写法应该写成 jsdoc 格式。而不是单纯的双斜杠注释。
+
+1. 请你修改 `src/api/**/*.ts` glob 匹配下的全部 ts 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+2. 请你修改 `src/router/**/*.ts` glob 匹配下的全部 ts 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+3. 请你修改 `src/types/**/*.ts` glob 匹配下的全部 ts 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+4. 请你修改 `src/pages/**/*.ts` glob 匹配下的全部 vue 代码文件，将代码注释，**恰当的**改成期望的 jsdoc 注释格式。
+
+### 031 应用 `api-migration` 子代理，确保落实严格的无鉴权原则
 
 请深度思考。
 
 请使用 `api-migration` 子代理，读取 `src\api` 目录下的文件，或者是其他相关的代码文件，确保项目满足严格的无鉴权原则。
+
+1. 确保 mock 接口文件，其返回的 mock 接口，都充分的使用了 `src\api\mock\shared\utils.ts` 提供的工具。比如 `successResponse` 和 `errorResponse` 函数。请规范接口返回的数据格式。
+2. 确保 mock 接口文件，都使用了 `mockLog` 函数来规范日志输出结果。
+
+### 032 修改子代理使用 icon 的核心准则
+
+请深度思考。请你认真阅读以下`icon迁移的方针思想`，以及实现方式。
+
+各类迁移子代理实现 icon 标签的迁移时，是从 `cuIcon` ColorUI 图标，迁移到基于 `<wd-icon>` 组件的 `custom-class` 自定义样式实现的。
+
+- icon 实现方式：新的 icon 图标用的基于类名生成的 icon。
+- 类名格式要求：其编写格式满足 unocss 的 icon 图标类格式要求。icon 的类型都来自于 `Iconify`。
+- iconify 图标集分类： 本项目用的是 `@iconify-json/carbon` 库，是 `carbon` 图标集。
+- icon 类名格式要求：按照 unocss 使用 iconify 图标集的要求，本项目内的 `carbon` 图标集类名为 `i-carbon-*` 图标类。
+- 具体示例： 比如 icon 的旧类型为 `cuIcon-notification` ，按照上述要求，新的 icon 实现方式为：
+
+```html
+<wd-icon name="" custom-class="i-carbon-notification" />
+```
+
+在使用`<wd-icon>`组件实现 icon 迁移时，请注意满足以下要求：
+
+1. 使用 `<wd-icon>` 组件。
+2. `<wd-icon>` 组件的要求是 name 属性必填。这里你固定填写为空字符串即可。
+3. `i-carbon-*` 图标类在 custom-class 内就可以生效了。请你用 custom-class 来解决 `i-carbon-*` 图标类不生效的故障。
+4. 按钮大小调整等样式修改需求，请主动使用 `custom-class` 加上 unocss 原子式样式的方式实现。
+
+以上就是`icon迁移的方针思想`了。现在请你深度思考，并完成以下任务：
+
+1. 针对性的阅读 `component-migration` 子代理的 `图标映射` 和 `style-migration` 子代理的 `图标系统映射` 部分。这两个部分都在讲 icon 图标映射表。
+2. 以后全部的 icon 迁移任务，都交给 `component-migration` 子代理完成，而不是 `style-migration` 子代理。所以请你将 `style-migration` 子代理的 icon 映射图标表格，都迁移剪切到 `component-migration` 子代理的 `图标映射` 部分。
+3. 将我上面表述的`icon迁移的方针思想`，整理并写入到 `component-migration` 子代理内，我希望 `component-migration` 子代理未来能够严格遵守该方针，实现 icon 迁移。
