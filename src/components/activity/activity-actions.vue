@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useToast } from 'wot-design-uni'
+// TODO: 用组合式api 优化这里的接口请求交互过程
 import { updateActivityCollect, updateActivityLike } from '@/api/activity'
 
 interface Props {

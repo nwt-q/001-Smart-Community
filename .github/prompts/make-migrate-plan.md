@@ -377,3 +377,19 @@
 1. 针对性的阅读 `component-migration` 子代理的 `图标映射` 和 `style-migration` 子代理的 `图标系统映射` 部分。这两个部分都在讲 icon 图标映射表。
 2. 以后全部的 icon 迁移任务，都交给 `component-migration` 子代理完成，而不是 `style-migration` 子代理。所以请你将 `style-migration` 子代理的 icon 映射图标表格，都迁移剪切到 `component-migration` 子代理的 `图标映射` 部分。
 3. 将我上面表述的`icon迁移的方针思想`，整理并写入到 `component-migration` 子代理内，我希望 `component-migration` 子代理未来能够严格遵守该方针，实现 icon 迁移。
+
+### 033 明确 `useRequest` 组合式 api 的使用方式
+
+请深度思考。
+
+我需要你帮我明确清楚，以后子代理实现接口迁移，和使用接口时，要如何使用组合式 api 来使用接口请求的各种状态。
+
+这里我规定：
+
+- 接口请求定义：用 `import { http } from '@/http/alova'` 提供的 `http` 工具来定义接口。
+- 请求状态管理的组合式 api： 用 `import { useRequest } from 'alova/client'` 提供的 `useRequest` 来使用接口请求过程中常用的状态。
+
+1. 阅读 `code-migration` 和 `api-migration` 子代理。
+2. 自主整理清楚关于接口定义、接口写法、组合式 api 使用的信息，全部整理迁移到 `api-migration` 子代理内。我希望 `api-migration` 子代理未来专门负责好 api 写法的迁移、mock 数据的定义、接口定义、以及用组合式 api 来使用接口。
+3. 仔细思考，制定一个 `useRequest` 组合式 api 的使用规范，并将这个规范写到 api-migration 子代理内。
+4. 避免出现 `code-migration` 和 `api-migration` 子代理都重复定义说明的情况，只允许 `api-migration` 子代理说明清楚如何使用 api 相关的使用规范。`code-migration` 子代理不允许出现重复的，交叉说明的情况。
