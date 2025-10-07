@@ -1,4 +1,10 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
+import { nextTick, ref, watch } from 'vue'
+import { useToast } from 'wot-design-uni'
+import { useGlobalLoading } from '@/hooks/useGlobalLoading'
+import { getCurrentPath } from '@/utils'
+
 const { loadingOptions, currentPage } = storeToRefs(useGlobalLoading())
 
 const { close: closeGlobalLoading } = useGlobalLoading()

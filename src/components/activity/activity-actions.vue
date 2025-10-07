@@ -6,8 +6,8 @@
 <script setup lang="ts">
 import { useRequest } from 'alova/client'
 import { computed, ref, watch } from 'vue'
-import { useToast } from 'wot-design-uni'
 import { updateActivityCollect, updateActivityLike } from '@/api/activity'
+import { useGlobalToast } from '@/hooks/useGlobalToast'
 
 interface Props {
   /** 活动ID */
@@ -62,7 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 /** Toast 实例 */
-const toast = useToast()
+const toast = useGlobalToast()
 
 /** 组件内部状态管理 */
 const isLiked = ref<boolean>(props.initialLiked)
@@ -392,9 +392,6 @@ function handleContact() {
 
 <template>
   <view class="activity-actions-container mx-4 max-sm:mx-3">
-    <!-- Toast 轻提示挂载点 -->
-    <wd-toast />
-
     <!-- 主操作按钮区域 -->
     <view class="mb-4 flex gap-3">
       <!-- 报名按钮 -->

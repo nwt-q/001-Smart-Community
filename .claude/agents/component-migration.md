@@ -505,6 +505,89 @@ color: blue
   - 统一使用 `wd-status-tip` 保持视觉一致性
   - 支持响应式数据绑定，动态切换空状态类型
 
+### 全局反馈组件映射
+
+#### 核心原则
+
+本项目采用**全局组件模式**实现 Toast/Message/Loading 反馈功能，所有反馈组件统一在 `App.ku.vue` 根组件注册，避免子组件内挂载导致的层级遮挡问题。
+
+**⚠️ 严格禁止**:
+
+- 在子组件内直接使用 `<wd-toast />`、`<wd-message-box />`、`<wd-loading />` 等反馈组件
+- 在子组件内通过 `useToast('globalToast')` 等方式挂载局部反馈组件
+- 手动管理 loading 状态（应使用全局 Loading 组件）
+
+**✅ 必须使用**:
+
+- `useGlobalToast()` - 全局 Toast 提示
+- `useGlobalMessage()` - 全局 Message 对话框
+- `useGlobalLoading()` - 全局 Loading 加载
+
+#### 组件映射表
+
+|            旧方式             |             新方式             |                             使用文档                             |
+| :---------------------------: | :----------------------------: | :--------------------------------------------------------------: |
+|    子组件内 `<wd-toast />`    |  `useGlobalToast()`组合式函数  |   [Toast 文档](../../../src/components/global/toast/README.md)   |
+| 子组件内 `<wd-message-box />` | `useGlobalMessage()`组合式函数 | [Message 文档](../../../src/components/global/message/README.md) |
+|     手动管理 loading 状态     | `useGlobalLoading()`组合式函数 | [Loading 文档](../../../src/components/global/loading/README.md) |
+
+#### 使用示例
+
+**旧代码 (子组件内使用 Toast)**:
+
+```vue
+<script setup lang="ts">
+import { useToast } from 'wot-design-uni'
+
+const toast = useToast('globalToast')
+
+function showSuccess() {
+  toast.success('操作成功')
+}
+</script>
+
+<template>
+  <wd-toast id="globalToast" />
+  <wd-button @click="showSuccess">显示提示</wd-button>
+</template>
+```
+
+**新代码 (全局组合式 API)**:
+
+```vue
+<script setup lang="ts">
+import { useGlobalToast } from '@/hooks/useGlobalToast'
+
+const toast = useGlobalToast()
+
+function showSuccess() {
+  toast.success('操作成功')
+}
+</script>
+
+<template>
+  <!-- 无需在子组件内挂载 Toast 组件 -->
+  <wd-button @click="showSuccess">显示提示</wd-button>
+</template>
+```
+
+#### 详细文档
+
+- **Toast 组件**: 查看 [src/components/global/toast/README.md](../../../src/components/global/toast/README.md)
+  - 支持 success/error/info/warning 快捷方法
+  - 自动页面路径检测
+  - 自定义图标、位置、持续时间
+
+- **Message 组件**: 查看 [src/components/global/message/README.md](../../../src/components/global/message/README.md)
+  - 支持 alert/confirm/prompt 对话框
+  - success/fail 回调处理
+  - 自定义按钮样式
+
+- **Loading 组件**: 查看 [src/components/global/loading/README.md](../../../src/components/global/loading/README.md)
+  - 自动显示遮罩层
+  - 支持自定义加载文案
+  - 统一管理加载状态
+
 ## 🎯 迁移检查清单
 
 ### 功能验证

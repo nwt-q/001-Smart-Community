@@ -1,4 +1,10 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
+import { nextTick, ref, watch } from 'vue'
+import { useToast } from 'wot-design-uni'
+import { useGlobalToast } from '@/hooks/useGlobalToast'
+import { getCurrentPath } from '@/utils'
+
 const { toastOptions, currentPage } = storeToRefs(useGlobalToast())
 
 const { close: closeGlobalToast } = useGlobalToast()

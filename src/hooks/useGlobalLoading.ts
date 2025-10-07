@@ -1,6 +1,7 @@
 import type { ToastOptions } from 'wot-design-uni/components/wd-toast/types'
-
 import { defineStore } from 'pinia'
+import { CommonUtil } from 'wot-design-uni'
+import { getCurrentPath } from '@/utils'
 
 interface GlobalLoading {
   loadingOptions: ToastOptions

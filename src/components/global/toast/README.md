@@ -30,7 +30,7 @@ GlobalToast 是基于 `wot-design-uni` 的 `wd-toast` 组件封装的全局提�
 ### 2. 在组件中使用
 
 ```typescript
-import { useGlobalToast } from '@/composables/useGlobalToast'
+import { useGlobalToast } from '@/hooks/useGlobalToast'
 
 const toast = useGlobalToast()
 ```

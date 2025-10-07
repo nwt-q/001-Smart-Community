@@ -1,5 +1,10 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
+import { nextTick, ref, watch } from 'vue'
+import { useMessage } from 'wot-design-uni'
 import { deepClone, isFunction } from 'wot-design-uni/components/common/util'
+import { useGlobalMessage } from '@/hooks/useGlobalMessage'
+import { getCurrentPath } from '@/utils'
 
 const { messageOptions, currentPage } = storeToRefs(useGlobalMessage())
 

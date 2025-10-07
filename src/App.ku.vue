@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onShow, ref } from 'vue'
+import GlobalLoading from '@/components/global/loading/global-loading.vue'
+import GlobalMessage from '@/components/global/message/global-message.vue'
+import GlobalToast from '@/components/global/toast/global-toast.vue'
 import { useThemeStore } from '@/store'
 import FgTabbar from '@/tabbar/index.vue'
 import { isPageTabbar } from './tabbar/store'
@@ -33,7 +36,10 @@ defineExpose({
     <KuRootView />
 
     <FgTabbar v-if="isCurrentPageTabbar" />
-    <wd-toast />
-    <wd-message-box />
+
+    <!-- 全局组件 -->
+    <GlobalToast />
+    <GlobalMessage />
+    <GlobalLoading />
   </wd-config-provider>
 </template>
