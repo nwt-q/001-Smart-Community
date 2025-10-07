@@ -269,8 +269,6 @@
 
 ### 10 使用 `api-migration` 子代理优化 `活动操作按钮组件` 的接口请求
 
-<!-- TODO: -->
-
 使用 `api-migration` 子代理优化 `活动操作按钮组件` 的接口请求，优化 `src\components\activity\activity-actions.vue` 组件的写法。
 
 特别是这一段 【用组合式 api 优化这里的接口请求交互过程】，请严格遵循 `api-migration` 子代理的要求，避免写 `try/catch` 来管理接口请求的成功和失败情况。
