@@ -247,3 +247,22 @@
 2. 阅读 `活动操作按钮组件` src\components\activity\activity-actions.vue
 3. 重构优化 `activity-actions.vue` `活动操作按钮组件` 。
 4. 必须保证 `showInteractionFeedback` 显示交互反馈函数被迁移到 `活动操作按钮组件` 内。`showInteractionFeedback` 显示交互反馈函数就不应该出现在父组件 `活动详情页` 内。
+
+### 09 编写模拟性质的 mock 接口实现，并继续重构 `活动详情页` 和 `活动操作按钮组件` 的写法
+
+请深度思考。
+
+1. 请阅读以下代码：
+
+- 活动详情页 src\pages\activity\detail.vue
+- 活动操作按钮组件 src\components\activity\activity-actions.vue
+
+2. 我需要你在 `src\api\mock\activity.mock.ts` 内新建新的模拟接口。模拟实现以下接口：
+
+- 活动点赞数变更接口。接口传参 isLiked likeCount 。
+- 活动收藏数变更接口。接口传参 isCollected collectCount 。
+
+3. 主动使用 `api-migration` 子代理，新建上述接口。
+4. 在 `活动详情页` 内，收藏和点赞两个子组件事件传递上来时，作为父组件的 `活动详情页` 只做活动数据的模拟变更。只更改数据，不做接口请求。
+5. 在 `活动操作按钮组件` 内，作为子组件将会调用刚才新建的这两个模拟接口。请务必使用 `code-migration` 子代理，遵照 `code-migration` 的要求，使用正确的接口请求工具，来做接口请求。
+6. 在 `活动操作按钮组件` 子组件内做接口请求；在 `活动详情页` 父组件内不做接口请求，只做简单的模拟数据修改，并单向传递数据给子组件。
