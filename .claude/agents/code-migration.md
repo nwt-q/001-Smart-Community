@@ -61,7 +61,6 @@ export default {
 // Vue3 典型页面组件
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRequest } from 'alova/client'
 import { getTaskList } from '@/api/task'
 
 interface SearchForm {
@@ -88,19 +87,11 @@ const searchForm = ref<SearchForm>({
   keyword: '',
   status: ''
 })
-
-// 请求管理
-const {
-  loading,
-  data: taskList,
-  send: refreshTasks
-} = useRequest(getTaskList, {
-  immediate: true
-})
+const taskList = ref<Task[]>([])
+const loading = ref(false)
 
 // 计算属性
 const filteredTasks = computed(() => {
-  if (!taskList.value) return []
   return taskList.value.filter((task: Task) => {
     if (searchForm.value.keyword) {
       return task.title.includes(searchForm.value.keyword)
@@ -109,14 +100,34 @@ const filteredTasks = computed(() => {
   })
 })
 
+// 方法
+async function loadTasks() {
+  loading.value = true
+  try {
+    const result = await getTaskList({ page: 1, row: 10 })
+    taskList.value = result.tasks
+  } catch (error) {
+    console.error('加载失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
 // 生命周期
 onMounted(() => {
   console.log('组件已挂载')
+  loadTasks()
 })
 </script>
 ```
 
 ## 详细迁移策略
+
+**⚠️ 重要说明**:
+
+- 本文档专注于 **Vue2 Options API 到 Vue3 Composition API** 的代码写法迁移
+- 关于 **API 接口定义、请求状态管理、useRequest 使用规范**，请参考 `api-migration` 子代理文档
+- 两个子代理职责明确分工，避免重复说明
 
 ### 1. 组件结构迁移
 
@@ -190,7 +201,6 @@ export default {
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRequest } from 'alova/client'
 import { getTaskList } from '@/api/task'
 
 // 页面配置
@@ -213,16 +223,30 @@ interface Task {
 
 // 响应式数据
 const searchForm = ref<SearchForm>({ keyword: '' })
+const taskList = ref<Task[]>([])
+const loading = ref(false)
 
-// 请求管理
-const { loading, data: taskList } = useRequest(getTaskList, {
-  immediate: true,
-})
+// 加载数据
+async function loadTasks() {
+  loading.value = true
+  try {
+    const result = await getTaskList({ page: 1, row: 10 })
+    taskList.value = result.tasks
+  } catch (error) {
+    console.error('加载失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 // 计算属性
 const filteredTasks = computed(() => {
-  if (!taskList.value) return []
   return taskList.value.filter((task: Task) => task.title.includes(searchForm.value.keyword))
+})
+
+// 页面加载时获取数据
+onMounted(() => {
+  loadTasks()
 })
 </script>
 ```
@@ -814,51 +838,61 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onPullDownRefresh, onReachBottom, onShow } from '@dcloudio/uni-app'
-import { useRequest } from 'alova/client'
 import { getTaskList } from '@/api/task'
 
 const currentPage = ref(1)
 const hasMore = ref(true)
+const taskList = ref<Task[]>([])
+const loading = ref(false)
+const loadingMore = ref(false)
 
-// 基础数据请求
-const {
-  loading,
-  data: taskList,
-  send: refreshData,
-} = useRequest(() => getTaskList({ page: 1 }), {
-  immediate: true,
-})
+// 刷新数据
+async function refreshData() {
+  loading.value = true
+  try {
+    const result = await getTaskList({ page: 1 })
+    taskList.value = result.tasks
+    currentPage.value = 1
+    hasMore.value = true
+  } catch (error) {
+    console.error('刷新失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 // 加载更多
-const { loading: loadingMore, send: loadMore } = useRequest((page: number) => getTaskList({ page }), {
-  immediate: false,
-})
+async function loadMoreData() {
+  if (loadingMore.value || !hasMore.value) return
+
+  loadingMore.value = true
+  try {
+    const result = await getTaskList({ page: currentPage.value + 1 })
+    if (result?.tasks?.length) {
+      taskList.value.push(...result.tasks)
+      currentPage.value++
+    } else {
+      hasMore.value = false
+    }
+  } catch (error) {
+    console.error('加载更多失败:', error)
+  } finally {
+    loadingMore.value = false
+  }
+}
 
 // 下拉刷新
 onPullDownRefresh(async () => {
   try {
     await refreshData()
-    currentPage.value = 1
   } finally {
     uni.stopPullDownRefresh()
   }
 })
 
 // 上拉加载
-onReachBottom(async () => {
-  if (!loadingMore.value && hasMore.value) {
-    try {
-      const result = await loadMore(currentPage.value + 1)
-      if (result?.length) {
-        taskList.value?.push(...result)
-        currentPage.value++
-      } else {
-        hasMore.value = false
-      }
-    } catch (error) {
-      console.error('加载更多失败', error)
-    }
-  }
+onReachBottom(() => {
+  loadMoreData()
 })
 
 // 页面显示

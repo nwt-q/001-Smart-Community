@@ -378,7 +378,7 @@
 2. 以后全部的 icon 迁移任务，都交给 `component-migration` 子代理完成，而不是 `style-migration` 子代理。所以请你将 `style-migration` 子代理的 icon 映射图标表格，都迁移剪切到 `component-migration` 子代理的 `图标映射` 部分。
 3. 将我上面表述的`icon迁移的方针思想`，整理并写入到 `component-migration` 子代理内，我希望 `component-migration` 子代理未来能够严格遵守该方针，实现 icon 迁移。
 
-### 033 明确 `useRequest` 组合式 api 的使用方式
+### 033 子代理明确 `useRequest` 组合式 api 的使用方式
 
 请深度思考。
 
