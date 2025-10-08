@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
-import GlobalLoading from '@/components/global/loading/global-loading.vue'
-import GlobalMessage from '@/components/global/message/global-message.vue'
-import GlobalToast from '@/components/global/toast/global-toast.vue'
 import { navigateToInterceptor } from '@/router/interceptor'
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
@@ -24,13 +21,6 @@ onHide(() => {
   console.log('App Hide')
 })
 </script>
-
-<template>
-  <!-- 全局反馈组件 -->
-  <GlobalToast />
-  <GlobalMessage />
-  <GlobalLoading />
-</template>
 
 <style lang="scss">
 swiper,

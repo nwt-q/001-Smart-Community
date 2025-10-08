@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onShow, ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
 import GlobalLoading from '@/components/global/loading/global-loading.vue'
 import GlobalMessage from '@/components/global/message/global-message.vue'
 import GlobalToast from '@/components/global/toast/global-toast.vue'
@@ -33,13 +34,17 @@ defineExpose({
       {{ helloKuRoot }}，这里可以配置全局的东西
     </view>
 
+    <!-- <view>  fagaerg </view> -->
+
     <KuRootView />
 
     <FgTabbar v-if="isCurrentPageTabbar" />
 
-    <!-- 全局组件 -->
-    <GlobalToast />
-    <GlobalMessage />
-    <GlobalLoading />
+    <wd-notify />
+    <wd-message-box />
+    <wd-toast />
+    <global-loading />
+    <global-toast />
+    <global-message />
   </wd-config-provider>
 </template>
