@@ -445,39 +445,39 @@ function handleContact() {
       <!-- 点赞按钮 -->
       <view
         class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-red-500 like-active': isLiked, 'text-gray-600': !isLiked }"
+        :class="{ 'like-active': isLiked }"
         @click="handleLike"
       >
         <view class="group relative">
           <wd-icon
             :name="isLiked ? 'like-filled' : 'like'"
             size="24"
-            :custom-class="`action-icon i-carbon-${isLiked ? 'thumbs-up-filled' : 'thumbs-up'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isLiked ? 'thumbs-up-filled' : 'thumbs-up'} ${isLiked ? 'text-red-500' : 'text-gray-600'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isLiking" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
           </view>
         </view>
-        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]">{{ formattedLikeCount }}</text>
+        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]" :class="isLiked ? 'text-red-500' : 'text-gray-600'">{{ formattedLikeCount }}</text>
       </view>
 
       <!-- 收藏按钮 -->
       <view
         class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-yellow-500 collect-active': isCollected, 'text-gray-600': !isCollected }"
+        :class="{ 'collect-active': isCollected }"
         @click="handleCollect"
       >
         <view class="group relative">
           <wd-icon
             :name="isCollected ? 'star-filled' : 'star'"
             size="24"
-            :custom-class="`action-icon i-carbon-${isCollected ? 'star-filled' : 'star'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isCollected ? 'star-filled' : 'star'} ${isCollected ? 'text-yellow-500' : 'text-gray-600'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isCollecting" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
           </view>
         </view>
-        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]">{{ formattedCollectCount }}</text>
+        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]" :class="isCollected ? 'text-yellow-500' : 'text-gray-600'">{{ formattedCollectCount }}</text>
       </view>
 
       <!-- 分享按钮 -->

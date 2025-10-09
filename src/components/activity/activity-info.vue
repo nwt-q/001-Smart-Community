@@ -84,8 +84,8 @@ function handleTimeClick() {
 
 <template>
   <view class="activity-info-card rounded-2xl bg-white p-6 shadow-lg backdrop-blur-10px animate-slide-up max-sm:p-4">
-    <!-- 活动标题 -->
-    <view class="mb-4">
+    <!-- 活动标题和状态 -->
+    <view class="mb-4 flex flex-wrap items-center gap-2">
       <text class="text-2xl text-gray-900 font-bold leading-tight tracking-[0.5rpx] max-sm:text-xl">
         {{ props.title }}
       </text>
@@ -93,7 +93,7 @@ function handleTimeClick() {
       <!-- 状态标签 -->
       <view
         v-if="props.status"
-        class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-[0.2rpx]"
+        class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-[0.2rpx]"
         :class="`bg-${statusConfig.color}-100 text-${statusConfig.color}-600`"
       >
         <view
