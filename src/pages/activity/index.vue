@@ -1,4 +1,6 @@
 <!--
+  活动列表页
+
   快速访问地址 请不要删除
   /pages/activity/index?currentCommunityId=COMM_001
 -->
