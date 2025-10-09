@@ -4,7 +4,14 @@
 
 import type { PaginationParams } from './api'
 
-/** 活动状态枚举 */
+/**
+ * 活动状态枚举
+ * @description
+ * - UPCOMING: 即将开始 - 活动还未开始，可以报名
+ * - ONGOING: 进行中 - 活动正在进行，可以立即报名
+ * - COMPLETED: 已结束 - 活动已结束，无法报名
+ * - CANCELLED: 已取消 - 活动已取消，无法报名
+ */
 export type ActivityStatus = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED'
 
 /** 活动基础信息 */

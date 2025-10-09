@@ -190,7 +190,8 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
       page,
       row: pageSize.value,
       communityId: currentCommunityId.value,
-      status: '1', /** 只获取已发布的活动 */
+      /** 只获取已发布的活动 */
+      status: 'UPCOMING',
     }
 
     await fetchActivities(params)
