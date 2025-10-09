@@ -26,6 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 在实现具体业务时，某些热点组件会经常修改，为了便于沟通，这里说明清楚其简称，便于你快速找到对应组件。
 
 - `活动操作按钮组件` ： `src\components\activity\activity-actions.vue`
+- `活动信息组件` ： `src\components\activity\activity-info.vue`
 - `活动详情页` ： `src\pages\activity\detail.vue`
 - `活动列表页` ： `src\pages\activity\index.vue`
 

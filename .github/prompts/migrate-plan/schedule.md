@@ -293,3 +293,23 @@
 6. **更新 component-migration**： 在 `component-migration` 子代理内，更新关于的 Toast 、 Message 、 Loading 这三个组件的用法。以后实现类似的功能时，一律使用全局组件提供的功能，一律使用组合式 api 来实现该功能。子代理提供这几个组合式 api 的使用文档链接即可，不需要写很详细的组件用法，避免 `component-migration` 子代理文件文本过长。
 7. **使用子代理改写组件写法**： 使用 `component-migration` 子代理去改写 活动操作按钮组件对 Toast 组件的用法，改成组合式 api 的用法。
 8. **运行项目并检查**： 主动使用 MCP 工具 `chrome-devtools` ，以 `/pages/activity/detail?activitiesId=ACT_018&currentCommunityId=COMM_001` 地址为例，进入该活动详情页，并模拟用户的点赞、收藏这两个行为，检查提示框是否还会出现遮挡的情况。
+
+## 011 微调优化 `活动详情页` 的页面元素布局
+
+<!-- TODO -->
+
+请深度思考。
+
+请阅读以下截图：
+
+1. 点赞按钮在点击后，没有颜色了看不到其图标了。请优化。
+
+![2025-10-09-11-46-22](https://s2.loli.net/2025/10/09/ZIWbikBqNGTvQKH.png)
+
+2. 在 `活动信息组件` 内，活动标题 和 状态标签 在视觉效果上没有对齐成一条线，请调整成水平对齐。请优化。请确保在优化后，当活动标题比较长时，其 状态标签 仍旧排在标题后面，正常换行。
+
+![2025-10-09-11-48-03](https://s2.loli.net/2025/10/09/J1qdxBrnvFszkDu.png)
+
+## 012 处理错误的活动状态取值
+
+在 `活动详情页` 内，activity 的 status 取值不满足类型约束，请修改。并连带地将相关的组件，对 status 的使用也一同更改。不要出现错误使用 status 取值的情况。
