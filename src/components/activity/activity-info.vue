@@ -5,13 +5,15 @@
 <script setup lang="ts">
 import type { ActivityStatus } from '@/types/activity'
 import dayjs from 'dayjs'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 interface Props {
   /** 活动标题 */
   title: string
   /** 发布者姓名 */
   author: string
+  /** 发布者头像 */
+  avatar?: string
   /** 开始时间 */
   startTime: string
   /** 结束时间 */
@@ -25,6 +27,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+/** 头像加载失败标记 */
+const avatarLoadError = ref(false)
 
 /** 计算属性 */
 const formattedStartTime = computed(() => {
@@ -81,6 +86,11 @@ function handleTimeClick() {
     })
   }
 }
+
+/** 头像加载错误处理 */
+function handleAvatarError() {
+  avatarLoadError.value = true
+}
 </script>
 
 <template>
@@ -112,10 +122,25 @@ function handleTimeClick() {
         class="group flex cursor-pointer items-center border-b border-gray-50 py-3 transition-all duration-200 hover:bg-gray-50"
         @click="handleAuthorClick"
       >
+        <!-- 头像显示区域 -->
         <view
-          class="icon-wrapper-blue mr-4 h-10 w-10 flex items-center justify-center rounded-full from-blue-500 to-blue-600 bg-gradient-to-r shadow-md transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
+          class="avatar-wrapper mr-4 h-10 w-10 flex items-center justify-center overflow-hidden rounded-full shadow-md transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
         >
-          <wd-icon name="user" size="18" custom-class="i-carbon-user-avatar text-white max-sm:text-sm" />
+          <!-- 有头像且未加载失败时显示头像 -->
+          <image
+            v-if="props.avatar && !avatarLoadError"
+            :src="props.avatar"
+            class="h-full w-full object-cover"
+            mode="aspectFill"
+            @error="handleAvatarError"
+          />
+          <!-- 无头像或加载失败时显示默认图标 -->
+          <view
+            v-else
+            class="icon-wrapper-blue h-full w-full flex items-center justify-center from-blue-500 to-blue-600 bg-gradient-to-r"
+          >
+            <wd-icon name="user" size="18" custom-class="i-carbon-user-avatar text-white max-sm:text-sm" />
+          </view>
         </view>
 
         <view class="flex-1">
@@ -190,6 +215,11 @@ function handleTimeClick() {
 /** 卡片阴影效果 */
 .activity-info-card {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/** 头像包装器阴影 */
+.avatar-wrapper {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 /** 蓝色图标包装器阴影 */

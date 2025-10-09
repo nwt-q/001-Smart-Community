@@ -19,6 +19,7 @@ export interface Activity {
   activitiesId: string
   title: string
   userName: string
+  avatar?: string
   startTime: string
   endTime: string
   context: string

@@ -54,6 +54,7 @@ const activity = reactive<Partial<Activity>>({
   activitiesId: '',
   title: '',
   userName: '',
+  avatar: '',
   startTime: '',
   endTime: '',
   context: '',
@@ -290,6 +291,7 @@ onPullDownRefresh(() => {
         <ActivityInfo
           :title="activity.title"
           :author="activity.userName"
+          :avatar="activity.avatar"
           :start-time="activity.startTime"
           :end-time="activity.endTime"
           :status="activity.status"
