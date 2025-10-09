@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import type { ActivityStatus } from '@/types/activity'
 import dayjs from 'dayjs'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 interface Props {
   /** 活动标题 */
@@ -27,9 +27,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-
-/** 头像加载失败标记 */
-const avatarLoadError = ref(false)
 
 /** 计算属性 */
 const formattedStartTime = computed(() => {
@@ -86,11 +83,6 @@ function handleTimeClick() {
     })
   }
 }
-
-/** 头像加载错误处理 */
-function handleAvatarError() {
-  avatarLoadError.value = true
-}
 </script>
 
 <template>
@@ -126,18 +118,27 @@ function handleAvatarError() {
         <view
           class="avatar-wrapper mr-4 h-10 w-10 flex items-center justify-center overflow-hidden rounded-full shadow-md transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
         >
-          <!-- 有头像且未加载失败时显示头像 -->
-          <image
-            v-if="props.avatar && !avatarLoadError"
+          <!--  :width="40"
+            :height="40" -->
+          <wd-img
+            v-if="props.avatar"
             :src="props.avatar"
-            class="h-full w-full object-cover"
             mode="aspectFill"
-            @error="handleAvatarError"
-          />
-          <!-- 无头像或加载失败时显示默认图标 -->
+            class="h-full w-full"
+          >
+            <!-- 加载失败时显示默认图标 -->
+            <template #error>
+              <view
+                class="icon-wrapper-blue h-full w-full flex items-center justify-center from-blue-500 to-blue-600 bg-gradient-to-r"
+              >
+                <wd-icon name="user" size="18" custom-class="i-carbon-user-avatar text-white max-sm:text-sm" />
+              </view>
+            </template>
+          </wd-img>
+          <!-- 无头像时显示默认图标 -->
           <view
             v-else
-            class="icon-wrapper-blue h-full w-full flex items-center justify-center from-blue-500 to-blue-600 bg-gradient-to-r"
+            class="icon-wrapper-blue h-full w-full flex items-center justify-center rounded-full from-blue-500 to-blue-600 bg-gradient-to-r"
           >
             <wd-icon name="user" size="18" custom-class="i-carbon-user-avatar text-white max-sm:text-sm" />
           </view>
