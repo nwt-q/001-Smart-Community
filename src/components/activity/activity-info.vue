@@ -3,6 +3,7 @@
   显示活动标题、发布者、时间等元信息
 -->
 <script setup lang="ts">
+import type { ActivityStatus } from '@/types/activity'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 
@@ -16,7 +17,7 @@ interface Props {
   /** 结束时间 */
   endTime?: string
   /** 活动状态 */
-  status?: string
+  status?: ActivityStatus
   /** 浏览量 */
   viewCount?: number
   /** 点赞数 */
@@ -51,13 +52,13 @@ const formattedLikeCount = computed(() => {
 })
 
 const statusConfig = computed(() => {
-  const statusMap = {
+  const statusMap: Record<ActivityStatus, { text: string, color: string }> = {
     ONGOING: { text: '进行中', color: 'green' },
     UPCOMING: { text: '即将开始', color: 'blue' },
     COMPLETED: { text: '已结束', color: 'gray' },
     CANCELLED: { text: '已取消', color: 'red' },
   }
-  return statusMap[props.status as keyof typeof statusMap] || { text: '未知', color: 'gray' }
+  return props.status ? statusMap[props.status] : { text: '未知', color: 'gray' }
 })
 
 /** 方法 */

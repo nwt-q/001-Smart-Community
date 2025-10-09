@@ -1,5 +1,4 @@
-import type { Activity, ActivityListParams, ActivityListResponse, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
-import type { StatusType } from '@/types/api'
+import type { Activity, ActivityListParams, ActivityListResponse, ActivityStatus, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
 import { defineUniAppMock, errorResponse, generateId, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
@@ -172,8 +171,21 @@ function createMockActivity(id: string): Activity {
   const startOffset = Math.random() * 14 * 24 * 60 * 60 * 1000
   const duration = (Math.random() * 3 + 1) * 60 * 60 * 1000
 
+  /** 生成活动状态：根据开始时间判断活动状态 */
   const statusRand = Math.random()
-  const status: StatusType = statusRand < 0.8 ? '1' : '0'
+  let status: ActivityStatus
+  if (statusRand < 0.25) {
+    status = 'UPCOMING' // 即将开始
+  }
+  else if (statusRand < 0.5) {
+    status = 'ONGOING' // 进行中
+  }
+  else if (statusRand < 0.85) {
+    status = 'COMPLETED' // 已结束
+  }
+  else {
+    status = 'CANCELLED' // 已取消
+  }
 
   const baseViewCount = Math.floor(Math.random() * 1000 + 50)
   const numericId = Number.parseInt(id) || Math.floor(Math.random() * 999) + 1
@@ -426,7 +438,7 @@ export default defineUniAppMock([
           likeCount: 0,
           readCount: 0,
           collectCount: 0,
-          status: data.status || '0',
+          status: data.status || 'UPCOMING',
           headerImg: data.headerImg,
           src: data.headerImg ? `/file?fileId=${data.headerImg}` : undefined,
         }
@@ -587,7 +599,7 @@ export default defineUniAppMock([
     body: async ({ body }) => {
       await randomDelay(300, 700)
 
-      const data = body as { activitiesId: string, status: string }
+      const data = body as { activitiesId: string, status: ActivityStatus }
 
       try {
         mockLog('updateActivityStatus', data)
@@ -601,12 +613,12 @@ export default defineUniAppMock([
           return errorResponse('活动不存在', '404')
         }
 
-        const validStatuses = ['0', '1']
+        const validStatuses: ActivityStatus[] = ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED']
         if (!validStatuses.includes(data.status)) {
           return errorResponse('无效的活动状态', '400')
         }
 
-        activity.status = data.status as StatusType
+        activity.status = data.status
         activity.updateTime = new Date().toISOString()
 
         mockLog('updateActivityStatus result', { title: activity.title, status: activity.status })

@@ -4,6 +4,7 @@
   所有交互逻辑和状态管理均在组件内部完成，增强内聚性
 -->
 <script setup lang="ts">
+import type { ActivityStatus } from '@/types/activity'
 import { useRequest } from 'alova/client'
 import { computed, ref, watch } from 'vue'
 import { updateActivityCollect, updateActivityLike } from '@/api/activity'
@@ -31,7 +32,7 @@ interface Props {
   /** 初始报名数量 */
   initialRegisterCount?: number
   /** 活动状态 */
-  status?: string
+  status?: ActivityStatus
   /** 是否显示报名按钮 */
   showRegisterButton?: boolean
 }
