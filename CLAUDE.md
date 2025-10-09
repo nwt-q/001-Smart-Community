@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 在我和你沟通时，我会使用以下术语，便于你理解。
 
+### 全局术语
+
+在任何沟通下，这些术语都生效。
+
 - `vue3项目` ： 即 `package.json` 指代的 uniapp 项目。
 - `本项目`： 即 `vue3项目` 。
 - `vue2项目`： `gitee-example` 目录下的 uniapp 项目。
@@ -17,11 +21,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
 - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 
+### 业务术语
+
+在实现具体业务时，某些热点组件会经常修改，为了便于沟通，这里说明清楚其简称，便于你快速找到对应组件。
+
+- `活动操作按钮组件` ： `src\components\activity\activity-actions.vue`
+- `活动详情页` ： `src\pages\activity\detail.vue`
+- `活动列表页` ： `src\pages\activity\index.vue`
+
 ## 迁移任务的重要原则
 
 在实现 `vue3项目` 迁移到 `vue2项目` 时，请遵守以下几条重要原则：
 
-1. 所有的接口都是mock假接口： 全部的接口都是使用本地的 vite-plugin-mock-dev-server 插件实现的假接口。
+1. 所有的接口都是mock假接口： 全部的接口都是使用本地的 `vite-plugin-mock-dev-server` 插件实现的假接口。
 2. 不考虑严格的登录逻辑： 我们不做任何登录功能。关于token的存储，读取，管理，使用的功能与逻辑，在 `vue3项目` 内都不做。
 3. 不考虑严格的鉴权逻辑： 我们不做任何鉴权功能。在跳转路由的时候，`vue3项目` 不做任何形式的鉴权处理。任何页面都可以随意跳转，任意访问。
 4. 不许滥用 unocss 的 shortcuts 功能： 不要将业务性质的，非公共性质的样式类，都写入到 `uno.config.ts` 配置文件内。避免滥用全局变量性质的配置文件，
