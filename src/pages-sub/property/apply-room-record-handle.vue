@@ -1,0 +1,172 @@
+<!--
+  房屋申请记录处理页
+  功能：处理房屋申请记录，添加处理意见和违规信息
+-->
+<script setup lang="ts">
+import type { PropertyApplication } from '@/types/property-application'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+
+definePage({
+  style: {
+    navigationBarTitleText: '记录处理',
+  },
+})
+
+const applyRoomInfo = ref<PropertyApplication>({} as PropertyApplication)
+const imgList = ref<any[]>([])
+const photos = ref<string[]>([])
+const videoName = ref<string>('')
+const tempFilePath = ref<string>('')
+const content = ref<string>('')
+const communityId = ref<string>('')
+const violations = ref<Array<{ name: string, value?: string }>>([
+  {
+    name: '请选择是否违规',
+  },
+  {
+    name: '是',
+    value: 'true',
+  },
+  {
+    name: '否',
+    value: 'false',
+  },
+])
+const violationIndex = ref(0)
+const violation = ref<string>('')
+const uploadImage = ref({
+  maxPhotoNum: 4,
+  imgTitle: '图片上传',
+  canEdit: true,
+})
+
+function sendImagesData(e: Array<{ fileId: string }>) {
+  photos.value = []
+  if (e.length > 0) {
+    e.forEach((img: { fileId: string }) => {
+      photos.value.push(img.fileId)
+    })
+  }
+}
+
+function violationChange(e: { detail: { value: number } }) {
+  violationIndex.value = e.detail.value
+  if (violationIndex.value === 0) {
+    violation.value = ''
+    return
+  }
+  const selected = violations.value[violationIndex.value]
+  violation.value = selected.value || ''
+}
+
+function dispatchRecord() {
+  uni.showLoading({
+    title: '上传中...',
+  })
+
+  const params = {
+    ardId: applyRoomInfo.value.ardId,
+    roomId: applyRoomInfo.value.roomId,
+    roomName: applyRoomInfo.value.roomName,
+    state: applyRoomInfo.value.state,
+    stateName: applyRoomInfo.value.stateName,
+    photos: photos.value,
+    videoName: '',
+    remark: content.value,
+    detailType: '1001',
+    communityId: communityId.value,
+    examineRemark: '',
+    isTrue: violation.value,
+  }
+
+  let msg = ''
+  if (params.remark === '') {
+    msg = '请填写处理意见'
+  }
+  else if (params.isTrue === '') {
+    msg = '请选择是否违规'
+  }
+
+  if (msg !== '') {
+    uni.hideLoading()
+    uni.showToast({
+      title: msg,
+      icon: 'none',
+    })
+    return
+  }
+
+  // TODO: 实现保存记录逻辑
+  console.log('保存记录', params)
+
+  setTimeout(() => {
+    uni.hideLoading()
+    uni.showToast({
+      title: '保存成功',
+    })
+    setTimeout(() => {
+      uni.navigateBack({
+        delta: 1,
+      })
+    }, 1000)
+  }, 1000)
+}
+
+onLoad((options: { apply: string }) => {
+  applyRoomInfo.value = JSON.parse(options.apply)
+  communityId.value = '' // TODO: 获取当前小区ID
+})
+</script>
+
+<template>
+  <view>
+    <view class="cu-form-group margin-top">
+      <textarea
+        v-model="content"
+        placeholder="请输入处理意见"
+      />
+    </view>
+    <view class="cu-form-group margin-top">
+      <picker
+        :value="violationIndex"
+        :range="violations"
+        range-key="name"
+        @change="violationChange"
+      >
+        <view>{{ violations[violationIndex].name }}</view>
+      </picker>
+    </view>
+
+    <view class="block__title">
+      相关图片
+    </view>
+    <upload-image-async
+      ref="vcUploadRef"
+      :community-id="communityId"
+      :max-photo-num="uploadImage.maxPhotoNum"
+      :can-edit="uploadImage.canEdit"
+      :title="uploadImage.imgTitle"
+      @send-images-data="sendImagesData"
+    />
+
+    <view class="flex-direction margin-top flex">
+      <button
+        class="cu-btn margin-tb-sm lg bg-green"
+        @click="dispatchRecord"
+      >
+        提交
+      </button>
+    </view>
+  </view>
+</template>
+
+<style scoped>
+.block__title {
+  margin: 0;
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(69, 90, 100, 0.6);
+  padding: 40rpx 30rpx 20rpx;
+}
+</style>

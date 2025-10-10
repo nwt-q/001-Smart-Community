@@ -382,6 +382,8 @@
 
 ## 016 迁移 applyRoom 系列的页面
 
+请深度思考。
+
 要被迁移的页面文件夹地址如下：
 
 1. gitee-example\pages\applyRoom
@@ -391,3 +393,8 @@
 5. gitee-example\pages\applyRoomRecordHandle
 
 请你使用全部在内 `.claude\agents` 满足 `*-migration.md` glob 匹配规则的全部迁移用途的子代理，一次性完成这 5 个页面的系统性迁移。迁移完成后为我提供迁移报告。
+
+### 产生的冗余文件
+
+docs 根目录内的文件。
+test-property-application.ts
