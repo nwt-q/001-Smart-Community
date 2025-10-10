@@ -521,114 +521,738 @@ definePage({
 
 ### 第四阶段：基于映射表的路由优化（1-2 天）
 
-#### 4.1 映射表驱动的路由类型定义
+#### 4.1 类型化路由系统架构说明
 
-**根据映射表生成类型安全的路由跳转**:
+**⚠️ 重要**: Vue3 项目已建立完整的类型化路由系统，所有路由跳转必须使用类型安全的工具
+
+**类型化路由系统的三层架构**:
+
+```plain
+src/types/routes.ts (类型定义层)
+    ↓ 提供类型约束
+src/router/helpers.ts (工具函数层)
+    ↓ 封装业务逻辑
+src/router/index.ts (导出层)
+    ↓ 统一导出接口
+业务代码 (使用层)
+```
+
+#### 4.2 类型定义层详解 (src/types/routes.ts)
+
+这是类型化路由系统的核心，定义了所有路由路径和参数的类型约束。
+
+**核心类型定义**:
 
 ```typescript
-// src/types/routes.ts - 基于映射表的路由类型定义
-// 注意: 路径必须与映射表中的新路径完全一致
+/** 1. PageRoute - 所有页面路由的联合类型 */
+export type PageRoute =
+  /** 主包页面 */
+  | '/pages/index/index'
+  | '/pages/about/about'
+  | '/pages/me/me'
+  | '/pages/login/login'
+  | '/pages/address/list'
+  | '/pages/activity/index'
+  | '/pages/activity/detail'
+  /** 分包页面 */
+  | '/pages-sub/repair/order-list'
+  | '/pages-sub/repair/add-order'
+  | '/pages-sub/repair/order-detail'
+  | '/pages-sub/complaint/list'
+  | '/pages-sub/complaint/detail'
+  | '/pages-sub/complaint/handle'
+  | '/pages-sub/inspection/list'
+  | '/pages-sub/inspection/execute'
 
-export interface RouteParams {
-  // 基于映射表的维修模块路径
+/** 2. TabRoute - Tab页面路由的联合类型 */
+export type TabRoute = '/pages/index/index' | '/pages/address/list' | '/pages/me/me'
+
+/** 3. PageParams - 页面参数的类型映射接口 */
+export interface PageParams {
+  '/pages/index/index': {}
+  '/pages/login/login': {
+    redirect?: string
+  }
+  '/pages/activity/detail': {
+    activitiesId: string
+    currentCommunityId: string
+  }
+  /** 维修模块参数 */
+  '/pages-sub/repair/order-list': {
+    status?: 'pending' | 'processing' | 'completed'
+    type?: string
+  }
   '/pages-sub/repair/order-detail': {
     repairId: string
     status?: string
   }
-  // 基于映射表的投诉模块路径
+  /** 投诉模块参数 */
   '/pages-sub/complaint/detail': {
     complaintId: string
   }
-  // 基于映射表的巡检模块路径
+  /** 巡检模块参数 */
   '/pages-sub/inspection/execute': {
     taskId: string
-    type: 'normal' | 'reexamine'
+    type?: 'normal' | 'reexamine'
   }
-  // 更多路径根据映射表添加...
-}
-
-// 类型安全的路由跳转工具
-export function navigateTo<T extends keyof RouteParams>(url: T, params?: RouteParams[T]) {
-  const query = params ? '?' + new URLSearchParams(params as any).toString() : ''
-  uni.navigateTo({
-    url: url + query,
-  })
+  // ... 更多路径参数定义
 }
 ```
 
-#### 4.2 路由跳转优化（无鉴权版本）
+#### 4.3 工具函数层详解 (src/router/helpers.ts)
 
-**⚠️ 重要**: 根据项目要求，路由系统不实施任何登录验证和权限控制
+提供三类工具：基础类型安全函数、业务路由类、导航工具类。
+
+**1. 基础类型安全函数**:
 
 ```typescript
-// src/router/navigation.ts - 无鉴权的路由跳转优化
-export function setupRouteOptimization() {
-  // 路由跳转性能优化 (不包含任何鉴权逻辑)
-  uni.addInterceptor('navigateTo', {
-    invoke(args) {
-      const url = args.url
+/** 类型安全的路由跳转函数 */
+export function navigateToTyped<T extends keyof PageParams>(
+  url: T,
+  params?: PageParams[T],
+  options?: UniApp.NavigateToOptions,
+) {
+  let fullUrl: string = url
+  if (params && Object.keys(params).length > 0) {
+    const query = new URLSearchParams(params as any).toString()
+    fullUrl = `${url}?${query}`
+  }
 
-      // 只做性能优化，不做权限检查
-      console.log('🚀 Navigate to:', url)
-
-      // 优化页面跳转动画
-      if (!args.animationType) {
-        args.animationType = 'slide-in-right'
-      }
-
-      return true // 所有页面都允许访问
-    },
+  return uni.navigateTo({
+    url: fullUrl,
+    ...options,
   })
+}
+
+/** 类型安全的重定向函数 */
+export function redirectToTyped<T extends keyof PageParams>(url: T, params?: PageParams[T]) {
+  // 实现逻辑...
+}
+
+/** 类型安全的Tab切换函数 */
+export function switchTabTyped(url: TabRoute) {
+  return uni.switchTab({ url })
+}
+
+/** 返回上一页或指定页面 */
+export function goBack(delta: number = 1) {
+  // 实现逻辑...
 }
 ```
 
-#### 4.3 基于映射表的路由跳转工具函数
+**2. 业务路由类 TypedRouter**:
 
 ```typescript
-// src/utils/navigation.ts - 严格遵循映射表路径
-export class NavigationUtils {
-  // 跳转到维修详情 (映射表路径: src/pages-sub/repair/order-detail.vue)
+/** 路由工具类 - 提供业务级别的路由跳转方法 */
+export class TypedRouter {
+  /** 维修模块导航 */
+  static toRepairList(params?: PageParams['/pages-sub/repair/order-list']) {
+    return navigateToTyped('/pages-sub/repair/order-list', params)
+  }
+
   static toRepairDetail(repairId: string, status?: string) {
-    navigateTo('/pages-sub/repair/order-detail', { repairId, status })
+    return navigateToTyped('/pages-sub/repair/order-detail', { repairId, status })
   }
 
-  // 跳转到投诉处理 (映射表路径: src/pages-sub/complaint/handle.vue)
+  static toAddRepair(communityId?: string) {
+    return navigateToTyped('/pages-sub/repair/add-order', { communityId })
+  }
+
+  /** 投诉模块导航 */
+  static toComplaintList(params?: PageParams['/pages-sub/complaint/list']) {
+    return navigateToTyped('/pages-sub/complaint/list', params)
+  }
+
+  static toComplaintDetail(complaintId: string) {
+    return navigateToTyped('/pages-sub/complaint/detail', { complaintId })
+  }
+
   static toComplaintHandle(complaintId: string) {
-    navigateTo('/pages-sub/complaint/handle', { complaintId })
+    return navigateToTyped('/pages-sub/complaint/handle', { complaintId })
   }
 
-  // 跳转到巡检执行 (映射表路径: src/pages-sub/inspection/execute.vue)
-  static toInspectionExecute(taskId: string, type: 'normal' | 'reexamine' = 'normal') {
-    navigateTo('/pages-sub/inspection/execute', { taskId, type })
+  /** 巡检模块导航 */
+  static toInspectionList(params?: PageParams['/pages-sub/inspection/list']) {
+    return navigateToTyped('/pages-sub/inspection/list', params)
   }
 
-  // 返回首页 (映射表路径: src/pages/index/index.vue)
-  static goBack(delta: number = 1) {
-    if (getCurrentPages().length > delta) {
-      uni.navigateBack({ delta })
+  static toInspectionExecute(taskId: string, type?: 'normal' | 'reexamine') {
+    return navigateToTyped('/pages-sub/inspection/execute', { taskId, type })
+  }
+
+  /** 基础页面导航 */
+  static toLogin(redirect?: string) {
+    return navigateToTyped('/pages/login/login', { redirect })
+  }
+
+  static toActivityDetail(activitiesId: string, currentCommunityId: string) {
+    return navigateToTyped('/pages/activity/detail', { activitiesId, currentCommunityId })
+  }
+
+  /** Tab页面切换 */
+  static toHome() {
+    return switchTabTyped('/pages/index/index')
+  }
+
+  static toAddressList() {
+    return switchTabTyped('/pages/address/list')
+  }
+
+  static toMe() {
+    return switchTabTyped('/pages/me/me')
+  }
+}
+```
+
+**3. 导航工具类 NavigationUtils**:
+
+```typescript
+/** 通用导航工具类 */
+export class NavigationUtils {
+  /** 预加载页面 */
+  static preloadPage<T extends keyof PageParams>(url: T, params?: PageParams[T]) {
+    const query = params ? `?${new URLSearchParams(params as any).toString()}` : ''
+    return uni.preloadPage({ url: url + query })
+  }
+
+  /** 获取当前页面路径 */
+  static getCurrentPagePath(): string {
+    const pages = getCurrentPages()
+    if (pages.length > 0) {
+      return `/${(pages[pages.length - 1] as any).route}`
+    }
+    return ''
+  }
+
+  /** 检查是否可以返回 */
+  static canGoBack(): boolean {
+    return getCurrentPages().length > 1
+  }
+
+  /** 安全返回（如果无法返回则跳转到首页） */
+  static safeGoBack() {
+    if (this.canGoBack()) {
+      goBack()
     } else {
-      uni.redirectTo({ url: '/pages/index/index' })
+      switchTabTyped('/pages/index/index')
     }
   }
+
+  /** 重新加载当前页面 */
+  static reloadCurrentPage() {
+    // 实现逻辑...
+  }
 }
 ```
 
-## 📋 映射表驱动的迁移总结
+#### 4.4 何时使用不同的路由跳转方式
 
-### 映射表的核心作用
+**使用决策树**:
+
+```plain
+需要路由跳转？
+    ├─ 是否是常用业务路由？
+    │   ├─ 是 → 使用 TypedRouter 静态方法 (推荐)
+    │   │   例如: TypedRouter.toRepairDetail('id123')
+    │   │   优点: 简洁、语义清晰、参数验证
+    │   │
+    │   └─ 否 → 继续判断
+    │
+    ├─ 是否需要特殊选项（动画、回调等）？
+    │   ├─ 是 → 使用基础类型安全函数
+    │   │   例如: navigateToTyped('/pages/xxx', params, { animationType: 'fade-in' })
+    │   │
+    │   └─ 否 → 使用 TypedRouter 或基础函数均可
+    │
+    └─ 是否是工具性操作（返回、预加载等）？
+        └─ 是 → 使用 NavigationUtils
+            例如: NavigationUtils.safeGoBack()
+```
+
+**详细使用规则**:
+
+|       场景       |                使用工具                | 示例                                                              |
+| :--------------: | :------------------------------------: | :---------------------------------------------------------------- |
+| 常用业务路由跳转 |         `TypedRouter.toXxx()`          | `TypedRouter.toRepairDetail('id123')`                             |
+|   Tab 页面切换   |         `TypedRouter.toXxx()`          | `TypedRouter.toHome()`                                            |
+|  需要自定义动画  |          `navigateToTyped()`           | `navigateToTyped('/pages/xxx', {}, { animationType: 'fade-in' })` |
+|    需要重定向    |          `redirectToTyped()`           | `redirectToTyped('/pages/login', { redirect: '/pages/me' })`      |
+|    预加载页面    |    `NavigationUtils.preloadPage()`     | `NavigationUtils.preloadPage('/pages/xxx', params)`               |
+|     安全返回     |     `NavigationUtils.safeGoBack()`     | `NavigationUtils.safeGoBack()`                                    |
+|     普通返回     |               `goBack()`               | `goBack(1)`                                                       |
+|   获取当前路径   | `NavigationUtils.getCurrentPagePath()` | `const path = NavigationUtils.getCurrentPagePath()`               |
+
+#### 4.5 如何新增类型化跳转函数
+
+当从 Vue2 项目迁移新页面到 Vue3 项目时，需要同步更新类型化路由系统。
+
+**完整步骤**:
+
+```typescript
+// ============================================
+// 步骤1: 在 src/types/routes.ts 中添加路由路径
+// ============================================
+
+// 1.1 添加到 PageRoute 联合类型
+export type PageRoute =
+  | '/pages/index/index'
+  // ... 现有路径
+  | '/pages-sub/notice/list' // 新增: 公告列表
+  | '/pages-sub/notice/detail' // 新增: 公告详情
+  | '/pages-sub/notice/publish' // 新增: 发布公告
+
+// 1.2 如果是 Tab 页面，添加到 TabRoute
+export type TabRoute =
+  | '/pages/index/index'
+  // ... 现有路径
+  | '/pages/notice/index' // 新增: 公告Tab页
+
+// ============================================
+// 步骤2: 在 PageParams 接口中定义参数类型
+// ============================================
+
+export interface PageParams {
+  // ... 现有参数定义
+
+  /** 公告模块参数 */
+  '/pages-sub/notice/list': {
+    type?: 'system' | 'community' | 'activity'
+    communityId?: string
+  }
+  '/pages-sub/notice/detail': {
+    noticeId: string // 必填参数
+    from?: 'list' | 'home' // 可选参数
+  }
+  '/pages-sub/notice/publish': {
+    communityId: string
+    type: 'system' | 'community' | 'activity'
+  }
+}
+
+// ============================================
+// 步骤3: 在 src/router/helpers.ts 的 TypedRouter 类中添加静态方法
+// ============================================
+
+export class TypedRouter {
+  // ... 现有方法
+
+  /** 公告模块导航 */
+  static toNoticeList(params?: PageParams['/pages-sub/notice/list']) {
+    return navigateToTyped('/pages-sub/notice/list', params)
+  }
+
+  static toNoticeDetail(noticeId: string, from?: 'list' | 'home') {
+    return navigateToTyped('/pages-sub/notice/detail', { noticeId, from })
+  }
+
+  static toPublishNotice(communityId: string, type: 'system' | 'community' | 'activity') {
+    return navigateToTyped('/pages-sub/notice/publish', { communityId, type })
+  }
+}
+
+// ============================================
+// 步骤4: 在 src/router/index.ts 中导出新方法（可选，用于便捷访问）
+// ============================================
+
+export const {
+  // ... 现有导出
+  toNoticeList,
+  toNoticeDetail,
+  toPublishNotice,
+} = TypedRouter
+
+// ============================================
+// 步骤5: 更新 isValidRoute 函数（如需运行时验证）
+// ============================================
+
+export function isValidRoute(path: string): path is PageRoute {
+  const validRoutes: PageRoute[] = [
+    // ... 现有路径
+    '/pages-sub/notice/list',
+    '/pages-sub/notice/detail',
+    '/pages-sub/notice/publish',
+  ]
+  return validRoutes.includes(path as PageRoute)
+}
+```
+
+**新增跳转函数的命名规范**:
+
+|    模块     |            静态方法命名            | 示例                                   |
+| :---------: | :--------------------------------: | :------------------------------------- |
+|   列表页    |          `to{Module}List`          | `toNoticeList`, `toRepairList`         |
+|   详情页    |         `to{Module}Detail`         | `toNoticeDetail`, `toRepairDetail`     |
+| 新增/编辑页 | `toAdd{Module}` / `toEdit{Module}` | `toAddRepair`, `toEditNotice`          |
+| 特殊操作页  |        `to{Action}{Module}`        | `toPublishNotice`, `toHandleComplaint` |
+|   Tab 页    |            `to{Module}`            | `toHome`, `toMe`, `toNotice`           |
+
+#### 4.6 迁移时的路由跳转替换规则
+
+从 Vue2 传统路由跳转迁移到 Vue3 类型化路由跳转的转换规则。
+
+**转换对照表**:
+
+| Vue2 写法                                                                            | Vue3 类型化写法                             | 说明                       |
+| :----------------------------------------------------------------------------------- | :------------------------------------------ | :------------------------- |
+| `uni.navigateTo({ url: '/pages/index/index' })`                                      | `TypedRouter.toHome()`                      | Tab 页切换应用专用方法     |
+| `uni.navigateTo({ url: '/pages/me/me' })`                                            | `TypedRouter.toMe()`                        | Tab 页切换                 |
+| `uni.navigateTo({ url: '/pages-sub/repair/order-detail?repairId=' + id })`           | `TypedRouter.toRepairDetail(id)`            | 带参数跳转                 |
+| `uni.navigateTo({ url: '/pages-sub/complaint/handle?complaintId=' + id })`           | `TypedRouter.toComplaintHandle(id)`         | 业务路由跳转               |
+| `uni.navigateTo({ url: '/pages/login/login?redirect=' + encodeURIComponent(path) })` | `TypedRouter.toLogin(path)`                 | 参数自动编码               |
+| `uni.redirectTo({ url: '/pages/login/login' })`                                      | `redirectToTyped('/pages/login/login', {})` | 重定向                     |
+| `uni.switchTab({ url: '/pages/index/index' })`                                       | `switchTabTyped('/pages/index/index')`      | Tab 切换基础函数           |
+| `uni.navigateBack({ delta: 1 })`                                                     | `goBack(1)`                                 | 返回上一页                 |
+| `uni.navigateBack()` 或返回首页逻辑                                                  | `NavigationUtils.safeGoBack()`              | 安全返回（无历史则跳首页） |
+
+**复杂场景转换示例**:
+
+```typescript
+// ===== 场景1: 带多个参数的跳转 =====
+// Vue2 写法:
+const url = `/pages-sub/repair/order-detail?repairId=${id}&status=${status}&from=list`
+uni.navigateTo({ url })
+
+// Vue3 类型化写法:
+TypedRouter.toRepairDetail(id, status)
+// 注意: 'from' 参数如果需要，应该在 PageParams 中定义
+
+// ===== 场景2: 条件跳转 =====
+// Vue2 写法:
+if (hasPermission) {
+  uni.navigateTo({ url: '/pages-sub/complaint/handle?complaintId=' + id })
+} else {
+  uni.navigateTo({ url: '/pages-sub/complaint/detail?complaintId=' + id })
+}
+
+// Vue3 类型化写法:
+if (hasPermission) {
+  TypedRouter.toComplaintHandle(id)
+} else {
+  TypedRouter.toComplaintDetail(id)
+}
+
+// ===== 场景3: 列表跳转详情 =====
+// Vue2 写法:
+function handleItemClick(item) {
+  uni.navigateTo({
+    url: `/pages-sub/repair/order-detail?repairId=${item.id}&status=${item.status}`,
+  })
+}
+
+// Vue3 类型化写法:
+function handleItemClick(item: { id: string; status: string }) {
+  TypedRouter.toRepairDetail(item.id, item.status)
+}
+
+// ===== 场景4: 带状态筛选的列表页 =====
+// Vue2 写法:
+uni.navigateTo({
+  url: '/pages-sub/repair/order-list?status=pending&type=emergency',
+})
+
+// Vue3 类型化写法:
+TypedRouter.toRepairList({
+  status: 'pending',
+  type: 'emergency',
+})
+
+// ===== 场景5: 返回逻辑 =====
+// Vue2 写法:
+function goBackOrHome() {
+  const pages = getCurrentPages()
+  if (pages.length > 1) {
+    uni.navigateBack()
+  } else {
+    uni.switchTab({ url: '/pages/index/index' })
+  }
+}
+
+// Vue3 类型化写法:
+function goBackOrHome() {
+  NavigationUtils.safeGoBack()
+}
+
+// ===== 场景6: 需要自定义动画的跳转 =====
+// Vue2 写法:
+uni.navigateTo({
+  url: '/pages-sub/repair/order-detail?repairId=' + id,
+  animationType: 'slide-in-bottom',
+  animationDuration: 300,
+})
+
+// Vue3 类型化写法:
+navigateToTyped(
+  '/pages-sub/repair/order-detail',
+  { repairId: id },
+  {
+    animationType: 'slide-in-bottom',
+    animationDuration: 300,
+  },
+)
+```
+
+**特殊注意事项**:
+
+1. **参数类型安全**: Vue3 类型化路由会在编译时检查参数类型，错误的参数会导致 TypeScript 报错
+2. **参数自动编码**: `navigateToTyped` 会自动使用 URLSearchParams 编码参数，无需手动 `encodeURIComponent`
+3. **Tab 页面**: Tab 页面必须使用 `switchTabTyped` 或 `TypedRouter.toXxx()` 的 Tab 方法，不能使用 `navigateToTyped`
+4. **可选参数**: 在 `PageParams` 中定义的可选参数（带 `?` 的），调用时可以省略
+5. **必填参数**: 必填参数必须传递，否则 TypeScript 会报错
+
+## 📋 类型化路由迁移完整工作流程
+
+### 路由迁移的标准流程
+
+当从 Vue2 项目迁移页面到 Vue3 项目时，必须同步完成类型化路由系统的更新。
+
+```mermaid
+graph TD
+    A[接收迁移任务] --> B[读取映射表]
+    B --> C[查找旧路径对应的新路径]
+    C --> D[迁移页面文件到新路径]
+    D --> E{页面是否需要路由跳转?}
+    E -->|是| F[更新类型化路由系统]
+    E -->|否| J[完成]
+    F --> G[步骤1: 更新 src/types/routes.ts]
+    G --> H[步骤2: 更新 src/router/helpers.ts]
+    H --> I[步骤3: 更新页面内的路由调用]
+    I --> J[在映射表标记完成]
+    J --> K[验证路由跳转正常]
+```
+
+### 迁移示例：从头到尾迁移公告模块
+
+假设我们要从 Vue2 项目迁移公告模块到 Vue3 项目，完整步骤如下：
+
+#### 步骤 1: 查找映射表
+
+```yaml
+# .github/prompts/route-migration-map.yml
+
+notice_modules:
+  gitee-example/pages/notice/noticeList.vue: src/pages-sub/notice/list.vue
+  gitee-example/pages/notice/noticeDetail.vue: src/pages-sub/notice/detail.vue
+  gitee-example/pages/notice/publishNotice.vue: src/pages-sub/notice/publish.vue
+```
+
+#### 步骤 2: 迁移页面文件（由其他子代理完成）
+
+```bash
+# 页面文件已迁移到:
+src/pages-sub/notice/list.vue
+src/pages-sub/notice/detail.vue
+src/pages-sub/notice/publish.vue
+```
+
+#### 步骤 3: 更新类型化路由系统
+
+**3.1 更新 `src/types/routes.ts`**:
+
+```typescript
+export type PageRoute =
+  | '/pages/index/index'
+  // ... 现有路径
+  | '/pages-sub/notice/list' // ✅ 新增
+  | '/pages-sub/notice/detail' // ✅ 新增
+  | '/pages-sub/notice/publish' // ✅ 新增
+
+export interface PageParams {
+  // ... 现有参数定义
+
+  /** 公告模块参数 */
+  '/pages-sub/notice/list': {
+    type?: 'system' | 'community' | 'activity'
+    communityId?: string
+  }
+  '/pages-sub/notice/detail': {
+    noticeId: string
+    from?: 'list' | 'home'
+  }
+  '/pages-sub/notice/publish': {
+    communityId: string
+    type: 'system' | 'community' | 'activity'
+  }
+}
+```
+
+**3.2 更新 `src/router/helpers.ts`**:
+
+```typescript
+export class TypedRouter {
+  // ... 现有方法
+
+  /** 公告模块导航 */
+  static toNoticeList(params?: PageParams['/pages-sub/notice/list']) {
+    return navigateToTyped('/pages-sub/notice/list', params)
+  }
+
+  static toNoticeDetail(noticeId: string, from?: 'list' | 'home') {
+    return navigateToTyped('/pages-sub/notice/detail', { noticeId, from })
+  }
+
+  static toPublishNotice(communityId: string, type: 'system' | 'community' | 'activity') {
+    return navigateToTyped('/pages-sub/notice/publish', { communityId, type })
+  }
+}
+```
+
+**3.3 更新 `src/router/index.ts` (可选导出)**:
+
+```typescript
+export const {
+  // ... 现有导出
+  toNoticeList,
+  toNoticeDetail,
+  toPublishNotice,
+} = TypedRouter
+```
+
+**3.4 更新 `isValidRoute` 函数**:
+
+```typescript
+export function isValidRoute(path: string): path is PageRoute {
+  const validRoutes: PageRoute[] = [
+    // ... 现有路径
+    '/pages-sub/notice/list',
+    '/pages-sub/notice/detail',
+    '/pages-sub/notice/publish',
+  ]
+  return validRoutes.includes(path as PageRoute)
+}
+```
+
+#### 步骤 4: 替换页面内的路由调用
+
+**在 `src/pages-sub/notice/list.vue` 中**:
+
+```vue
+<script setup lang="ts">
+import { TypedRouter } from '@/router'
+
+/** 跳转到公告详情 */
+function handleNoticeClick(noticeId: string) {
+  // ❌ Vue2 写法 (禁止使用):
+  // uni.navigateTo({ url: '/pages/notice/noticeDetail?noticeId=' + noticeId })
+
+  // ✅ Vue3 类型化写法:
+  TypedRouter.toNoticeDetail(noticeId, 'list')
+}
+
+/** 跳转到发布公告 */
+function handlePublish() {
+  const communityId = 'community123'
+
+  // ❌ Vue2 写法 (禁止使用):
+  // uni.navigateTo({ url: '/pages/notice/publishNotice?communityId=' + communityId })
+
+  // ✅ Vue3 类型化写法:
+  TypedRouter.toPublishNotice(communityId, 'community')
+}
+</script>
+```
+
+**在 `src/pages-sub/notice/detail.vue` 中**:
+
+```vue
+<script setup lang="ts">
+import { NavigationUtils } from '@/router'
+
+/** 返回列表或首页 */
+function handleBack() {
+  // ❌ Vue2 写法 (禁止使用):
+  // const pages = getCurrentPages()
+  // if (pages.length > 1) {
+  //   uni.navigateBack()
+  // } else {
+  //   uni.switchTab({ url: '/pages/index/index' })
+  // }
+
+  // ✅ Vue3 类型化写法:
+  NavigationUtils.safeGoBack()
+}
+</script>
+```
+
+#### 步骤 5: 在映射表标记完成
+
+```yaml
+# .github/prompts/route-migration-map.yml
+
+notice_modules: ✅  # 标记整个模块已完成
+  gitee-example/pages/notice/noticeList.vue: src/pages-sub/notice/list.vue
+  gitee-example/pages/notice/noticeDetail.vue: src/pages-sub/notice/detail.vue
+  gitee-example/pages/notice/publishNotice.vue: src/pages-sub/notice/publish.vue
+```
+
+#### 步骤 6: 验证路由跳转
+
+```typescript
+// 可以在浏览器控制台或页面中测试
+import { TypedRouter } from '@/router'
+
+// 测试1: 跳转到公告列表
+TypedRouter.toNoticeList({ type: 'system' })
+
+// 测试2: 跳转到公告详情
+TypedRouter.toNoticeDetail('notice123', 'list')
+
+// 测试3: 跳转到发布公告
+TypedRouter.toPublishNotice('community456', 'community')
+```
+
+### 类型化路由系统的优势
+
+**1. 编译时类型检查**:
+
+```typescript
+// ✅ 正确 - TypeScript 会检查参数类型
+TypedRouter.toNoticeDetail('notice123', 'list')
+
+// ❌ 错误 - TypeScript 会报错：类型 "invalid" 不可分配给类型 "list" | "home"
+TypedRouter.toNoticeDetail('notice123', 'invalid')
+```
+
+**2. IDE 智能提示**:
+
+```typescript
+// 输入 TypedRouter. 后会自动提示所有可用方法
+TypedRouter.to // IDE会提示: toNoticeList, toNoticeDetail, toRepairList...
+```
+
+**3. 重构安全**:
+
+```typescript
+// 如果路由路径改变，所有使用该路由的地方都会收到 TypeScript 错误提示
+// 避免了字符串路径导致的运行时错误
+```
+
+**4. 参数验证**:
+
+```typescript
+// ✅ 正确 - 必填参数已提供
+TypedRouter.toNoticeDetail('notice123')
+
+// ❌ 错误 - TypeScript 会报错：应有 1-2 个参数，但获得 0 个
+TypedRouter.toNoticeDetail()
+```
+
+### 映射表驱动的迁移总结
+
+#### 映射表的核心作用
 
 1. **唯一权威路径来源**: 所有路由迁移必须以映射表为准
 2. **进度追踪中心**: 映射表文件本身就是迁移进度表
 3. **完整性保证**: 140 个页面的完整映射，确保无遗漏
 4. **模块化管理**: 13 个业务模块的清晰分组
 
-### 子代理的职责边界
+#### 子代理的职责边界
 
 **子代理专注于实施**:
 
 - 提供技术方法和最佳实践
 - 执行具体的路由迁移操作
 - 确保代码质量和性能优化
+- 同步更新类型化路由系统
 
 **不包含进度管理**:
 
@@ -636,18 +1260,31 @@ export class NavigationUtils {
 - 不包含具体的路径映射数据
 - 一切以映射表文件为准
 
-### 标准工作流程
+#### 标准工作流程
 
-```mermaid
-graph LR
-    A[接收迁移任务] --> B[读取映射表]
-    B --> C[查找路径映射]
-    C --> D[执行迁移]
-    D --> E[更新映射表进度]
-    E --> F[验证完成]
+**每次任务必须遵循**:
+
+```plain
+读取映射表
+  → 查找路径映射
+  → 迁移页面文件
+  → 更新类型化路由系统 (重要!)
+  → 替换路由调用
+  → 标记进度
+  → 验证功能
 ```
 
-**每次任务必须遵循**: 读取映射表 → 查找路径 → 执行迁移 → 标记进度
+#### 类型化路由更新检查清单
+
+每次迁移页面后，必须检查以下内容：
+
+- [ ] `src/types/routes.ts` 中的 `PageRoute` 已包含新路由
+- [ ] `src/types/routes.ts` 中的 `PageParams` 已定义参数类型
+- [ ] `src/router/helpers.ts` 中的 `TypedRouter` 已添加静态方法
+- [ ] `src/router/index.ts` 中已导出新方法（如需要）
+- [ ] `isValidRoute` 函数已更新（如需要）
+- [ ] 页面内的路由调用已替换为类型化写法
+- [ ] 所有路由跳转功能已测试通过
 
 ## 迁移完成验证和优化
 
