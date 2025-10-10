@@ -1,6 +1,9 @@
 <!--
   房屋申请记录处理页
   功能：处理房屋申请记录，添加处理意见和违规信息
+
+  访问地址: http://localhost:9000/#/pages-sub/property/apply-room-record-handle
+  建议携带参数: ?apply=JSON.stringify(applyRoomInfo)
 -->
 <script setup lang="ts">
 import type { PropertyApplication } from '@/types/property-application'

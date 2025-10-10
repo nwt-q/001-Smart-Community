@@ -1,6 +1,9 @@
 <!--
   房屋申请记录页
   功能：显示房屋申请的跟踪记录列表
+
+  访问地址: http://localhost:9000/#/pages-sub/property/apply-room-record
+  建议携带参数: ?apply=JSON.stringify(applyRoomInfo)
 -->
 <script setup lang="ts">
 import type { ApplicationRecord, PropertyApplication } from '@/types/property-application'

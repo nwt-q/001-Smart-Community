@@ -1,6 +1,8 @@
 <!--
   房屋申请列表页
   功能：显示房屋申请列表，支持搜索和筛选
+
+  访问地址: http://localhost:9000/#/pages-sub/property/apply-room
 -->
 <script setup lang="ts">
 import type { PropertyApplication } from '@/types/property-application'
