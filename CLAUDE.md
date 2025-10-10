@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 在我和你沟通时，我会使用以下术语，便于你理解。
 
+### 全局术语
+
+在任何沟通下，这些术语都生效。
+
 - `vue3项目` ： 即 `package.json` 指代的 uniapp 项目。
 - `本项目`： 即 `vue3项目` 。
 - `vue2项目`： `gitee-example` 目录下的 uniapp 项目。
@@ -17,22 +21,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
 - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 
+### 业务术语
+
+在实现具体业务时，某些热点组件会经常修改，为了便于沟通，这里说明清楚其简称，便于你快速找到对应组件。
+
+- `活动操作按钮组件` ： `src\components\activity\activity-actions.vue`
+- `活动信息组件` ： `src\components\activity\activity-info.vue`
+- `活动详情页` ： `src\pages\activity\detail.vue`
+- `活动列表页` ： `src\pages\activity\index.vue`
+
 ## 迁移任务的重要原则
 
 在实现 `vue3项目` 迁移到 `vue2项目` 时，请遵守以下几条重要原则：
 
-1. 所有的接口都是mock假接口： 全部的接口都是使用本地的 vite-plugin-mock-dev-server 插件实现的假接口。
+1. 所有的接口都是mock假接口： 全部的接口都是使用本地的 `vite-plugin-mock-dev-server` 插件实现的假接口。
 2. 不考虑严格的登录逻辑： 我们不做任何登录功能。关于token的存储，读取，管理，使用的功能与逻辑，在 `vue3项目` 内都不做。
 3. 不考虑严格的鉴权逻辑： 我们不做任何鉴权功能。在跳转路由的时候，`vue3项目` 不做任何形式的鉴权处理。任何页面都可以随意跳转，任意访问。
 4. 不许滥用 unocss 的 shortcuts 功能： 不要将业务性质的，非公共性质的样式类，都写入到 `uno.config.ts` 配置文件内。避免滥用全局变量性质的配置文件，
 
 ## 代码/编码格式要求
 
-### markdown 文档的 table 编写格式
+### 1. markdown 文档的 table 编写格式
 
 每当你在 markdown 文档内编写表格时，表格的格式一定是**居中对齐**的，必须满足**居中对齐**的格式要求。
 
-### javascript / typescript 的代码注释写法
+### 2. javascript / typescript 的代码注释写法
 
 代码注释写法应该写成jsdoc格式。而不是单纯的双斜杠注释。比如：
 
@@ -66,15 +79,19 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 ```
 
-### unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
+### 3. unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
 
 在你做样式迁移的时候，**不允许滥用** unocss 的 shortcuts 功能。不要把那么多样式类都设计成公共全局级别的快捷方式。
 
-### vue组件编写规则
+### 4. vue组件编写规则
 
 1. vue组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
 2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
 3. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
+
+## 其他注意事项
+
+1. 每次你完成更改时，都**不要运行**任何类型检查命令。我们项目不需要你去运行类型检查命令。
 
 ## 项目概述
 

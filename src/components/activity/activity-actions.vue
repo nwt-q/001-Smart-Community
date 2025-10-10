@@ -4,9 +4,11 @@
   所有交互逻辑和状态管理均在组件内部完成，增强内聚性
 -->
 <script setup lang="ts">
+import type { ActivityStatus } from '@/types/activity'
+import { useRequest } from 'alova/client'
 import { computed, ref, watch } from 'vue'
-import { useToast } from 'wot-design-uni'
 import { updateActivityCollect, updateActivityLike } from '@/api/activity'
+import { useGlobalToast } from '@/hooks/useGlobalToast'
 
 interface Props {
   /** 活动ID */
@@ -30,7 +32,7 @@ interface Props {
   /** 初始报名数量 */
   initialRegisterCount?: number
   /** 活动状态 */
-  status?: string
+  status?: ActivityStatus
   /** 是否显示报名按钮 */
   showRegisterButton?: boolean
 }
@@ -61,7 +63,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 /** Toast 实例 */
-const toast = useToast()
+const toast = useGlobalToast()
 
 /** 组件内部状态管理 */
 const isLiked = ref<boolean>(props.initialLiked)
@@ -70,10 +72,6 @@ const isRegistered = ref<boolean>(props.initialRegistered)
 const likeCount = ref<number>(props.initialLikeCount)
 const collectCount = ref<number>(props.initialCollectCount)
 const registerCount = ref<number>(props.initialRegisterCount)
-
-/** 加载状态 */
-const isLiking = ref<boolean>(false)
-const isCollecting = ref<boolean>(false)
 const isRegistering = ref<boolean>(false)
 
 /** 监听 props 变化同步到内部状态 */
@@ -94,6 +92,92 @@ watch(() => props.initialCollectCount, (val) => {
 })
 watch(() => props.initialRegisterCount, (val) => {
   registerCount.value = val
+})
+
+/**
+ * 点赞请求管理
+ * 使用 useRequest 管理点赞接口的状态和请求
+ */
+const {
+  loading: isLiking,
+  send: sendLikeRequest,
+  onSuccess: onLikeSuccess,
+  onError: onLikeError,
+} = useRequest(
+  (newLikedState: boolean, newLikeCount: number) =>
+    updateActivityLike({
+      activitiesId: props.activityId,
+      isLiked: newLikedState,
+      likeCount: newLikeCount,
+    }),
+  {
+    immediate: false,
+  },
+)
+
+/** 点赞成功回调 */
+onLikeSuccess((response) => {
+  /** 更新内部状态 */
+  isLiked.value = response.data.isLiked
+  likeCount.value = response.data.likeCount
+
+  /** 显示交互反馈 */
+  showInteractionFeedback('like', isLiked.value ? '点赞成功' : '取消点赞')
+
+  /** 通知父组件数据变更 */
+  emit('update:liked', {
+    isLiked: isLiked.value,
+    likeCount: likeCount.value,
+  })
+})
+
+/** 点赞失败回调 */
+onLikeError((error) => {
+  console.error('点赞操作失败:', error)
+  showInteractionFeedback('error', '操作失败')
+})
+
+/**
+ * 收藏请求管理
+ * 使用 useRequest 管理收藏接口的状态和请求
+ */
+const {
+  loading: isCollecting,
+  send: sendCollectRequest,
+  onSuccess: onCollectSuccess,
+  onError: onCollectError,
+} = useRequest(
+  (newCollectedState: boolean, newCollectCount: number) =>
+    updateActivityCollect({
+      activitiesId: props.activityId,
+      isCollected: newCollectedState,
+      collectCount: newCollectCount,
+    }),
+  {
+    immediate: false,
+  },
+)
+
+/** 收藏成功回调 */
+onCollectSuccess((response) => {
+  /** 更新内部状态 */
+  isCollected.value = response.data.isCollected
+  collectCount.value = response.data.collectCount
+
+  /** 显示交互反馈 */
+  showInteractionFeedback('collect', isCollected.value ? '收藏成功' : '取消收藏')
+
+  /** 通知父组件数据变更 */
+  emit('update:collected', {
+    isCollected: isCollected.value,
+    collectCount: collectCount.value,
+  })
+})
+
+/** 收藏失败回调 */
+onCollectError((error) => {
+  console.error('收藏操作失败:', error)
+  showInteractionFeedback('error', '操作失败')
 })
 
 /** 计算属性 */
@@ -161,104 +245,61 @@ function showInteractionFeedback(type: 'like' | 'collect' | 'share' | 'register'
   }
 }
 
-/** 点赞操作 */
-async function handleLike() {
+/**
+ * 点赞操作
+ * 计算新状态并发送请求
+ */
+function handleLike() {
+  /** 防止重复点击 */
   if (isLiking.value)
     return
 
-  isLiking.value = true
-  try {
-    // 计算新的状态
-    const newLikedState = !isLiked.value
-    const newLikeCount = newLikedState
-      ? likeCount.value + 1
-      : Math.max(likeCount.value - 1, 0)
+  /** 计算新的状态 */
+  const newLikedState = !isLiked.value
+  const newLikeCount = newLikedState
+    ? likeCount.value + 1
+    : Math.max(likeCount.value - 1, 0)
 
-    // 调用 API 更新点赞状态
-    const response = await updateActivityLike({
-      activitiesId: props.activityId,
-      isLiked: newLikedState,
-      likeCount: newLikeCount,
-    })
-
-    // 更新内部状态
-    isLiked.value = response.isLiked
-    likeCount.value = response.likeCount
-
-    // 显示交互反馈
-    showInteractionFeedback('like', isLiked.value ? '点赞成功' : '取消点赞')
-
-    // 通知父组件数据变更
-    emit('update:liked', {
-      isLiked: isLiked.value,
-      likeCount: likeCount.value,
-    })
-  }
-  catch (error) {
-    console.error('点赞操作失败:', error)
-    showInteractionFeedback('error', '操作失败')
-  }
-  finally {
-    isLiking.value = false
-  }
+  /** 发送点赞请求 */
+  sendLikeRequest(newLikedState, newLikeCount)
 }
 
-/** 收藏操作 */
-async function handleCollect() {
+/**
+ * 收藏操作
+ * 计算新状态并发送请求
+ */
+function handleCollect() {
+  /** 防止重复点击 */
   if (isCollecting.value)
     return
 
-  isCollecting.value = true
-  try {
-    // 计算新的状态
-    const newCollectedState = !isCollected.value
-    const newCollectCount = newCollectedState
-      ? collectCount.value + 1
-      : Math.max(collectCount.value - 1, 0)
+  /** 计算新的状态 */
+  const newCollectedState = !isCollected.value
+  const newCollectCount = newCollectedState
+    ? collectCount.value + 1
+    : Math.max(collectCount.value - 1, 0)
 
-    // 调用 API 更新收藏状态
-    const response = await updateActivityCollect({
-      activitiesId: props.activityId,
-      isCollected: newCollectedState,
-      collectCount: newCollectCount,
-    })
-
-    // 更新内部状态
-    isCollected.value = response.isCollected
-    collectCount.value = response.collectCount
-
-    // 显示交互反馈
-    showInteractionFeedback('collect', isCollected.value ? '收藏成功' : '取消收藏')
-
-    // 通知父组件数据变更
-    emit('update:collected', {
-      isCollected: isCollected.value,
-      collectCount: collectCount.value,
-    })
-  }
-  catch (error) {
-    console.error('收藏操作失败:', error)
-    showInteractionFeedback('error', '操作失败')
-  }
-  finally {
-    isCollecting.value = false
-  }
+  /** 发送收藏请求 */
+  sendCollectRequest(newCollectedState, newCollectCount)
 }
 
-/** 报名操作 */
+/**
+ * 报名操作
+ * 暂时保持模拟实现
+ */
 async function handleRegister() {
   if (isRegistering.value || !canRegister.value)
     return
 
   isRegistering.value = true
   try {
-    // 模拟API调用
+    /** 模拟API调用 */
     await new Promise(resolve => setTimeout(resolve, 500))
 
-    // 更新内部状态
+    /** 更新内部状态 */
     isRegistered.value = !isRegistered.value
 
-    // 显示交互反馈
+    /** 显示交互反馈 */
     if (isRegistered.value) {
       uni.showModal({
         title: '报名成功',
@@ -272,7 +313,7 @@ async function handleRegister() {
       showInteractionFeedback('register', '已取消报名')
     }
 
-    // 通知父组件数据变更
+    /** 通知父组件数据变更 */
     emit('update:registered', {
       isRegistered: isRegistered.value,
     })
@@ -292,14 +333,14 @@ function handleShare() {
     itemList: ['分享给好友', '复制链接', '保存图片'],
     success: (res) => {
       if (res.tapIndex === 0) {
-        // 触发原生分享
+        /** 触发原生分享 */
         uni.share({
           provider: 'weixin',
           scene: 'WXSceneSession',
           type: 0,
           href: '',
           title: props.activityTitle,
-          summary: `我发现了一个很不错的活动：${props.activityTitle}`,
+          summary: `我发现了一个很不错的活动:${props.activityTitle}`,
           imageUrl: props.activityImage,
           success: () => {
             showInteractionFeedback('share', '分享成功')
@@ -310,7 +351,7 @@ function handleShare() {
         })
       }
       else if (res.tapIndex === 1) {
-        // 复制链接
+        /** 复制链接 */
         uni.setClipboardData({
           data: props.sharePath,
           success: () => {
@@ -319,7 +360,7 @@ function handleShare() {
         })
       }
       else if (res.tapIndex === 2) {
-        // 保存图片
+        /** 保存图片 */
         if (props.activityImage) {
           uni.saveImageToPhotosAlbum({
             filePath: props.activityImage,
@@ -352,9 +393,6 @@ function handleContact() {
 
 <template>
   <view class="activity-actions-container mx-4 max-sm:mx-3">
-    <!-- Toast 轻提示挂载点 -->
-    <wd-toast />
-
     <!-- 主操作按钮区域 -->
     <view class="mb-4 flex gap-3">
       <!-- 报名按钮 -->
@@ -408,39 +446,39 @@ function handleContact() {
       <!-- 点赞按钮 -->
       <view
         class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-red-500 like-active': isLiked, 'text-gray-600': !isLiked }"
+        :class="{ 'like-active': isLiked }"
         @click="handleLike"
       >
         <view class="group relative">
           <wd-icon
             :name="isLiked ? 'like-filled' : 'like'"
             size="24"
-            :custom-class="`action-icon i-carbon-${isLiked ? 'thumbs-up-filled' : 'thumbs-up'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isLiked ? 'thumbs-up-filled' : 'thumbs-up'} ${isLiked ? 'text-red-500' : 'text-gray-600'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isLiking" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
           </view>
         </view>
-        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]">{{ formattedLikeCount }}</text>
+        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]" :class="isLiked ? 'text-red-500' : 'text-gray-600'">{{ formattedLikeCount }}</text>
       </view>
 
       <!-- 收藏按钮 -->
       <view
         class="action-item flex flex-col cursor-pointer items-center rounded-xl p-2 transition-all duration-200 active:translate-y-0 hover:bg-gray-100 hover:-translate-y-0.5"
-        :class="{ 'text-yellow-500 collect-active': isCollected, 'text-gray-600': !isCollected }"
+        :class="{ 'collect-active': isCollected }"
         @click="handleCollect"
       >
         <view class="group relative">
           <wd-icon
             :name="isCollected ? 'star-filled' : 'star'"
             size="24"
-            :custom-class="`action-icon i-carbon-${isCollected ? 'star-filled' : 'star'} transition-transform duration-200 group-hover:scale-110`"
+            :custom-class="`action-icon i-carbon-${isCollected ? 'star-filled' : 'star'} ${isCollected ? 'text-yellow-500' : 'text-gray-600'} transition-transform duration-200 group-hover:scale-110`"
           />
           <view v-if="isCollecting" class="absolute inset-0 flex items-center justify-center">
             <wd-loading size="20" />
           </view>
         </view>
-        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]">{{ formattedCollectCount }}</text>
+        <text class="mt-1 text-xs font-medium tracking-[0.1rpx]" :class="isCollected ? 'text-yellow-500' : 'text-gray-600'">{{ formattedCollectCount }}</text>
       </view>
 
       <!-- 分享按钮 -->

@@ -338,7 +338,354 @@ const alovaInstance = createAlova({
 export const http = alovaInstance
 ```
 
-#### 1.2 TypeScript 类型定义体系
+#### 1.2 useRequest 组合式 API 使用规范
+
+**🔴 核心原则**: 使用 Alova 提供的 `useRequest` Hook 管理接口请求状态，替代手动管理 loading、error、data 等状态。
+
+**🔴 默认规范**: 所有 `useRequest` 必须设置 `immediate: false`，禁止自动运行请求，必须手动触发。
+
+##### 基础用法
+
+**1. 标准请求写法 (immediate: false)**
+
+适用场景：所有接口请求场景（页面加载、表单提交、按钮点击等）
+
+```typescript
+<script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { getActivityDetail } from '@/api/activity'
+import { ref, onMounted } from 'vue'
+
+const activitiesId = ref('ACT_001')
+const currentCommunityId = ref('COMM_001')
+
+/** 请求管理 - 必须手动触发 */
+const {
+  loading,                // 加载状态 (Ref<boolean>)
+  data: activityData,     // 响应数据 (Ref<Activity | undefined>)
+  send: loadActivity,     // 手动触发请求函数
+  error: requestError,    // 错误信息 (Ref<Error | undefined>)
+  onSuccess,              // 成功回调钩子
+  onError,                // 失败回调钩子
+  onComplete,             // 完成回调钩子
+} = useRequest(
+  () => getActivityDetail({
+    page: 1,
+    row: 1,
+    activitiesId: activitiesId.value,
+    currentCommunityId: currentCommunityId.value,
+  }),
+  {
+    immediate: false, // 🔴 强制要求: 不自动执行
+  },
+)
+
+/** 使用回调处理成功、失败、完成情况 */
+onSuccess((data) => {
+  console.log('请求成功:', data)
+  uni.showToast({ title: '加载成功', icon: 'success' })
+})
+
+onError((error) => {
+  console.error('请求失败:', error)
+  uni.showToast({ title: '加载失败', icon: 'none' })
+})
+
+onComplete(() => {
+  console.log('请求完成')
+  // 无论成功失败都会执行
+})
+
+/** 生命周期中手动触发 */
+onMounted(() => {
+  loadActivity()
+})
+</script>
+```
+
+**2. 表单提交场景**
+
+```typescript
+<script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { createActivity } from '@/api/activity'
+import { reactive } from 'vue'
+
+interface ActivityForm {
+  title: string
+  startTime: string
+  endTime: string
+}
+
+const formData = reactive<ActivityForm>({
+  title: '',
+  startTime: '',
+  endTime: '',
+})
+
+/** 请求管理 - 手动触发 */
+const {
+  loading: submitting,
+  send: submitActivity,
+  onSuccess,
+  onError,
+} = useRequest(
+  (data: ActivityForm) => createActivity(data),
+  {
+    immediate: false, // 🔴 强制要求: 不自动执行
+  },
+)
+
+/** 成功回调 */
+onSuccess((result) => {
+  console.log('创建成功:', result)
+  uni.showToast({ title: '创建成功', icon: 'success' })
+  // 重置表单
+  Object.assign(formData, { title: '', startTime: '', endTime: '' })
+})
+
+/** 失败回调 */
+onError((error) => {
+  console.error('创建失败:', error)
+  uni.showToast({ title: error.message || '创建失败', icon: 'none' })
+})
+
+/** 表单提交处理 */
+function handleSubmit() {
+  if (!formData.title) {
+    uni.showToast({ title: '请输入标题', icon: 'none' })
+    return
+  }
+  // 手动触发请求
+  submitActivity(formData)
+}
+</script>
+```
+
+**3. 分页/加载更多场景**
+
+```typescript
+<script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { getActivityList } from '@/api/activity'
+import { ref, onMounted } from 'vue'
+
+const currentPage = ref(1)
+const hasMore = ref(true)
+const activityList = ref<Activity[]>([])
+
+/** 基础列表请求 */
+const {
+  loading,
+  send: loadList,
+  onSuccess: onListSuccess,
+  onError: onListError,
+} = useRequest(
+  (page: number) => getActivityList({ page, row: 10 }),
+  {
+    immediate: false, // 🔴 强制要求: 不自动执行
+  },
+)
+
+/** 加载更多请求 */
+const {
+  loading: loadingMore,
+  send: loadMore,
+  onSuccess: onLoadMoreSuccess,
+  onError: onLoadMoreError,
+} = useRequest(
+  (page: number) => getActivityList({ page, row: 10 }),
+  {
+    immediate: false, // 🔴 强制要求: 不自动执行
+  },
+)
+
+/** 列表加载成功 */
+onListSuccess((result) => {
+  activityList.value = result.activitiess || []
+  currentPage.value = 1
+  hasMore.value = result.activitiess.length >= 10
+})
+
+/** 列表加载失败 */
+onListError((error) => {
+  console.error('加载失败:', error)
+  uni.showToast({ title: '加载失败', icon: 'none' })
+})
+
+/** 加载更多成功 */
+onLoadMoreSuccess((result) => {
+  if (result?.activitiess?.length) {
+    activityList.value.push(...result.activitiess)
+    currentPage.value++
+    hasMore.value = result.activitiess.length >= 10
+  } else {
+    hasMore.value = false
+  }
+})
+
+/** 加载更多失败 */
+onLoadMoreError((error) => {
+  console.error('加载更多失败:', error)
+  uni.showToast({ title: '加载更多失败', icon: 'none' })
+})
+
+/** 下拉刷新 */
+function handleRefresh() {
+  loadList(1)
+}
+
+/** 上拉加载 */
+function handleReachBottom() {
+  if (!loadingMore.value && hasMore.value) {
+    loadMore(currentPage.value + 1)
+  }
+}
+
+/** 页面加载时手动触发 */
+onMounted(() => {
+  loadList(1)
+})
+</script>
+```
+
+##### 核心状态说明
+
+| 状态名       | 类型                      | 说明                         |
+| ------------ | ------------------------- | ---------------------------- |
+| `loading`    | `Ref<boolean>`            | 请求加载状态，自动管理       |
+| `data`       | `Ref<T \| undefined>`     | 响应数据，类型安全           |
+| `error`      | `Ref<Error \| undefined>` | 错误信息，请求失败时自动填充 |
+| `send`       | `(...args) => Promise<T>` | 手动触发请求函数，支持传参   |
+| `onSuccess`  | `(callback) => void`      | 成功回调钩子                 |
+| `onError`    | `(callback) => void`      | 失败回调钩子                 |
+| `onComplete` | `(callback) => void`      | 完成回调钩子（无论成功失败） |
+
+##### 最佳实践
+
+**✅ 推荐做法**:
+
+```typescript
+// 1. 必须设置 immediate: false，使用回调处理成功/失败
+const {
+  loading,
+  send: loadData,
+  onSuccess,
+  onError,
+} = useRequest(getActivityDetail, {
+  immediate: false, // 🔴 强制要求
+})
+
+onSuccess((data) => {
+  console.log('加载成功:', data)
+  uni.showToast({ title: '加载成功', icon: 'success' })
+})
+
+onError((error) => {
+  console.error('加载失败:', error)
+  uni.showToast({ title: '加载失败', icon: 'none' })
+})
+
+onMounted(() => {
+  loadData() // 手动触发
+})
+
+// 2. 使用解构重命名提高可读性
+const {
+  loading: submitting,
+  send: submitForm,
+  onSuccess: onSubmitSuccess,
+  onError: onSubmitError,
+} = useRequest(createActivity, {
+  immediate: false, // 🔴 强制要求
+})
+
+onSubmitSuccess((result) => {
+  console.log('提交成功:', result)
+})
+
+onSubmitError((error) => {
+  console.error('提交失败:', error)
+})
+
+// 3. 使用 onComplete 处理公共逻辑
+const {
+  loading,
+  send: loadList,
+  onSuccess,
+  onError,
+  onComplete,
+} = useRequest(getActivityList, {
+  immediate: false, // 🔴 强制要求
+})
+
+onComplete(() => {
+  // 无论成功失败都执行的逻辑
+  uni.stopPullDownRefresh()
+})
+```
+
+**❌ 不推荐做法**:
+
+```typescript
+// ❌ 错误1: 设置 immediate: true 自动执行
+const { loading, data } = useRequest(getActivityDetail, {
+  immediate: true, // ❌ 禁止自动执行
+})
+
+// ❌ 错误2: 使用 try/catch 处理成功/失败
+const { send: loadData } = useRequest(getActivityDetail, {
+  immediate: false,
+})
+
+async function load() {
+  try {
+    const result = await loadData() // ❌ 不要使用 try/catch
+    console.log('成功:', result)
+  } catch (error) {
+    console.error('失败:', error)
+  }
+}
+
+// ❌ 错误3: 手动管理 loading 状态
+const loading = ref(false)
+const data = ref(null)
+
+async function loadData() {
+  loading.value = true // ❌ 不要手动管理状态
+  try {
+    const result = await getActivityDetail({ id: '001' })
+    data.value = result
+  } finally {
+    loading.value = false
+  }
+}
+
+// ❌ 错误4: 直接调用 API 不使用 useRequest
+const activityData = await getActivityDetail({ id: '001' }) // ❌ 失去状态管理优势
+```
+
+##### 迁移对照表
+
+| Vue2 手动管理                  | Vue3 useRequest                 | 说明                       |
+| ------------------------------ | ------------------------------- | -------------------------- |
+| `this.loading = true/false`    | `loading.value`                 | 自动管理加载状态           |
+| `this.data = result`           | `data.value`                    | 自动管理响应数据           |
+| `try/catch` 手动错误处理       | `onSuccess()` / `onError()`     | 使用回调钩子处理成功/失败  |
+| `async loadData() { ... }`     | `const { send } = useRequest()` | 使用 send 函数手动触发请求 |
+| Promise 回调 `.then().catch()` | `onSuccess()` / `onError()`     | 现代化回调处理             |
+| 页面 `onLoad` 自动调用接口     | `onMounted(() => send())`       | 生命周期中手动触发         |
+
+**🔴 强制规范**:
+
+1. **必须使用 useRequest**: 所有接口调用都必须通过 `useRequest` 管理状态
+2. **必须设置 immediate: false**: 禁止自动执行请求，必须手动触发
+3. **必须使用回调钩子**: 使用 `onSuccess`、`onError`、`onComplete` 处理请求结果，禁止使用 `try/catch`
+4. **禁止手动管理状态**: 不允许手动创建 `loading`、`error` 等状态变量
+5. **类型安全**: 确保 `data` 类型与 API 定义的返回类型一致
+6. **命名规范**: 使用解构重命名提高代码可读性（如 `loading: submitting`, `send: submitForm`）
+
+#### 1.3 TypeScript 类型定义体系
 
 **首先建立完整的类型定义**:
 
@@ -398,7 +745,7 @@ export interface MaintainanceTaskListParams extends PaginationParams {
 }
 ```
 
-#### 1.3 API 定义方式对比
+#### 1.4 API 定义方式对比
 
 **Vue2 项目 API 定义**:
 

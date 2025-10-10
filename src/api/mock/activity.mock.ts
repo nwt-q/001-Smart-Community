@@ -1,5 +1,4 @@
-import type { Activity, ActivityListParams, ActivityListResponse, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
-import type { StatusType } from '@/types/api'
+import type { Activity, ActivityListParams, ActivityListResponse, ActivityStatus, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
 import { defineUniAppMock, errorResponse, generateId, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
@@ -31,6 +30,46 @@ const ORGANIZERS = [
   '党支部',
   '青年联谊会',
   '老年活动中心',
+]
+
+/** 人员头像 URL 集合（用于活动发布者头像） */
+const AVATAR_URLS = [
+  // Pravatar 随机头像（1-35）
+  'https://i.pravatar.cc/150?img=1',
+  'https://i.pravatar.cc/150?img=2',
+  'https://i.pravatar.cc/150?img=3',
+  'https://i.pravatar.cc/150?img=4',
+  'https://i.pravatar.cc/150?img=5',
+  'https://i.pravatar.cc/150?img=6',
+  'https://i.pravatar.cc/150?img=7',
+  'https://i.pravatar.cc/150?img=8',
+  'https://i.pravatar.cc/150?img=9',
+  'https://i.pravatar.cc/150?img=10',
+  'https://i.pravatar.cc/150?img=11',
+  'https://i.pravatar.cc/150?img=12',
+  'https://i.pravatar.cc/150?img=13',
+  'https://i.pravatar.cc/150?img=14',
+  'https://i.pravatar.cc/150?img=15',
+  'https://i.pravatar.cc/150?img=16',
+  'https://i.pravatar.cc/150?img=17',
+  'https://i.pravatar.cc/150?img=18',
+  'https://i.pravatar.cc/150?img=19',
+  'https://i.pravatar.cc/150?img=20',
+  'https://i.pravatar.cc/150?img=21',
+  'https://i.pravatar.cc/150?img=22',
+  'https://i.pravatar.cc/150?img=23',
+  'https://i.pravatar.cc/150?img=24',
+  'https://i.pravatar.cc/150?img=25',
+  'https://i.pravatar.cc/150?img=26',
+  'https://i.pravatar.cc/150?img=27',
+  'https://i.pravatar.cc/150?img=28',
+  'https://i.pravatar.cc/150?img=29',
+  'https://i.pravatar.cc/150?img=30',
+  'https://i.pravatar.cc/150?img=31',
+  'https://i.pravatar.cc/150?img=32',
+  'https://i.pravatar.cc/150?img=33',
+  'https://i.pravatar.cc/150?img=34',
+  'https://i.pravatar.cc/150?img=35',
 ]
 
 /** 生成活动标题 */
@@ -172,8 +211,21 @@ function createMockActivity(id: string): Activity {
   const startOffset = Math.random() * 14 * 24 * 60 * 60 * 1000
   const duration = (Math.random() * 3 + 1) * 60 * 60 * 1000
 
+  /** 生成活动状态：根据开始时间判断活动状态 */
   const statusRand = Math.random()
-  const status: StatusType = statusRand < 0.8 ? '1' : '0'
+  let status: ActivityStatus
+  if (statusRand < 0.25) {
+    status = 'UPCOMING' // 即将开始
+  }
+  else if (statusRand < 0.5) {
+    status = 'ONGOING' // 进行中
+  }
+  else if (statusRand < 0.85) {
+    status = 'COMPLETED' // 已结束
+  }
+  else {
+    status = 'CANCELLED' // 已取消
+  }
 
   const baseViewCount = Math.floor(Math.random() * 1000 + 50)
   const numericId = Number.parseInt(id) || Math.floor(Math.random() * 999) + 1
@@ -182,6 +234,7 @@ function createMockActivity(id: string): Activity {
     activitiesId: `ACT_${id}`,
     title: generateActivityTitle(activityType, numericId),
     userName: ORGANIZERS[Math.floor(Math.random() * ORGANIZERS.length)],
+    avatar: AVATAR_URLS[Math.floor(Math.random() * AVATAR_URLS.length)],
     startTime: new Date(now + startOffset).toISOString(),
     endTime: new Date(now + startOffset + duration).toISOString(),
     context: generateActivityContent(activityType, id),
@@ -426,7 +479,7 @@ export default defineUniAppMock([
           likeCount: 0,
           readCount: 0,
           collectCount: 0,
-          status: data.status || '0',
+          status: data.status || 'UPCOMING',
           headerImg: data.headerImg,
           src: data.headerImg ? `/file?fileId=${data.headerImg}` : undefined,
         }
@@ -587,7 +640,7 @@ export default defineUniAppMock([
     body: async ({ body }) => {
       await randomDelay(300, 700)
 
-      const data = body as { activitiesId: string, status: string }
+      const data = body as { activitiesId: string, status: ActivityStatus }
 
       try {
         mockLog('updateActivityStatus', data)
@@ -601,12 +654,12 @@ export default defineUniAppMock([
           return errorResponse('活动不存在', '404')
         }
 
-        const validStatuses = ['0', '1']
+        const validStatuses: ActivityStatus[] = ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED']
         if (!validStatuses.includes(data.status)) {
           return errorResponse('无效的活动状态', '400')
         }
 
-        activity.status = data.status as StatusType
+        activity.status = data.status
         activity.updateTime = new Date().toISOString()
 
         mockLog('updateActivityStatus result', { title: activity.title, status: activity.status })

@@ -2,13 +2,24 @@
  * 活动模块类型定义
  */
 
-import type { PaginationParams, StatusType } from './api'
+import type { PaginationParams } from './api'
+
+/**
+ * 活动状态枚举
+ * @description
+ * - UPCOMING: 即将开始 - 活动还未开始，可以报名
+ * - ONGOING: 进行中 - 活动正在进行，可以立即报名
+ * - COMPLETED: 已结束 - 活动已结束，无法报名
+ * - CANCELLED: 已取消 - 活动已取消，无法报名
+ */
+export type ActivityStatus = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED'
 
 /** 活动基础信息 */
 export interface Activity {
   activitiesId: string
   title: string
   userName: string
+  avatar?: string
   startTime: string
   endTime: string
   context: string
@@ -17,7 +28,7 @@ export interface Activity {
   communityId: string
   createTime: string
   updateTime: string
-  status: StatusType
+  status: ActivityStatus
   viewCount: number
   likeCount: number
   readCount: number
@@ -31,7 +42,7 @@ export interface Activity {
 export interface ActivityListParams extends PaginationParams {
   activitiesId?: string
   communityId: string
-  status?: StatusType
+  status?: ActivityStatus
   keyword?: string
   startDate?: string
   endDate?: string
@@ -53,7 +64,7 @@ export interface CreateActivityReq {
   endTime: string
   headerImg?: string
   communityId?: string
-  status?: StatusType
+  status?: ActivityStatus
 }
 
 /** 更新活动请求 */

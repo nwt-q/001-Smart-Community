@@ -266,3 +266,128 @@
 4. 在 `活动详情页` 内，收藏和点赞两个子组件事件传递上来时，作为父组件的 `活动详情页` 只做活动数据的模拟变更。只更改数据，不做接口请求。
 5. 在 `活动操作按钮组件` 内，作为子组件将会调用刚才新建的这两个模拟接口。请务必使用 `code-migration` 子代理，遵照 `code-migration` 的要求，使用正确的接口请求工具，来做接口请求。
 6. 在 `活动操作按钮组件` 子组件内做接口请求；在 `活动详情页` 父组件内不做接口请求，只做简单的模拟数据修改，并单向传递数据给子组件。
+
+### 10 使用 `api-migration` 子代理优化 `活动操作按钮组件` 的接口请求
+
+使用 `api-migration` 子代理优化 `活动操作按钮组件` 的接口请求，优化 `src\components\activity\activity-actions.vue` 组件的写法。
+
+特别是这一段 【用组合式 api 优化这里的接口请求交互过程】，请严格遵循 `api-migration` 子代理的要求，避免写 `try/catch` 来管理接口请求的成功和失败情况。
+
+## 010 处理 `活动操作按钮组件` 内提示框层叠位置不合适的故障
+
+请深度思考。
+
+如下图所示：
+
+![2025-10-07-09-26-32](https://s2.loli.net/2025/10/07/mbVJM7Nf4KX1yap.png)
+
+在 `src\components\activity\activity-actions.vue` 活动操作按钮组件 内，Toast 提示弹框的位置出现了遮挡。这是因为在子组件范围内，空间就只有那么大，所以会遮挡。
+
+请你按照我提供的方案和步骤，逐步完成故障修复：
+
+1. **全局组件的格式准备**： 请你对 `src\components\global` 内的 vue 组件做目录层级划分，并对组件做文件重命名，整理好这些文件。
+2. **注册使用全局组件**： 去 `src\App.ku.vue` 内检查这些全局组件是否按照各自的文档要求所述，在根组件内定义好这些全局组件。
+3. **补全 CommonUtil 导入**： 去 `src\hooks\useGlobal*.ts` 这几个组合式 api 文件内，补全从 `wot-design-uni` 模块导出的 CommonUtil 对象。
+4. **补全 getCurrentPath 导入**： 去 `src\hooks\useGlobal*.ts` 这几个组合式 api 文件内，补全从 `src\utils\index.ts` 模块导出的 getCurrentPath 函数。
+5. **及时更新文档说明的路径地址**：去 `src\components\global` 内找到你整理好的 md 文件，找到类似于 `import { useGlobalMessage } from '@/composables/useGlobalMessage'` 的写法，及时的从 composables 改成 hooks 。因为组合式 api 的文件导入地址是 hooks，而不是 composables 。
+6. **更新 component-migration**： 在 `component-migration` 子代理内，更新关于的 Toast 、 Message 、 Loading 这三个组件的用法。以后实现类似的功能时，一律使用全局组件提供的功能，一律使用组合式 api 来实现该功能。子代理提供这几个组合式 api 的使用文档链接即可，不需要写很详细的组件用法，避免 `component-migration` 子代理文件文本过长。
+7. **使用子代理改写组件写法**： 使用 `component-migration` 子代理去改写 活动操作按钮组件对 Toast 组件的用法，改成组合式 api 的用法。
+8. **运行项目并检查**： 主动使用 MCP 工具 `chrome-devtools` ，以 `/pages/activity/detail?activitiesId=ACT_018&currentCommunityId=COMM_001` 地址为例，进入该活动详情页，并模拟用户的点赞、收藏这两个行为，检查提示框是否还会出现遮挡的情况。
+
+## 011 微调优化 `活动详情页` 的页面元素布局
+
+请深度思考。
+
+请阅读以下截图：
+
+1. 点赞按钮在点击后，没有颜色了看不到其图标了。请优化。
+
+![2025-10-09-11-46-22](https://s2.loli.net/2025/10/09/ZIWbikBqNGTvQKH.png)
+
+2. 在 `活动信息组件` 内，活动标题 和 状态标签 在视觉效果上没有对齐成一条线，请调整成水平对齐。请优化。请确保在优化后，当活动标题比较长时，其 状态标签 仍旧排在标题后面，正常换行。
+
+![2025-10-09-11-48-03](https://s2.loli.net/2025/10/09/J1qdxBrnvFszkDu.png)
+
+## 012 处理错误的活动状态取值
+
+在 `活动详情页` 内，activity 的 status 取值不满足类型约束，请修改。并连带地将相关的组件，对 status 的使用也一同更改。不要出现错误使用 status 取值的情况。
+
+## 013 TODO: 活动列表页，增加底部悬浮的导航栏，针对活动状态做筛选
+
+该功能属于优化任务。保留至此，未来在考虑做这部分的优化。
+
+## 014 处理 活动信息区域 出现的类型错误，增设 avatar 字段
+
+请深度思考。
+
+在 `活动列表页` 内，出现了错误使用 avatar 字段的错误。我打算增加这个 avatar 头像图片字段，请你这样处理：
+
+1. 活动基础信息类型 Activity ，应该增加一个 avatar 字段，这个字段表示发布者的头像字段。
+2. avatar 字段在 mock 接口内，应该返回为一个人的头像。请你准备好 https 开头的 URL 链接，作为人员头像集合。
+3. 在 `src\api\mock\activity.mock.ts` 内，创建一个预设好的人员头像数组，作为 mock 本地存储的数据库。其数组长度预期为 35。即至少给我提供 35 个不同的人物头像。
+4. 请你在 `src\api\mock\activity.mock.ts` 内确保活动列表页接口，返回 avatar 字段，并提供模拟的人员头像集合。
+5. 请你使用 `api-migration` 子代理，确保修改满足 `api-migration` 子代理的需求。
+6. 使用谷歌浏览器 MCP，运行项目，访问 `活动列表页` 的快速访问地址 `/pages/activity/index?currentCommunityId=COMM_001`，自己阅读并检查人员的头像是否能够正确显示出来。同时你应该保留好人员头像显示失败时，默认的占位符显示功能。
+
+### 01 更换使用的组件
+
+请深度思考。
+
+你的上一个任务完成的很好。现在我需要你优化重构代码。
+
+1. 在 `活动信息组件` 内，注意到 `有头像且未加载失败时显示头像` 这一块逻辑，你的代码实现是用 `<image>` 组件实现业务。
+2. 我希望你遵照 `component-migration` 子代理的要求，换成该子代理所要求的组件。
+3. 换组件时，请你继续保持现在 `活动详情页` 的页面显示效果，以下是现在 `活动详情页` 页的显示效果。在你实现组件迁移改写的时候，请不要破坏掉原来的 UI 布局效果。下图的头像布局位置是符合预期的。
+
+![2025-10-10-07-13-54](https://s2.loli.net/2025/10/10/8MO4JHAgG5ZpB3N.png)
+
+4. 请你继续使用谷歌浏览器 MCP，在 `活动详情页` 页地址内继续修改，并自主检查视觉效果。
+
+### 02 优化组件显示效果
+
+1. 如下图所示，在 `活动信息组件` 内，其人物头像的样式效果很不好看。被你改成了一个方框。下图的效果是糟糕的：
+
+![2025-10-10-07-25-00](https://s2.loli.net/2025/10/10/9F6JwyMSdNthKBG.png)
+
+2. 如下图所示，这样的人物头像效果才是正常的，我期望是一个圆形，不要增加方框边距的视觉效果：
+
+![2025-10-10-07-13-54](https://s2.loli.net/2025/10/10/8MO4JHAgG5ZpB3N.png)
+
+### 03 处理头像多出来的白色边框
+
+1. 在分辨率较高的显示屏内，头像的显示效果多出了一圈白色边框，如下图所示：
+
+![2025-10-10-07-31-09](https://s2.loli.net/2025/10/10/Oxb8QiRf6pTCVFa.png)
+
+这很不美观，请你解决这外圈大量的白色背景块，确保人物头像是圆形的，且放大后不会有这样大范围的白色背景块。
+
+## 015 处理 `活动列表页` 出现的组件样式问题
+
+1. 如下图所示，在分辨率高的情况，显示效果很好。
+
+![2025-10-10-08-03-55](https://s2.loli.net/2025/10/10/KuTMLSb58PljUhy.png)
+
+2. 但是在分辨率较低的情况下，显示效果很差，响应式没做好，出现了遮挡遮盖现象。
+
+![2025-10-10-08-04-45](https://s2.loli.net/2025/10/10/lt5BfzoXeDxmbK1.png)
+
+3. 请你使用 `component-migration` 子代理的要求，修复上述的图片遮盖故障。
+4. 请继续主动使用谷歌浏览器 MCP，在 `/pages/activity/index?currentCommunityId=COMM_001` 地址内访问 `活动列表页` 。
+
+### 01 处理按钮的响应式显示问题
+
+如下图所示，查看详情按钮，在低分辨率的界面上，显示效果不好，出现了范围过大的情况，请你更改成合适的响应式写法。确保其按钮满足显示效果要求。
+
+![2025-10-10-08-09-34](https://s2.loli.net/2025/10/10/KHLk2td6iISJr5a.png)
+
+## 016 迁移 applyRoom 系列的页面
+
+要被迁移的页面文件夹地址如下：
+
+1. gitee-example\pages\applyRoom
+2. gitee-example\pages\applyRoomDetail
+3. gitee-example\pages\applyRoomRecord
+4. gitee-example\pages\applyRoomRecordDetail
+5. gitee-example\pages\applyRoomRecordHandle
+
+请你使用全部在内 `.claude\agents` 满足 `*-migration.md` glob 匹配规则的全部迁移用途的子代理，一次性完成这 5 个页面的系统性迁移。迁移完成后为我提供迁移报告。

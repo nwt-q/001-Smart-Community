@@ -1,4 +1,6 @@
 <!--
+  活动列表页
+
   快速访问地址 请不要删除
   /pages/activity/index?currentCommunityId=COMM_001
 -->
@@ -188,7 +190,8 @@ async function loadActivities(page: number = 1, showLoading: boolean = true) {
       page,
       row: pageSize.value,
       communityId: currentCommunityId.value,
-      status: '1', /** 只获取已发布的活动 */
+      /** 只获取已发布的活动 */
+      status: 'UPCOMING',
     }
 
     await fetchActivities(params)
@@ -321,8 +324,6 @@ onReachBottom(() => {
             <wd-img
               :src="item.src"
               mode="aspectFill"
-              width="100%"
-              :height="360"
               class="block h-full w-full"
             >
               <template #error>
@@ -379,9 +380,8 @@ onReachBottom(() => {
                   v-if="item.avatar"
                   :src="item.avatar"
                   round
-                  :width="96"
-                  :height="96"
                   mode="aspectFill"
+                  class="w-96rpx h-96rpx"
                 >
                   <template #error>
                     <view class="user-avatar flex items-center justify-center rounded-full w-96rpx h-96rpx">
@@ -444,10 +444,10 @@ onReachBottom(() => {
                   <!-- 查看详情按钮 -->
                   <wd-button
                     type="primary"
-                    size="large"
+                    size="small"
                     plain
                     round
-                    class="shrink-0 text-26rpx!"
+                    class="px-24rpx text-24rpx!"
                   >
                     查看详情
                   </wd-button>
