@@ -394,6 +394,45 @@
 
 请你使用全部在内 `.claude\agents` 满足 `*-migration.md` glob 匹配规则的全部迁移用途的子代理，一次性完成这 5 个页面的系统性迁移。迁移完成后为我提供迁移报告。
 
+### 01 使用严格的 `route-migration` 子代理实现路由跳转
+
+<!-- TODO: 先改写路由迁移子代理。 -->
+
+请深度思考。
+
+1. 请你阅读 `src\pages-sub\property` 内全部的页面。
+2. 已知这几个页面的路由跳转的逻辑链路如下：
+
+旧项目流程：
+
+```txt
+applyRoom.vue
+  → _toApplyRoomDetail()
+    → applyRoomDetail.vue
+      → showApplyRoomRecord()
+        → applyRoomRecord.vue
+          → _addRecord()
+            → applyRoomRecordHandle.vue
+          → _showDetail()
+            → applyRoomRecordDetail.vue
+```
+
+新项目流程：
+
+```txt
+apply-room.vue
+  → toApplyRoomDetail()
+    → apply-room-detail.vue
+      → showApplyRoomRecord()
+        → apply-room-record.vue
+          → addRecord()
+            → apply-room-record-handle.vue
+          → showDetail()
+            → apply-room-record-detail.vue
+```
+
+3. 使用 `route-migration` 子代理，制作严格的路由跳转函数，实现严格的强类型路由跳转。
+
 ### 产生的冗余文件
 
 docs 根目录内的文件。
