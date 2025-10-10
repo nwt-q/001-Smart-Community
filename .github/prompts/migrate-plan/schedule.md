@@ -379,3 +379,15 @@
 如下图所示，查看详情按钮，在低分辨率的界面上，显示效果不好，出现了范围过大的情况，请你更改成合适的响应式写法。确保其按钮满足显示效果要求。
 
 ![2025-10-10-08-09-34](https://s2.loli.net/2025/10/10/KHLk2td6iISJr5a.png)
+
+## 016 迁移 applyRoom 系列的页面
+
+要被迁移的页面文件夹地址如下：
+
+1. gitee-example\pages\applyRoom
+2. gitee-example\pages\applyRoomDetail
+3. gitee-example\pages\applyRoomRecord
+4. gitee-example\pages\applyRoomRecordDetail
+5. gitee-example\pages\applyRoomRecordHandle
+
+请你使用全部在内 `.claude\agents` 满足 `*-migration.md` glob 匹配规则的全部迁移用途的子代理，一次性完成这 5 个页面的系统性迁移。迁移完成后为我提供迁移报告。
