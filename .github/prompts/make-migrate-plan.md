@@ -393,3 +393,10 @@
 2. 自主整理清楚关于接口定义、接口写法、组合式 api 使用的信息，全部整理迁移到 `api-migration` 子代理内。我希望 `api-migration` 子代理未来专门负责好 api 写法的迁移、mock 数据的定义、接口定义、以及用组合式 api 来使用接口。
 3. 仔细思考，制定一个 `useRequest` 组合式 api 的使用规范，并将这个规范写到 api-migration 子代理内。
 4. 避免出现 `code-migration` 和 `api-migration` 子代理都重复定义说明的情况，只允许 `api-migration` 子代理说明清楚如何使用 api 相关的使用规范。`code-migration` 子代理不允许出现重复的，交叉说明的情况。
+
+### 034 `component-migration` 子代理更新 `<wd-img>` 对 width 和 height 的使用方式
+
+请深度思考。
+
+1. 请阅读 `component-migration` 子代理文件，现在我不允许配置 `<wd-img>` 组件的 width 和 height 属性。因为这两个属性会写死组件的宽高，不利于响应式界面的显示。
+2. 请改成用 unocss 样式实现宽高设置。

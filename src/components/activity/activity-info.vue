@@ -118,10 +118,9 @@ function handleTimeClick() {
         <view
           class="avatar-wrapper mr-4 h-10 w-10 flex items-center justify-center overflow-hidden rounded-full shadow-md transition-transform duration-200 max-sm:mr-3 max-sm:h-8 max-sm:w-8 group-hover:scale-110"
         >
-          <!--  :width="40"
-            :height="40" -->
           <wd-img
             v-if="props.avatar"
+            :round="true"
             :src="props.avatar"
             mode="aspectFill"
             class="h-full w-full"

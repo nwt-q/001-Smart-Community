@@ -326,10 +326,10 @@ color: blue
 ```vue
 <template>
   <!-- 基础图片显示 -->
-  <wd-img :src="userAvatar" mode="aspectFill" :width="100" :height="100" round />
+  <wd-img :src="userAvatar" mode="aspectFill" class="w-100rpx h-100rpx" round />
 
   <!-- 带加载状态和错误处理的图片 -->
-  <wd-img :src="productImage" mode="scaleToFill" :width="200" :height="200" @load="onImageLoad" @error="onImageError">
+  <wd-img :src="productImage" mode="scaleToFill" class="w-200rpx h-200rpx" @load="onImageLoad" @error="onImageError">
     <template #loading>
       <view class="flex items-center justify-center w-full h-full">
         <wd-loading />
@@ -341,7 +341,7 @@ color: blue
   </wd-img>
 
   <!-- 可预览的图片 -->
-  <wd-img :src="galleryImage" :enable-preview="true" :width="150" :height="150" />
+  <wd-img :src="galleryImage" :enable-preview="true" class="w-150rpx h-150rpx" />
 </template>
 ```
 
@@ -467,7 +467,11 @@ color: blue
 - **属性映射**:
   - `src` 属性保持不变
   - `mode` 属性直接兼容，支持所有原生填充模式
-  - `width`、`height` 使用数值或字符串，支持 px、rpx 等单位
+  - **⚠️ 禁止使用 `width`、`height` 属性**: 为保证响应式界面的灵活性，严格禁止使用组件的 width 和 height 属性
+  - **✅ 使用 UnoCSS 样式设置宽高**: 必须通过 `class` 属性配合 UnoCSS 原子类实现宽高设置
+    - 固定宽高: `class="w-100rpx h-100rpx"`
+    - 百分比宽高: `class="w-full h-full"`
+    - 响应式宽高: `class="w-screen h-auto"`
 - **增强功能利用**:
   - 使用 `round` 属性实现圆形图片
   - 使用 `radius` 属性设置圆角
