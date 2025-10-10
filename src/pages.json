@@ -122,55 +122,6 @@
       "style": {
         "navigationBarTitleText": "我的"
       }
-    },
-    {
-      "path": "pages/apply-room/index",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "空置房申请",
-        "navigationBarBackgroundColor": "#368CFE",
-        "navigationBarTextStyle": "white",
-        "enablePullDownRefresh": true,
-        "onReachBottomDistance": 50
-      }
-    },
-    {
-      "path": "pages/apply-room/detail",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "申请详情",
-        "navigationBarBackgroundColor": "#368CFE",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/apply-room/record",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "跟踪记录",
-        "navigationBarBackgroundColor": "#368CFE",
-        "navigationBarTextStyle": "white",
-        "enablePullDownRefresh": true,
-        "onReachBottomDistance": 50
-      }
-    },
-    {
-      "path": "pages/apply-room/record-detail",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "记录详情",
-        "navigationBarBackgroundColor": "#368CFE",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/apply-room/record-handle",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "添加记录",
-        "navigationBarBackgroundColor": "#368CFE",
-        "navigationBarTextStyle": "white"
-      }
     }
   ],
   "subPackages": [
@@ -183,6 +134,43 @@
           "type": "page",
           "style": {
             "navigationBarTitleText": "分包页面"
+          }
+        },
+        {
+          "path": "property/apply-room-detail",
+          "type": "page",
+          "style": {
+            "navigationBarTitleText": "房屋申请详情"
+          }
+        },
+        {
+          "path": "property/apply-room-record-detail",
+          "type": "page",
+          "style": {
+            "navigationBarTitleText": "记录详情"
+          }
+        },
+        {
+          "path": "property/apply-room-record-handle",
+          "type": "page",
+          "style": {
+            "navigationBarTitleText": "记录处理"
+          }
+        },
+        {
+          "path": "property/apply-room-record",
+          "type": "page",
+          "style": {
+            "navigationBarTitleText": "申请记录",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "property/apply-room",
+          "type": "page",
+          "style": {
+            "navigationBarTitleText": "房屋申请",
+            "enablePullDownRefresh": true
           }
         }
       ]
