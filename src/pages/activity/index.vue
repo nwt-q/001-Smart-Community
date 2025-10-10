@@ -324,8 +324,6 @@ onReachBottom(() => {
             <wd-img
               :src="item.src"
               mode="aspectFill"
-              width="100%"
-              :height="360"
               class="block h-full w-full"
             >
               <template #error>
@@ -382,9 +380,8 @@ onReachBottom(() => {
                   v-if="item.avatar"
                   :src="item.avatar"
                   round
-                  :width="96"
-                  :height="96"
                   mode="aspectFill"
+                  class="w-96rpx h-96rpx"
                 >
                   <template #error>
                     <view class="user-avatar flex items-center justify-center rounded-full w-96rpx h-96rpx">
