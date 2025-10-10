@@ -444,10 +444,10 @@ onReachBottom(() => {
                   <!-- 查看详情按钮 -->
                   <wd-button
                     type="primary"
-                    size="large"
+                    size="small"
                     plain
                     round
-                    class="shrink-0 text-26rpx!"
+                    class="px-24rpx text-24rpx!"
                   >
                     查看详情
                   </wd-button>
