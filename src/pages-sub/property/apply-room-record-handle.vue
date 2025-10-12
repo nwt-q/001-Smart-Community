@@ -9,6 +9,7 @@
 import type { PropertyApplication } from '@/types/property-application'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { saveApplicationRecord } from '@/api/property-application'
 import { buildApplyFromParams } from '@/hooks/property/use-property-apply-room'
 
 definePage({
@@ -64,23 +65,21 @@ function violationChange(e: { detail: { value: number } }) {
   violation.value = selected.value || ''
 }
 
-function dispatchRecord() {
+/** 提交跟踪记录 */
+async function dispatchRecord() {
   uni.showLoading({
     title: '上传中...',
   })
 
   const params = {
-    ardId: applyRoomInfo.value.ardId,
+    applicationId: applyRoomInfo.value.ardId,
     roomId: applyRoomInfo.value.roomId,
     roomName: applyRoomInfo.value.roomName,
     state: applyRoomInfo.value.state,
     stateName: applyRoomInfo.value.stateName,
     photos: photos.value,
-    videoName: '',
     remark: content.value,
-    detailType: '1001',
     communityId: communityId.value,
-    examineRemark: '',
     isTrue: violation.value,
   }
 
@@ -101,10 +100,9 @@ function dispatchRecord() {
     return
   }
 
-  // TODO: 实现保存记录逻辑
-  console.log('保存记录', params)
+  try {
+    await saveApplicationRecord(params)
 
-  setTimeout(() => {
     uni.hideLoading()
     uni.showToast({
       title: '保存成功',
@@ -114,7 +112,15 @@ function dispatchRecord() {
         delta: 1,
       })
     }, 1000)
-  }, 1000)
+  }
+  catch (error) {
+    uni.hideLoading()
+    uni.showToast({
+      title: '保存失败',
+      icon: 'none',
+    })
+    console.error('保存记录失败', error)
+  }
 }
 
 onLoad((options: {

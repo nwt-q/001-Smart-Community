@@ -9,6 +9,7 @@
 import type { ApplicationRecord, ApplicationRecordDetail } from '@/types/property-application'
 import { onLoad, onReady, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { deleteApplicationRecord, getApplicationRecordDetailList } from '@/api/property-application'
 import { buildRecordFromParams } from '@/hooks/property/use-property-apply-room'
 
 definePage({
@@ -23,11 +24,33 @@ const imgRecordList = ref<ApplicationRecordDetail[]>([])
 const videoRecordList = ref<ApplicationRecordDetail[]>([])
 const commonBaseUrl = ref<string>('')
 
-function loadRecordDetail() {
-  // TODO: 实现加载记录详情逻辑
-  console.log('加载记录详情')
+/** 加载记录详情 */
+async function loadRecordDetail() {
+  try {
+    const res = await getApplicationRecordDetailList({
+      page: 1,
+      row: 10,
+      communityId: recordInfo.value.communityId || '',
+      ardrId: recordInfo.value.ardrId,
+      roomName: recordInfo.value.roomName || '',
+    })
+
+    recordList.value = res
+    res.forEach((item: ApplicationRecordDetail) => {
+      if (item.relTypeCd === '19000') {
+        imgRecordList.value.push(item)
+      }
+      else if (item.relTypeCd === '21000') {
+        videoRecordList.value.push(item)
+      }
+    })
+  }
+  catch (error) {
+    console.error('加载记录详情失败', error)
+  }
 }
 
+/** 预览图片 */
 function preview(e: { target: { dataset: { index: number } } }) {
   const index = e.target.dataset.index
   const urls: string[] = []
@@ -40,17 +63,35 @@ function preview(e: { target: { dataset: { index: number } } }) {
   })
 }
 
+/** 删除记录 */
 function deleteRecord() {
   uni.showModal({
     title: '提示',
     content: '是否确认删除？',
-    success: (res) => {
+    success: async (res) => {
       if (res.confirm) {
-        // TODO: 实现删除记录逻辑
-        console.log('删除记录')
-        uni.navigateBack({
-          delta: 1,
-        })
+        try {
+          await deleteApplicationRecord({
+            ardrId: recordInfo.value.ardrId,
+            communityId: recordInfo.value.communityId || '',
+          })
+
+          uni.showToast({
+            title: '删除成功',
+          })
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1,
+            })
+          }, 1000)
+        }
+        catch (error) {
+          uni.showToast({
+            title: '删除失败',
+            icon: 'none',
+          })
+          console.error('删除记录失败', error)
+        }
       }
     },
   })
@@ -65,6 +106,7 @@ onLoad((options: {
   state?: string
   stateName?: string
 }) => {
+  // TODO: 请优化这段逻辑 缺少字段时就弹框报错 并且精简代码写法 别太冗长
   if (options.ardrId && options.applicationId && options.roomId && options.roomName && options.communityId && options.state && options.stateName) {
     recordInfo.value = buildRecordFromParams({
       ardrId: options.ardrId,
@@ -75,7 +117,7 @@ onLoad((options: {
       state: options.state,
       stateName: options.stateName,
     }) as ApplicationRecord & { communityId: string }
-    commonBaseUrl.value = '' // TODO: 从配置中获取
+    commonBaseUrl.value = ''
     loadRecordDetail()
   }
 })

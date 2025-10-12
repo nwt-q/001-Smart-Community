@@ -115,7 +115,7 @@ export function getApplicationRecordList(params: ApplicationRecordListParams) {
  * @returns 跟踪记录详情列表
  */
 export function getApplicationRecordDetailList(params: ApplicationRecordDetailParams) {
-  return http.Get<{ records: ApplicationRecordDetail[] }>('/app/applyRoomDiscountRecord/queryApplyRoomDiscountRecordDetail', {
+  return http.Get<ApplicationRecordDetail[]>('/app/applyRoomDiscountRecord/queryApplyRoomDiscountRecordDetail', {
     params,
   })
 }

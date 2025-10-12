@@ -9,6 +9,7 @@
 import type { ApplicationRecord, PropertyApplication } from '@/types/property-application'
 import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { getApplicationRecordList } from '@/api/property-application'
 import { buildApplyFromParams, extractRecordDetailParams } from '@/hooks/property/use-property-apply-room'
 import { TypedRouter } from '@/router'
 
@@ -30,9 +31,30 @@ const loadingContentText = ref({
   contentnomore: '没有更多',
 })
 
-function loadApply() {
-  // TODO: 实现加载申请记录逻辑
-  console.log('加载申请记录')
+/** 加载申请记录列表 */
+async function loadApply() {
+  loadingStatus.value = 'more'
+  try {
+    const res = await getApplicationRecordList({
+      page: page.value,
+      row: 10,
+      communityId: applyRoomInfo.value.communityId,
+      applicationId: applyRoomInfo.value.ardId,
+      roomId: applyRoomInfo.value.roomId,
+      roomName: applyRoomInfo.value.roomName,
+    })
+
+    applyRoomRecordList.value = applyRoomRecordList.value.concat(res.data)
+    page.value++
+
+    if (applyRoomRecordList.value.length >= res.total) {
+      loadingStatus.value = 'noMore'
+    }
+  }
+  catch (error) {
+    console.error('加载申请记录失败', error)
+    loadingStatus.value = 'noMore'
+  }
 }
 
 /** 新增跟踪记录 */
@@ -78,7 +100,6 @@ onLoad((options: {
 onShow(() => {
   page.value = 1
   applyRoomRecordList.value = []
-  communityId.value = '' // TODO: 获取当前小区ID
   loadApply()
 })
 

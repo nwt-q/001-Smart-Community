@@ -8,6 +8,7 @@
 import type { PropertyApplication } from '@/types/property-application'
 import { onReachBottom, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { getPropertyApplicationList, queryDictInfo } from '@/api/property-application'
 import { TypedRouter } from '@/router'
 
 definePage({
@@ -17,7 +18,7 @@ definePage({
   },
 })
 
-const communityId = ref<string>('')
+const communityId = ref<string>('COMM_001')
 const applyRoomList = ref<PropertyApplication[]>([])
 const page = ref(1)
 const loadingStatus = ref<'loading' | 'more' | 'noMore'>('loading')
@@ -32,17 +33,31 @@ const applyStatesIndex = ref(0)
 const applyState = ref<string>('')
 const roomName = ref<string>('')
 
+/** 搜索申请 */
 function searchApply() {
   applyRoomList.value = []
   page.value = 1
   loadApply()
 }
 
-function loadApplyState() {
-  // TODO: 实现加载申请状态逻辑
-  console.log('加载申请状态')
+/** 加载申请状态字典 */
+async function loadApplyState() {
+  try {
+    const res = await queryDictInfo({
+      name: 'apply_room_discount',
+      type: 'state',
+    })
+    console.log('字典接口返回数据：', res)
+    if (res) {
+      applyStates.value = [{ name: '请选择' }, ...res]
+    }
+  }
+  catch (error) {
+    console.error('加载申请状态失败', error)
+  }
 }
 
+/** 申请状态选择器变更 */
 function applyStatesChange(e: { detail: { value: number } }) {
   applyStatesIndex.value = e.detail.value
   if (applyStatesIndex.value === 0) {
@@ -53,9 +68,36 @@ function applyStatesChange(e: { detail: { value: number } }) {
   applyState.value = selected.statusCd || ''
 }
 
-function loadApply() {
-  // TODO: 实现加载申请列表逻辑
-  console.log('加载申请列表')
+/** 加载申请列表 */
+async function loadApply() {
+  loadingStatus.value = 'more'
+  try {
+    const res = await getPropertyApplicationList({
+      page: page.value,
+      row: 10,
+      communityId: communityId.value,
+      roomName: roomName.value,
+      state: applyState.value,
+    })
+
+    console.log('列表接口返回数据：', res)
+
+    if (res && res.data) {
+      applyRoomList.value = applyRoomList.value.concat(res.data)
+      page.value++
+
+      if (applyRoomList.value.length >= res.total) {
+        loadingStatus.value = 'noMore'
+      }
+    }
+    else {
+      loadingStatus.value = 'noMore'
+    }
+  }
+  catch (error) {
+    console.error('加载申请列表失败', error)
+    loadingStatus.value = 'noMore'
+  }
 }
 
 /** 跳转到房屋申请详情页 */
@@ -66,7 +108,7 @@ function toApplyRoomDetail(item: PropertyApplication) {
 onShow(() => {
   page.value = 1
   applyRoomList.value = []
-  communityId.value = '' // TODO: 获取当前小区ID
+  loadApplyState()
   loadApply()
 })
 
@@ -134,10 +176,16 @@ onReachBottom(() => {
           </view>
         </view>
       </view>
-      <uni-load-more :status="loadingStatus" :content-text="loadingContentText" />
+      <view class="py-4 text-center text-gray-400">
+        <text v-if="loadingStatus === 'loading'">{{ loadingContentText.contentrefresh }}</text>
+        <text v-else-if="loadingStatus === 'more'">{{ loadingContentText.contentdown }}</text>
+        <text v-else-if="loadingStatus === 'noMore'">{{ loadingContentText.contentnomore }}</text>
+      </view>
     </view>
     <view v-else>
-      <no-data-page />
+      <view class="flex flex-col items-center justify-center py-20">
+        <text class="text-gray-400">暂无数据</text>
+      </view>
     </view>
   </view>
 </template>
