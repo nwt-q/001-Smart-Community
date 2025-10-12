@@ -22,6 +22,11 @@ export type PageRoute
     | '/pages-sub/complaint/handle'
     | '/pages-sub/inspection/list'
     | '/pages-sub/inspection/execute'
+    | '/pages-sub/property/apply-room'
+    | '/pages-sub/property/apply-room-detail'
+    | '/pages-sub/property/apply-room-record'
+    | '/pages-sub/property/apply-room-record-handle'
+    | '/pages-sub/property/apply-room-record-detail'
 
 /** Tab页面路由类型 */
 export type TabRoute
@@ -74,6 +79,37 @@ export interface PageParams {
   '/pages-sub/inspection/execute': {
     taskId: string
     type?: 'normal' | 'reexamine'
+  }
+  /** 物业管理模块参数 */
+  '/pages-sub/property/apply-room': {}
+  '/pages-sub/property/apply-room-detail': {
+    ardId: string
+    communityId: string
+  }
+  '/pages-sub/property/apply-room-record': {
+    ardId: string
+    communityId: string
+    roomId: string
+    roomName: string
+    state: string
+    stateName: string
+  }
+  '/pages-sub/property/apply-room-record-handle': {
+    ardId: string
+    communityId: string
+    roomId: string
+    roomName: string
+    state: string
+    stateName: string
+  }
+  '/pages-sub/property/apply-room-record-detail': {
+    ardrId: string
+    applicationId: string
+    roomId: string
+    roomName: string
+    communityId: string
+    state: string
+    stateName: string
   }
 }
 

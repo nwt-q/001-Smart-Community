@@ -10,6 +10,8 @@
 import type { PropertyApplication } from '@/types/property-application'
 import { onLoad, onReady, onShow } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
+import { extractApplyRecordParams } from '@/hooks/property/use-property-apply-room'
+import { TypedRouter } from '@/router'
 
 definePage({
   style: {
@@ -147,10 +149,10 @@ function goBack() {
   uni.navigateBack({ delta: 1 })
 }
 
+/** 显示房屋申请跟踪记录 */
 function showApplyRoomRecord() {
-  uni.navigateTo({
-    url: `/pages-sub/property/apply-room-record?apply=${JSON.stringify(applyRoomInfo.value)}`,
-  })
+  const params = extractApplyRecordParams(applyRoomInfo.value)
+  TypedRouter.toApplyRoomRecord(params)
 }
 
 onLoad((options: { ardId?: string }) => {

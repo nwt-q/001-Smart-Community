@@ -9,6 +9,7 @@
 import type { PropertyApplication } from '@/types/property-application'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { buildApplyFromParams } from '@/hooks/property/use-property-apply-room'
 
 definePage({
   style: {
@@ -116,9 +117,25 @@ function dispatchRecord() {
   }, 1000)
 }
 
-onLoad((options: { apply: string }) => {
-  applyRoomInfo.value = JSON.parse(options.apply)
-  communityId.value = '' // TODO: 获取当前小区ID
+onLoad((options: {
+  ardId?: string
+  communityId?: string
+  roomId?: string
+  roomName?: string
+  state?: string
+  stateName?: string
+}) => {
+  if (options.ardId && options.communityId && options.roomId && options.roomName && options.state && options.stateName) {
+    applyRoomInfo.value = buildApplyFromParams({
+      ardId: options.ardId,
+      communityId: options.communityId,
+      roomId: options.roomId,
+      roomName: options.roomName,
+      state: options.state,
+      stateName: options.stateName,
+    }) as PropertyApplication
+    communityId.value = options.communityId
+  }
 })
 </script>
 

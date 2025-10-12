@@ -9,6 +9,8 @@
 import type { ApplicationRecord, PropertyApplication } from '@/types/property-application'
 import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { buildApplyFromParams, extractRecordDetailParams } from '@/hooks/property/use-property-apply-room'
+import { TypedRouter } from '@/router'
 
 definePage({
   style: {
@@ -33,22 +35,44 @@ function loadApply() {
   console.log('加载申请记录')
 }
 
+/** 新增跟踪记录 */
 function addRecord() {
-  uni.navigateTo({
-    url: `/pages-sub/property/apply-room-record-handle?apply=${JSON.stringify(applyRoomInfo.value)}`,
-  })
+  const params = {
+    ardId: applyRoomInfo.value.ardId,
+    communityId: applyRoomInfo.value.communityId,
+    roomId: applyRoomInfo.value.roomId,
+    roomName: applyRoomInfo.value.roomName,
+    state: applyRoomInfo.value.state,
+    stateName: applyRoomInfo.value.stateName,
+  }
+  TypedRouter.toApplyRoomRecordHandle(params)
 }
 
+/** 显示记录详情 */
 function showDetail(_item: ApplicationRecord) {
-  const itemWithCommunityId = { ..._item, communityId: applyRoomInfo.value.communityId }
-  uni.navigateTo({
-    url: `/pages-sub/property/apply-room-record-detail?apply=${JSON.stringify(itemWithCommunityId)}`,
-  })
+  const params = extractRecordDetailParams(_item, applyRoomInfo.value.communityId)
+  TypedRouter.toApplyRoomRecordDetail(params)
 }
 
-onLoad((options: { apply: string }) => {
-  applyRoomInfo.value = JSON.parse(options.apply)
-  console.log(applyRoomInfo.value)
+onLoad((options: {
+  ardId?: string
+  communityId?: string
+  roomId?: string
+  roomName?: string
+  state?: string
+  stateName?: string
+}) => {
+  if (options.ardId && options.communityId && options.roomId && options.roomName && options.state && options.stateName) {
+    applyRoomInfo.value = buildApplyFromParams({
+      ardId: options.ardId,
+      communityId: options.communityId,
+      roomId: options.roomId,
+      roomName: options.roomName,
+      state: options.state,
+      stateName: options.stateName,
+    }) as PropertyApplication
+    console.log(applyRoomInfo.value)
+  }
 })
 
 onShow(() => {

@@ -9,6 +9,7 @@
 import type { ApplicationRecord, ApplicationRecordDetail } from '@/types/property-application'
 import { onLoad, onReady, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { buildRecordFromParams } from '@/hooks/property/use-property-apply-room'
 
 definePage({
   style: {
@@ -55,10 +56,28 @@ function deleteRecord() {
   })
 }
 
-onLoad((options: { apply: string }) => {
-  recordInfo.value = JSON.parse(options.apply)
-  commonBaseUrl.value = '' // TODO: 从配置中获取
-  loadRecordDetail()
+onLoad((options: {
+  ardrId?: string
+  applicationId?: string
+  roomId?: string
+  roomName?: string
+  communityId?: string
+  state?: string
+  stateName?: string
+}) => {
+  if (options.ardrId && options.applicationId && options.roomId && options.roomName && options.communityId && options.state && options.stateName) {
+    recordInfo.value = buildRecordFromParams({
+      ardrId: options.ardrId,
+      applicationId: options.applicationId,
+      roomId: options.roomId,
+      roomName: options.roomName,
+      communityId: options.communityId,
+      state: options.state,
+      stateName: options.stateName,
+    }) as ApplicationRecord & { communityId: string }
+    commonBaseUrl.value = '' // TODO: 从配置中获取
+    loadRecordDetail()
+  }
 })
 
 onReady(() => {

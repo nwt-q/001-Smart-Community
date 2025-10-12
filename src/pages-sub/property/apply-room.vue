@@ -8,6 +8,7 @@
 import type { PropertyApplication } from '@/types/property-application'
 import { onReachBottom, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { TypedRouter } from '@/router'
 
 definePage({
   style: {
@@ -57,10 +58,9 @@ function loadApply() {
   console.log('加载申请列表')
 }
 
+/** 跳转到房屋申请详情页 */
 function toApplyRoomDetail(item: PropertyApplication) {
-  uni.navigateTo({
-    url: `/pages-sub/property/apply-room-detail?ardId=${item.ardId}&communityId=${item.communityId}`,
-  })
+  TypedRouter.toApplyRoomDetail(item.ardId, item.communityId)
 }
 
 onShow(() => {

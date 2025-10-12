@@ -134,6 +134,11 @@ export const {
   toHome,
   toAddressList,
   toMe,
+  toApplyRoomList,
+  toApplyRoomDetail,
+  toApplyRoomRecord,
+  toApplyRoomRecordHandle,
+  toApplyRoomRecordDetail,
 } = TypedRouter
 
 /** 路由工具函数 */
