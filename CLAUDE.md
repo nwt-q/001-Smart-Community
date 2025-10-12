@@ -89,6 +89,11 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
 3. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
 
+### 5. jsdoc 注释的 `@example` 标签不要写冗长复杂的例子
+
+1. 你应该积极主动的函数编写 jsdoc 注释的 `@example` 标签。
+2. 但是 `@example` 标签不允许写复杂的例子，请写简单的单行例子。完整的函数使用例子，你应该择机在函数文件的附近编写md文档，在文档内给出使用例子。
+
 ## 其他注意事项
 
 1. 每次你完成更改时，都**不要运行**任何类型检查命令。我们项目不需要你去运行类型检查命令。
