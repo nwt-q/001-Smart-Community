@@ -448,15 +448,19 @@ apply-room.vue
 4. 认真实现 `src\pages-sub\property\*.vue` 页面内出现的 `TODO` 待办。对接接口，实现业务。
 5. 主动运行谷歌浏览器 MCP，在这些页面提供的 URL 地址内，访问并测试你是否对接了上述接口，实现了该页面应有的功能。
 
-### 03 使用合适的组件
+### 03 使用合适的下拉加载组件
+
+请深度思考。
 
 <!-- TODO -->
 
-`<uni-load-more :status="loadingStatus" :content-text="loadingContentText" />`
-`<no-data-page />`
+注意到你之前删减掉的组件 `<uni-load-more :status="loadingStatus" :content-text="loadingContentText" />` 。请你用 wot-design-uni 的 loadmore 组件来完成修改。我希望你用 `<wd-loadmore>` 组件来完成该部分功能。
 
-- https://wot-ui.cn/component/loadmore.html
+请你主动阅读该文档。学会如何使用 `<wd-loadmore>` 组件。
+
 - https://github.com/Moonofweisheng/wot-design-uni/blob/master/docs/en-US/component/loadmore.md
+
+<!-- `<no-data-page />` -->
 
 ### 04 使用 useRequest 做接口请求
 
