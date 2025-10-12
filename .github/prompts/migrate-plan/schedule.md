@@ -431,6 +431,23 @@ apply-room.vue
 
 3. 使用 `route-migration` 子代理，制作严格的路由跳转函数，实现严格的强类型路由跳转。
 
+### 02 对接 mock 接口
+
+请深度思考。
+
+1. 有策略的阅读 `旧项目` 的页面：
+
+- gitee-example\pages\applyRoom
+- gitee-example\pages\applyRoomDetail
+- gitee-example\pages\applyRoomRecord
+- gitee-example\pages\applyRoomRecordDetail
+- gitee-example\pages\applyRoomRecordHandle
+
+2. 阅读 `src\api\mock\property-application.mock.ts` 和 `src\api\property-application.ts` ，认真**思考**，自己在迁移旧项目的这 5 个页面时，是否出现了遗漏接口的情况？如果有遗漏，请在 mock 文件内 api 文件内补全。请主动使用 `api-migration` 子代理补全接口。
+3. 阅读 `src\pages-sub\property\*.vue` 的这几个`本项目`的文件，在这几个页面内实现接口，对接 `src\api\property-application.ts` 提供的接口。
+4. 认真实现 `src\pages-sub\property\*.vue` 页面内出现的 `TODO` 待办。对接接口，实现业务。
+5. 主动运行谷歌浏览器 MCP，在这些页面提供的 URL 地址内，访问并测试你是否对接了上述接口，实现了该页面应有的功能。
+
 ### 产生的冗余文件
 
 docs 根目录内的文件。
