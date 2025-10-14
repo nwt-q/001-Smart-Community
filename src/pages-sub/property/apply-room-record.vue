@@ -24,16 +24,11 @@ const applyRoomInfo = ref<PropertyApplication>({} as PropertyApplication)
 const communityId = ref<string>('')
 const applyRoomRecordList = ref<ApplicationRecord[]>([])
 const page = ref(1)
-const loadingStatus = ref<'loading' | 'more' | 'noMore'>('loading')
-const loadingContentText = ref({
-  contentdown: '上拉加载更多',
-  contentrefresh: '加载中',
-  contentnomore: '没有更多',
-})
+const loadingState = ref<'loading' | 'finished' | 'error'>('loading')
 
 /** 加载申请记录列表 */
 async function loadApply() {
-  loadingStatus.value = 'more'
+  loadingState.value = 'loading'
   try {
     const res = await getApplicationRecordList({
       page: page.value,
@@ -48,12 +43,15 @@ async function loadApply() {
     page.value++
 
     if (applyRoomRecordList.value.length >= res.total) {
-      loadingStatus.value = 'noMore'
+      loadingState.value = 'finished'
+    }
+    else {
+      loadingState.value = 'loading'
     }
   }
   catch (error) {
     console.error('加载申请记录失败', error)
-    loadingStatus.value = 'noMore'
+    loadingState.value = 'error'
   }
 }
 
@@ -104,7 +102,7 @@ onShow(() => {
 })
 
 onReachBottom(() => {
-  if (loadingStatus.value === 'noMore') {
+  if (loadingState.value === 'finished') {
     return
   }
   loadApply()
@@ -139,7 +137,13 @@ onReachBottom(() => {
           </view>
         </view>
       </view>
-      <uni-load-more :status="loadingStatus" :content-text="loadingContentText" />
+      <wd-loadmore
+        :state="loadingState"
+        loading-text="加载中"
+        finished-text="没有更多"
+        error-text="加载失败，点击重试"
+        @reload="loadApply"
+      />
     </view>
     <view v-else>
       <no-data-page />

@@ -21,12 +21,7 @@ definePage({
 const communityId = ref<string>('COMM_001')
 const applyRoomList = ref<PropertyApplication[]>([])
 const page = ref(1)
-const loadingStatus = ref<'loading' | 'more' | 'noMore'>('loading')
-const loadingContentText = ref({
-  contentdown: '上拉加载更多',
-  contentrefresh: '加载中',
-  contentnomore: '没有更多',
-})
+const loadingState = ref<'loading' | 'finished' | 'error'>('loading')
 
 const applyStates = ref<Array<{ name: string, statusCd?: string }>>([{ name: '请选择' }])
 const applyStatesIndex = ref(0)
@@ -70,7 +65,7 @@ function applyStatesChange(e: { detail: { value: number } }) {
 
 /** 加载申请列表 */
 async function loadApply() {
-  loadingStatus.value = 'more'
+  loadingState.value = 'loading'
   try {
     const res = await getPropertyApplicationList({
       page: page.value,
@@ -87,16 +82,19 @@ async function loadApply() {
       page.value++
 
       if (applyRoomList.value.length >= res.total) {
-        loadingStatus.value = 'noMore'
+        loadingState.value = 'finished'
+      }
+      else {
+        loadingState.value = 'loading'
       }
     }
     else {
-      loadingStatus.value = 'noMore'
+      loadingState.value = 'finished'
     }
   }
   catch (error) {
     console.error('加载申请列表失败', error)
-    loadingStatus.value = 'noMore'
+    loadingState.value = 'error'
   }
 }
 
@@ -113,7 +111,7 @@ onShow(() => {
 })
 
 onReachBottom(() => {
-  if (loadingStatus.value === 'noMore') {
+  if (loadingState.value === 'finished') {
     return
   }
   loadApply()
@@ -176,11 +174,13 @@ onReachBottom(() => {
           </view>
         </view>
       </view>
-      <view class="py-4 text-center text-gray-400">
-        <text v-if="loadingStatus === 'loading'">{{ loadingContentText.contentrefresh }}</text>
-        <text v-else-if="loadingStatus === 'more'">{{ loadingContentText.contentdown }}</text>
-        <text v-else-if="loadingStatus === 'noMore'">{{ loadingContentText.contentnomore }}</text>
-      </view>
+      <wd-loadmore
+        :state="loadingState"
+        loading-text="加载中"
+        finished-text="没有更多"
+        error-text="加载失败，点击重试"
+        @reload="loadApply"
+      />
     </view>
     <view v-else>
       <view class="flex flex-col items-center justify-center py-20">
