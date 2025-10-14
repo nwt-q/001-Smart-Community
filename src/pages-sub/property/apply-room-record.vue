@@ -8,7 +8,8 @@
 <script setup lang="ts">
 import type { ApplicationRecord, PropertyApplication } from '@/types/property-application'
 import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { useRequest } from 'alova/client'
+import { ref, watch } from 'vue'
 import { getApplicationRecordList } from '@/api/property-application'
 import { buildApplyFromParams, extractRecordDetailParams } from '@/hooks/property/use-property-apply-room'
 import { TypedRouter } from '@/router'
@@ -26,34 +27,63 @@ const applyRoomRecordList = ref<ApplicationRecord[]>([])
 const page = ref(1)
 const loadingState = ref<'loading' | 'finished' | 'error'>('loading')
 
-/** 加载申请记录列表 */
-async function loadApply() {
-  loadingState.value = 'loading'
-  try {
-    const res = await getApplicationRecordList({
-      page: page.value,
-      row: 10,
-      communityId: applyRoomInfo.value.communityId,
-      applicationId: applyRoomInfo.value.ardId,
-      roomId: applyRoomInfo.value.roomId,
-      roomName: applyRoomInfo.value.roomName,
-    })
+/** 加载申请记录列表 - 使用 useRequest */
+const {
+  loading: recordListLoading,
+  send: loadRecordListRequest,
+  onSuccess: onRecordListSuccess,
+  onError: onRecordListError,
+  onComplete: onRecordListFinally,
+} = useRequest(
+  (pageNum: number) => getApplicationRecordList({
+    page: pageNum,
+    row: 10,
+    communityId: applyRoomInfo.value.communityId,
+    applicationId: applyRoomInfo.value.ardId,
+    roomId: applyRoomInfo.value.roomId,
+    roomName: applyRoomInfo.value.roomName,
+  }),
+  {
+    immediate: false,
+  },
+)
 
-    applyRoomRecordList.value = applyRoomRecordList.value.concat(res.data)
-    page.value++
+onRecordListSuccess((res) => {
+  applyRoomRecordList.value = applyRoomRecordList.value.concat(res.data)
+  page.value++
+})
 
-    if (applyRoomRecordList.value.length >= res.total) {
-      loadingState.value = 'finished'
-    }
-    else {
-      loadingState.value = 'loading'
-    }
+onRecordListError((error) => {
+  console.error('加载申请记录失败', error)
+  loadingState.value = 'error'
+  uni.showToast({
+    title: '加载记录失败',
+    icon: 'none',
+  })
+})
+
+/** 统一处理 finished 状态 */
+onRecordListFinally((event) => {
+  // 只有在成功的情况下才判断是否设置 finished 状态
+  if (event.error) {
+    // 错误情况已在 onError 中处理
+    return
   }
-  catch (error) {
-    console.error('加载申请记录失败', error)
-    loadingState.value = 'error'
+
+  const res = event.data
+  // 判断是否已加载完所有数据：使用响应式数组长度与 total 比较
+  if (!res || applyRoomRecordList.value.length >= res.total) {
+    loadingState.value = 'finished'
   }
-}
+  // 注意：loading 状态由 watch 自动管理，这里不需要设置
+})
+
+/** 监听 loading 状态，自动设置 loadingState */
+watch(recordListLoading, (isLoading) => {
+  if (isLoading) {
+    loadingState.value = 'loading'
+  }
+})
 
 /** 新增跟踪记录 */
 function addRecord() {
@@ -98,14 +128,14 @@ onLoad((options: {
 onShow(() => {
   page.value = 1
   applyRoomRecordList.value = []
-  loadApply()
+  loadRecordListRequest(1)
 })
 
 onReachBottom(() => {
-  if (loadingState.value === 'finished') {
+  if (loadingState.value === 'finished' || recordListLoading.value) {
     return
   }
-  loadApply()
+  loadRecordListRequest(page.value)
 })
 </script>
 
@@ -142,7 +172,7 @@ onReachBottom(() => {
         loading-text="加载中"
         finished-text="没有更多"
         error-text="加载失败，点击重试"
-        @reload="loadApply"
+        @reload="() => loadRecordListRequest(page.value)"
       />
     </view>
     <view v-else>

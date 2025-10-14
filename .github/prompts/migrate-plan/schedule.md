@@ -467,6 +467,25 @@ apply-room.vue
 2. 直接使用 `'alova/client'` 模块提供的 useRequest 函数，来重构接口请求。
 3. 严格遵照 `api-migration` 子代理的需求来改造代码。请阅读 `api-migration` 子代理的要求来完成改造。
 
+### 05 使用 onComplete 回调函数优化
+
+使用 useRequest 组合式 api 的 onComplete 回调函数，优化 loadingState 变量设置成 finished 的赋值逻辑。要求在 onComplete 回调函数内，统一处理这种 finished 状态的变更写法。
+
+### 06 使用 useRequest 的 loading 响应式变量来设置 loadingState 变量取值为 `loading` 字符串的状态
+
+重构代码，用 vue 的 watch 监听来监控 loading 的取值，进而动态设置 loadingState 变量的 `loading` 字符串。
+
+如果处于正在 loading ，那么就通过 watch 来设置字符串状态值。
+
+### 07 更换使用的数组
+
+针对：
+
+- src\pages-sub\property\apply-room.vue
+- src\pages-sub\property\apply-room-record.vue
+
+在统一处理 finished 状态时，不使用 res.data.length 和 res.data 。这会出现类型报错。请你思考，使用对应页面的响应式变量数组，来做逻辑判断。
+
 ### 05 处理类型报错
 
 <!-- TODO -->

@@ -11,6 +11,7 @@
 <script setup lang="ts">
 import type { PropertyApplication } from '@/types/property-application'
 import { onLoad, onReady, onShow } from '@dcloudio/uni-app'
+import { useRequest } from 'alova/client'
 import { computed, ref } from 'vue'
 import {
   getFeeDetailList,
@@ -68,21 +69,34 @@ function getBase64List(_data: string[]) {
   photos.value = _data
 }
 
-/** 查询费用项缴费历史 */
-async function listFeeDetail() {
-  try {
-    const res = await getFeeDetailList({
-      page: 1,
-      row: 50,
-      communityId: applyRoomInfo.value.communityId,
-      feeId: applyRoomInfo.value.feeId,
-    })
-    fees.value = res.feeDetails
-  }
-  catch (error) {
-    console.error('查询费用项缴费历史失败', error)
-  }
-}
+/** 查询费用项缴费历史 - 使用 useRequest */
+const {
+  send: loadFeeDetailRequest,
+  onSuccess: onFeeDetailSuccess,
+  onError: onFeeDetailError,
+} = useRequest(
+  () => getFeeDetailList({
+    page: 1,
+    row: 50,
+    communityId: applyRoomInfo.value.communityId,
+    feeId: applyRoomInfo.value.feeId,
+  }),
+  {
+    immediate: false,
+  },
+)
+
+onFeeDetailSuccess((res) => {
+  fees.value = res.feeDetails
+})
+
+onFeeDetailError((error) => {
+  console.error('查询费用项缴费历史失败', error)
+  uni.showToast({
+    title: '查询费用历史失败',
+    icon: 'none',
+  })
+})
 
 /** 缴费历史复选框选择 */
 function checkboxChange(e: { detail: { value: string[] } }) {
@@ -120,23 +134,40 @@ function switchShowModel() {
   errorSwitch.value = !errorSwitch.value
 }
 
+/** 查询费用折扣列表 - 使用 useRequest */
+const {
+  send: loadFeeDiscountRequest,
+  onSuccess: onFeeDiscountSuccess,
+  onError: onFeeDiscountError,
+} = useRequest(
+  (discountTypeId: string) => getFeeDiscountList({
+    page: 1,
+    row: 100,
+    discountType: discountTypeId,
+    communityId: applyRoomInfo.value.communityId,
+  }),
+  {
+    immediate: false,
+  },
+)
+
+onFeeDiscountSuccess((res) => {
+  discountIdRange.value = res
+})
+
+onFeeDiscountError((error) => {
+  console.error('查询费用折扣失败', error)
+  uni.showToast({
+    title: '查询费用折扣失败',
+    icon: 'none',
+  })
+})
+
 /** 修改折扣类型 */
-async function discountTypeRangeChange(e: { detail: { value: number } }) {
+function discountTypeRangeChange(e: { detail: { value: number } }) {
   const index = e.detail.value
   discountType.value = discountTypeRange.value[index]
-
-  try {
-    const res = await getFeeDiscountList({
-      page: 1,
-      row: 100,
-      discountType: (discountType.value as { id: string }).id,
-      communityId: applyRoomInfo.value.communityId,
-    })
-    discountIdRange.value = res
-  }
-  catch (error) {
-    console.error('查询费用折扣失败', error)
-  }
+  loadFeeDiscountRequest((discountType.value as { id: string }).id)
 }
 
 /** 修改折扣名称 */
@@ -166,143 +197,166 @@ function reviewStateRangeChange(e: { detail: { value: number } }) {
   reviewRemark.value = (reviewState.value as { state: number, name: string }).name
 }
 
-/** 保存修改 */
-async function submit() {
-  uni.showLoading({
-    title: '请稍候...',
+/** 提交验房更新 - 使用 useRequest */
+const {
+  loading: checkUpdateLoading,
+  send: submitCheckRequest,
+  onSuccess: onCheckSuccess,
+  onError: onCheckError,
+} = useRequest(
+  (data: any) => submitCheckUpdate(data),
+  {
+    immediate: false,
+  },
+)
+
+onCheckSuccess(() => {
+  uni.showToast({
+    title: '保存成功',
   })
+  setTimeout(() => {
+    uni.navigateBack({})
+  }, 1000)
+})
 
-  try {
-    const startTime = `${applyRoomInfo.value.startTime.split(' ')[0]} 0:00:00`
-    const endTime = `${applyRoomInfo.value.endTime.split(' ')[0]} 23:59:59`
-    const ardId = applyRoomInfo.value.ardId
-    const communityId = applyRoomInfo.value.communityId
-    const createRemark = applyRoomInfo.value.createRemark
+onCheckError((error) => {
+  uni.showToast({
+    title: '操作失败',
+    icon: 'none',
+  })
+  console.error('提交失败', error)
+})
 
-    // 验房提交
-    if (applyRoomInfo.value.state === '1') {
-      const state = (checkState.value as { state: number }).state
-      if (!state) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请选择验房状态',
-          icon: 'none',
-        })
-        return
-      }
+/** 提交审核更新 - 使用 useRequest */
+const {
+  loading: reviewUpdateLoading,
+  send: submitReviewRequest,
+  onSuccess: onReviewSuccess,
+  onError: onReviewError,
+} = useRequest(
+  (data: any) => submitReviewUpdate(data),
+  {
+    immediate: false,
+  },
+)
 
-      if (!checkRemark.value) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请填写验房备注',
-          icon: 'none',
-        })
-        return
-      }
+onReviewSuccess(() => {
+  uni.showToast({
+    title: '保存成功',
+  })
+  setTimeout(() => {
+    goBack()
+  }, 1000)
+})
 
-      await submitCheckUpdate({
-        ardId,
-        communityId,
-        state: state.toString(),
-        checkRemark: checkRemark.value,
-        startTime,
-        endTime,
-        createRemark,
-        photos: photos.value,
-      })
+onReviewError((error) => {
+  uni.showToast({
+    title: '操作失败',
+    icon: 'none',
+  })
+  console.error('提交失败', error)
+})
 
-      uni.hideLoading()
+/** 保存修改 */
+function submit() {
+  const startTime = `${applyRoomInfo.value.startTime.split(' ')[0]} 0:00:00`
+  const endTime = `${applyRoomInfo.value.endTime.split(' ')[0]} 23:59:59`
+  const ardId = applyRoomInfo.value.ardId
+  const communityId = applyRoomInfo.value.communityId
+  const createRemark = applyRoomInfo.value.createRemark
+
+  // 验房提交
+  if (applyRoomInfo.value.state === '1') {
+    const state = (checkState.value as { state: number }).state
+    if (!state) {
       uni.showToast({
-        title: '保存成功',
+        title: '请选择验房状态',
+        icon: 'none',
       })
-      setTimeout(() => {
-        uni.navigateBack({})
-      }, 1000)
+      return
     }
-    // 审核提交
-    else if (applyRoomInfo.value.state === '2') {
-      const state = (reviewState.value as { state: number }).state
-      if (!state) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请选择审批状态',
-          icon: 'none',
-        })
-        return
-      }
 
-      if (state === 4 && !(discountId.value as any).discountId) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请选择优惠名称',
-          icon: 'none',
-        })
-        return
-      }
-
-      if (state === 4 && !returnWay.value) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请选择退还方式',
-          icon: 'none',
-        })
-        return
-      }
-
-      if (state === 4 && returnWay.value === '1002' && selectedFees.value.length <= 0) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请选择缴费记录',
-          icon: 'none',
-        })
-        return
-      }
-
-      if (!reviewRemark.value) {
-        uni.hideLoading()
-        uni.showToast({
-          title: '请填写审批备注',
-          icon: 'none',
-        })
-        return
-      }
-
-      await submitReviewUpdate({
-        ardId,
-        communityId,
-        state: state.toString(),
-        reviewRemark: reviewRemark.value,
-        startTime,
-        endTime,
-        createRemark,
-        discountType: (discountType.value as any).id || '',
-        discountId: (discountId.value as any).discountId || '',
-        returnWay: returnWay.value,
-        selectedFees: selectedFees.value,
-        feeId: applyRoomInfo.value.feeId,
-        roomId: applyRoomInfo.value.roomId,
-        checkRemark: applyRoomInfo.value.checkRemark,
-        fees: fees.value,
-        configId: '',
-        discounts: discountIdRange.value,
-      })
-
-      uni.hideLoading()
+    if (!checkRemark.value) {
       uni.showToast({
-        title: '保存成功',
+        title: '请填写验房备注',
+        icon: 'none',
       })
-      setTimeout(() => {
-        goBack()
-      }, 1000)
+      return
     }
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: '操作失败',
-      icon: 'none',
+
+    submitCheckRequest({
+      ardId,
+      communityId,
+      state: state.toString(),
+      checkRemark: checkRemark.value,
+      startTime,
+      endTime,
+      createRemark,
+      photos: photos.value,
     })
-    console.error('提交失败', error)
+  }
+  // 审核提交
+  else if (applyRoomInfo.value.state === '2') {
+    const state = (reviewState.value as { state: number }).state
+    if (!state) {
+      uni.showToast({
+        title: '请选择审批状态',
+        icon: 'none',
+      })
+      return
+    }
+
+    if (state === 4 && !(discountId.value as any).discountId) {
+      uni.showToast({
+        title: '请选择优惠名称',
+        icon: 'none',
+      })
+      return
+    }
+
+    if (state === 4 && !returnWay.value) {
+      uni.showToast({
+        title: '请选择退还方式',
+        icon: 'none',
+      })
+      return
+    }
+
+    if (state === 4 && returnWay.value === '1002' && selectedFees.value.length <= 0) {
+      uni.showToast({
+        title: '请选择缴费记录',
+        icon: 'none',
+      })
+      return
+    }
+
+    if (!reviewRemark.value) {
+      uni.showToast({
+        title: '请填写审批备注',
+        icon: 'none',
+      })
+      return
+    }
+
+    submitReviewRequest({
+      ardId,
+      communityId,
+      state: state.toString(),
+      reviewRemark: reviewRemark.value,
+      startTime,
+      endTime,
+      createRemark,
+      discountType: (discountType.value as any).id || '',
+      discountId: (discountId.value as any).discountId || '',
+      returnWay: returnWay.value,
+      selectedFees: selectedFees.value,
+      feeId: applyRoomInfo.value.feeId,
+      roomId: applyRoomInfo.value.roomId,
+      checkRemark: applyRoomInfo.value.checkRemark,
+      fees: fees.value,
+      configId: '',
+      discounts: discountIdRange.value,
+    })
   }
 }
 
@@ -331,7 +385,38 @@ function showApplyRoomRecord() {
   TypedRouter.toApplyRoomRecord(params)
 }
 
-onLoad(async (options: { ardId?: string, communityId?: string }) => {
+/** 加载申请详情 - 使用 useRequest */
+const {
+  send: loadDetailRequest,
+  onSuccess: onDetailSuccess,
+  onError: onDetailError,
+} = useRequest(
+  (params: { page: number, row: number, communityId: string, ardId: string }) =>
+    getPropertyApplicationDetail(params),
+  {
+    immediate: false,
+  },
+)
+
+onDetailSuccess((res) => {
+  if (res && res.data && res.data.length > 0) {
+    applyRoomInfo.value = res.data[0]
+    sendImgList.value = applyRoomInfo.value.urls || []
+    applyRoomInfo.value.startTime = applyRoomInfo.value.startTime.split(' ')[0]
+    applyRoomInfo.value.endTime = applyRoomInfo.value.endTime.split(' ')[0]
+    loadFeeDetailRequest()
+  }
+})
+
+onDetailError((error) => {
+  console.error('加载申请详情失败', error)
+  uni.showToast({
+    title: '加载失败',
+    icon: 'none',
+  })
+})
+
+onLoad((options: { ardId?: string, communityId?: string }) => {
   if (!options.ardId || !options.communityId) {
     uni.showToast({
       title: '参数错误',
@@ -340,29 +425,12 @@ onLoad(async (options: { ardId?: string, communityId?: string }) => {
     return
   }
 
-  try {
-    const res = await getPropertyApplicationDetail({
-      page: 1,
-      row: 1,
-      communityId: options.communityId,
-      ardId: options.ardId,
-    })
-
-    if (res && res.data && res.data.length > 0) {
-      applyRoomInfo.value = res.data[0]
-      sendImgList.value = applyRoomInfo.value.urls || []
-      applyRoomInfo.value.startTime = applyRoomInfo.value.startTime.split(' ')[0]
-      applyRoomInfo.value.endTime = applyRoomInfo.value.endTime.split(' ')[0]
-      listFeeDetail()
-    }
-  }
-  catch (error) {
-    console.error('加载申请详情失败', error)
-    uni.showToast({
-      title: '加载失败',
-      icon: 'none',
-    })
-  }
+  loadDetailRequest({
+    page: 1,
+    row: 1,
+    communityId: options.communityId,
+    ardId: options.ardId,
+  })
 })
 
 onReady(() => {

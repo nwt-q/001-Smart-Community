@@ -7,7 +7,8 @@
 <script setup lang="ts">
 import type { PropertyApplication } from '@/types/property-application'
 import { onReachBottom, onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { useRequest } from 'alova/client'
+import { ref, watch } from 'vue'
 import { getPropertyApplicationList, queryDictInfo } from '@/api/property-application'
 import { TypedRouter } from '@/router'
 
@@ -28,28 +29,103 @@ const applyStatesIndex = ref(0)
 const applyState = ref<string>('')
 const roomName = ref<string>('')
 
+/** 加载申请状态字典 - 使用 useRequest */
+const {
+  send: loadApplyStateRequest,
+  onSuccess: onApplyStateSuccess,
+  onError: onApplyStateError,
+} = useRequest(
+  () => queryDictInfo({
+    name: 'apply_room_discount',
+    type: 'state',
+  }),
+  {
+    immediate: false,
+  },
+)
+
+onApplyStateSuccess((res) => {
+  console.log('字典接口返回数据：', res)
+  if (res) {
+    applyStates.value = [{ name: '请选择' }, ...res]
+  }
+})
+
+onApplyStateError((error) => {
+  console.error('加载申请状态失败', error)
+  uni.showToast({
+    title: '加载状态失败',
+    icon: 'none',
+  })
+})
+
+/** 加载申请列表 - 使用 useRequest */
+const {
+  loading: applyListLoading,
+
+  send: loadApplyListRequest,
+  onSuccess: onApplyListSuccess,
+  onError: onApplyListError,
+  onComplete: onApplyListFinally,
+} = useRequest(
+  (pageNum: number) => getPropertyApplicationList({
+    page: pageNum,
+    row: 10,
+    communityId: communityId.value,
+    roomName: roomName.value,
+    state: applyState.value,
+  }),
+  {
+    immediate: false,
+  },
+)
+
+onApplyListSuccess((res) => {
+  console.log('列表接口返回数据：', res)
+
+  if (res && res.data) {
+    applyRoomList.value = applyRoomList.value.concat(res.data)
+    page.value++
+  }
+})
+
+onApplyListError((error) => {
+  console.error('加载申请列表失败', error)
+  loadingState.value = 'error'
+  uni.showToast({
+    title: '加载列表失败',
+    icon: 'none',
+  })
+})
+
+/** 统一处理 finished 状态 */
+onApplyListFinally((event) => {
+  // 只有在成功的情况下才判断是否设置 finished 状态
+  if (event.error) {
+    // 错误情况已在 onError 中处理
+    return
+  }
+
+  const res = event.data
+  // 判断是否已加载完所有数据：使用响应式数组长度与 total 比较
+  if (!res || applyRoomList.value.length >= res.total) {
+    loadingState.value = 'finished'
+  }
+  // 注意：loading 状态由 watch 自动管理，这里不需要设置
+})
+
+/** 监听 loading 状态，自动设置 loadingState */
+watch(applyListLoading, (isLoading) => {
+  if (isLoading) {
+    loadingState.value = 'loading'
+  }
+})
+
 /** 搜索申请 */
 function searchApply() {
   applyRoomList.value = []
   page.value = 1
-  loadApply()
-}
-
-/** 加载申请状态字典 */
-async function loadApplyState() {
-  try {
-    const res = await queryDictInfo({
-      name: 'apply_room_discount',
-      type: 'state',
-    })
-    console.log('字典接口返回数据：', res)
-    if (res) {
-      applyStates.value = [{ name: '请选择' }, ...res]
-    }
-  }
-  catch (error) {
-    console.error('加载申请状态失败', error)
-  }
+  loadApplyListRequest(1)
 }
 
 /** 申请状态选择器变更 */
@@ -63,41 +139,6 @@ function applyStatesChange(e: { detail: { value: number } }) {
   applyState.value = selected.statusCd || ''
 }
 
-/** 加载申请列表 */
-async function loadApply() {
-  loadingState.value = 'loading'
-  try {
-    const res = await getPropertyApplicationList({
-      page: page.value,
-      row: 10,
-      communityId: communityId.value,
-      roomName: roomName.value,
-      state: applyState.value,
-    })
-
-    console.log('列表接口返回数据：', res)
-
-    if (res && res.data) {
-      applyRoomList.value = applyRoomList.value.concat(res.data)
-      page.value++
-
-      if (applyRoomList.value.length >= res.total) {
-        loadingState.value = 'finished'
-      }
-      else {
-        loadingState.value = 'loading'
-      }
-    }
-    else {
-      loadingState.value = 'finished'
-    }
-  }
-  catch (error) {
-    console.error('加载申请列表失败', error)
-    loadingState.value = 'error'
-  }
-}
-
 /** 跳转到房屋申请详情页 */
 function toApplyRoomDetail(item: PropertyApplication) {
   TypedRouter.toApplyRoomDetail(item.ardId, item.communityId)
@@ -106,15 +147,15 @@ function toApplyRoomDetail(item: PropertyApplication) {
 onShow(() => {
   page.value = 1
   applyRoomList.value = []
-  loadApplyState()
-  loadApply()
+  loadApplyStateRequest()
+  loadApplyListRequest(1)
 })
 
 onReachBottom(() => {
-  if (loadingState.value === 'finished') {
+  if (loadingState.value === 'finished' || applyListLoading.value) {
     return
   }
-  loadApply()
+  loadApplyListRequest(page.value)
 })
 </script>
 
@@ -179,7 +220,7 @@ onReachBottom(() => {
         loading-text="加载中"
         finished-text="没有更多"
         error-text="加载失败，点击重试"
-        @reload="loadApply"
+        @reload="() => loadApplyListRequest(page.value)"
       />
     </view>
     <view v-else>

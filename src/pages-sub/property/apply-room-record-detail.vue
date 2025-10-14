@@ -8,6 +8,7 @@
 <script setup lang="ts">
 import type { ApplicationRecord, ApplicationRecordDetail } from '@/types/property-application'
 import { onLoad, onReady, onShow } from '@dcloudio/uni-app'
+import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { deleteApplicationRecord, getApplicationRecordDetailList } from '@/api/property-application'
 import { buildRecordFromParams } from '@/hooks/property/use-property-apply-room'
@@ -24,31 +25,43 @@ const imgRecordList = ref<ApplicationRecordDetail[]>([])
 const videoRecordList = ref<ApplicationRecordDetail[]>([])
 const commonBaseUrl = ref<string>('')
 
-/** 加载记录详情 */
-async function loadRecordDetail() {
-  try {
-    const res = await getApplicationRecordDetailList({
-      page: 1,
-      row: 10,
-      communityId: recordInfo.value.communityId || '',
-      ardrId: recordInfo.value.ardrId,
-      roomName: recordInfo.value.roomName || '',
-    })
+/** 加载记录详情 - 使用 useRequest */
+const {
+  send: loadRecordDetailRequest,
+  onSuccess: onRecordDetailSuccess,
+  onError: onRecordDetailError,
+} = useRequest(
+  () => getApplicationRecordDetailList({
+    page: 1,
+    row: 10,
+    communityId: recordInfo.value.communityId || '',
+    ardrId: recordInfo.value.ardrId,
+    roomName: recordInfo.value.roomName || '',
+  }),
+  {
+    immediate: false,
+  },
+)
 
-    recordList.value = res
-    res.forEach((item: ApplicationRecordDetail) => {
-      if (item.relTypeCd === '19000') {
-        imgRecordList.value.push(item)
-      }
-      else if (item.relTypeCd === '21000') {
-        videoRecordList.value.push(item)
-      }
-    })
-  }
-  catch (error) {
-    console.error('加载记录详情失败', error)
-  }
-}
+onRecordDetailSuccess((res) => {
+  recordList.value = res
+  res.forEach((item: ApplicationRecordDetail) => {
+    if (item.relTypeCd === '19000') {
+      imgRecordList.value.push(item)
+    }
+    else if (item.relTypeCd === '21000') {
+      videoRecordList.value.push(item)
+    }
+  })
+})
+
+onRecordDetailError((error) => {
+  console.error('加载记录详情失败', error)
+  uni.showToast({
+    title: '加载记录详情失败',
+    icon: 'none',
+  })
+})
 
 /** 预览图片 */
 function preview(e: { target: { dataset: { index: number } } }) {
@@ -63,35 +76,48 @@ function preview(e: { target: { dataset: { index: number } } }) {
   })
 }
 
+/** 删除记录 - 使用 useRequest */
+const {
+  send: deleteRecordRequest,
+  onSuccess: onDeleteSuccess,
+  onError: onDeleteError,
+} = useRequest(
+  () => deleteApplicationRecord({
+    ardrId: recordInfo.value.ardrId,
+    communityId: recordInfo.value.communityId || '',
+  }),
+  {
+    immediate: false,
+  },
+)
+
+onDeleteSuccess(() => {
+  uni.showToast({
+    title: '删除成功',
+  })
+  setTimeout(() => {
+    uni.navigateBack({
+      delta: 1,
+    })
+  }, 1000)
+})
+
+onDeleteError((error) => {
+  uni.showToast({
+    title: '删除失败',
+    icon: 'none',
+  })
+  console.error('删除记录失败', error)
+})
+
 /** 删除记录 */
 function deleteRecord() {
   uni.showModal({
     title: '提示',
     content: '是否确认删除？',
-    success: async (res) => {
+    success: (res) => {
       if (res.confirm) {
-        try {
-          await deleteApplicationRecord({
-            ardrId: recordInfo.value.ardrId,
-            communityId: recordInfo.value.communityId || '',
-          })
-
-          uni.showToast({
-            title: '删除成功',
-          })
-          setTimeout(() => {
-            uni.navigateBack({
-              delta: 1,
-            })
-          }, 1000)
-        }
-        catch (error) {
-          uni.showToast({
-            title: '删除失败',
-            icon: 'none',
-          })
-          console.error('删除记录失败', error)
-        }
+        deleteRecordRequest()
       }
     },
   })
@@ -118,7 +144,7 @@ onLoad((options: {
       stateName: options.stateName,
     }) as ApplicationRecord & { communityId: string }
     commonBaseUrl.value = ''
-    loadRecordDetail()
+    loadRecordDetailRequest()
   }
 })
 

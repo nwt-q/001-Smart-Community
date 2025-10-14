@@ -8,6 +8,7 @@
 <script setup lang="ts">
 import type { PropertyApplication } from '@/types/property-application'
 import { onLoad } from '@dcloudio/uni-app'
+import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { saveApplicationRecord } from '@/api/property-application'
 import { buildApplyFromParams } from '@/hooks/property/use-property-apply-room'
@@ -65,12 +66,40 @@ function violationChange(e: { detail: { value: number } }) {
   violation.value = selected.value || ''
 }
 
-/** 提交跟踪记录 */
-async function dispatchRecord() {
-  uni.showLoading({
-    title: '上传中...',
-  })
+/** 保存申请记录 - 使用 useRequest */
+const {
+  loading: saveRecordLoading,
+  send: saveRecordRequest,
+  onSuccess: onSaveSuccess,
+  onError: onSaveError,
+} = useRequest(
+  (params: any) => saveApplicationRecord(params),
+  {
+    immediate: false,
+  },
+)
 
+onSaveSuccess(() => {
+  uni.showToast({
+    title: '保存成功',
+  })
+  setTimeout(() => {
+    uni.navigateBack({
+      delta: 1,
+    })
+  }, 1000)
+})
+
+onSaveError((error) => {
+  uni.showToast({
+    title: '保存失败',
+    icon: 'none',
+  })
+  console.error('保存记录失败', error)
+})
+
+/** 提交跟踪记录 */
+function dispatchRecord() {
   const params = {
     applicationId: applyRoomInfo.value.ardId,
     roomId: applyRoomInfo.value.roomId,
@@ -92,7 +121,6 @@ async function dispatchRecord() {
   }
 
   if (msg !== '') {
-    uni.hideLoading()
     uni.showToast({
       title: msg,
       icon: 'none',
@@ -100,27 +128,7 @@ async function dispatchRecord() {
     return
   }
 
-  try {
-    await saveApplicationRecord(params)
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '保存成功',
-    })
-    setTimeout(() => {
-      uni.navigateBack({
-        delta: 1,
-      })
-    }, 1000)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: '保存失败',
-      icon: 'none',
-    })
-    console.error('保存记录失败', error)
-  }
+  saveRecordRequest(params)
 }
 
 onLoad((options: {
