@@ -461,13 +461,11 @@ apply-room.vue
 
 4. 请遵照 `component-migration` 子代理的要求做，但是不要运行子代理。
 
-<!-- `<no-data-page />` -->
-
 ### 04 使用 useRequest 做接口请求
 
-<!-- TODO -->
-
-直接使用 `'alova/client'` 模块提供的 useRequest 函数
+1. 阅读 `src\pages-sub\property\*.vue` 的这几个`本项目`的文件。
+2. 直接使用 `'alova/client'` 模块提供的 useRequest 函数，来重构接口请求。
+3. 严格遵照 `api-migration` 子代理的需求来改造代码。请阅读 `api-migration` 子代理的要求来完成改造。
 
 ### 05 处理类型报错
 
