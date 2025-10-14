@@ -452,13 +452,14 @@ apply-room.vue
 
 请深度思考。
 
-<!-- TODO -->
+1. 阅读 `src\pages-sub\property\*.vue` 的这几个`本项目`的文件
 
-注意到你之前删减掉的组件 `<uni-load-more :status="loadingStatus" :content-text="loadingContentText" />` 。请你用 wot-design-uni 的 loadmore 组件来完成修改。我希望你用 `<wd-loadmore>` 组件来完成该部分功能。
-
-请你主动阅读该文档。学会如何使用 `<wd-loadmore>` 组件。
+2. 注意到你之前删减掉的组件 `<uni-load-more :status="loadingStatus" :content-text="loadingContentText" />` 。请你用 wot-design-uni 的 loadmore 组件来完成修改。我希望你用 `<wd-loadmore>` 组件来完成该部分功能。
+3. 请你主动阅读该文档。学会如何使用 `<wd-loadmore>` 组件。
 
 - https://github.com/Moonofweisheng/wot-design-uni/blob/master/docs/en-US/component/loadmore.md
+
+4. 请遵照 `component-migration` 子代理的要求做，但是不要运行子代理。
 
 <!-- `<no-data-page />` -->
 
