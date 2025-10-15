@@ -412,6 +412,8 @@
 
 ### 036 细化 `component-migration` 子代理对 `<wd-status-tip>` 组件的使用
 
+<!-- TODO: -->
+
 我希望 `component-migration` 子代理在实现类似于暂无数据的空占位符需求时，能够使用 `wot-design-uni` 组件库的 `<wd-status-tip>` 组件。
 
 在迁移 `旧项目` 并实现类似的空占位符需求时，请使用 `<wd-status-tip>` 组件实现。
