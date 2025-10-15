@@ -29,6 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `活动信息组件` ： `src\components\activity\activity-info.vue`
 - `活动详情页` ： `src\pages\activity\detail.vue`
 - `活动列表页` ： `src\pages\activity\index.vue`
+- `房屋申请系列页面` ： `src\pages-sub\property\*.vue` ，一个 glob 匹配语法，指代一系列 vue 组件。
 
 ## 迁移任务的重要原则
 
