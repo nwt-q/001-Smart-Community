@@ -186,12 +186,12 @@
     "vitepress-plugin-llms": "^1.7.5",
     "vue-tsc": "^3.0.7"
   },
-  "resolutions": {
-    "bin-wrapper": "npm:bin-wrapper-china"
-  },
   "pnpm": {
     "overrides": {
       "vue-router": "4.5.1"
     }
+  },
+  "resolutions": {
+    "bin-wrapper": "npm:bin-wrapper-china"
   }
 }
