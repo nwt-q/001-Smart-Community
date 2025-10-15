@@ -22,7 +22,7 @@ color: blue
 
 `wot-design-uni` 组件文档全都在以下 github 仓库目录内。
 
-- https://github.com/Moonofweisheng/wot-design-uni/tree/master/docs/en-US/component
+- https://github.com/Moonofweisheng/wot-design-uni/tree/master/docs/component
 
 ## 📋 核心职责
 
