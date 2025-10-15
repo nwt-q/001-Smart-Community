@@ -1,5 +1,3 @@
-packages:
-  - gitee-example
 onlyBuiltDependencies:
   - '@uni-helper/unocss-preset-uni'
   - core-js
