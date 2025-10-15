@@ -188,5 +188,10 @@
   },
   "resolutions": {
     "bin-wrapper": "npm:bin-wrapper-china"
+  },
+  "pnpm": {
+    "overrides": {
+      "vue-router": "4.5.1"
+    }
   }
 }
