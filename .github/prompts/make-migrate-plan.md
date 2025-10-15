@@ -409,3 +409,15 @@
 2. 阅读 `src\router` 目录内全部的文件。
 3. 现在 `route-migration` 子代理和`src\router` 目录内全部的文件，是对不上的。现在我希望你以 `src\router` 目录的现存文件为引导，告诉 `route-migration` 子代理，要在什么时候正确使用这些类型化的路由跳转工具。细化子代理的指导文件，细化清楚如何使用这些类型化的配置。
 4. 细化清楚何时新增类型化的跳转函数。
+
+### 036 细化 `component-migration` 子代理对 `<wd-status-tip>` 组件的使用
+
+我希望 `component-migration` 子代理在实现类似于暂无数据的空占位符需求时，能够使用 `wot-design-uni` 组件库的 `<wd-status-tip>` 组件。
+
+在迁移 `旧项目` 并实现类似的空占位符需求时，请使用 `<wd-status-tip>` 组件实现。
+
+1. 请阅读 https://github.com/Moonofweisheng/wot-design-uni/blob/master/docs/component/status-tip.md 文档。了解清楚 `<wd-status-tip>` 组件的用法。
+2. 为 `component-migration` 子代理增加关于 `<wd-status-tip>` 组件的使用细则。
+3. 精简地增加 `<wd-status-tip>` 组件的使用方式，我不希望 `component-migration` 子代理太长了。
+
+如果你对此有疑问，请深度思考该需求，询问我你不清楚的细节。我和你补充细化细则后，再开始修改 `component-migration` 子代理文件。
