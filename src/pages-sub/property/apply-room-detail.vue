@@ -9,7 +9,7 @@
 
 -->
 <script setup lang="ts">
-import type { PropertyApplication } from '@/types/property-application'
+import type { DiscountType, PropertyApplication } from '@/types/property-application'
 import { onLoad, onReady, onShow } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import { computed, ref } from 'vue'
@@ -87,7 +87,7 @@ const {
 )
 
 onFeeDetailSuccess((res) => {
-  fees.value = res.feeDetails
+  fees.value = res.data.feeDetails
 })
 
 onFeeDetailError((error) => {
@@ -140,7 +140,7 @@ const {
   onSuccess: onFeeDiscountSuccess,
   onError: onFeeDiscountError,
 } = useRequest(
-  (discountTypeId: string) => getFeeDiscountList({
+  (discountTypeId: DiscountType) => getFeeDiscountList({
     page: 1,
     row: 100,
     discountType: discountTypeId,
@@ -152,7 +152,7 @@ const {
 )
 
 onFeeDiscountSuccess((res) => {
-  discountIdRange.value = res
+  discountIdRange.value = res.data
 })
 
 onFeeDiscountError((error) => {
@@ -167,7 +167,7 @@ onFeeDiscountError((error) => {
 function discountTypeRangeChange(e: { detail: { value: number } }) {
   const index = e.detail.value
   discountType.value = discountTypeRange.value[index]
-  loadFeeDiscountRequest((discountType.value as { id: string }).id)
+  loadFeeDiscountRequest((discountType.value as { id: DiscountType }).id)
 }
 
 /** 修改折扣名称 */
@@ -245,7 +245,8 @@ onReviewSuccess(() => {
     title: '保存成功',
   })
   setTimeout(() => {
-    goBack()
+    // TODO: 用路由子代理来修复调整
+    // goBack()
   }, 1000)
 })
 
@@ -360,24 +361,25 @@ function submit() {
   }
 }
 
-function goBack() {
-  // #ifdef H5
-  const canBack = true
-  const pages = getCurrentPages()
-  if (pages.length > 1) {
-    uni.navigateBack({ delta: 1 })
-    return
-  }
-  const a = (uni as any).$router.go(-1)
-  if (a === undefined) {
-    uni.reLaunch({
-      url: '/pages-sub/property/apply-room',
-    })
-  }
-  return
-  // #endif
-  uni.navigateBack({ delta: 1 })
-}
+// TODO: 用路由子代理来修复调整
+// function goBack() {
+//   // #ifdef H5
+//   const canBack = true
+//   const pages = getCurrentPages()
+//   if (pages.length > 1) {
+//     uni.navigateBack({ delta: 1 })
+//     return
+//   }
+//   const a = (uni as any).$router.go(-1)
+//   if (a === undefined) {
+//     uni.reLaunch({
+//       url: '/pages-sub/property/apply-room',
+//     })
+//   }
+//   return
+//   // #endif
+//   uni.navigateBack({ delta: 1 })
+// }
 
 /** 显示房屋申请跟踪记录 */
 function showApplyRoomRecord() {
@@ -399,8 +401,8 @@ const {
 )
 
 onDetailSuccess((res) => {
-  if (res && res.data && res.data.length > 0) {
-    applyRoomInfo.value = res.data[0]
+  if (res && res.data && res.data.list.length > 0) {
+    applyRoomInfo.value = res.data.list[0]
     sendImgList.value = applyRoomInfo.value.urls || []
     applyRoomInfo.value.startTime = applyRoomInfo.value.startTime.split(' ')[0]
     applyRoomInfo.value.endTime = applyRoomInfo.value.endTime.split(' ')[0]

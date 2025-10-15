@@ -44,8 +44,8 @@ const {
 )
 
 onRecordDetailSuccess((res) => {
-  recordList.value = res
-  res.forEach((item: ApplicationRecordDetail) => {
+  recordList.value = res.data
+  res.data.forEach((item: ApplicationRecordDetail) => {
     if (item.relTypeCd === '19000') {
       imgRecordList.value.push(item)
     }
@@ -85,6 +85,11 @@ const {
   () => deleteApplicationRecord({
     ardrId: recordInfo.value.ardrId,
     communityId: recordInfo.value.communityId || '',
+    roomName: recordInfo.value.roomName || '',
+    applicationId: recordInfo.value.applicationId || '',
+    roomId: recordInfo.value.roomId || '',
+    state: recordInfo.value.state || '',
+    stateName: recordInfo.value.stateName || '',
   }),
   {
     immediate: false,
