@@ -486,6 +486,25 @@ apply-room.vue
 
 在统一处理 finished 状态时，不使用 res.data.length 和 res.data 。这会出现类型报错。请你思考，使用对应页面的响应式变量数组，来做逻辑判断。
 
+### 08 优化 暂无数据 的代码实现
+
+<!-- TODO: -->
+
+请深度思考。
+
+请阅读 房屋申请系列页面 文件，查找以下代码实现。
+
+```html
+<view class="flex flex-col items-center justify-center py-20">
+  <text class="text-gray-400">暂无数据</text>
+</view>
+```
+
+我需要你帮我优化 `房屋申请系列页面` 的暂无数据的占位符实现。改用成 `<wd-status-tip>` 组件。
+
+1. 请遵循 `component-migration` 子代理的要求。
+2. 遵循其要求，但不使用子代理。
+
 ### 05 处理类型报错
 
 <!-- TODO -->
