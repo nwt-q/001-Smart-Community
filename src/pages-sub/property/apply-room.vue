@@ -47,7 +47,7 @@ const {
 onApplyStateSuccess((res) => {
   console.log('字典接口返回数据：', res)
   if (res) {
-    applyStates.value = [{ name: '请选择' }, ...res]
+    applyStates.value = [{ name: '请选择' }, ...res.data]
   }
 })
 
@@ -84,7 +84,7 @@ onApplyListSuccess((res) => {
   console.log('列表接口返回数据：', res)
 
   if (res && res.data) {
-    applyRoomList.value = applyRoomList.value.concat(res.data)
+    applyRoomList.value = applyRoomList.value.concat(res.data.list)
     page.value++
   }
 })
@@ -220,7 +220,7 @@ onReachBottom(() => {
         loading-text="加载中"
         finished-text="没有更多"
         error-text="加载失败，点击重试"
-        @reload="() => loadApplyListRequest(page.value)"
+        @reload="() => loadApplyListRequest(page)"
       />
     </view>
     <view v-else>

@@ -49,7 +49,7 @@ const {
 )
 
 onRecordListSuccess((res) => {
-  applyRoomRecordList.value = applyRoomRecordList.value.concat(res.data)
+  applyRoomRecordList.value = applyRoomRecordList.value.concat(res.data.list)
   page.value++
 })
 
@@ -172,11 +172,13 @@ onReachBottom(() => {
         loading-text="加载中"
         finished-text="没有更多"
         error-text="加载失败，点击重试"
-        @reload="() => loadRecordListRequest(page.value)"
+        @reload="() => loadRecordListRequest(page)"
       />
     </view>
     <view v-else>
-      <no-data-page />
+      <view class="flex flex-col items-center justify-center py-20">
+        <text class="text-gray-400">暂无数据</text>
+      </view>
     </view>
     <view class="record-add" @tap="addRecord">
       <img src="/static/image/renovation-add.png" alt="">
