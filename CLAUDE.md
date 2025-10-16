@@ -54,7 +54,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 每当你在 markdown 文档内编写表格时，表格的格式一定是**居中对齐**的，必须满足**居中对齐**的格式要求。
 
-### 2. javascript / typescript 的代码注释写法
+### 2. markdown 文档的 vue 组件代码片段编写格式
+
+错误写法：
+
+1. 代码块语言用 vue，且不带有 `<template>` 标签来包裹。
+
+```vue
+<wd-popup v-model="showModal">
+  <wd-cell-group>
+    <!-- 内容 -->
+  </wd-cell-group>
+</wd-popup>
+```
+
+2. 代码块语言用 html。
+
+```html
+<wd-popup v-model="showModal">
+  <wd-cell-group>
+    <!-- 内容 -->
+  </wd-cell-group>
+</wd-popup>
+```
+
+正确写法：代码块语言用 vue ，且带有 `<template>` 标签来包裹。
+
+```vue
+<template>
+  <wd-popup v-model="showModal">
+    <wd-cell-group>
+      <!-- 内容 -->
+    </wd-cell-group>
+  </wd-popup>
+</template>
+```
+
+### 3. javascript / typescript 的代码注释写法
 
 代码注释写法应该写成jsdoc格式。而不是单纯的双斜杠注释。比如：
 
@@ -88,17 +124,17 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 ```
 
-### 3. unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
+### 4. unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
 
 在你做样式迁移的时候，**不允许滥用** unocss 的 shortcuts 功能。不要把那么多样式类都设计成公共全局级别的快捷方式。
 
-### 4. vue组件编写规则
+### 5. vue组件编写规则
 
 1. vue组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
 2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
 3. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
 
-### 5. jsdoc 注释的 `@example` 标签不要写冗长复杂的例子
+### 6. jsdoc 注释的 `@example` 标签不要写冗长复杂的例子
 
 1. 你应该积极主动的函数编写 jsdoc 注释的 `@example` 标签。
 2. 但是 `@example` 标签不允许写复杂的例子，请写简单的单行例子。完整的函数使用例子，你应该择机在函数文件的附近编写md文档，在文档内给出使用例子。
