@@ -203,12 +203,46 @@ color: blue
 
 ### 空状态组件映射
 
-|         旧组件/类名         |   使用场景   |          新组件          |            迁移说明            |
-| :-------------------------: | :----------: | :----------------------: | :----------------------------: |
-|     `no-data-page` 组件     |  通用空状态  |     `wd-status-tip`      | 使用 wot-design-uni 空状态组件 |
-|      `cuIcon-warnfill`      |   警告图标   | `wd-status-tip` 默认图标 |      组件内置多种状态图标      |
-| 内联空状态处理（文本+图标） |  列表空状态  |     `wd-status-tip`      |      统一的空状态展示方式      |
-|     `text-gray` 空提示      | 灰色提示文字 | `wd-status-tip` tip 属性 |   使用 tip 属性设置提示文字    |
+|         旧组件/类名         |   使用场景   |          新组件          |                       迁移说明                        |
+| :-------------------------: | :----------: | :----------------------: | :---------------------------------------------------: |
+|     `no-data-page` 组件     |  通用空状态  |     `wd-status-tip`      | 支持 7 种内置图片类型，使用 wot-design-uni 空状态组件 |
+|      `cuIcon-warnfill`      |   警告图标   | `wd-status-tip` 默认图标 |              组件内置多种状态图标和插槽               |
+| 内联空状态处理（文本+图标） |  列表空状态  |     `wd-status-tip`      |    统一的空状态展示方式，支持自定义图片大小和内容     |
+|     `text-gray` 空提示      | 灰色提示文字 | `wd-status-tip` tip 属性 |         使用 tip 属性设置提示文字，语义化命名         |
+
+#### StatusTip 使用细则
+
+**内置图片类型**：
+
+- `search`: 搜索无结果场景
+- `network`: 网络连接失败场景
+- `content`: 内容为空场景（默认）
+- `collect`: 收藏/收集为空场景
+- `comment`: 评论/联系人为空场景
+- `halo`: 操作失败/支付失败场景
+- `message`: 消息通知场景
+
+**自定义图片大小**：
+
+```vue
+<!-- 统一设置宽高 -->
+<wd-status-tip image="search" tip="暂无数据" :image-size="200" />
+
+<!-- 分别设置宽高 -->
+<wd-status-tip image="network" tip="网络异常" :image-size="{ width: 300, height: 200 }" />
+```
+
+**自定义图片内容**：
+
+通过 `image` 插槽可完全自定义图片区域，适用于需要使用特定图标或动画的场景。
+
+```vue
+<wd-status-tip tip="自定义空状态">
+  <template #image>
+    <wd-icon name="" custom-class="i-carbon-warning-alt text-60rpx text-orange-500" />
+  </template>
+</wd-status-tip>
+```
 
 ## 🚀 迁移策略
 
@@ -500,18 +534,25 @@ color: blue
 - **强制使用 `<wd-status-tip>` 替换 `no-data-page`**: 在迁移空状态组件时，必须使用 `<wd-status-tip>` 组件替代原有的 `no-data-page` 组件
 - **属性映射**:
   - `tip` 属性：设置提示文字，替代原有的固定文本"当前没有数据"
-  - `image` 属性：设置状态图片类型，支持 `search`、`network`、`content` 等内置类型
-  - `image-size` 属性：自定义图片尺寸，格式为 `{height: number, width: number}`
+  - `image` 属性：设置状态图片类型，支持 7 种内置类型或自定义图片 URL
+  - `image-size` 属性：自定义图片尺寸，支持 `number` 或 `{height: number, width: number}` 格式
   - `image-mode` 属性：图片填充模式，默认为 `aspectFit`
-- **状态类型支持**:
+- **7 种内置状态类型**:
   - `search`: 搜索无结果状态
   - `network`: 网络连接失败状态
-  - `content`: 内容为空状态
-  - 自定义图片 URL：支持传入本地或网络图片路径
+  - `content`: 内容为空状态（默认）
+  - `collect`: 收藏/收集为空状态
+  - `comment`: 评论/联系人为空状态
+  - `halo`: 操作失败/支付失败状态
+  - `message`: 消息通知状态
+- **图片尺寸设置**:
+  - 统一宽高：`:image-size="200"` 设置为 200x200
+  - 分别设置：`:image-size="{ width: 300, height: 200 }"` 自定义宽高比例
+  - 响应式尺寸：根据不同平台调整图片大小，提升视觉体验
 - **自定义能力**:
-  - 使用 `image` 插槽可以完全自定义图片内容
-  - 支持与 `wd-icon` 组件结合使用
-  - 可根据业务场景设置不同的提示文字
+  - 使用 `image` 插槽可完全自定义图片内容（如使用 `wd-icon` 组件或动画）
+  - 支持传入本地或网络图片 URL 替代内置类型
+  - 可根据业务场景动态切换不同的状态类型和提示文字
 - **兼容性处理**:
   - 替换原有的 `v-if="notices.length === 0"` 内联空状态处理
   - 统一使用 `wd-status-tip` 保持视觉一致性
