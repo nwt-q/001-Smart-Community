@@ -488,11 +488,9 @@ apply-room.vue
 
 ### 08 优化 暂无数据 的代码实现
 
-<!-- TODO: 先完成 细化 `component-migration` 子代理对 `<wd-status-tip>` 组件的使用 -->
-
 请深度思考。
 
-请阅读 房屋申请系列页面 文件，查找以下代码实现。
+请阅读 `房屋申请系列页面` 文件，查找以下代码实现。
 
 ```html
 <view class="flex flex-col items-center justify-center py-20">

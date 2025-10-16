@@ -223,10 +223,8 @@ onReachBottom(() => {
         @reload="() => loadApplyListRequest(page)"
       />
     </view>
-    <view v-else>
-      <view class="flex flex-col items-center justify-center py-20">
-        <text class="text-gray-400">暂无数据</text>
-      </view>
+    <view v-else class="py-20">
+      <wd-status-tip image="content" tip="暂无房屋申请数据" />
     </view>
   </view>
 </template>
