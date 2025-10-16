@@ -503,13 +503,22 @@ apply-room.vue
 1. 请遵循 `component-migration` 子代理的要求。
 2. 遵循其要求，但不使用子代理。
 
-### 09 处理类型报错
+### 09 处理迁移时的样式类转换问题
 
-<!-- TODO -->
+请深度思考。
 
-### 10 处理迁移时的样式类转换问题
+1. 阅读 房屋申请系列页面 。
+2. 阅读旧项目内被迁移的旧页面。
 
-<!-- TODO -->
+- gitee-example\pages\applyRoom
+- gitee-example\pages\applyRoomDetail
+- gitee-example\pages\applyRoomRecord
+- gitee-example\pages\applyRoomRecordDetail
+- gitee-example\pages\applyRoomRecordHandle
+
+3. 阅读清楚 `style-migration` 子代理的要求。
+4. 搞清楚现在 `房屋申请系列页面` 有那些样式类没有被及时的迁移。做好使用 `style-migration` 子代理完成迁移的准备。
+5. 请全面的，完整的阅读我提供的文件，并深度思考我的样式类迁移需求。如果在迁移前，你对迁移细节，或者是 `style-migration` 子代理的迁移规则有疑问，请在思考后向我提问。我将和你补充细化实现细节。
 
 ### 产生的冗余文件
 
