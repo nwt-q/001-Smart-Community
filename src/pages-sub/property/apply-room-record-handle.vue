@@ -155,26 +155,36 @@ onLoad((options: {
 
 <template>
   <view>
-    <view class="cu-form-group margin-top">
+    <!-- 处理意见输入区域 -->
+    <view class="mt-4 bg-white p-4">
       <textarea
         v-model="content"
         placeholder="请输入处理意见"
+        class="min-h-30 w-full border border-gray-200 rounded p-2 text-sm"
       />
     </view>
-    <view class="cu-form-group margin-top">
+
+    <!-- 违规选择器 -->
+    <view class="mt-4 bg-white p-4">
       <picker
         :value="violationIndex"
         :range="violations"
         range-key="name"
+        class="w-full"
         @change="violationChange"
       >
-        <view>{{ violations[violationIndex].name }}</view>
+        <view class="text-gray-600">
+          {{ violations[violationIndex].name }}
+        </view>
       </picker>
     </view>
 
-    <view class="block__title">
+    <!-- 相关图片标题 -->
+    <view class="m-0 px-7.5 pb-5 pt-10 text-sm text-gray-600/60 font-normal">
       相关图片
     </view>
+
+    <!-- 图片上传组件 -->
     <upload-image-async
       ref="vcUploadRef"
       :community-id="communityId"
@@ -184,9 +194,10 @@ onLoad((options: {
       @send-images-data="sendImagesData"
     />
 
-    <view class="flex-direction margin-top flex">
+    <!-- 提交按钮 -->
+    <view class="mt-4 flex flex-col">
       <button
-        class="cu-btn margin-tb-sm lg bg-green"
+        class="my-2 cursor-pointer rounded-full bg-colorui-green px-6 py-2 text-center text-lg text-white transition-all"
         @click="dispatchRecord"
       >
         提交
@@ -194,13 +205,3 @@ onLoad((options: {
     </view>
   </view>
 </template>
-
-<style scoped>
-.block__title {
-  margin: 0;
-  font-weight: 400;
-  font-size: 14px;
-  color: rgba(69, 90, 100, 0.6);
-  padding: 40rpx 30rpx 20rpx;
-}
-</style>

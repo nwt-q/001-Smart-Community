@@ -164,65 +164,76 @@ onShow(() => {
 
 <template>
   <view>
-    <view class="cu-list menu margin-top">
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-deletefill text-green" />
-          <text class="text-grey">操作</text>
+    <!-- 记录详情列表 -->
+    <view class="mt-4 bg-white divide-y divide-gray-100">
+      <!-- 操作按钮 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-trash-can text-colorui-green" />
+          <text class="ml-2 text-gray-600">操作</text>
         </view>
-        <view class="action">
-          <text class="cu-btn bg-red" @click="deleteRecord">删除</text>
-        </view>
-      </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">申请房间</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ recordInfo.roomName }}</text>
+        <view class="ml-auto">
+          <text class="cursor-pointer rounded-full bg-colorui-red px-6 py-2 text-center text-white transition-all" @click="deleteRecord">删除</text>
         </view>
       </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-footprint text-green" />
-          <text class="text-grey">跟踪备注</text>
+
+      <!-- 申请房间 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">申请房间</text>
         </view>
-        <view class="action">
-          <text class="text-grey text-sm">
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ recordInfo.roomName }}</text>
+        </view>
+      </view>
+
+      <!-- 跟踪备注 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-footprints text-colorui-green" />
+          <text class="ml-2 text-gray-600">跟踪备注</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">
             {{ recordList.length > 0 ? recordList[0].remark : '' }}
           </text>
         </view>
       </view>
+
+      <!-- 图片列表 -->
       <view v-if="imgRecordList.length > 0">
-        <view class="text-grey">
+        <view class="px-4 py-2 text-gray-600">
           图片
         </view>
-        <view class="cu-item">
-          <view class="col-4 grid-square grid text-center">
+        <view class="flex items-center p-4">
+          <view class="grid grid-cols-4 w-full gap-2 text-center">
             <view
               v-for="(item, index) in imgRecordList"
               :key="index"
-              class=""
+              class="aspect-square"
             >
               <image
                 mode="widthFix"
                 :data-url="item.url"
                 :data-index="index"
                 :src="item.url"
+                class="h-full w-full object-cover"
                 @tap="preview"
               />
             </view>
           </view>
         </view>
       </view>
+
+      <!-- 视频列表 -->
       <view v-if="videoRecordList.length > 0">
-        <view class="text-grey">
+        <view class="px-4 py-2 text-gray-600">
           视频
         </view>
-        <view v-for="(item, index) in videoRecordList" :key="index">
+        <view v-for="(item, index) in videoRecordList" :key="index" class="px-4 py-2">
           <video
-            class="record-video"
+            class="w-full"
             object-fit="contain"
             :src="commonBaseUrl + item.url"
             controls
@@ -234,6 +245,7 @@ onShow(() => {
 </template>
 
 <style scoped>
+/** 保留 uni-video 全局样式 */
 uni-video {
   width: 100%;
 }

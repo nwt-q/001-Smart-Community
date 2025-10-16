@@ -446,65 +446,79 @@ onShow(() => {
 
 <template>
   <view>
-    <view class="cu-list menu margin-top">
-      <view class="cu-item arrow" @click="showApplyRoomRecord()">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">空置房跟踪记录</text>
+    <!-- 申请详情列表 -->
+    <view class="mt-4 bg-white divide-y divide-gray-100">
+      <!-- 跟踪记录入口 -->
+      <view class="flex items-center p-4" @click="showApplyRoomRecord()">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">空置房跟踪记录</text>
         </view>
-        <view class="action">
-          <text class="text-grey text-sm">查看</text>
-        </view>
-      </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-edit text-green" />
-          <text class="text-grey">申请ID</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.ardId }}</text>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">查看</text>
         </view>
       </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-ticket text-green" />
-          <text class="text-grey">申请类型</text>
+
+      <!-- 申请ID -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-edit text-colorui-green" />
+          <text class="ml-2 text-gray-600">申请ID</text>
         </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.applyTypeName }}</text>
-        </view>
-      </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">申请房间</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.roomName }}</text>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.ardId }}</text>
         </view>
       </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-profile text-green" />
-          <text class="text-grey">申请人</text>
+
+      <!-- 申请类型 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-ticket text-colorui-green" />
+          <text class="ml-2 text-gray-600">申请类型</text>
         </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.createUserName }}</text>
-        </view>
-      </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-phone text-green" />
-          <text class="text-grey">联系方式</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.createUserTel }}</text>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.applyTypeName }}</text>
         </view>
       </view>
-      <view class="cu-item arrow">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">开始时间</text>
+
+      <!-- 申请房间 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">申请房间</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.roomName }}</text>
+        </view>
+      </view>
+
+      <!-- 申请人 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-user-avatar text-colorui-green" />
+          <text class="ml-2 text-gray-600">申请人</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.createUserName }}</text>
+        </view>
+      </view>
+
+      <!-- 联系方式 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-phone text-colorui-green" />
+          <text class="ml-2 text-gray-600">联系方式</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.createUserTel }}</text>
+        </view>
+      </view>
+
+      <!-- 开始时间 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">开始时间</text>
         </view>
         <picker
           mode="date"
@@ -512,17 +526,20 @@ onShow(() => {
           start="2020-09-01"
           end="2050-09-01"
           :disabled="pickerDisabled"
+          class="ml-auto"
           @change="dateStartChange"
         >
-          <view class="picker">
+          <view class="picker text-sm text-gray-600">
             {{ applyRoomInfo.startTime }}
           </view>
         </picker>
       </view>
-      <view class="cu-item arrow">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">结束时间</text>
+
+      <!-- 结束时间 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">结束时间</text>
         </view>
         <picker
           mode="date"
@@ -530,106 +547,120 @@ onShow(() => {
           start="2020-09-01"
           end="2050-09-01"
           :disabled="pickerDisabled"
+          class="ml-auto"
           @change="dateEndChange"
         >
-          <view class="picker">
+          <view class="picker text-sm text-gray-600">
             {{ applyRoomInfo.endTime }}
           </view>
         </picker>
       </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-footprint text-green" />
-          <text class="text-grey">申请备注</text>
+
+      <!-- 申请备注 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-footprints text-colorui-green" />
+          <text class="ml-2 text-gray-600">申请备注</text>
         </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.createRemark }}</text>
-        </view>
-      </view>
-      <view v-if="Number(applyRoomInfo.state) > 1" class="cu-item">
-        <view class="content">
-          <text class="cuIcon-footprint text-green" />
-          <text class="text-grey">验房备注</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.checkRemark }}</text>
-        </view>
-      </view>
-      <view v-if="Number(applyRoomInfo.state) > 3" class="cu-item">
-        <view class="content">
-          <text class="cuIcon-footprint text-green" />
-          <text class="text-grey">审核备注</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.reviewRemark }}</text>
-        </view>
-      </view>
-      <view class="cu-item">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">当前状态</text>
-        </view>
-        <view class="action">
-          <text class="text-grey text-sm">{{ applyRoomInfo.stateName }}</text>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.createRemark }}</text>
         </view>
       </view>
 
-      <!-- 验房状态 -->
-      <view v-if="Number(applyRoomInfo.state) === 1" class="cu-item">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">验房状态</text>
+      <!-- 验房备注（状态>1时显示） -->
+      <view v-if="Number(applyRoomInfo.state) > 1" class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-footprints text-colorui-green" />
+          <text class="ml-2 text-gray-600">验房备注</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.checkRemark }}</text>
+        </view>
+      </view>
+
+      <!-- 审核备注（状态>3时显示） -->
+      <view v-if="Number(applyRoomInfo.state) > 3" class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-footprints text-colorui-green" />
+          <text class="ml-2 text-gray-600">审核备注</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.reviewRemark }}</text>
+        </view>
+      </view>
+
+      <!-- 当前状态 -->
+      <view class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">当前状态</text>
+        </view>
+        <view class="ml-auto">
+          <text class="text-sm text-gray-600">{{ applyRoomInfo.stateName }}</text>
+        </view>
+      </view>
+
+      <!-- 验房状态选择器 -->
+      <view v-if="Number(applyRoomInfo.state) === 1" class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">验房状态</text>
         </view>
         <picker
           mode="selector"
           :value="(checkState as { state: number }).state"
           :range="checkStateRange"
           range-key="name"
+          class="ml-auto"
           @change="checkStateRangeChange"
         >
-          <view class="picker">
+          <view class="picker text-sm text-gray-600">
             {{ (checkState as { state: number; name: string }).name || "请选择" }}
           </view>
         </picker>
       </view>
-      <view v-if="Number(applyRoomInfo.state) === 1" class="cu-item">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">验房备注</text>
+
+      <!-- 验房备注输入 -->
+      <view v-if="Number(applyRoomInfo.state) === 1" class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">验房备注</text>
         </view>
-        <input v-model="checkRemark" type="text" @blur="onBlur()">
+        <input v-model="checkRemark" type="text" class="ml-auto text-right text-sm text-gray-600" @blur="onBlur()">
       </view>
 
-      <!-- 审批状态 -->
-      <view v-if="Number(applyRoomInfo.state) === 2" class="cu-item">
-        <view class="content">
-          <text class="cuIcon-time text-green" />
-          <text class="text-grey">审批状态</text>
+      <!-- 审批状态选择器 -->
+      <view v-if="Number(applyRoomInfo.state) === 2" class="flex items-center p-4">
+        <view class="flex flex-1 items-center">
+          <wd-icon name="" custom-class="i-carbon-time text-colorui-green" />
+          <text class="ml-2 text-gray-600">审批状态</text>
         </view>
         <picker
           mode="selector"
           :value="(reviewState as { state: number }).state"
           :range="reviewStateRange"
           range-key="name"
+          class="ml-auto"
           @change="reviewStateRangeChange"
         >
-          <view class="picker">
+          <view class="picker text-sm text-gray-600">
             {{ (reviewState as { state: number; name: string }).name || "请选择" }}
           </view>
         </picker>
       </view>
 
-      <view class="cu-item">
+      <!-- 提交按钮区域 -->
+      <view class="flex items-center p-4">
         <button
           v-if="Number(applyRoomInfo.state) === 1"
-          class="btn-check"
+          class="mx-auto my-7.5 h-22.5 w-1/2 rounded-3.75 bg-colorui-green text-center text-white leading-22.5 text-32rpx"
           @click="submit"
         >
           验房
         </button>
         <button
           v-if="Number(applyRoomInfo.state) === 2"
-          class="btn-check"
+          class="mx-auto my-7.5 h-22.5 w-1/2 rounded-3.75 bg-colorui-green text-center text-white leading-22.5 text-32rpx"
           @click="submit"
         >
           审核
@@ -640,19 +671,7 @@ onShow(() => {
 </template>
 
 <style scoped>
-.btn-check {
-  width: 50%;
-  margin: 30rpx auto;
-  height: 90rpx;
-  line-height: 90rpx;
-  text-align: center;
-  background-color: #00aa00;
-  border-radius: 15rpx;
-  color: #fff;
-  font-size: 32rpx;
-}
-
-/* 弹出框 */
+/** 保留弹出框样式 - 这些复杂样式无法用原子类表达 */
 .pop-bg {
   position: fixed;
   top: 0;

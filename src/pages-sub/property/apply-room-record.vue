@@ -141,28 +141,31 @@ onReachBottom(() => {
 
 <template>
   <view>
-    <view v-if="applyRoomRecordList.length > 0" class="margin-top">
+    <!-- 申请记录列表 -->
+    <view v-if="applyRoomRecordList.length > 0" class="mt-4">
       <view
         v-for="(item, index) in applyRoomRecordList"
         :key="index"
-        class="cu-list menu-avatar"
+        class="mb-2 bg-white"
         @tap="showDetail(item)"
       >
-        <view class="cu-item arrow">
-          <view class="item-content">
-            <view class="text-grey">
-              <text class="cuIcon-notification text-cut margin-right-xs text-green" />
+        <view class="flex items-center p-4">
+          <!-- 内容区域 -->
+          <view class="ml-5 w-full leading-relaxed">
+            <view class="text-gray-600">
+              <wd-icon name="" custom-class="i-carbon-notification truncate mr-1 text-colorui-green" />
               {{ item.stateName }}-{{ item.createTime }}
             </view>
-            <view class="flex text-sm text-gray">
-              <view class="text-cut">
+            <view class="flex text-sm text-gray-500">
+              <view class="truncate">
                 操作人员：{{ item.createUserName }}
               </view>
             </view>
           </view>
-          <view class="action">
-            <view class="text-grey text-xs">
-              <text class="lg cuIcon-right margin-left-xs text-gray" />
+          <!-- 箭头图标 -->
+          <view class="ml-auto">
+            <view class="text-xs text-gray-600">
+              <wd-icon name="" custom-class="text-lg i-carbon-chevron-right ml-1 text-gray-500" />
             </view>
           </view>
         </view>
@@ -178,29 +181,9 @@ onReachBottom(() => {
     <view v-else class="py-20">
       <wd-status-tip image="content" tip="暂无申请记录" />
     </view>
-    <view class="record-add" @tap="addRecord">
-      <img src="/static/image/renovation-add.png" alt="">
+    <!-- 新增记录按钮 -->
+    <view class="fixed bottom-12.5 right-2.5 h-25 w-25" @tap="addRecord">
+      <img src="/static/image/renovation-add.png" alt="" class="h-full w-full">
     </view>
   </view>
 </template>
-
-<style scoped>
-.record-add {
-  position: fixed;
-  right: 10rpx;
-  bottom: 50rpx;
-  width: 100rpx;
-  height: 100rpx;
-}
-
-.record-add img {
-  width: 100%;
-  height: 100%;
-}
-
-.item-content {
-  width: 100%;
-  margin-left: 20rpx;
-  line-height: 1.6em;
-}
-</style>
