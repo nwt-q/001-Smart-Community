@@ -146,6 +146,16 @@ color: blue
 <wd-icon name="" custom-class="i-carbon-thumbs-up text-28rpx text-gray-400 mr-8rpx" />
 ```
 
+**带颜色类的迁移示例**:
+
+```vue
+<!-- 迁移前: ColorUI 图标 + 颜色类 -->
+<text class="cuIcon-notification text-green" />
+
+<!-- 迁移后: wd-icon + Carbon 图标 + UnoCSS 颜色类 -->
+<wd-icon name="" custom-class="i-carbon-notification text-colorui-green" />
+```
+
 #### ColorUI 图标到 Carbon 图标映射表
 
 |      旧组件/类名      |   使用场景   |                      新组件                       |            Carbon 图标映射             |
@@ -166,6 +176,12 @@ color: blue
 |     `cuIcon-view`     |   浏览图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-view`             |
 |  `cuIcon-thumbs-up`   |   点赞图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-thumbs-up`          |
 |     `cuIcon-chat`     |   评论图标   | `<wd-icon name="" custom-class="i-carbon-..." />` | `i-carbon-chat` 或 `i-carbon-chat-bot` |
+|    `cuIcon-right`     |  右箭头图标  | `<wd-icon name="" custom-class="i-carbon-..." />` |        `i-carbon-chevron-right`        |
+|    `cuIcon-ticket`    |   票据图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |           `i-carbon-ticket`            |
+|   `cuIcon-profile`    | 用户头像图标 | `<wd-icon name="" custom-class="i-carbon-..." />` |         `i-carbon-user-avatar`         |
+|    `cuIcon-phone`     |   电话图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-phone`            |
+|  `cuIcon-footprint`   |   足迹图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |         `i-carbon-footprints`          |
+|  `cuIcon-deletefill`  | 删除填充图标 | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-trash-can`          |
 
 ### 布局组件映射
 
