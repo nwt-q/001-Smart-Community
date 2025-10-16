@@ -186,22 +186,6 @@ export default defineConfig({
   },
 
   /**
-   * 快捷方式配置 - 仅包含最基础的全局样式
-   * 避免业务性质样式，保持配置的通用性
-   */
-  shortcuts: [
-    {
-      /** 通用布局快捷方式 - 基础布局 */
-      'center': 'flex justify-center items-center',
-      'flex-center': 'flex justify-center items-center',
-      'flex-between': 'flex justify-between items-center',
-      'flex-around': 'flex justify-around items-center',
-      'flex-start': 'flex justify-start items-center',
-      'flex-end': 'flex justify-end items-center',
-    },
-  ],
-
-  /**
    * 自定义规则 - 扩展功能
    * 提供原生 UnoCSS 不支持的特殊样式规则
    */
