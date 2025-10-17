@@ -136,6 +136,27 @@ export class TypedRouter {
   static toMe() {
     return switchTabTyped('/pages/me/me')
   }
+
+  /** 物业管理模块导航 */
+  static toApplyRoomList() {
+    return navigateToTyped('/pages-sub/property/apply-room', {})
+  }
+
+  static toApplyRoomDetail(ardId: string, communityId: string) {
+    return navigateToTyped('/pages-sub/property/apply-room-detail', { ardId, communityId })
+  }
+
+  static toApplyRoomRecord(params: PageParams['/pages-sub/property/apply-room-record']) {
+    return navigateToTyped('/pages-sub/property/apply-room-record', params)
+  }
+
+  static toApplyRoomRecordHandle(params: PageParams['/pages-sub/property/apply-room-record-handle']) {
+    return navigateToTyped('/pages-sub/property/apply-room-record-handle', params)
+  }
+
+  static toApplyRoomRecordDetail(params: PageParams['/pages-sub/property/apply-room-record-detail']) {
+    return navigateToTyped('/pages-sub/property/apply-room-record-detail', params)
+  }
 }
 
 /** 路由参数解析工具 */
@@ -182,6 +203,11 @@ export function isValidRoute(path: string): path is PageRoute {
     '/pages-sub/complaint/handle',
     '/pages-sub/inspection/list',
     '/pages-sub/inspection/execute',
+    '/pages-sub/property/apply-room',
+    '/pages-sub/property/apply-room-detail',
+    '/pages-sub/property/apply-room-record',
+    '/pages-sub/property/apply-room-record-handle',
+    '/pages-sub/property/apply-room-record-detail',
   ]
 
   return validRoutes.includes(path as PageRoute)

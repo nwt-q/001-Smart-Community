@@ -400,3 +400,121 @@
 
 1. 请阅读 `component-migration` 子代理文件，现在我不允许配置 `<wd-img>` 组件的 width 和 height 属性。因为这两个属性会写死组件的宽高，不利于响应式界面的显示。
 2. 请改成用 unocss 样式实现宽高设置。
+
+### 035 细化 `route-migration` 子代理对类型化路由的跳转方案
+
+请深度思考。
+
+1. 阅读 `route-migration` 子代理。
+2. 阅读 `src\router` 目录内全部的文件。
+3. 现在 `route-migration` 子代理和`src\router` 目录内全部的文件，是对不上的。现在我希望你以 `src\router` 目录的现存文件为引导，告诉 `route-migration` 子代理，要在什么时候正确使用这些类型化的路由跳转工具。细化子代理的指导文件，细化清楚如何使用这些类型化的配置。
+4. 细化清楚何时新增类型化的跳转函数。
+
+### 036 细化 `component-migration` 子代理对 `<wd-status-tip>` 组件的使用
+
+我希望 `component-migration` 子代理在实现类似于暂无数据的空占位符需求时，能够使用 `wot-design-uni` 组件库的 `<wd-status-tip>` 组件。
+
+在迁移 `旧项目` 并实现类似的空占位符需求时，请使用 `<wd-status-tip>` 组件实现。
+
+1. 请阅读 https://github.com/Moonofweisheng/wot-design-uni/blob/master/docs/component/status-tip.md 文档。了解清楚 `<wd-status-tip>` 组件的用法。
+2. 为 `component-migration` 子代理增加关于 `<wd-status-tip>` 组件的使用细则。
+3. 精简地增加 `<wd-status-tip>` 组件的使用方式，我不希望 `component-migration` 子代理太长了。
+
+如果你对此有疑问，请深度思考该需求，询问我你不清楚的细节。我和你补充细化细则后，再开始修改 `component-migration` 子代理文件。
+
+#### 01 回答 AI 的问题
+
+1. 图片资源管理策略：允许 `<wd-status-tip>` 继续使用默认外链。
+2. 内容细化程度：
+   - A 但是简单说明 7 种类型即可。不需要你详细说明。
+   - C 补充 image-size 的常见用法示例。
+   - D 简单说明 image 插槽的自定义场景就好。
+3. 内容整合位置：
+   - A
+   - B
+   - D
+4. 精简程度控制：按照你的建议来做。
+
+### 037 优化 `style-migration` 子代理的迁移行为细节
+
+我需要你帮我优化迭代 `style-migration` 子代理的迁移实施细节。要求 `style-migration` 子代理在未来遵守这些要求。
+
+1. 自定义样式类处理策略： 分解成 UnoCSS 原子类，不新建任何业务性质样式类。避免增加心智负担。
+2. 遇到复合样式直接在模板内分解成 css 原子类。
+3. 补全关于 `cu-*` 样式映射表。
+4. 面对 `cu-*` 样式类的处理策略： 直接在模板中展开成原子类，不可以创建任何 unocss shortcuts 。
+
+与此同时，我需要你读取，吸收，接纳现有的样式迁移报告，请你在这报告中，将以下内容，迁移，补充，整合到现有的 `style-migration` 子代理内。
+
+针对报告： `docs\migration-property-apply-pages.md`
+
+迁移整合的项目：
+
+- `布局容器类迁移`
+- `颜色类迁移`
+- 间距类迁移
+- 形状与效果类迁移
+- 网格类迁移
+
+编写子代理时，我还有以下要求：
+
+1. 长度不要过长。
+
+#### 1 回答问题
+
+1. shortcuts 的处理边界：
+   - 需要完全删除 cu-card、cu-bar、cu-btn、cu-list、cu-item 这些`cu-*` shortcuts。
+   - 非 `cu-*` 的 shortcuts（如 address-search、letter-header、staff-item），不做保留，删除掉。
+   - 所有 shortcuts 全部删除，只保留纯映射表。
+
+2. "长度不要过长"的具体标准： 把这些作用不大的，和迁移任务关联不大的，标准指导意义弱的内容，删除掉。
+   - 迁移计划和检查清单
+   - 迁移实施计划。我不想看到子代理有迁移实施计划。
+   - 检查清单和验证步骤
+   - 代码示例：请你对代码示例做适当的删减缩减。
+
+3. 映射表的整合策略：
+   - 合并去重。
+   - 冲突映射以 `style-migration` 子代理原本的为主。
+
+4. 复合样式类的映射粒度： 只处理满足 `cu-*` 规则的样式。其他复合的细节不看。舍弃掉。
+
+5. 自定义业务样式类的识别标准： 我也讲不清楚具体的`业务性质样式类`是什么，我给不出你具体的标准。但是有一点很清楚，遇到这种类，你也别去区分`框架类` 还是 `业务类` ，你都应该变成 unocss 原子样式。既然你没有明确的原子样式映射表，那就直接忽略掉。
+
+6. uno.config.ts 配置的保留程度： 其他配置你都不用删减，你就删除掉全部的 shortcuts 定义。我要求你精简的是子代理的文件长度，至于 `uno.config.ts` 配置，不在讨论范围内。
+
+7. 图标迁移内容的取舍： 保留一句简要说明 + 跳转链接。我不允许你完全移除图标相关内容。该部分关于 icon 迁移的内容，也是 `style-migration` 子代理重要的组成部分。
+
+8. 对于子代理文件。精简代码示例，用紧凑的表格格式代替冗长对比。
+
+9. 善后处置： 因为我要求你删除掉全部的 shortcuts ，但是仍旧有部分页面保留，使用了这些 shortcuts 。请你阅读下面这些`本项目`的业务热点组件，同步按照你刚刚修改的 `style-migration` 子代理的要求，做出替换修改。
+   - `活动操作按钮组件` ： `src\components\activity\activity-actions.vue`
+   - `活动信息组件` ： `src\components\activity\activity-info.vue`
+   - `活动详情页` ： `src\pages\activity\detail.vue`
+   - `活动列表页` ： `src\pages\activity\index.vue`
+
+### 038 优化补全 `component-migration` 子代理关于 icon 图标的迁移清单
+
+请深度思考。
+
+我需要你读取，吸收，接纳现有的样式迁移报告，请你在这报告中，将以下内容，迁移，补充，整合到现有的 `component-migration` 子代理内。
+
+针对报告： `docs\migration-property-apply-pages.md`
+
+迁移整合的项目：
+
+- `图标映射表`
+- `图标映射策略`
+
+#### 1 回答 AI 问题
+
+1. 图标映射表的合并策略： 合并去重策略；都新增补充到子代理内。
+2. 表格格式的统一：
+   - 采用格式： `现有子代理表格(4列)`
+   - 不需要 `使用频率` 这个表格列。
+   - 不需要 `选择依据` 这个表格列。
+3. 图标映射策略的整合方式： 不需要增加任何关于 `选择依据` 的内容。忽略。
+4. 冲突映射的处理： 都保留。`cuIcon-delete` 和 `cuIcon-deletefill` 都映射成新的 `i-carbon-trash-can` ，分别列出两条映射。
+5. 内容组织结构： C: 保持现有结构,只更新映射表,不新增章节
+6. 迁移示例的补充：
+   - **需要补充**到子代理的"Icon 迁移的核心方针"章节。

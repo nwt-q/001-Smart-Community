@@ -382,6 +382,8 @@
 
 ## 016 迁移 applyRoom 系列的页面
 
+请深度思考。
+
 要被迁移的页面文件夹地址如下：
 
 1. gitee-example\pages\applyRoom
@@ -391,3 +393,146 @@
 5. gitee-example\pages\applyRoomRecordHandle
 
 请你使用全部在内 `.claude\agents` 满足 `*-migration.md` glob 匹配规则的全部迁移用途的子代理，一次性完成这 5 个页面的系统性迁移。迁移完成后为我提供迁移报告。
+
+### 01 使用严格的 `route-migration` 子代理实现路由跳转
+
+请深度思考。
+
+1. 请你阅读 `src\pages-sub\property` 内全部的页面。
+2. 已知这几个页面的路由跳转的逻辑链路如下：
+
+旧项目流程：
+
+```txt
+applyRoom.vue
+  → _toApplyRoomDetail()
+    → applyRoomDetail.vue
+      → showApplyRoomRecord()
+        → applyRoomRecord.vue
+          → _addRecord()
+            → applyRoomRecordHandle.vue
+          → _showDetail()
+            → applyRoomRecordDetail.vue
+```
+
+新项目流程：
+
+```txt
+apply-room.vue
+  → toApplyRoomDetail()
+    → apply-room-detail.vue
+      → showApplyRoomRecord()
+        → apply-room-record.vue
+          → addRecord()
+            → apply-room-record-handle.vue
+          → showDetail()
+            → apply-room-record-detail.vue
+```
+
+3. 使用 `route-migration` 子代理，制作严格的路由跳转函数，实现严格的强类型路由跳转。
+
+### 02 对接 mock 接口
+
+请深度思考。
+
+1. 有策略的阅读 `旧项目` 的页面：
+
+- gitee-example\pages\applyRoom
+- gitee-example\pages\applyRoomDetail
+- gitee-example\pages\applyRoomRecord
+- gitee-example\pages\applyRoomRecordDetail
+- gitee-example\pages\applyRoomRecordHandle
+
+2. 阅读 `src\api\mock\property-application.mock.ts` 和 `src\api\property-application.ts` ，认真**思考**，自己在迁移旧项目的这 5 个页面时，是否出现了遗漏接口的情况？如果有遗漏，请在 mock 文件内 api 文件内补全。请主动使用 `api-migration` 子代理补全接口。
+3. 阅读 `src\pages-sub\property\*.vue` 的这几个`本项目`的文件，在这几个页面内实现接口，对接 `src\api\property-application.ts` 提供的接口。
+4. 认真实现 `src\pages-sub\property\*.vue` 页面内出现的 `TODO` 待办。对接接口，实现业务。
+5. 主动运行谷歌浏览器 MCP，在这些页面提供的 URL 地址内，访问并测试你是否对接了上述接口，实现了该页面应有的功能。
+
+### 03 使用合适的下拉加载组件
+
+请深度思考。
+
+1. 阅读 `src\pages-sub\property\*.vue` 的这几个`本项目`的文件
+
+2. 注意到你之前删减掉的组件 `<uni-load-more :status="loadingStatus" :content-text="loadingContentText" />` 。请你用 wot-design-uni 的 loadmore 组件来完成修改。我希望你用 `<wd-loadmore>` 组件来完成该部分功能。
+3. 请你主动阅读该文档。学会如何使用 `<wd-loadmore>` 组件。
+
+- https://github.com/Moonofweisheng/wot-design-uni/blob/master/docs/en-US/component/loadmore.md
+
+4. 请遵照 `component-migration` 子代理的要求做，但是不要运行子代理。
+
+### 04 使用 useRequest 做接口请求
+
+1. 阅读 `src\pages-sub\property\*.vue` 的这几个`本项目`的文件。
+2. 直接使用 `'alova/client'` 模块提供的 useRequest 函数，来重构接口请求。
+3. 严格遵照 `api-migration` 子代理的需求来改造代码。请阅读 `api-migration` 子代理的要求来完成改造。
+
+### 05 使用 onComplete 回调函数优化
+
+使用 useRequest 组合式 api 的 onComplete 回调函数，优化 loadingState 变量设置成 finished 的赋值逻辑。要求在 onComplete 回调函数内，统一处理这种 finished 状态的变更写法。
+
+### 06 使用 useRequest 的 loading 响应式变量来设置 loadingState 变量取值为 `loading` 字符串的状态
+
+重构代码，用 vue 的 watch 监听来监控 loading 的取值，进而动态设置 loadingState 变量的 `loading` 字符串。
+
+如果处于正在 loading ，那么就通过 watch 来设置字符串状态值。
+
+### 07 更换使用的数组
+
+针对：
+
+- src\pages-sub\property\apply-room.vue
+- src\pages-sub\property\apply-room-record.vue
+
+在统一处理 finished 状态时，不使用 res.data.length 和 res.data 。这会出现类型报错。请你思考，使用对应页面的响应式变量数组，来做逻辑判断。
+
+### 08 优化 暂无数据 的代码实现
+
+请深度思考。
+
+请阅读 `房屋申请系列页面` 文件，查找以下代码实现。
+
+```html
+<view class="flex flex-col items-center justify-center py-20">
+  <text class="text-gray-400">暂无数据</text>
+</view>
+```
+
+我需要你帮我优化 `房屋申请系列页面` 的暂无数据的占位符实现。改用成 `<wd-status-tip>` 组件。
+
+1. 请遵循 `component-migration` 子代理的要求。
+2. 遵循其要求，但不使用子代理。
+
+### 09 处理迁移时的样式类转换问题
+
+请深度思考。
+
+1. 阅读 房屋申请系列页面 。
+2. 阅读旧项目内被迁移的旧页面。
+
+- gitee-example\pages\applyRoom
+- gitee-example\pages\applyRoomDetail
+- gitee-example\pages\applyRoomRecord
+- gitee-example\pages\applyRoomRecordDetail
+- gitee-example\pages\applyRoomRecordHandle
+
+3. 阅读清楚 `style-migration` 子代理的要求。
+4. 搞清楚现在 `房屋申请系列页面` 有那些样式类没有被及时的迁移。做好使用 `style-migration` 子代理完成迁移的准备。
+5. 请全面的，完整的阅读我提供的文件，并深度思考我的样式类迁移需求。如果在迁移前，你对迁移细节，或者是 `style-migration` 子代理的迁移规则有疑问，请在思考后向我提问。我将和你补充细化实现细节。
+
+#### 1 回答疑问
+
+1. 图标迁移归属问题： 你考虑的很对。那就先用 `component-migration` 子代理完成 icon 图标的迁移。
+2. 自定义样式类处理策略： 分解成 UnoCSS 原子类，不新建任何业务性质样式类。避免增加心智负担。
+3. 迁移范围与优先级：
+   - 一次性迁移全部的页面；
+   - 一个一个文件的来做；
+   - 没有页面优先级，都是平级的页面；
+   - 同时完成 `颜色类` 和 `布局类` 的迁移；
+4. Shortcuts 使用边界： 直接在模板中展开成原子类。不可以创建任何关于 `cu-*` 的 shortcuts 。
+5. 渐变色处理： 允许在 `uno.config.ts` 中配置。
+
+### 产生的冗余文件
+
+docs 根目录内的文件。
+test-property-application.ts

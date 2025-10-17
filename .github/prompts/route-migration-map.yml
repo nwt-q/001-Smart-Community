@@ -146,7 +146,7 @@ route_mappings:
     gitee-example/pages/owner/addOwner.vue: src/pages-sub/property/add-owner.vue
     gitee-example/pages/owner/editOwner.vue: src/pages-sub/property/edit-owner.vue
 
-    # 房屋申请 (5个)
+    # 房屋申请 (5个) ✅ 已完成迁移
     gitee-example/pages/applyRoom/applyRoom.vue: src/pages-sub/property/apply-room.vue
     gitee-example/pages/applyRoomDetail/applyRoomDetail.vue: src/pages-sub/property/apply-room-detail.vue
     gitee-example/pages/applyRoomRecord/applyRoomRecord.vue: src/pages-sub/property/apply-room-record.vue

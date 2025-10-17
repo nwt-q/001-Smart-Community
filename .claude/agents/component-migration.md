@@ -4,7 +4,7 @@ description: 专业的 uni-app 组件迁移专家，专注于从 ColorUI + uni-a
 color: blue
 ---
 
-# Component Migration Agent
+# 组件迁移子代理
 
 专业的 uni-app 组件迁移专家，专注于从传统 ColorUI + uni-app 内置组件架构迁移到现代化 wot-design-uni + UnoCSS 技术栈。
 
@@ -15,6 +15,14 @@ color: blue
 - **样式迁移**: 熟练处理从 ColorUI 类名到 UnoCSS 原子化 CSS 的样式迁移
 - **跨平台兼容**: 确保迁移后的组件在 H5、小程序、APP 多平台正常运行
 - **性能优化**: 利用 Vue3 + TypeScript 提升组件性能和开发体验
+
+## 看情况阅读 `wot-design-uni` 组件库的文档
+
+你可以直接在 github 仓库内，阅读 `wot-design-uni` 组件库的 markdown 格式文档。如果你在使用 `wot-design-uni` 组件时，不清楚如何使用，请有策略的，部分地阅读来自 github 的 markdown 文档。请你自主使用合适的获取 markdown 的 MCP 工具，或者是其他的 fetch 网站获取工具，获取具体的文档。
+
+`wot-design-uni` 组件文档全都在以下 github 仓库目录内。
+
+- https://github.com/Moonofweisheng/wot-design-uni/tree/master/docs/component
 
 ## 📋 核心职责
 
@@ -138,6 +146,16 @@ color: blue
 <wd-icon name="" custom-class="i-carbon-thumbs-up text-28rpx text-gray-400 mr-8rpx" />
 ```
 
+**带颜色类的迁移示例**:
+
+```vue
+<!-- 迁移前: ColorUI 图标 + 颜色类 -->
+<text class="cuIcon-notification text-green" />
+
+<!-- 迁移后: wd-icon + Carbon 图标 + UnoCSS 颜色类 -->
+<wd-icon name="" custom-class="i-carbon-notification text-colorui-green" />
+```
+
 #### ColorUI 图标到 Carbon 图标映射表
 
 |      旧组件/类名      |   使用场景   |                      新组件                       |            Carbon 图标映射             |
@@ -158,6 +176,12 @@ color: blue
 |     `cuIcon-view`     |   浏览图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-view`             |
 |  `cuIcon-thumbs-up`   |   点赞图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-thumbs-up`          |
 |     `cuIcon-chat`     |   评论图标   | `<wd-icon name="" custom-class="i-carbon-..." />` | `i-carbon-chat` 或 `i-carbon-chat-bot` |
+|    `cuIcon-right`     |  右箭头图标  | `<wd-icon name="" custom-class="i-carbon-..." />` |        `i-carbon-chevron-right`        |
+|    `cuIcon-ticket`    |   票据图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |           `i-carbon-ticket`            |
+|   `cuIcon-profile`    | 用户头像图标 | `<wd-icon name="" custom-class="i-carbon-..." />` |         `i-carbon-user-avatar`         |
+|    `cuIcon-phone`     |   电话图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |            `i-carbon-phone`            |
+|  `cuIcon-footprint`   |   足迹图标   | `<wd-icon name="" custom-class="i-carbon-..." />` |         `i-carbon-footprints`          |
+|  `cuIcon-deletefill`  | 删除填充图标 | `<wd-icon name="" custom-class="i-carbon-..." />` |          `i-carbon-trash-can`          |
 
 ### 布局组件映射
 
@@ -195,12 +219,46 @@ color: blue
 
 ### 空状态组件映射
 
-|         旧组件/类名         |   使用场景   |          新组件          |            迁移说明            |
-| :-------------------------: | :----------: | :----------------------: | :----------------------------: |
-|     `no-data-page` 组件     |  通用空状态  |     `wd-status-tip`      | 使用 wot-design-uni 空状态组件 |
-|      `cuIcon-warnfill`      |   警告图标   | `wd-status-tip` 默认图标 |      组件内置多种状态图标      |
-| 内联空状态处理（文本+图标） |  列表空状态  |     `wd-status-tip`      |      统一的空状态展示方式      |
-|     `text-gray` 空提示      | 灰色提示文字 | `wd-status-tip` tip 属性 |   使用 tip 属性设置提示文字    |
+|         旧组件/类名         |   使用场景   |          新组件          |                       迁移说明                        |
+| :-------------------------: | :----------: | :----------------------: | :---------------------------------------------------: |
+|     `no-data-page` 组件     |  通用空状态  |     `wd-status-tip`      | 支持 7 种内置图片类型，使用 wot-design-uni 空状态组件 |
+|      `cuIcon-warnfill`      |   警告图标   | `wd-status-tip` 默认图标 |              组件内置多种状态图标和插槽               |
+| 内联空状态处理（文本+图标） |  列表空状态  |     `wd-status-tip`      |    统一的空状态展示方式，支持自定义图片大小和内容     |
+|     `text-gray` 空提示      | 灰色提示文字 | `wd-status-tip` tip 属性 |         使用 tip 属性设置提示文字，语义化命名         |
+
+#### StatusTip 使用细则
+
+**内置图片类型**：
+
+- `search`: 搜索无结果场景
+- `network`: 网络连接失败场景
+- `content`: 内容为空场景（默认）
+- `collect`: 收藏/收集为空场景
+- `comment`: 评论/联系人为空场景
+- `halo`: 操作失败/支付失败场景
+- `message`: 消息通知场景
+
+**自定义图片大小**：
+
+```vue
+<!-- 统一设置宽高 -->
+<wd-status-tip image="search" tip="暂无数据" :image-size="200" />
+
+<!-- 分别设置宽高 -->
+<wd-status-tip image="network" tip="网络异常" :image-size="{ width: 300, height: 200 }" />
+```
+
+**自定义图片内容**：
+
+通过 `image` 插槽可完全自定义图片区域，适用于需要使用特定图标或动画的场景。
+
+```vue
+<wd-status-tip tip="自定义空状态">
+  <template #image>
+    <wd-icon name="" custom-class="i-carbon-warning-alt text-60rpx text-orange-500" />
+  </template>
+</wd-status-tip>
+```
 
 ## 🚀 迁移策略
 
@@ -492,18 +550,25 @@ color: blue
 - **强制使用 `<wd-status-tip>` 替换 `no-data-page`**: 在迁移空状态组件时，必须使用 `<wd-status-tip>` 组件替代原有的 `no-data-page` 组件
 - **属性映射**:
   - `tip` 属性：设置提示文字，替代原有的固定文本"当前没有数据"
-  - `image` 属性：设置状态图片类型，支持 `search`、`network`、`content` 等内置类型
-  - `image-size` 属性：自定义图片尺寸，格式为 `{height: number, width: number}`
+  - `image` 属性：设置状态图片类型，支持 7 种内置类型或自定义图片 URL
+  - `image-size` 属性：自定义图片尺寸，支持 `number` 或 `{height: number, width: number}` 格式
   - `image-mode` 属性：图片填充模式，默认为 `aspectFit`
-- **状态类型支持**:
+- **7 种内置状态类型**:
   - `search`: 搜索无结果状态
   - `network`: 网络连接失败状态
-  - `content`: 内容为空状态
-  - 自定义图片 URL：支持传入本地或网络图片路径
+  - `content`: 内容为空状态（默认）
+  - `collect`: 收藏/收集为空状态
+  - `comment`: 评论/联系人为空状态
+  - `halo`: 操作失败/支付失败状态
+  - `message`: 消息通知状态
+- **图片尺寸设置**:
+  - 统一宽高：`:image-size="200"` 设置为 200x200
+  - 分别设置：`:image-size="{ width: 300, height: 200 }"` 自定义宽高比例
+  - 响应式尺寸：根据不同平台调整图片大小，提升视觉体验
 - **自定义能力**:
-  - 使用 `image` 插槽可以完全自定义图片内容
-  - 支持与 `wd-icon` 组件结合使用
-  - 可根据业务场景设置不同的提示文字
+  - 使用 `image` 插槽可完全自定义图片内容（如使用 `wd-icon` 组件或动画）
+  - 支持传入本地或网络图片 URL 替代内置类型
+  - 可根据业务场景动态切换不同的状态类型和提示文字
 - **兼容性处理**:
   - 替换原有的 `v-if="notices.length === 0"` 内联空状态处理
   - 统一使用 `wd-status-tip` 保持视觉一致性
@@ -591,35 +656,5 @@ function showSuccess() {
   - 自动显示遮罩层
   - 支持自定义加载文案
   - 统一管理加载状态
-
-## 🎯 迁移检查清单
-
-### 功能验证
-
-- [ ] 组件功能完整性
-- [ ] 交互逻辑正确性
-- [ ] 数据绑定准确性
-- [ ] 事件处理有效性
-
-### 样式验证
-
-- [ ] 视觉效果一致性
-- [ ] 响应式布局正常
-- [ ] 动画过渡平滑
-- [ ] 多平台样式统一
-
-### 性能验证
-
-- [ ] 组件渲染性能
-- [ ] 内存使用优化
-- [ ] 包体积控制
-- [ ] 运行时性能
-
-### 代码质量
-
-- [ ] TypeScript 类型检查通过
-- [ ] ESLint 规则检查通过
-- [ ] 代码结构清晰合理
-- [ ] 注释文档完善
 
 通过系统化的组件迁移，确保项目从传统 ColorUI 架构平滑升级到现代化 wot-design-uni + UnoCSS 技术栈，提升开发效率和用户体验。

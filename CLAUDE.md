@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 主动问询实施细节
+
+在我与你沟通并要求你具体实施更改时，难免会遇到很多模糊不清的事情。
+
+请你深度思考这些`遗漏点`，`缺漏点`，和`冲突相悖点`，**并主动的向我问询这些你不清楚的实施细节**。
+
+我会与你共同补充细化实现细节。我们先迭代出一轮完整完善的实施清单，然后再由你亲自落实实施下去。
+
 ## 对话沟通术语表
 
 在我和你沟通时，我会使用以下术语，便于你理解。
@@ -25,6 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 在实现具体业务时，某些热点组件会经常修改，为了便于沟通，这里说明清楚其简称，便于你快速找到对应组件。
 
+- `房屋申请系列页面` ： `src\pages-sub\property\*.vue` ，一个 glob 匹配语法，指代一系列 vue 组件。
 - `活动操作按钮组件` ： `src\components\activity\activity-actions.vue`
 - `活动信息组件` ： `src\components\activity\activity-info.vue`
 - `活动详情页` ： `src\pages\activity\detail.vue`
@@ -45,7 +54,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 每当你在 markdown 文档内编写表格时，表格的格式一定是**居中对齐**的，必须满足**居中对齐**的格式要求。
 
-### 2. javascript / typescript 的代码注释写法
+### 2. markdown 文档的 vue 组件代码片段编写格式
+
+错误写法：
+
+1. 代码块语言用 vue，且不带有 `<template>` 标签来包裹。
+
+```vue
+<wd-popup v-model="showModal">
+  <wd-cell-group>
+    <!-- 内容 -->
+  </wd-cell-group>
+</wd-popup>
+```
+
+2. 代码块语言用 html。
+
+```html
+<wd-popup v-model="showModal">
+  <wd-cell-group>
+    <!-- 内容 -->
+  </wd-cell-group>
+</wd-popup>
+```
+
+正确写法：代码块语言用 vue ，且带有 `<template>` 标签来包裹。
+
+```vue
+<template>
+  <wd-popup v-model="showModal">
+    <wd-cell-group>
+      <!-- 内容 -->
+    </wd-cell-group>
+  </wd-popup>
+</template>
+```
+
+### 3. javascript / typescript 的代码注释写法
 
 代码注释写法应该写成jsdoc格式。而不是单纯的双斜杠注释。比如：
 
@@ -79,19 +124,25 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 ```
 
-### 3. unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
+### 4. unocss 配置不应该创建过多的 shortcuts 样式类快捷方式
 
 在你做样式迁移的时候，**不允许滥用** unocss 的 shortcuts 功能。不要把那么多样式类都设计成公共全局级别的快捷方式。
 
-### 4. vue组件编写规则
+### 5. vue组件编写规则
 
 1. vue组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
 2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
 3. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
 
+### 6. jsdoc 注释的 `@example` 标签不要写冗长复杂的例子
+
+1. 你应该积极主动的函数编写 jsdoc 注释的 `@example` 标签。
+2. 但是 `@example` 标签不允许写复杂的例子，请写简单的单行例子。完整的函数使用例子，你应该择机在函数文件的附近编写md文档，在文档内给出使用例子。
+
 ## 其他注意事项
 
 1. 每次你完成更改时，都**不要运行**任何类型检查命令。我们项目不需要你去运行类型检查命令。
+2. 不要去更改 `prettier.config.js` 文件，**不要自作主张**的给这个配置文件**增加单引号**。
 
 ## 项目概述
 
