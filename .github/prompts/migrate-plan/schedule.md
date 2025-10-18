@@ -534,12 +534,29 @@ apply-room.vue
 
 ### 10 处理接口故障
 
-请你运行谷歌浏览器 MCP，进入 `房屋申请列表页` 的 `http://localhost:9000/#/pages-sub/property/apply-room` 地址，阅读控制台报错，处理报错。
-
+你的任务是处理接口故障。具体来说，你需要运行谷歌浏览器 MCP，进入 `房屋申请列表页` 的 `http://localhost:9000/#/pages-sub/property/apply-room` 地址，阅读控制台报错，并处理报错。
+以下是控制台报错信息：
+<console_errors>
 `TypeError: Cannot read properties of undefined (reading 'stateName')`
 `TypeError: Cannot read properties of undefined (reading 'createUserName')`
+</console_errors>
+请按照以下步骤进行操作：
 
-请你自主检查是不是 mock 接口有故障，还是什么情况，深度解析分析故障，认真思考故障缘由。
+1. 开启谷歌浏览器 MCP，访问 `http://localhost:9000/#/pages-sub/property/apply-room` 地址。
+2. 仔细查看控制台的报错信息，自主检查是否是 mock 接口出现故障。
+3. 深度解析分析故障，认真思考故障缘由。
+
+在`<思考>`标签中详细分析故障产生的原因，包括可能的代码问题、数据问题、接口问题等。然后在`<结论>`标签中给出故障处理的最终结论和相关建议，如是否需要修改代码、调整数据、修复接口等。
+
+```html
+<思考>
+[在此详细分析故障产生的原因]
+</思考>
+
+<结论>
+[在此给出故障处理的最终结论和相关建议]
+</结论>
+```
 
 ### 产生的冗余文件
 
