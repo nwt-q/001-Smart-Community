@@ -521,9 +521,22 @@
 
 ### 039 优化 `api-migration` 子代理对 mock 的处理方式
 
-<!-- TODO: -->
-
 请阅读 `api-migration` 子代理，并按照以下要求，优化子代理的行为。使得子代理在生成 mock 接口时，满足以下要求。
 
 1. 新增的接口要求： mock 接口必须满足 `src\types\api.ts` 的接口响应格式。
 2. 修改 mock 接口时，如果此时正在使用谷歌浏览器 MCP 运行项目，请你及时重启本地开发环境。重启本地开发环境才能让 mock 接口更新到最新版。
+
+#### 01 回答 AI 的问题
+
+1. ResultEnum.Success 的值是什么？你不用管 `ResultEnum.Success` 的具体值，你只需要遵守要求，使用该 `ResultEnum.Success` 枚举值即可。错的是现在的 `api-migration` 子代理文档。不一致修改的是 `api-migration` 子代理。
+2. 错误码规范： 一律用 `ResultEnum` 提供的错误码。不需要定义一个标准的错误码枚举。直接复用 `ResultEnum` 枚举的值。文档的实例，恰当的补充到 `ResultEnum` 枚举内。注意去补充`ResultEnum` 枚举，而不是覆盖删减 `ResultEnum` 枚举的值。另外把 `api-migration` 子代理文档对这些返回值例子删除，让子代理一律以 `ResultEnum` 枚举为准。
+3. timestamp 字段的必需性 ：以 `src\types\api.ts` 类型定义的为准。timestamp 应该是必需字段。修正 `api-migration` 子代理。
+4. 如何检测是否在使用浏览器 MCP？检查是否有运行中的 pnpm dev 进程即可。你自己想办法重启谷歌浏览器 MCP，重启正在运行的本地 H5 项目。
+5. 你期望的重启方式是什么？选项 A：自动重启。
+6. 重启的触发条件，什么情况下需要重启？
+   - 新增任何 `*.mock.ts` 文件时
+   - 修改任何现有 `*.mock.ts` 文件时
+   - 修改 mock 数据内容时也需要重启
+7. 重启后的状态保持：浏览器 MCP 已经打开页面，重启后需要刷新页面。
+8. 如何确保开发者遵循响应格式规范？选项 A。在 `api-migration.md` 中强调必须使用 `successResponse/errorResponse`
+9. 现有 mock 文件的处理：用更新后的子代理，重新检查并修正现有的 mock 文件。
