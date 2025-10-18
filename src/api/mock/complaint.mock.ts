@@ -1,7 +1,7 @@
 import type { PriorityType } from '@/types/api'
 import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/complaint'
-import { ResultEnum } from '@/http/tools/enum'
-import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, randomDelay, successResponse } from './shared/utils'
+
+import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 投诉模块 Mock 接口 - 完全自包含架构
@@ -306,12 +306,12 @@ export default defineUniAppMock([
 
       try {
         if (!params.complaintId) {
-          return errorResponse('投诉ID不能为空', ResultEnum.Error)
+          return errorResponse('投诉ID不能为空', ResultEnumMap.Error)
         }
 
         const complaint = mockComplaintDatabase.getComplaintById(params.complaintId)
         if (!complaint) {
-          return errorResponse('投诉记录不存在', ResultEnum.NotFound)
+          return errorResponse('投诉记录不存在', ResultEnumMap.NotFound)
         }
 
         console.log('🚀 Mock API: getComplaintDetail', params, '→', complaint)
@@ -339,16 +339,16 @@ export default defineUniAppMock([
 
         // 数据验证
         if (!data.title?.trim()) {
-          return errorResponse('投诉标题不能为空', ResultEnum.Error)
+          return errorResponse('投诉标题不能为空', ResultEnumMap.Error)
         }
         if (!data.description?.trim()) {
-          return errorResponse('投诉描述不能为空', ResultEnum.Error)
+          return errorResponse('投诉描述不能为空', ResultEnumMap.Error)
         }
         if (!data.ownerName?.trim()) {
-          return errorResponse('投诉人姓名不能为空', ResultEnum.Error)
+          return errorResponse('投诉人姓名不能为空', ResultEnumMap.Error)
         }
         if (!data.ownerPhone?.trim()) {
-          return errorResponse('联系电话不能为空', ResultEnum.Error)
+          return errorResponse('联系电话不能为空', ResultEnumMap.Error)
         }
 
         const newComplaint: Complaint = {
@@ -390,12 +390,12 @@ export default defineUniAppMock([
 
       try {
         if (!body.complaintId) {
-          return errorResponse('投诉ID不能为空', ResultEnum.Error)
+          return errorResponse('投诉ID不能为空', ResultEnumMap.Error)
         }
 
         const complaint = mockComplaintDatabase.getComplaintById(body.complaintId)
         if (!complaint) {
-          return errorResponse('投诉记录不存在', ResultEnum.NotFound)
+          return errorResponse('投诉记录不存在', ResultEnumMap.NotFound)
         }
 
         // 更新投诉状态和处理信息
@@ -425,15 +425,15 @@ export default defineUniAppMock([
 
       try {
         if (!body.complaintId) {
-          return errorResponse('投诉ID不能为空', ResultEnum.Error)
+          return errorResponse('投诉ID不能为空', ResultEnumMap.Error)
         }
         if (!body.responseContent?.trim()) {
-          return errorResponse('回复内容不能为空', ResultEnum.Error)
+          return errorResponse('回复内容不能为空', ResultEnumMap.Error)
         }
 
         const complaint = mockComplaintDatabase.getComplaintById(body.complaintId)
         if (!complaint) {
-          return errorResponse('投诉记录不存在', ResultEnum.NotFound)
+          return errorResponse('投诉记录不存在', ResultEnumMap.NotFound)
         }
 
         // 添加回复信息
@@ -467,19 +467,19 @@ export default defineUniAppMock([
 
       try {
         if (!body.complaintId) {
-          return errorResponse('投诉ID不能为空', ResultEnum.Error)
+          return errorResponse('投诉ID不能为空', ResultEnumMap.Error)
         }
         if (!body.rating || body.rating < 1 || body.rating > 5) {
-          return errorResponse('评分必须在1-5之间', ResultEnum.Error)
+          return errorResponse('评分必须在1-5之间', ResultEnumMap.Error)
         }
 
         const complaint = mockComplaintDatabase.getComplaintById(body.complaintId)
         if (!complaint) {
-          return errorResponse('投诉记录不存在', ResultEnum.NotFound)
+          return errorResponse('投诉记录不存在', ResultEnumMap.NotFound)
         }
 
         if (complaint.status !== 'RESOLVED') {
-          return errorResponse('只能对已解决的投诉进行评价', ResultEnum.Error)
+          return errorResponse('只能对已解决的投诉进行评价', ResultEnumMap.Error)
         }
 
         // 添加满意度评价
@@ -577,12 +577,12 @@ export default defineUniAppMock([
 
       try {
         if (!body.complaintId) {
-          return errorResponse('投诉ID不能为空', ResultEnum.Error)
+          return errorResponse('投诉ID不能为空', ResultEnumMap.Error)
         }
 
         const updatedComplaint = mockComplaintDatabase.updateComplaint(body.complaintId, body)
         if (!updatedComplaint) {
-          return errorResponse('投诉记录不存在', ResultEnum.NotFound)
+          return errorResponse('投诉记录不存在', ResultEnumMap.NotFound)
         }
 
         console.log('🚀 Mock API: updateComplaint', body, '→', updatedComplaint)
@@ -609,12 +609,12 @@ export default defineUniAppMock([
 
       try {
         if (!params.complaintId) {
-          return errorResponse('投诉ID不能为空', ResultEnum.Error)
+          return errorResponse('投诉ID不能为空', ResultEnumMap.Error)
         }
 
         const success = mockComplaintDatabase.deleteComplaint(params.complaintId)
         if (!success) {
-          return errorResponse('投诉记录不存在', ResultEnum.NotFound)
+          return errorResponse('投诉记录不存在', ResultEnumMap.NotFound)
         }
 
         const result = { success: true }

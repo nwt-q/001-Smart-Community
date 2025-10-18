@@ -1,6 +1,6 @@
 import type { Contact, DepartmentType } from '@/types/contact'
-import { ResultEnum } from '@/http/tools/enum'
-import { createPaginationResponse, defineUniAppMock, errorResponse, generateChineseName, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
+
+import { createPaginationResponse, defineUniAppMock, errorResponse, generateChineseName, generatePhoneNumber, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 通讯录模块 Mock 接口 - 完全自包含架构
@@ -169,12 +169,12 @@ export default defineUniAppMock([
 
       try {
         if (!params.contactId) {
-          return errorResponse('联系人ID不能为空', ResultEnum.Error)
+          return errorResponse('联系人ID不能为空', ResultEnumMap.Error)
         }
 
         const contact = mockContactDatabase.getContactById(params.contactId)
         if (!contact) {
-          return errorResponse('联系人不存在', ResultEnum.NotFound)
+          return errorResponse('联系人不存在', ResultEnumMap.NotFound)
         }
 
         console.log('🚀 Mock API: getContactDetail', params, '→', contact)
@@ -237,7 +237,7 @@ export default defineUniAppMock([
 
       try {
         if (!params.keyword?.trim()) {
-          return errorResponse('搜索关键词不能为空', ResultEnum.Error)
+          return errorResponse('搜索关键词不能为空', ResultEnumMap.Error)
         }
 
         const result = mockContactDatabase.getContactList({
@@ -317,7 +317,7 @@ export default defineUniAppMock([
 
       try {
         if (!body.contactId) {
-          return errorResponse('联系人ID不能为空', ResultEnum.Error)
+          return errorResponse('联系人ID不能为空', ResultEnumMap.Error)
         }
 
         const contact = mockContactDatabase.updateOnlineStatus(
@@ -326,7 +326,7 @@ export default defineUniAppMock([
         )
 
         if (!contact) {
-          return errorResponse('联系人不存在', ResultEnum.NotFound)
+          return errorResponse('联系人不存在', ResultEnumMap.NotFound)
         }
 
         console.log('🚀 Mock API: updateOnlineStatus', body, '→', contact)

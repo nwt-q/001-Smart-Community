@@ -10,6 +10,27 @@ import { createDefineMock } from 'vite-plugin-mock-dev-server'
 import { ResultEnum } from '../../../http/tools/enum'
 
 /**
+ * 仅用于在 `*.mock.ts` 文件内使用。
+ * @description
+ * FIXME: 在 `*.mock.ts` 文件内使用 `ResultEnum` 枚举，会导致项目启动失败。故不得不提供字面量版本的对象。规避掉问题。
+ */
+export const ResultEnumMap = {
+  Success: '0',
+  Error: '400',
+  Unauthorized: '401',
+  Forbidden: '403',
+  NotFound: '404',
+  MethodNotAllowed: '405',
+  RequestTimeout: '408',
+  InternalServerError: '500',
+  NotImplemented: '501',
+  BadGateway: '502',
+  ServiceUnavailable: '503',
+  GatewayTimeout: '504',
+  HttpVersionNotSupported: '505',
+}
+
+/**
  * 自定义 Mock 定义函数，自动添加环境变量前缀
  * 处理 vite 代理配置和 alova baseURL 的双重前缀问题
  */
@@ -134,10 +155,11 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 
 /** 模拟错误响应 */
-export function errorResponse(message: string = '操作失败', code: ResultEnum = ResultEnum.InternalServerError) {
+export function errorResponse(message: string = '操作失败', code?: string) {
+  code = code || String(ResultEnum.InternalServerError)
   return {
     success: false,
-    code: String(code),
+    code,
     message,
     data: null,
     timestamp: Date.now(),

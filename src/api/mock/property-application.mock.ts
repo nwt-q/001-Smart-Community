@@ -23,8 +23,8 @@ import type {
   ReviewUpdateRequest,
   SaveApplicationRecordRequest,
 } from '@/types/property-application'
-import { ResultEnum } from '@/http/tools/enum'
-import { defineUniAppMock, delay, errorResponse, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, successResponse } from './shared/utils'
+
+import { defineUniAppMock, delay, errorResponse, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 空置房申请模拟数据库
@@ -565,7 +565,7 @@ export default defineUniAppMock([
         const applyRoom = mockApplyRoomDatabase.getApplyRoomById(params.ardId)
         if (!applyRoom) {
           mockLog('queryApplyRoomDiscount result', 'not found')
-          return errorResponse('申请不存在', ResultEnum.NotFound)
+          return errorResponse('申请不存在', ResultEnumMap.NotFound)
         }
 
         const result = {
@@ -609,7 +609,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('updateApplyRoomDiscount result', 'failed - not found')
-        return errorResponse('申请不存在', ResultEnum.NotFound)
+        return errorResponse('申请不存在', ResultEnumMap.NotFound)
       }
 
       mockLog('updateApplyRoomDiscount result', 'success')
@@ -632,7 +632,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('updateReviewApplyRoomDiscount result', 'failed - not found')
-        return errorResponse('申请不存在', ResultEnum.NotFound)
+        return errorResponse('申请不存在', ResultEnumMap.NotFound)
       }
 
       mockLog('updateReviewApplyRoomDiscount result', 'success')
@@ -780,7 +780,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('saveApplyRoomDiscountRecord result', 'failed')
-        return errorResponse('保存失败', ResultEnum.InternalServerError)
+        return errorResponse('保存失败', ResultEnumMap.InternalServerError)
       }
 
       mockLog('saveApplyRoomDiscountRecord result', 'success')
@@ -803,7 +803,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('cutApplyRoomDiscountRecord result', 'failed - not found')
-        return errorResponse('记录不存在', ResultEnum.NotFound)
+        return errorResponse('记录不存在', ResultEnumMap.NotFound)
       }
 
       mockLog('cutApplyRoomDiscountRecord result', 'success')

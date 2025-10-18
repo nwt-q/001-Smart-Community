@@ -1,5 +1,4 @@
-import { ResultEnum } from '@/http/tools/enum'
-import { defineUniAppMock, errorResponse, mockLog, successResponse } from './shared/utils'
+import { defineUniAppMock, errorResponse, mockLog, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 测试 Mock 插件是否正常工作
@@ -41,7 +40,7 @@ export default defineUniAppMock([
     body: ({ query }) => {
       mockLog('test/error', query)
       if (query.trigger === 'error') {
-        return errorResponse('模拟服务器错误', ResultEnum.InternalServerError)
+        return errorResponse('模拟服务器错误', ResultEnumMap.InternalServerError)
       }
       return successResponse(null, '正常响应')
     },
