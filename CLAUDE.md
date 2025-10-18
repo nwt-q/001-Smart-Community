@@ -33,7 +33,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 在实现具体业务时，某些热点组件会经常修改，为了便于沟通，这里说明清楚其简称，便于你快速找到对应组件。
 
+#### 房屋申请业务
+
+- `房屋申请列表页` ： `src\pages-sub\property\apply-room.vue`
+- `房屋申请记录页` ： `src\pages-sub\property\apply-room-record.vue`
+- `房屋申请详情页` ： `src\pages-sub\property\apply-room-detail.vue`
+- `房屋申请记录详情页` ： `src\pages-sub\property\apply-room-record-detail.vue`
+- `房屋申请记录处理页` ： `src\pages-sub\property\apply-room-record-handle.vue`
 - `房屋申请系列页面` ： `src\pages-sub\property\*.vue` ，一个 glob 匹配语法，指代一系列 vue 组件。
+
+#### 活动业务
+
 - `活动操作按钮组件` ： `src\components\activity\activity-actions.vue`
 - `活动信息组件` ： `src\components\activity\activity-info.vue`
 - `活动详情页` ： `src\pages\activity\detail.vue`
