@@ -532,6 +532,15 @@ apply-room.vue
 4. Shortcuts 使用边界： 直接在模板中展开成原子类。不可以创建任何关于 `cu-*` 的 shortcuts 。
 5. 渐变色处理： 允许在 `uno.config.ts` 中配置。
 
+### 10 处理接口故障
+
+请你运行谷歌浏览器 MCP，进入 `房屋申请列表页` 的 `http://localhost:9000/#/pages-sub/property/apply-room` 地址，阅读控制台报错，处理报错。
+
+`TypeError: Cannot read properties of undefined (reading 'stateName')`
+`TypeError: Cannot read properties of undefined (reading 'createUserName')`
+
+请你自主检查是不是 mock 接口有故障，还是什么情况，深度解析分析故障，认真思考故障缘由。
+
 ### 产生的冗余文件
 
 docs 根目录内的文件。
