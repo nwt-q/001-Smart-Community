@@ -13,6 +13,28 @@ export enum ResultEnum {
   GatewayTimeout = 504, // 网关超时（原为gatewayTimeout）
   HttpVersionNotSupported = 505, // HTTP版本不支持（原为httpVersionNotSupported）
 }
+
+/**
+ * 仅用于在 `*.mock.ts` 文件内使用。
+ * @description
+ * FIXME: 在 `*.mock.ts` 文件内使用 `ResultEnum` 枚举，会导致项目启动失败。故不得不提供字面量版本的对象。规避掉问题。
+ */
+export const ResultEnumMap = {
+  Success: '0',
+  Error: '400',
+  Unauthorized: '401',
+  Forbidden: '403',
+  NotFound: '404',
+  MethodNotAllowed: '405',
+  RequestTimeout: '408',
+  InternalServerError: '500',
+  NotImplemented: '501',
+  BadGateway: '502',
+  ServiceUnavailable: '503',
+  GatewayTimeout: '504',
+  HttpVersionNotSupported: '505',
+}
+
 export enum ContentTypeEnum {
   JSON = 'application/json;charset=UTF-8',
   FORM_URLENCODED = 'application/x-www-form-urlencoded;charset=UTF-8',
