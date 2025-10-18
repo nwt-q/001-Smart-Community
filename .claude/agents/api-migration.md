@@ -54,13 +54,50 @@ url: '/app/ownerRepair.listOwnerRepairs'
 
 **🔴 强制要求**: 所有 Mock 接口的返回值必须使用统一的响应格式函数进行包装。
 
-#### 响应格式函数说明
+#### ⚠️ 禁止使用 ResultEnum 枚举的重要原则
 
-从 `./shared/utils` 导入三个核心函数：
+**🚫 严格禁止**: 在任何 `*.mock.ts` 文件内，**禁止**直接以**路径别名**（如 `@/http/tools/enum`）的方式导入和使用 `ResultEnum` 枚举。
+
+**原因说明**:
+
+- 在 `*.mock.ts` 文件内使用路径别名导入 `ResultEnum` 会导致项目编译失败
+- Vite Mock 插件在处理 mock 文件时无法正确解析路径别名
+
+**🔴 强制规范**:
+
+1. **禁止**: 在 `*.mock.ts` 文件中使用 `import { ResultEnum } from '@/http/tools/enum'`
+2. **必须**: 仅使用 `ResultEnumMap` 对象提供的字面量字符串值
+3. **必须**: 使用相对路径 `'./shared/utils'` 导入 `ResultEnumMap`
+4. **禁止**: 使用任何形式的路径别名导入（`@/`、`~/` 等）
+
+**正确的导入方式**:
 
 ```typescript
-import { successResponse, errorResponse, mockLog } from './shared/utils'
+// ✅ 正确：使用相对路径导入 ResultEnumMap
+import { successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+
+// ❌ 错误：使用路径别名导入 ResultEnum
 import { ResultEnum } from '@/http/tools/enum'
+```
+
+**正确的使用方式**:
+
+```typescript
+// ✅ 正确：使用 ResultEnumMap 提供的字面量字符串
+return errorResponse('资源不存在', ResultEnumMap.NotFound)
+return errorResponse('参数错误', ResultEnumMap.Error)
+return errorResponse('服务器错误', ResultEnumMap.InternalServerError)
+
+// ❌ 错误：直接使用 ResultEnum 枚举
+return errorResponse('资源不存在', ResultEnum.NotFound)
+```
+
+#### 响应格式函数说明
+
+从 `./shared/utils` 导入核心函数和 ResultEnumMap：
+
+```typescript
+import { successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
 ```
 
 **1. successResponse - 成功响应函数**
@@ -92,9 +129,9 @@ successResponse<T>(data: T, message?: string)
 /**
  * 生成错误响应
  * @param message - 错误提示信息
- * @param code - 错误代码（使用 ResultEnum 枚举，默认 ResultEnum.InternalServerError）
+ * @param code - 错误代码（使用 ResultEnumMap 提供的字符串，默认 ResultEnumMap.InternalServerError）
  */
-errorResponse(message: string, code?: ResultEnum)
+errorResponse(message: string, code?: string)
 ```
 
 **返回格式**:
@@ -102,21 +139,21 @@ errorResponse(message: string, code?: ResultEnum)
 ```typescript
 {
   success: false,
-  code: string,  // ResultEnum 枚举值转换为字符串
+  code: string,  // ResultEnumMap 提供的字符串值
   message: string,
   data: null,
   timestamp: number
 }
 ```
 
-**错误码说明**: 所有错误码必须使用 `src/http/tools/enum.ts` 中的 `ResultEnum` 枚举值，包括：
+**错误码说明**: 所有错误码必须使用 `./shared/utils` 中的 `ResultEnumMap` 对象提供的字符串值，包括：
 
-- `ResultEnum.Success` (0) - 成功
-- `ResultEnum.Error` (400) - 参数错误
-- `ResultEnum.Forbidden` (403) - 禁止访问/业务逻辑错误
-- `ResultEnum.NotFound` (404) - 资源不存在
-- `ResultEnum.InternalServerError` (500) - 服务器内部错误
-- 其他标准 HTTP 状态码，详见 `ResultEnum` 定义
+- `ResultEnumMap.Success` ('0') - 成功
+- `ResultEnumMap.Error` ('400') - 参数错误
+- `ResultEnumMap.Forbidden` ('403') - 禁止访问/业务逻辑错误
+- `ResultEnumMap.NotFound` ('404') - 资源不存在
+- `ResultEnumMap.InternalServerError` ('500') - 服务器内部错误
+- 其他标准 HTTP 状态码，详见 `ResultEnumMap` 定义
 
 **3. mockLog - Mock 日志输出函数**
 
@@ -149,7 +186,7 @@ mockLog(apiName: string, data?: any)
 **✅ 正确的返回值写法**:
 
 ```typescript
-import { ResultEnum } from '@/http/tools/enum'
+import { successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
 
 // 1. 接口开始时记录请求参数
 mockLog('getActivityList', params)
@@ -173,19 +210,19 @@ return successResponse(activity, '获取活动详情成功')
 // 4. 失败情况 - 资源不存在
 mockLog('deleteActivity', params)
 if (!activity) {
-  return errorResponse('活动不存在', ResultEnum.NotFound)
+  return errorResponse('活动不存在', ResultEnumMap.NotFound)
 }
 
 // 5. 失败情况 - 参数错误
 mockLog('createActivity', params)
 if (!params.activityId) {
-  return errorResponse('活动ID不能为空', ResultEnum.Error)
+  return errorResponse('活动ID不能为空', ResultEnumMap.Error)
 }
 
 // 6. 失败情况 - 业务逻辑错误
 mockLog('updateActivity', { activityId, status })
 if (activity.status === 'CLOSED') {
-  return errorResponse('活动已关闭，无法修改', ResultEnum.Forbidden)
+  return errorResponse('活动已关闭，无法修改', ResultEnumMap.Forbidden)
 }
 ```
 
@@ -211,7 +248,11 @@ return {
 }
 
 // ❌ 错误：硬编码错误码字符串
-return errorResponse('活动不存在', '404') // 应使用 ResultEnum.NotFound
+return errorResponse('活动不存在', '404') // 应使用 ResultEnumMap.NotFound
+
+// ❌ 错误：使用 ResultEnum 枚举（会导致编译失败）
+import { ResultEnum } from '@/http/tools/enum'
+return errorResponse('活动不存在', ResultEnum.NotFound) // 应使用 ResultEnumMap
 
 // ❌ 错误：使用手动的 console.log
 console.log('🚀 Mock API: getActivityList', params)
@@ -225,10 +266,12 @@ console.debug('Result:', result)
 #### 强制规范说明
 
 1. **100% 使用规范函数**: 禁止手动构造返回对象，必须使用 `successResponse/errorResponse`
-2. **🔴 强制使用 ResultEnum**: 所有错误码必须使用 `src/http/tools/enum.ts` 中的 `ResultEnum` 枚举值
-   - ✅ 正确：`errorResponse('资源不存在', ResultEnum.NotFound)`
+2. **🔴 强制使用 ResultEnumMap**: 所有错误码必须使用 `./shared/utils` 中的 `ResultEnumMap` 对象提供的字符串值
+   - ✅ 正确：`errorResponse('资源不存在', ResultEnumMap.NotFound)`
    - ❌ 错误：`errorResponse('资源不存在', '404')`
+   - ❌ 错误：`errorResponse('资源不存在', ResultEnum.NotFound)` （会导致编译失败）
    - 禁止硬编码字符串或数字错误码
+   - 禁止使用路径别名导入 ResultEnum 枚举
 3. **字段一致性**: 确保所有接口响应格式完全一致，严格符合 `src/types/api.ts` 中的 `ApiResponse<T>` 接口定义
 4. **timestamp 必需字段**: `timestamp` 字段是必需的，不可省略，`successResponse/errorResponse` 函数会自动添加
 5. **类型安全**: `successResponse<T>` 支持泛型，确保数据类型正确
@@ -953,8 +996,7 @@ export function formatErrorResponse(message: string, code: string = '9999') {
 
 ```typescript
 // src/api/mock/maintainance.mock.ts
-import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
-import { ResultEnum } from '@/http/tools/enum'
+import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
 // 1. 🔴 必须：导入拆分后的业务类型
 import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from '@/types/repair'
 import type { PaginationResponse } from '@/types/api'
@@ -1147,7 +1189,7 @@ export default defineUniAppMock([
 
       // 🔴 必须：失败情况使用 errorResponse 函数
       if (!task) {
-        return errorResponse('维修工单不存在', ResultEnum.NotFound)
+        return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
       }
 
       mockLog('getOwnerRepair result', task.title)
@@ -1169,7 +1211,7 @@ export default defineUniAppMock([
 
       // 🔴 必须：失败情况使用 errorResponse 函数
       if (!updatedTask) {
-        return errorResponse('更新失败，维修工单不存在', ResultEnum.Error)
+        return errorResponse('更新失败，维修工单不存在', ResultEnumMap.Error)
       }
 
       mockLog('updateOwnerRepair result', updatedTask.title)
@@ -1211,7 +1253,7 @@ export default defineUniAppMock([
       if (success) {
         return successResponse({ success: true }, '删除成功')
       } else {
-        return errorResponse('删除失败，维修工单不存在', ResultEnum.Error)
+        return errorResponse('删除失败，维修工单不存在', ResultEnumMap.Error)
       }
     },
   },
@@ -1227,7 +1269,7 @@ export default defineUniAppMock([
       const task = mockDb.getTaskById(params.taskId)
 
       if (!task) {
-        return errorResponse('任务不存在', ResultEnum.NotFound)
+        return errorResponse('任务不存在', ResultEnumMap.NotFound)
       }
 
       mockLog('getTaskById result', task.title)
@@ -1243,8 +1285,7 @@ export default defineUniAppMock([
 
 ```typescript
 // src/api/mock/advanced.mock.ts
-import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
-import { ResultEnum } from '@/http/tools/enum'
+import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
 
 export default defineUniAppMock([
   // 条件响应示例
@@ -1309,7 +1350,7 @@ export default defineUniAppMock([
       mockLog('errorDemo', query)
 
       if (query.trigger === 'error') {
-        return errorResponse('模拟服务器错误', ResultEnum.InternalServerError)
+        return errorResponse('模拟服务器错误', ResultEnumMap.InternalServerError)
       }
 
       return successResponse({ message: '正常响应' }, '请求成功')
@@ -1324,8 +1365,7 @@ export default defineUniAppMock([
 
 ```typescript
 // src/api/mock/activity.mock.ts
-import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
-import { ResultEnum } from '@/http/tools/enum'
+import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
 
 // 活动模拟数据
 const mockActivities = [
@@ -1440,7 +1480,7 @@ export default defineUniAppMock([
 
       const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId)
       if (!activity) {
-        return errorResponse('活动不存在', ResultEnum.NotFound)
+        return errorResponse('活动不存在', ResultEnumMap.NotFound)
       }
 
       Object.assign(activity, {
