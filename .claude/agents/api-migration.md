@@ -1754,50 +1754,34 @@ export default defineUniAppMock([
 
 ## 迁移实施计划
 
-### 第一阶段：Mock 环境搭建（1-2 天）
+### 配置标准
 
-**核心任务**:
+#### Vite 配置要求
 
-- [ ] 安装和配置 `vite-plugin-mock-dev-server`
-- [ ] 创建 `/mock` 目录和基础文件结构
-- [ ] 建立 TypeScript 类型定义体系
-- [ ] 验证 Mock 插件正常工作
-
-**详细步骤**:
-
-**Step 1: 插件安装与配置**
-
-```bash
-# 安装插件
-pnpm add -D vite-plugin-mock-dev-server
-# 注意：已配置自定义 defineUniAppMock 函数
-```
+确保项目的 `vite.config.ts` 正确配置了 `vite-plugin-mock-dev-server` 插件：
 
 ```typescript
 // vite.config.ts
+import { defineConfig } from 'vite'
 import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
 
 export default defineConfig({
   plugins: [
     // 其他插件...
-    mockDevServerPlugin(),
+    mockDevServerPlugin({
+      dir: 'src/api/mock', // 指定 Mock 文件目录
+    }),
   ],
   server: {
     proxy: {
-      '^/api': 'http://localhost:3000', // 后端地址
+      // 配置代理路径，插件会自动拦截这些路径
+      '^/api': 'http://localhost:3000', // 实际后端地址
     },
   },
 })
 ```
 
-### 第三阶段：迁移验证和优化（1 天）
-
-**验证任务**:
-
-- [ ] 所有 Mock 接口响应正常
-- [ ] TypeScript 类型检查通过
-
-**质量检查清单 (新增规范检查)**:
+### 实施标准
 
 **🔴 基础格式要求**:
 
@@ -1835,3 +1819,52 @@ export default defineConfig({
 - ✅ 控制台日志便于调试
 - ✅ 支持分页、筛选、排序等业务逻辑
 - ✅ 数据持久化（开发期间数据不丢失）
+
+### 验证步骤
+
+#### 接口响应验证
+
+1. **启动开发服务器**: 运行 `pnpm dev` 启动开发环境
+2. **检查 Mock 加载**: 控制台应显示 Mock 插件已加载成功
+3. **测试接口调用**: 在浏览器或小程序开发工具中访问页面，触发接口请求
+4. **验证返回数据**:
+   - 检查接口返回的数据格式是否符合 `ApiResponse<T>` 类型定义
+   - 验证 `success`、`code`、`message`、`data`、`timestamp` 字段是否完整
+   - 确认数据类型与业务类型定义一致
+5. **检查控制台日志**: 验证 `mockLog()` 函数输出的日志格式是否统一
+
+#### 类型安全验证
+
+1. **TypeScript 编译检查**:
+   - Mock 文件应无 TypeScript 编译错误
+   - 所有类型注解应正确且无 `any` 类型
+2. **IDE 类型提示**:
+   - 在编辑器中，Mock 数据应有完整的类型提示
+   - 数据库对象方法的参数和返回值应有类型提示
+3. **类型覆盖率**:
+   - 确保 Mock 生成的数据 100%符合业务类型定义
+   - 验证所有必需字段都已提供
+
+#### 功能完整性验证
+
+1. **CRUD 操作**: 测试所有增删改查操作是否正常工作
+2. **分页功能**: 验证分页参数是否正确处理，返回数据是否符合预期
+3. **筛选排序**: 测试数据筛选和排序功能是否正常
+4. **错误处理**:
+   - 测试不存在的资源返回 404 错误
+   - 测试参数错误返回 400 错误
+   - 验证错误响应格式是否统一
+5. **延迟模拟**: 检查接口响应延迟是否生效
+6. **数据持久化**: 刷新页面后，修改的数据应保持不变
+
+#### 配置验证
+
+1. **Vite 配置**:
+   - 检查 `vite.config.ts` 是否正确配置了 `mockDevServerPlugin`
+   - 验证 Mock 文件目录设置是否正确
+2. **URL 前缀**:
+   - 确认 Mock 接口 URL 不包含多余的 `/api` 前缀
+   - 验证 `defineUniAppMock` 函数是否正确处理 URL 前缀
+3. **导入路径**:
+   - 检查所有 Mock 文件是否使用相对路径导入工具函数
+   - 确认没有使用路径别名导入 `ResultEnum`
