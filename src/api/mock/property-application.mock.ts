@@ -348,13 +348,14 @@ const mockApplyRoomDatabase = {
     const total = filteredData.length
     const start = (params.page - 1) * params.row
     const end = start + params.row
-    const data = filteredData.slice(start, end)
+    const list = filteredData.slice(start, end)
 
     return {
-      data,
+      list,
       total,
       page: params.page,
-      row: params.row,
+      pageSize: params.row,
+      hasMore: end < total,
     }
   },
 
@@ -427,11 +428,14 @@ const mockApplyRoomDatabase = {
     const total = filteredData.length
     const start = (params.page - 1) * params.row
     const end = start + params.row
-    const data = filteredData.slice(start, end)
+    const list = filteredData.slice(start, end)
 
     return {
-      data,
+      list,
       total,
+      page: params.page,
+      pageSize: params.row,
+      hasMore: end < total,
     }
   },
 
@@ -564,10 +568,11 @@ export default defineUniAppMock([
         }
 
         const result = {
-          data: [applyRoom],
+          list: [applyRoom],
           total: 1,
           page: params.page || 1,
-          row: params.row || 1,
+          pageSize: params.row || 1,
+          hasMore: false,
         }
 
         mockLog('queryApplyRoomDiscount result', applyRoom.ardId)
@@ -583,7 +588,7 @@ export default defineUniAppMock([
         state: params.state,
       })
 
-      mockLog('queryApplyRoomDiscount result', `${result.data.length} items`)
+      mockLog('queryApplyRoomDiscount result', `${result.list.length} items`)
       return successResponse(result, '查询申请列表成功')
     },
   },
@@ -730,7 +735,7 @@ export default defineUniAppMock([
         roomName: params.roomName,
       })
 
-      mockLog('queryApplyRoomDiscountRecord result', `${result.data.length} items`)
+      mockLog('queryApplyRoomDiscountRecord result', `${result.list.length} items`)
       return successResponse(result, '查询跟踪记录列表成功')
     },
   },
