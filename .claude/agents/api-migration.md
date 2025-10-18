@@ -1712,12 +1712,6 @@ export default defineUniAppMock([
 - 使用懒加载和分页
 - 避免过度复杂的数据关联
 
-**内存管理**:
-
-- 定期清理过期数据
-- 使用 WeakMap 管理临时数据
-- 监控内存使用情况
-
 ## 迁移实施计划
 
 ### 第一阶段：Mock 环境搭建（1-2 天）
@@ -1756,124 +1750,12 @@ export default defineConfig({
 })
 ```
 
-**Step 2: 创建目录结构**
-
-```plain
-项目根目录/
-├── src/
-│   ├── api/
-│   │   ├── mock/
-│   │   │   ├── shared/
-│   │   │   │   └── utils.ts        # Mock 工具函数
-│   │   │   ├── activity.mock.ts    # 活动模块 Mock
-│   │   │   └── README.md           # Mock 开发说明
-│   │   ├── activity.ts             # 活动 API 接口
-│   │   └── ...
-│   └── types/                      # TypeScript 类型定义
-│       ├── api.ts
-│       ├── activity.ts
-│       └── ...
-└── vite.config.ts
-```
-
-**Step 3: 创建第一个 Mock 文件验证**
-
-```typescript
-// src/api/mock/test.mock.ts
-import { defineUniAppMock } from '@/api/mock/shared/utils'
-
-export default defineUniAppMock({
-  url: '/test', // 注意：无需 /api 前缀，defineUniAppMock 会自动添加环境变量前缀
-  delay: 300,
-  body: {
-    message: 'Mock 插件工作正常！',
-    timestamp: Date.now(),
-  },
-})
-```
-
-### 第二阶段：核心业务模块迁移（3-5 天）
-
-**迁移优先级和完整流程**:
-
-**Day 1: 活动管理模块**
-
-- [ ] 创建 `src/types/activity.ts` 类型定义
-- [ ] 创建 `src/api/activity.ts` API 接口
-- [ ] 创建 `src/api/mock/activity.mock.ts` Mock 文件
-- [ ] 在组件中测试验证
-
-**完整迁移示例**:
-
-```typescript
-// Step 1: 分析原接口 (gitee-example/api/activities/activities.js)
-// 原始：
-export function getActivitiesList(_that, _reqObj) {
-  return new Promise((resolve, reject) => {
-    _that.context.post({
-      url: url.getActivitiesList,
-      data: _reqObj,
-      // ...
-    })
-  })
-}
-
-// Step 2: 创建类型定义 (src/types/activity.ts)
-export interface Activity {
-  activitiesId: string
-  title: string
-  userName: string
-  startTime: string
-  context: string
-  headerImg: string
-  // ...其他字段
-}
-
-// Step 3: 创建 API 接口 (src/api/activity.ts)
-export const getActivityList = (params: ActivityListParams) =>
-  http.Get<ActivityListResponse>('/app/activities.listActivitiess', { params })
-
-// Step 4: 创建 Mock 文件 (src/api/mock/activity.mock.ts)
-export default defineUniAppMock([
-  {
-    url: '/app/activities.listActivitiess',
-    method: ['GET', 'POST'],
-    delay: [300, 600],
-    body: ({ query, body }) => {
-      // Mock 逻辑
-      return mockActivityList
-    },
-  },
-])
-
-// Step 5: 组件中使用验证
-const { loading, data } = useRequest(getActivityList({ page: 1, row: 10 }))
-```
-
-**Day 2-3: 维修管理模块**
-
-- [ ] 维修任务 CRUD 接口完整迁移
-- [ ] 复杂状态流转逻辑处理
-- [ ] 文件上传模拟接口
-
-**Day 4: 投诉管理模块**
-
-- [ ] 投诉工单接口迁移
-- [ ] 审核流程模拟
-
-**Day 5: 其他核心模块**
-
-- [ ] 通讯录、公告等辅助模块
-- [ ] 整体测试和优化
-
 ### 第三阶段：迁移验证和优化（1 天）
 
 **验证任务**:
 
 - [ ] 所有 Mock 接口响应正常
 - [ ] TypeScript 类型检查通过
-- [ ] 页面功能完全正常
-- [ ] 性能测试和优化
 
 **质量检查清单 (新增规范检查)**:
 
