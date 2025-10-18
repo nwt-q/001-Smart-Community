@@ -534,6 +534,8 @@ apply-room.vue
 
 ### 10 处理接口故障
 
+<!-- TODO: 在重构一次mock接口后，再重新运行一次 -->
+
 你的任务是处理接口故障。具体来说，你需要运行谷歌浏览器 MCP，进入 `房屋申请列表页` 的 `http://localhost:9000/#/pages-sub/property/apply-room` 地址，阅读控制台报错，并处理报错。
 以下是控制台报错信息：
 <console_errors>
