@@ -1,3 +1,4 @@
+import { ResultEnum } from '@/http/tools/enum'
 import { defineUniAppMock, errorResponse, mockLog, successResponse } from './shared/utils'
 
 /**
@@ -40,7 +41,7 @@ export default defineUniAppMock([
     body: ({ query }) => {
       mockLog('test/error', query)
       if (query.trigger === 'error') {
-        return errorResponse('模拟服务器错误', '500')
+        return errorResponse('模拟服务器错误', ResultEnum.InternalServerError)
       }
       return successResponse(null, '正常响应')
     },

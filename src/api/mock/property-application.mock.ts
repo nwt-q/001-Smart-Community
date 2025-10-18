@@ -23,6 +23,7 @@ import type {
   ReviewUpdateRequest,
   SaveApplicationRecordRequest,
 } from '@/types/property-application'
+import { ResultEnum } from '@/http/tools/enum'
 import { defineUniAppMock, delay, errorResponse, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, successResponse } from './shared/utils'
 
 /**
@@ -564,7 +565,7 @@ export default defineUniAppMock([
         const applyRoom = mockApplyRoomDatabase.getApplyRoomById(params.ardId)
         if (!applyRoom) {
           mockLog('queryApplyRoomDiscount result', 'not found')
-          return errorResponse('申请不存在', '404')
+          return errorResponse('申请不存在', ResultEnum.NotFound)
         }
 
         const result = {
@@ -608,7 +609,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('updateApplyRoomDiscount result', 'failed - not found')
-        return errorResponse('申请不存在', '404')
+        return errorResponse('申请不存在', ResultEnum.NotFound)
       }
 
       mockLog('updateApplyRoomDiscount result', 'success')
@@ -631,7 +632,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('updateReviewApplyRoomDiscount result', 'failed - not found')
-        return errorResponse('申请不存在', '404')
+        return errorResponse('申请不存在', ResultEnum.NotFound)
       }
 
       mockLog('updateReviewApplyRoomDiscount result', 'success')
@@ -779,7 +780,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('saveApplyRoomDiscountRecord result', 'failed')
-        return errorResponse('保存失败', '500')
+        return errorResponse('保存失败', ResultEnum.InternalServerError)
       }
 
       mockLog('saveApplyRoomDiscountRecord result', 'success')
@@ -802,7 +803,7 @@ export default defineUniAppMock([
 
       if (!success) {
         mockLog('cutApplyRoomDiscountRecord result', 'failed - not found')
-        return errorResponse('记录不存在', '404')
+        return errorResponse('记录不存在', ResultEnum.NotFound)
       }
 
       mockLog('cutApplyRoomDiscountRecord result', 'success')

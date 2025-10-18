@@ -60,6 +60,7 @@ url: '/app/ownerRepair.listOwnerRepairs'
 
 ```typescript
 import { successResponse, errorResponse, mockLog } from './shared/utils'
+import { ResultEnum } from '@/http/tools/enum'
 ```
 
 **1. successResponse - 成功响应函数**
@@ -78,8 +79,8 @@ successResponse<T>(data: T, message?: string)
 ```typescript
 {
   success: true,
-  code: '0',
-  message: '操作成功',
+  code: string,  // ResultEnum.Success 转换为字符串
+  message: string,
   data: T,
   timestamp: number
 }
@@ -91,9 +92,9 @@ successResponse<T>(data: T, message?: string)
 /**
  * 生成错误响应
  * @param message - 错误提示信息
- * @param code - 错误代码（可选，默认 '500'）
+ * @param code - 错误代码（使用 ResultEnum 枚举，默认 ResultEnum.InternalServerError）
  */
-errorResponse(message: string, code?: string)
+errorResponse(message: string, code?: ResultEnum)
 ```
 
 **返回格式**:
@@ -101,12 +102,21 @@ errorResponse(message: string, code?: string)
 ```typescript
 {
   success: false,
-  code: string,
+  code: string,  // ResultEnum 枚举值转换为字符串
   message: string,
   data: null,
   timestamp: number
 }
 ```
+
+**错误码说明**: 所有错误码必须使用 `src/http/tools/enum.ts` 中的 `ResultEnum` 枚举值，包括：
+
+- `ResultEnum.Success` (0) - 成功
+- `ResultEnum.Error` (400) - 参数错误
+- `ResultEnum.Forbidden` (403) - 禁止访问/业务逻辑错误
+- `ResultEnum.NotFound` (404) - 资源不存在
+- `ResultEnum.InternalServerError` (500) - 服务器内部错误
+- 其他标准 HTTP 状态码，详见 `ResultEnum` 定义
 
 **3. mockLog - Mock 日志输出函数**
 
@@ -139,6 +149,8 @@ mockLog(apiName: string, data?: any)
 **✅ 正确的返回值写法**:
 
 ```typescript
+import { ResultEnum } from '@/http/tools/enum'
+
 // 1. 接口开始时记录请求参数
 mockLog('getActivityList', params)
 
@@ -161,33 +173,35 @@ return successResponse(activity, '获取活动详情成功')
 // 4. 失败情况 - 资源不存在
 mockLog('deleteActivity', params)
 if (!activity) {
-  return errorResponse('活动不存在', '404')
+  return errorResponse('活动不存在', ResultEnum.NotFound)
 }
 
 // 5. 失败情况 - 参数错误
 mockLog('createActivity', params)
 if (!params.activityId) {
-  return errorResponse('活动ID不能为空', '400')
+  return errorResponse('活动ID不能为空', ResultEnum.Error)
 }
 
 // 6. 失败情况 - 业务逻辑错误
 mockLog('updateActivity', { activityId, status })
 if (activity.status === 'CLOSED') {
-  return errorResponse('活动已关闭，无法修改', '403')
+  return errorResponse('活动已关闭，无法修改', ResultEnum.Forbidden)
 }
 ```
 
 **❌ 错误的返回值和日志写法**:
 
 ```typescript
-// ❌ 错误：手动构造返回对象
+// ❌ 错误：手动构造返回对象（不使用 successResponse）
 return {
-  code: '0',
+  success: true,
+  code: '0', // 硬编码字符串而非 ResultEnum
   message: '成功',
   data: activity,
+  timestamp: Date.now(),
 }
 
-// ❌ 错误：直接返回数据
+// ❌ 错误：直接返回数据（缺少统一响应格式）
 return activity
 
 // ❌ 错误：使用不一致的字段名
@@ -195,6 +209,9 @@ return {
   status: 'success',
   result: activity,
 }
+
+// ❌ 错误：硬编码错误码字符串
+return errorResponse('活动不存在', '404') // 应使用 ResultEnum.NotFound
 
 // ❌ 错误：使用手动的 console.log
 console.log('🚀 Mock API: getActivityList', params)
@@ -207,11 +224,16 @@ console.debug('Result:', result)
 
 #### 强制规范说明
 
-1. **100% 使用规范函数**: 禁止手动构造返回对象
-2. **字段一致性**: 确保所有接口响应格式完全一致
-3. **类型安全**: `successResponse<T>` 支持泛型，确保数据类型正确
-4. **语义清晰**: `success` 字段明确标识请求成功/失败状态
-5. **🆕 统一日志输出**: 所有 Mock 接口必须使用 `mockLog()` 函数输出日志
+1. **100% 使用规范函数**: 禁止手动构造返回对象，必须使用 `successResponse/errorResponse`
+2. **🔴 强制使用 ResultEnum**: 所有错误码必须使用 `src/http/tools/enum.ts` 中的 `ResultEnum` 枚举值
+   - ✅ 正确：`errorResponse('资源不存在', ResultEnum.NotFound)`
+   - ❌ 错误：`errorResponse('资源不存在', '404')`
+   - 禁止硬编码字符串或数字错误码
+3. **字段一致性**: 确保所有接口响应格式完全一致，严格符合 `src/types/api.ts` 中的 `ApiResponse<T>` 接口定义
+4. **timestamp 必需字段**: `timestamp` 字段是必需的，不可省略，`successResponse/errorResponse` 函数会自动添加
+5. **类型安全**: `successResponse<T>` 支持泛型，确保数据类型正确
+6. **语义清晰**: `success` 字段明确标识请求成功/失败状态
+7. **🆕 统一日志输出**: 所有 Mock 接口必须使用 `mockLog()` 函数输出日志
    - 禁止使用手动的 `console.log('🚀 Mock API: ...')` 格式
    - 禁止使用其他 console 方法（info、debug、warn 等）用于常规日志
    - 确保日志格式统一、便于调试和追踪
@@ -932,6 +954,7 @@ export function formatErrorResponse(message: string, code: string = '9999') {
 ```typescript
 // src/api/mock/maintainance.mock.ts
 import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
+import { ResultEnum } from '@/http/tools/enum'
 // 1. 🔴 必须：导入拆分后的业务类型
 import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from '@/types/repair'
 import type { PaginationResponse } from '@/types/api'
@@ -1124,7 +1147,7 @@ export default defineUniAppMock([
 
       // 🔴 必须：失败情况使用 errorResponse 函数
       if (!task) {
-        return errorResponse('维修工单不存在', '404')
+        return errorResponse('维修工单不存在', ResultEnum.NotFound)
       }
 
       mockLog('getOwnerRepair result', task.title)
@@ -1146,7 +1169,7 @@ export default defineUniAppMock([
 
       // 🔴 必须：失败情况使用 errorResponse 函数
       if (!updatedTask) {
-        return errorResponse('更新失败，维修工单不存在', '400')
+        return errorResponse('更新失败，维修工单不存在', ResultEnum.Error)
       }
 
       mockLog('updateOwnerRepair result', updatedTask.title)
@@ -1188,7 +1211,7 @@ export default defineUniAppMock([
       if (success) {
         return successResponse({ success: true }, '删除成功')
       } else {
-        return errorResponse('删除失败，维修工单不存在', '400')
+        return errorResponse('删除失败，维修工单不存在', ResultEnum.Error)
       }
     },
   },
@@ -1204,7 +1227,7 @@ export default defineUniAppMock([
       const task = mockDb.getTaskById(params.taskId)
 
       if (!task) {
-        return errorResponse('任务不存在', '404')
+        return errorResponse('任务不存在', ResultEnum.NotFound)
       }
 
       mockLog('getTaskById result', task.title)
@@ -1221,6 +1244,7 @@ export default defineUniAppMock([
 ```typescript
 // src/api/mock/advanced.mock.ts
 import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
+import { ResultEnum } from '@/http/tools/enum'
 
 export default defineUniAppMock([
   // 条件响应示例
@@ -1285,7 +1309,7 @@ export default defineUniAppMock([
       mockLog('errorDemo', query)
 
       if (query.trigger === 'error') {
-        return errorResponse('模拟服务器错误', '500')
+        return errorResponse('模拟服务器错误', ResultEnum.InternalServerError)
       }
 
       return successResponse({ message: '正常响应' }, '请求成功')
@@ -1301,6 +1325,7 @@ export default defineUniAppMock([
 ```typescript
 // src/api/mock/activity.mock.ts
 import { defineUniAppMock, successResponse, errorResponse, mockLog } from '@/api/mock/shared/utils'
+import { ResultEnum } from '@/http/tools/enum'
 
 // 活动模拟数据
 const mockActivities = [
@@ -1415,7 +1440,7 @@ export default defineUniAppMock([
 
       const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId)
       if (!activity) {
-        return errorResponse('活动不存在', '404')
+        return errorResponse('活动不存在', ResultEnum.NotFound)
       }
 
       Object.assign(activity, {
@@ -1495,7 +1520,128 @@ export default defineUniAppMock([
 - **禁用 any**: 严禁使用 `any` 类型，确保类型安全
 - **自包含原则**: 每个 Mock 文件应该是功能完整的独立模块，避免外部数据依赖
 
-#### 3.2 文件组织原则
+#### 3.2 Mock 文件修改后的自动重启流程
+
+**🔴 重要说明**: 修改 Mock 文件后，必须重启开发环境才能使更改生效。本子代理会自动检测并处理重启流程。
+
+**自动重启触发条件**:
+
+以下情况会自动触发开发环境重启：
+
+1. **新增** 任何 `*.mock.ts` 文件时
+2. **修改** 任何现有 `*.mock.ts` 文件时
+3. **修改** mock 数据内容时
+
+**自动重启流程**:
+
+```typescript
+/** Mock 文件修改后的自动重启流程 */
+async function handleMockFileChange(filePath: string) {
+  // 1. 检测是否有运行中的 pnpm dev 进程
+  const hasDevServer = await checkRunningDevServer()
+
+  if (!hasDevServer) {
+    console.log('⚠️ 未检测到运行中的开发服务器')
+    return
+  }
+
+  console.log('🔄 检测到 Mock 文件变更，准备重启开发环境...')
+
+  // 2. 停止当前的 pnpm dev 进程
+  await stopDevServer()
+
+  // 3. 等待进程完全停止
+  await delay(2000)
+
+  // 4. 重新启动 pnpm dev
+  await startDevServer()
+
+  // 5. 等待开发服务器启动完成
+  await waitForServerReady()
+
+  // 6. 如果浏览器 MCP 已打开页面，刷新页面
+  await refreshBrowserPage()
+
+  console.log('✅ 开发环境重启完成，Mock 接口已更新')
+}
+```
+
+**检测运行中的开发服务器**:
+
+```bash
+# Windows 平台
+tasklist | findstr /I "node.exe" | findstr /I "pnpm"
+
+# 或者检查端口占用情况（默认 9000 端口）
+netstat -ano | findstr :9000
+```
+
+**停止开发服务器**:
+
+```bash
+# 方式1: 使用 taskkill 命令（推荐）
+# 先找到进程 ID
+tasklist | findstr /I "pnpm dev"
+# 杀死进程
+taskkill /F /PID <进程ID>
+
+# 方式2: 通过 Bash 工具的 KillShell 功能
+# 如果使用 Bash 工具启动的后台进程，可以直接使用 shell_id 停止
+```
+
+**启动开发服务器**:
+
+```bash
+# 在后台启动 pnpm dev
+pnpm dev
+```
+
+**等待服务器就绪**:
+
+```bash
+# 方式1: 检查端口是否可访问
+# 循环检查直到端口可用或超时（最多等待 30 秒）
+for i in {1..30}; do
+  netstat -ano | findstr :9000 && break
+  sleep 1
+done
+
+# 方式2: 使用 curl/wget 检查 HTTP 响应
+# 等待 http://localhost:9000 返回正常响应
+```
+
+**刷新浏览器页面**:
+
+如果使用谷歌浏览器 MCP:
+
+```bash
+# 使用 Chrome DevTools Protocol 刷新页面
+# 通过 MCP 的 chrome-devtools 工具刷新当前页面
+```
+
+**实施注意事项**:
+
+1. **进程检测**: 确保准确识别 `pnpm dev` 进程，避免误杀其他 Node.js 进程
+2. **等待时间**: 服务器停止和启动都需要适当的等待时间，避免操作过快导致失败
+3. **错误处理**: 如果重启失败，应该提示用户手动重启
+4. **状态反馈**: 在重启过程中提供清晰的状态提示，让用户了解当前进度
+
+**手动重启提示**:
+
+如果自动重启失败，输出以下提示：
+
+```plain
+⚠️ 自动重启开发环境失败，请手动执行以下操作：
+
+1. 停止当前的 pnpm dev 进程（Ctrl+C）
+2. 重新运行: pnpm dev
+3. 等待服务器启动完成
+4. 刷新浏览器页面
+
+Mock 接口更新需要重启开发环境才能生效。
+```
+
+#### 3.3 文件组织原则
 
 **Mock 文件命名规范**:
 
@@ -1508,7 +1654,7 @@ export default defineUniAppMock([
 - 支持数据持久化（开发期间数据不丢失）
 - 提供数据重置和初始化功能
 
-#### 3.3 常见模式和技巧
+#### 3.4 常见模式和技巧
 
 **1. 响应延迟模拟**:
 
@@ -1558,7 +1704,7 @@ export default defineUniAppMock([
 ])
 ```
 
-#### 3.4 性能优化建议
+#### 3.5 性能优化建议
 
 **数据量控制**:
 

@@ -1,5 +1,6 @@
 import type { PriorityType } from '@/types/api'
 import type { RepairOrder, RepairStatus, RepairType } from '@/types/repair'
+import { ResultEnum } from '@/http/tools/enum'
 import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateAmount, generateChineseName, generateId, generatePhoneNumber, randomDelay, successResponse } from './shared/utils'
 
 /**
@@ -282,12 +283,12 @@ export default defineUniAppMock([
 
       try {
         if (!params.repairId) {
-          return errorResponse('维修工单ID不能为空', '400')
+          return errorResponse('维修工单ID不能为空', ResultEnum.Error)
         }
 
         const repair = mockRepairDatabase.getRepairById(params.repairId)
         if (!repair) {
-          return errorResponse('维修工单不存在', '404')
+          return errorResponse('维修工单不存在', ResultEnum.NotFound)
         }
 
         console.log('🚀 Mock API: queryOwnerRepair', params, '→', repair)
@@ -313,19 +314,19 @@ export default defineUniAppMock([
       try {
         // 数据验证
         if (!body.title?.trim()) {
-          return errorResponse('维修标题不能为空', '400')
+          return errorResponse('维修标题不能为空', ResultEnum.Error)
         }
         if (!body.description?.trim()) {
-          return errorResponse('维修描述不能为空', '400')
+          return errorResponse('维修描述不能为空', ResultEnum.Error)
         }
         if (!body.ownerName?.trim()) {
-          return errorResponse('业主姓名不能为空', '400')
+          return errorResponse('业主姓名不能为空', ResultEnum.Error)
         }
         if (!body.ownerPhone?.trim()) {
-          return errorResponse('联系电话不能为空', '400')
+          return errorResponse('联系电话不能为空', ResultEnum.Error)
         }
         if (!body.address?.trim()) {
-          return errorResponse('维修地址不能为空', '400')
+          return errorResponse('维修地址不能为空', ResultEnum.Error)
         }
 
         const newRepair: RepairOrder = {
@@ -370,16 +371,16 @@ export default defineUniAppMock([
 
       try {
         if (!body.repairId) {
-          return errorResponse('维修工单ID不能为空', '400')
+          return errorResponse('维修工单ID不能为空', ResultEnum.Error)
         }
         if (!body.status) {
-          return errorResponse('工单状态不能为空', '400')
+          return errorResponse('工单状态不能为空', ResultEnum.Error)
         }
 
         // 验证状态有效性
         const validStatuses: RepairStatus[] = ['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
         if (!validStatuses.includes(body.status)) {
-          return errorResponse('无效的工单状态', '400')
+          return errorResponse('无效的工单状态', ResultEnum.Error)
         }
 
         const updatedRepair = mockRepairDatabase.updateRepairStatus(
@@ -389,7 +390,7 @@ export default defineUniAppMock([
         )
 
         if (!updatedRepair) {
-          return errorResponse('维修工单不存在', '404')
+          return errorResponse('维修工单不存在', ResultEnum.NotFound)
         }
 
         console.log('🚀 Mock API: updateRepairStatus', body, '→', updatedRepair)
@@ -414,15 +415,15 @@ export default defineUniAppMock([
 
       try {
         if (!body.repairId) {
-          return errorResponse('维修工单ID不能为空', '400')
+          return errorResponse('维修工单ID不能为空', ResultEnum.Error)
         }
         if (!body.assignedWorker) {
-          return errorResponse('维修工不能为空', '400')
+          return errorResponse('维修工不能为空', ResultEnum.Error)
         }
 
         const repair = mockRepairDatabase.getRepairById(body.repairId)
         if (!repair) {
-          return errorResponse('维修工单不存在', '404')
+          return errorResponse('维修工单不存在', ResultEnum.NotFound)
         }
 
         repair.assignedWorker = body.assignedWorker
@@ -511,15 +512,15 @@ export default defineUniAppMock([
 
       try {
         if (!body.repairId) {
-          return errorResponse('维修工单ID不能为空', '400')
+          return errorResponse('维修工单ID不能为空', ResultEnum.Error)
         }
         if (!body.rating || body.rating < 1 || body.rating > 5) {
-          return errorResponse('评分必须在1-5之间', '400')
+          return errorResponse('评分必须在1-5之间', ResultEnum.Error)
         }
 
         const repair = mockRepairDatabase.getRepairById(body.repairId)
         if (!repair) {
-          return errorResponse('维修工单不存在', '404')
+          return errorResponse('维修工单不存在', ResultEnum.NotFound)
         }
 
         // 添加评价信息
@@ -552,12 +553,12 @@ export default defineUniAppMock([
 
       try {
         if (!body.repairId) {
-          return errorResponse('维修工单ID不能为空', '400')
+          return errorResponse('维修工单ID不能为空', ResultEnum.Error)
         }
 
         const updatedRepair = mockRepairDatabase.updateRepair(body.repairId, body)
         if (!updatedRepair) {
-          return errorResponse('维修工单不存在', '404')
+          return errorResponse('维修工单不存在', ResultEnum.NotFound)
         }
 
         console.log('🚀 Mock API: updateOwnerRepair', body, '→', updatedRepair)
@@ -584,12 +585,12 @@ export default defineUniAppMock([
 
       try {
         if (!params.repairId) {
-          return errorResponse('维修工单ID不能为空', '400')
+          return errorResponse('维修工单ID不能为空', ResultEnum.Error)
         }
 
         const success = mockRepairDatabase.deleteRepair(params.repairId)
         if (!success) {
-          return errorResponse('维修工单不存在', '404')
+          return errorResponse('维修工单不存在', ResultEnum.NotFound)
         }
 
         const result = { success: true }

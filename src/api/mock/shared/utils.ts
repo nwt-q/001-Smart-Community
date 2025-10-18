@@ -126,7 +126,7 @@ export function generatePriority(): 'HIGH' | 'MEDIUM' | 'LOW' {
 export function successResponse<T>(data: T, message: string = '操作成功') {
   return {
     success: true,
-    code: ResultEnum.Success,
+    code: String(ResultEnum.Success),
     message,
     data,
     timestamp: Date.now(),
@@ -134,10 +134,10 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 
 /** 模拟错误响应 */
-export function errorResponse(message: string = '操作失败', code: string = '500') {
+export function errorResponse(message: string = '操作失败', code: ResultEnum = ResultEnum.InternalServerError) {
   return {
     success: false,
-    code,
+    code: String(code),
     message,
     data: null,
     timestamp: Date.now(),

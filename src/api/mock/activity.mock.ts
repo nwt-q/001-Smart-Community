@@ -1,4 +1,5 @@
 import type { Activity, ActivityListParams, ActivityListResponse, ActivityStatus, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
+import { ResultEnum } from '@/http/tools/enum'
 import { defineUniAppMock, errorResponse, generateId, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
@@ -419,7 +420,7 @@ export default defineUniAppMock([
         mockLog('getActivityList', { page, row, communityId, keyword: params.keyword, status: params.status })
 
         if (!communityId) {
-          return errorResponse('社区ID不能为空', '400')
+          return errorResponse('社区ID不能为空', ResultEnum.Error)
         }
 
         // 处理活动列表查询
@@ -456,13 +457,13 @@ export default defineUniAppMock([
 
         // 数据验证
         if (!data.title?.trim()) {
-          return errorResponse('活动标题不能为空', '400')
+          return errorResponse('活动标题不能为空', ResultEnum.Error)
         }
         if (!data.startTime) {
-          return errorResponse('活动开始时间不能为空', '400')
+          return errorResponse('活动开始时间不能为空', ResultEnum.Error)
         }
         if (!data.context?.trim()) {
-          return errorResponse('活动内容不能为空', '400')
+          return errorResponse('活动内容不能为空', ResultEnum.Error)
         }
 
         const newActivity: Activity = {
@@ -509,12 +510,12 @@ export default defineUniAppMock([
         mockLog('updateActivity', { activitiesId: data.activitiesId })
 
         if (!data.activitiesId) {
-          return errorResponse('活动ID不能为空', '400')
+          return errorResponse('活动ID不能为空', ResultEnum.Error)
         }
 
         const activity = mockActivityDatabase.getActivityById(data.activitiesId)
         if (!activity) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         // 更新活动数据
@@ -547,12 +548,12 @@ export default defineUniAppMock([
         mockLog('deleteActivity', params)
 
         if (!params.activitiesId) {
-          return errorResponse('活动ID不能为空', '400')
+          return errorResponse('活动ID不能为空', ResultEnum.Error)
         }
 
         const success = mockActivityDatabase.removeActivity(params.activitiesId)
         if (!success) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         const result = { success: true }
@@ -580,12 +581,12 @@ export default defineUniAppMock([
         mockLog('increaseView', data)
 
         if (!data.activitiesId) {
-          return errorResponse('活动ID不能为空', '400')
+          return errorResponse('活动ID不能为空', ResultEnum.Error)
         }
 
         const success = mockActivityDatabase.increaseView(data.activitiesId)
         if (!success) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         const result = { success: true }
@@ -613,12 +614,12 @@ export default defineUniAppMock([
         mockLog('likeActivity', data)
 
         if (!data.activitiesId) {
-          return errorResponse('活动ID不能为空', '400')
+          return errorResponse('活动ID不能为空', ResultEnum.Error)
         }
 
         const success = mockActivityDatabase.increaseLike(data.activitiesId)
         if (!success) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         const result = { success: true }
@@ -646,17 +647,17 @@ export default defineUniAppMock([
         mockLog('updateActivityStatus', data)
 
         if (!data.activitiesId || !data.status) {
-          return errorResponse('活动ID和状态不能为空', '400')
+          return errorResponse('活动ID和状态不能为空', ResultEnum.Error)
         }
 
         const activity = mockActivityDatabase.getActivityById(data.activitiesId)
         if (!activity) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         const validStatuses: ActivityStatus[] = ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED']
         if (!validStatuses.includes(data.status)) {
-          return errorResponse('无效的活动状态', '400')
+          return errorResponse('无效的活动状态', ResultEnum.Error)
         }
 
         activity.status = data.status
@@ -687,22 +688,22 @@ export default defineUniAppMock([
 
         // 参数验证
         if (!data.activitiesId) {
-          return errorResponse('活动ID不能为空', '400')
+          return errorResponse('活动ID不能为空', ResultEnum.Error)
         }
 
         if (typeof data.isLiked !== 'boolean') {
-          return errorResponse('点赞状态参数错误', '400')
+          return errorResponse('点赞状态参数错误', ResultEnum.Error)
         }
 
         if (typeof data.likeCount !== 'number' || data.likeCount < 0) {
-          return errorResponse('点赞数量参数错误', '400')
+          return errorResponse('点赞数量参数错误', ResultEnum.Error)
         }
 
         // 更新点赞状态
         const updatedActivity = mockActivityDatabase.updateLike(data.activitiesId, data.isLiked, data.likeCount)
 
         if (!updatedActivity) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         const result = {
@@ -737,22 +738,22 @@ export default defineUniAppMock([
 
         // 参数验证
         if (!data.activitiesId) {
-          return errorResponse('活动ID不能为空', '400')
+          return errorResponse('活动ID不能为空', ResultEnum.Error)
         }
 
         if (typeof data.isCollected !== 'boolean') {
-          return errorResponse('收藏状态参数错误', '400')
+          return errorResponse('收藏状态参数错误', ResultEnum.Error)
         }
 
         if (typeof data.collectCount !== 'number' || data.collectCount < 0) {
-          return errorResponse('收藏数量参数错误', '400')
+          return errorResponse('收藏数量参数错误', ResultEnum.Error)
         }
 
         // 更新收藏状态
         const updatedActivity = mockActivityDatabase.updateCollect(data.activitiesId, data.isCollected, data.collectCount)
 
         if (!updatedActivity) {
-          return errorResponse('活动不存在', '404')
+          return errorResponse('活动不存在', ResultEnum.NotFound)
         }
 
         const result = {
