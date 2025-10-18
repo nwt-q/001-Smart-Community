@@ -540,3 +540,13 @@
 7. 重启后的状态保持：浏览器 MCP 已经打开页面，重启后需要刷新页面。
 8. 如何确保开发者遵循响应格式规范？选项 A。在 `api-migration.md` 中强调必须使用 `successResponse/errorResponse`
 9. 现有 mock 文件的处理：用更新后的子代理，重新检查并修正现有的 mock 文件。
+
+### 040 不允许 `api-migration` 子代理在任何 `*.mock.ts` 文件内直接使用 ResultEnum 枚举
+
+很抱歉，我不得不给你做出破坏性变更。
+
+1. `api-migration` 子代理做出重大调整，不再允许直接使用 `ResultEnum` 这个枚举。
+2. 请为 `api-migration` 子代理增加一条**重要**的原则： **禁止**任何 `*.mock.ts` 文件内直接使用 `ResultEnum` 枚举。
+3. 更改为，仅允许使用 `ResultEnumMap` 提供的字面量字符串。仅使用该对象。
+4. 请扫描全部 `api-migration` 子代理的代码例子，确保遵循该原则。
+5. 请扫描全部 `*.mock.ts` 文件，确保 mock 文件均遵守这条新的原则，不遵守该原则就更改。
