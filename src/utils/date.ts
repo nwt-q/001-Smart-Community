@@ -2,7 +2,11 @@
  * 日期工具函数
  */
 
-/** 日期工具类 */
+/**
+ * 日期工具类
+ * @description
+ * TODO: 未来需要迁移到 dayjs 库
+ */
 export const dateUtil = {
   /**
    * 比较两个日期的大小
