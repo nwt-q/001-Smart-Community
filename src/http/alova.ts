@@ -105,6 +105,7 @@ const alovaInstance = createAlova({
     /**
      * 如果返回值的 code 不是 0 或 '0'，则抛出错误
      * 在 mock 模拟函数内 其业务码可能是数值，也可能是字符串。故在此处需要兼容两种情况。
+     * 只有业务码都不是 0 或 '0' 时，才抛出错误。
      */
     if (code !== ResultEnum.Success && code !== String(ResultEnum.Success)) {
       if (config.meta?.toast !== false) {
