@@ -112,7 +112,8 @@ export default ({ command, mode }) => {
       }),
       // Mock 开发服务器插件，仅在开发环境启用
       command === 'serve' && mockDevServerPlugin({
-        dir: 'src/api/mock', // 指定 Mock 文件目录
+        dir: 'src/api/mock', // 指定 Mock 文件目录,
+        build: mode === 'production',
       }),
       // h5环境增加 BUILD_TIME 和 BUILD_BRANCH
       UNI_PLATFORM === 'h5' && {
