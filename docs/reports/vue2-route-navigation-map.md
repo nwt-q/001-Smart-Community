@@ -9,8 +9,6 @@
 - 标注了关键的跳转参数
 - **本版本已覆盖所有主要业务模块（18 个模块，180+ 页面）**
 
----
-
 ## 目录
 
 - [Vue2 旧项目路由跳转关系脑图（完整版）](#vue2-旧项目路由跳转关系脑图完整版)
@@ -28,7 +26,7 @@
   - [10. 抄表管理模块](#10-抄表管理模块)
   - [11. 业主管理模块](#11-业主管理模块)
   - [12. 车辆管理模块](#12-车辆管理模块)
-  - [13. OA 工作流模块](#13-oa工作流模块)
+  - [13. OA 工作流模块](#13-oa-工作流模块)
   - [14. 工作单模块](#14-工作单模块)
   - [15. 报表统计模块](#15-报表统计模块)
   - [16. 个人中心模块](#16-个人中心模块)
@@ -48,8 +46,6 @@
     - [6. 采购流程](#6-采购流程)
     - [7. 费用管理流程](#7-费用管理流程)
     - [8. 抄表流程](#8-抄表流程)
-
----
 
 ## 1. 总览图：以首页/工作台为中心的导航结构
 
@@ -95,8 +91,6 @@ graph TB
     style My fill:#e1f5ff
     style Login fill:#ffe1e1
 ```
-
----
 
 ## 2. 维修工单流程模块
 
@@ -153,8 +147,6 @@ graph TB
     style AppraiseRepair fill:#e6ffe6
 ```
 
----
-
 ## 3. 投诉处理流程模块
 
 ```mermaid
@@ -195,8 +187,6 @@ graph TB
     style ComplaintHandle fill:#ffe6e6
     style ComplaintFinish fill:#e6ffe6
 ```
-
----
 
 ## 4. 巡检管理流程模块
 
@@ -240,8 +230,6 @@ graph TB
     style InspectionTransfer fill:#ffe6e6
 ```
 
----
-
 ## 5. 空置房管理流程模块
 
 > ⭐ **重要模块**：此模块之前被遗漏，现已补充完整
@@ -272,8 +260,6 @@ graph TB
     style ApplyRoomRecord fill:#ffe6f0
     style ApplyRoomRecordHandle fill:#ffe6e6
 ```
-
----
 
 ## 6. 装修管理流程模块
 
@@ -306,8 +292,6 @@ graph TB
     style RoomRenovationRecordHandle fill:#ffe6e6
 ```
 
----
-
 ## 7. 设备保养流程模块
 
 > ⭐ **重要模块**：设备定期保养管理
@@ -336,8 +320,6 @@ graph TB
     style ExcuteOneMaintainance fill:#ffe6f0
     style MaintainanceTransfer fill:#ffe6e6
 ```
-
----
 
 ## 8. 采购/资源管理流程模块
 
@@ -401,8 +383,6 @@ graph TB
     style ResourceStore fill:#e6ffe6
 ```
 
----
-
 ## 9. 费用管理模块
 
 > ⭐ **重要模块**：费用收取、催缴管理
@@ -429,8 +409,6 @@ graph TB
     style CreateFee fill:#ffe6f0
     style OweFeeCallable fill:#fff7e6
 ```
-
----
 
 ## 10. 抄表管理模块
 
@@ -467,8 +445,6 @@ graph TB
     style QrCodeMeter fill:#ffe6f0
 ```
 
----
-
 ## 11. 业主管理模块
 
 > ⭐ **重要模块**：业主信息管理
@@ -494,8 +470,6 @@ graph TB
     style EditOwner fill:#ffe6f0
 ```
 
----
-
 ## 12. 车辆管理模块
 
 > ⭐ **重要模块**：停车场、道闸管理
@@ -520,8 +494,6 @@ graph TB
     style CarInParkingArea fill:#ffe6f0
     style CarOutParkingArea fill:#ffe6f0
 ```
-
----
 
 ## 13. OA 工作流模块
 
@@ -554,8 +526,6 @@ graph TB
     style OaUndo fill:#ffe6f0
     style OaDetail fill:#ffe6e6
 ```
-
----
 
 ## 14. 工作单模块
 
@@ -592,8 +562,6 @@ graph TB
     style DoWorkAudit fill:#ffe6e6
 ```
 
----
-
 ## 15. 报表统计模块
 
 > ⭐ **重要模块**：各类数据报表
@@ -620,8 +588,6 @@ graph TB
     style ReportPayFeeDetail fill:#fff7e6
     style ReportRoomFee fill:#ffe6f0
 ```
-
----
 
 ## 16. 个人中心模块
 
@@ -658,8 +624,6 @@ graph TB
     style ChangePwd fill:#fff7e6
 ```
 
----
-
 ## 17. 公告活动模块
 
 > ⭐ **重要模块**：小区公告和文化活动
@@ -682,8 +646,6 @@ graph TB
     style Notice fill:#e6fff7
     style Activityes fill:#fff7e6
 ```
-
----
 
 ## 18. 其他辅助功能
 
@@ -746,8 +708,6 @@ graph TB
     style Charge fill:#ffe6f0
 ```
 
----
-
 ## 模块统计总览
 
 | 序号 | 模块名称       |  页面数  | 主要功能                     |
@@ -772,8 +732,6 @@ graph TB
 |  18  | 其他辅助功能   |   20+    | 房屋选择、预约、监控、充电桩 |
 |      | **合计**       | **130+** | **18 个主要业务模块**        |
 
----
-
 ## 关键跳转模式总结
 
 |  跳转类型  |    使用场景    | 示例              |
@@ -789,8 +747,6 @@ graph TB
 | URL 查询字符串 | 简单参数 | `?repairId=xxx&storeId=xxx`       |
 |  JSON 序列化   | 复杂对象 | `?apply=` + `JSON.stringify(obj)` |
 |    本地存储    | 大量数据 | `uni.setStorageSync()`            |
-
----
 
 ## 主要业务流程路径
 
@@ -841,8 +797,6 @@ graph TB
 ```plain
 抄表列表 → 手工抄表 / 二维码抄表 → 提交成功
 ```
-
----
 
 **生成时间**: 2025-10-20
 **项目**: HC 掌上物业 Vue2 版本 (gitee-example)
