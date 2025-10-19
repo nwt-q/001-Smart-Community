@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "tasks": {
-    "build": {
+    "build:h5:prod": {
       "cache": true,
       "outputs": ["dist/**"]
     },
@@ -12,7 +12,7 @@
     },
     "do-build": {
       "cache": true,
-      "dependsOn": ["build", "docs:build"]
+      "dependsOn": ["build:h5:prod", "docs:build"]
     }
   }
 }
