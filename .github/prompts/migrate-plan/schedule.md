@@ -539,8 +539,3 @@ apply-room.vue
 ### 11 美化，优化 `房屋申请系列页面` 的界面显示效果
 
 <!-- TODO: 截图说明 并用合适的UI设计AI来优化界面布局效果 -->
-
-### 产生的冗余文件
-
-docs 根目录内的文件。
-test-property-application.ts
