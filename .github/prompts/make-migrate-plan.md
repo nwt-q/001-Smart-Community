@@ -577,6 +577,37 @@
 
 请为我推荐一款前端 node 库，用 vue 实现的节点关系脑图库，实现类似于上面的效果。请优先从 github 和 npm 内推荐。推荐 5~8 款这样的库。
 
+#### 用 gemini 推荐的几款工具
+
+- https://gemini.google.com/share/7cc397b5591c
+- https://github.com/bcakmakoglu/vue-flow
+
+<!-- vite-plugin-vue-devtools graph -->
+
 ### 043 整体地阅读 `旧项目` 的页面，根据路由引导关系，生成页面之间的跳转关系脑图
 
-####
+我需要你帮我理清楚旧项目的路由跳转关系图。
+
+1. 完整读取 `gitee-example\pages.json` 文件，这包含了旧项目全部可以跳转的路由。
+2. 请你读取旧项目全部的页面，读取 `gitee-example/pages/**/*.vue` 的全部 vue 组件。确定全部要读取的 vue 组件。
+3. 请你有**策略的**，**部分的**阅读路由跳转部分的逻辑。重点阅读以下函数：
+   - uni.navigateTo
+   - uni.redirectTo
+   - uni.reLaunch
+   - uni.switchTab
+   - uni.navigateBack
+   - uni.preloadPage
+4. 根据上面的 uniapp 路由跳转函数，去帮我理清楚旧项目的路由跳转关系，并绘制出一份 mermaid 报表。
+
+#### 回答 AI 问题
+
+1. 脑图的详细程度和范围：
+   - 选项 B
+   - 选项 C
+2. 脑图的组织方式： 选项 B
+3. 否需要包含跳转参数： 需要在脑图中标注这些参数。
+4. 特殊跳转的处理：
+   - 返回上一页，这种跳转如何表示？不做显示，脑图不展示该内容。
+   - 切换到 tabBar 页面。不做显示，脑图不展示该内容。
+   - 条件跳转（如登录检查后跳转）。不做显示，脑图不展示该内容。
+5. 输出形式： 选项 B。且不需要文本版本的跳转关系清单。不需要。
