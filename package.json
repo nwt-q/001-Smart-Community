@@ -137,7 +137,7 @@
     "@iconify-json/carbon": "^1.2.13",
     "@prettier/plugin-oxc": "^0.0.4",
     "@rollup/rollup-darwin-x64": "^4.50.1",
-    "@ruan-cat/commitlint-config": "^3.1.0",
+    "@ruan-cat/commitlint-config": "^3.2.0",
     "@ruan-cat/taze-config": "^0.2.0",
     "@types/node": "^20.19.14",
     "@uni-helper/eslint-config": "^0.5.0",
