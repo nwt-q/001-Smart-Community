@@ -149,6 +149,34 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 1. 你应该积极主动的函数编写 jsdoc 注释的 `@example` 标签。
 2. 但是 `@example` 标签不允许写复杂的例子，请写简单的单行例子。完整的函数使用例子，你应该择机在函数文件的附近编写md文档，在文档内给出使用例子。
 
+### 7. 页面 vue 组件必须提供注释说明本组件的`业务名`和`访问地址`
+
+比如以下的这几个例子：
+
+```html
+<!--
+  房屋申请列表页
+  功能：显示房屋申请列表，支持搜索和筛选
+
+  访问地址: http://localhost:9000/#/pages-sub/property/apply-room
+-->
+```
+
+```html
+<!--
+  房屋申请详情页
+  功能：显示房屋申请详细信息，支持验房和审核操作
+
+  访问地址: http://localhost:9000/#/pages-sub/property/apply-room-detail
+  建议携带参数: ?ardId=xxx&communityId=xxx
+
+  http://localhost:9000/#/pages-sub/property/apply-room-detail?ardId=ARD_002&communityId=COMM_001
+
+-->
+```
+
+每个页面都必须提供最顶部的文件说明，说明其业务名称，提供访问地址。
+
 ## 其他注意事项
 
 1. 每次你完成更改时，都**不要运行**任何类型检查命令。我们项目不需要你去运行类型检查命令。
