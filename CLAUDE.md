@@ -142,7 +142,7 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 
 在你做样式迁移的时候，**不允许滥用** unocss 的 shortcuts 功能。不要把那么多样式类都设计成公共全局级别的快捷方式。
 
-### 5. vue组件编写规则
+### 5. vue 组件编写规则
 
 1. vue组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
 2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
@@ -180,6 +180,18 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 ```
 
 每个页面都必须提供最顶部的文件说明，说明其业务名称，提供访问地址。
+
+### 4. markdown 的多级标题要主动提供序号
+
+对于每一份 markdown 文件的三级标题，你都应该要：
+
+1. 主动添加**数字**序号，便于我阅读文档。
+2. 主动**维护正确的数字序号顺序**。如果你处理的 markdown 文档，其手动添加的序号顺序不对，请你及时的更新序号顺序。
+
+### 5. 生成的 markdown 格式的报告文档不应该增加短横杠作为分隔符
+
+1. 在你生成 markdown 格式报告时，请你**不要**额外生成 `---` 字样的分隔符，来分隔每一块内容。
+2. 如果你处理的 markdown 文档，存在这样的 `---` 分隔符，请你删除。
 
 ## 其他注意事项
 
