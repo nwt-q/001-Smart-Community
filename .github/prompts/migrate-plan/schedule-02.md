@@ -6,9 +6,9 @@
 
 我需要你帮我实现一整个 `维修工单流程模块` 系列页面的迁移。
 
-### 01 按照路由要求，新建简单占位符页面
+目前全部按照 `docs\reports\repair-module-migration-plan.md` 文档重新整理的一套迁移计划，来完成该模块的集中迁移。
 
-<!-- TODO: -->
+### 01 按照路由要求，新建简单占位符页面
 
 1. 阅读 `docs\reports\vue2-route-navigation-map.md` 文档的 `维修工单流程模块` 。明确清楚要处理的页面。
 2. 阅读 `.github\prompts\route-migration-map.yml` 关于 `3. 维修管理模块 (10个页面)` 的内容。
