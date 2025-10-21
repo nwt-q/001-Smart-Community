@@ -80,17 +80,56 @@ export function goBack(delta: number = 1) {
 
 /** 路由工具类 */
 export class TypedRouter {
-  /** 维修模块导航 */
+  /** 维修模块导航 (10个页面) */
+
+  /** 跳转到维修工单池 */
   static toRepairList(params?: PageParams['/pages-sub/repair/order-list']) {
     return navigateToTyped('/pages-sub/repair/order-list', params)
   }
 
-  static toRepairDetail(repairId: string, status?: string) {
-    return navigateToTyped('/pages-sub/repair/order-detail', { repairId, status })
+  /** 跳转到维修待办单 */
+  static toRepairDispatch(params?: PageParams['/pages-sub/repair/dispatch']) {
+    return navigateToTyped('/pages-sub/repair/dispatch', params)
   }
 
+  /** 跳转到维修已办 */
+  static toRepairFinish(params?: PageParams['/pages-sub/repair/finish']) {
+    return navigateToTyped('/pages-sub/repair/finish', params)
+  }
+
+  /** 跳转到维修详情 */
+  static toRepairDetail(repairId: string, storeId: string) {
+    return navigateToTyped('/pages-sub/repair/order-detail', { repairId, storeId })
+  }
+
+  /** 跳转到新增维修记录 */
   static toAddRepair(communityId?: string) {
     return navigateToTyped('/pages-sub/repair/add-order', { communityId })
+  }
+
+  /** 跳转到订单处理 */
+  static toRepairHandle(params: PageParams['/pages-sub/repair/handle']) {
+    return navigateToTyped('/pages-sub/repair/handle', params)
+  }
+
+  /** 跳转到选择物品 */
+  static toSelectResource(feeFlag: string) {
+    return navigateToTyped('/pages-sub/repair/select-resource', { feeFlag })
+  }
+
+  /** 跳转到结束订单 */
+  static toEndRepair(repairId: string, communityId: string) {
+    return navigateToTyped('/pages-sub/repair/end-order', { repairId, communityId })
+  }
+
+  /** 跳转到回访工单 */
+  static toAppraiseRepair(params: PageParams['/pages-sub/repair/appraise']) {
+    return navigateToTyped('/pages-sub/repair/appraise', params)
+  }
+
+  /** 跳转到回复评价 */
+  static toReplyAppraise(ruId: string, repairId: string) {
+    return navigateToTyped('/pages-sub/repair/appraise-reply', { ruId, repairId })
   }
 
   /** 投诉模块导航 */
@@ -195,14 +234,25 @@ export function isValidRoute(path: string): path is PageRoute {
     '/pages/address/list',
     '/pages/activity/index',
     '/pages/activity/detail',
+    // 维修管理模块
     '/pages-sub/repair/order-list',
-    '/pages-sub/repair/add-order',
+    '/pages-sub/repair/dispatch',
+    '/pages-sub/repair/finish',
     '/pages-sub/repair/order-detail',
+    '/pages-sub/repair/add-order',
+    '/pages-sub/repair/handle',
+    '/pages-sub/repair/select-resource',
+    '/pages-sub/repair/end-order',
+    '/pages-sub/repair/appraise',
+    '/pages-sub/repair/appraise-reply',
+    // 投诉管理模块
     '/pages-sub/complaint/list',
     '/pages-sub/complaint/detail',
     '/pages-sub/complaint/handle',
+    // 巡检管理模块
     '/pages-sub/inspection/list',
     '/pages-sub/inspection/execute',
+    // 物业管理模块
     '/pages-sub/property/apply-room',
     '/pages-sub/property/apply-room-detail',
     '/pages-sub/property/apply-room-record',

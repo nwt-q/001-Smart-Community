@@ -14,9 +14,18 @@ export type PageRoute
     | '/pages/activity/index'
     | '/pages/activity/detail'
   /** 分包页面 */
-    | '/pages-sub/repair/order-list'
-    | '/pages-sub/repair/add-order'
-    | '/pages-sub/repair/order-detail'
+    /** 维修管理模块 (10个页面) */
+    | '/pages-sub/repair/order-list' // 维修工单池
+    | '/pages-sub/repair/dispatch' // 维修待办单
+    | '/pages-sub/repair/finish' // 维修已办
+    | '/pages-sub/repair/order-detail' // 维修详情
+    | '/pages-sub/repair/add-order' // 添加维修记录
+    | '/pages-sub/repair/handle' // 订单处理
+    | '/pages-sub/repair/select-resource' // 选择物品
+    | '/pages-sub/repair/end-order' // 结束订单
+    | '/pages-sub/repair/appraise' // 回访工单
+    | '/pages-sub/repair/appraise-reply' // 回复评价
+    /** 投诉管理模块 */
     | '/pages-sub/complaint/list'
     | '/pages-sub/complaint/detail'
     | '/pages-sub/complaint/handle'
@@ -50,17 +59,59 @@ export interface PageParams {
     activitiesId: string
     currentCommunityId: string
   }
-  /** 维修模块参数 */
+  /** 维修管理模块参数 (10个页面) */
   '/pages-sub/repair/order-list': {
-    status?: 'pending' | 'processing' | 'completed'
-    type?: string
+    status?: string
+    page?: number
+    row?: number
+    repairName?: string
+    state?: string
+  }
+  '/pages-sub/repair/dispatch': {
+    page?: number
+    row?: number
+    repairName?: string
+    state?: string
+  }
+  '/pages-sub/repair/finish': {
+    page?: number
+    row?: number
+  }
+  '/pages-sub/repair/order-detail': {
+    repairId: string
+    storeId: string
   }
   '/pages-sub/repair/add-order': {
     communityId?: string
   }
-  '/pages-sub/repair/order-detail': {
+  '/pages-sub/repair/handle': {
+    /** 操作类型: DISPATCH-派单, TRANSFER-转单, BACK-退单, FINISH-办结 */
+    action: 'DISPATCH' | 'TRANSFER' | 'BACK' | 'FINISH'
     repairId: string
-    status?: string
+    repairType: string
+    preStaffId?: string
+    preStaffName?: string
+    repairObjType?: string
+    publicArea?: string
+    repairChannel?: string
+  }
+  '/pages-sub/repair/select-resource': {
+    feeFlag: string
+  }
+  '/pages-sub/repair/end-order': {
+    repairId: string
+    communityId: string
+  }
+  '/pages-sub/repair/appraise': {
+    repairId: string
+    repairType: string
+    repairChannel?: string
+    publicArea?: string
+    communityId: string
+  }
+  '/pages-sub/repair/appraise-reply': {
+    ruId: string
+    repairId: string
   }
   /** 投诉模块参数 */
   '/pages-sub/complaint/list': {
