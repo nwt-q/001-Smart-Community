@@ -227,3 +227,19 @@ export function robRepairOrder(data: {
 }) {
   return http.Post<{ success: boolean }>('/app/ownerRepair.grabbingRepair', data)
 }
+
+/** 21. 获取报修类型配置列表 */
+export function getRepairSettings(params: {
+  communityId: string
+  publicArea: 'T' | 'F'
+  page?: number
+  row?: number
+}) {
+  return http.Get<Array<{
+    repairType: string
+    repairTypeName: string
+    payFeeFlag: 'T' | 'F'
+    priceScope?: string
+    publicArea: 'T' | 'F'
+  }>>('/app/repairSetting.listRepairSettings', { params })
+}

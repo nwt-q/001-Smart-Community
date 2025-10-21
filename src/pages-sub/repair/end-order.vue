@@ -1,6 +1,6 @@
 <!--
-  结束订单
-  功能：结束维修工单
+  结束维修工单
+  功能：输入结束原因并结束工单
 
   访问地址: http://localhost:9000/#/pages-sub/repair/end-order
   建议携带参数: ?repairId=REP_001&communityId=COMM_001
@@ -9,52 +9,104 @@
 -->
 
 <script setup lang="ts">
-import { goBack } from '@/router'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { endRepair } from '@/api/repair'
 
 definePage({
   style: {
-    navigationBarTitleText: '结束订单',
+    navigationBarTitleText: '结束工单',
     enablePullDownRefresh: false,
   },
 })
 
-/** 确认结束 - 模拟数据测试 */
-function handleConfirmEnd() {
-  uni.showToast({
-    title: '订单已结束',
-    icon: 'success',
-  })
-  setTimeout(() => {
-    goBack()
-  }, 1500)
-}
+/** 页面参数 */
+const repairId = ref('')
+const communityId = ref('')
 
-/** 取消 */
-function handleCancel() {
-  goBack()
+/** 结束原因 */
+const content = ref('')
+
+/** 页面加载 */
+onLoad((options) => {
+  repairId.value = (options?.repairId as string) || ''
+  communityId.value = (options?.communityId as string) || ''
+})
+
+/** 结束工单 */
+async function handleEndRepair() {
+  if (!content.value.trim()) {
+    uni.showToast({
+      title: '请输入结束原因',
+      icon: 'none',
+    })
+    return
+  }
+
+  try {
+    uni.showLoading({ title: '处理中...' })
+
+    await endRepair({
+      repairId: repairId.value,
+      communityId: communityId.value,
+      context: content.value,
+    })
+
+    uni.hideLoading()
+    uni.showToast({
+      title: '工单已结束',
+      icon: 'success',
+    })
+
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 1500)
+  }
+  catch (error: any) {
+    uni.hideLoading()
+    uni.showToast({
+      title: error.message || '结束失败',
+      icon: 'none',
+    })
+  }
 }
 </script>
 
 <template>
-  <view class="repair-end-order-page p-4">
-    <view class="mb-4 text-center">
-      <text class="text-lg text-gray-600">结束订单页面</text>
+  <view class="end-repair-page">
+    <!-- 结束原因 -->
+    <view class="bg-white p-3">
+      <view class="mb-2 text-sm font-bold">
+        结束原因
+      </view>
+      <wd-textarea
+        v-model="content"
+        placeholder="请输入结束原因，比如缺材料"
+        :maxlength="500"
+        show-word-limit
+        :rows="6"
+      />
     </view>
 
-    <!-- 临时测试按钮 - 模拟业务流程跳转 -->
-    <view class="space-y-2">
-      <button class="w-full" type="warn" @click="handleConfirmEnd">
-        确认结束订单
-      </button>
-      <button class="w-full" type="default" @click="handleCancel">
-        取消
-      </button>
-    </view>
-
-    <view class="mt-4 text-center">
-      <text class="text-sm text-gray-400">此页面用于结束维修工单</text>
+    <!-- 结束按钮 -->
+    <view class="mt-6 px-3">
+      <wd-button
+        block
+        type="primary"
+        size="large"
+        :disabled="!content.trim()"
+        @click="handleEndRepair"
+      >
+        结束工单
+      </wd-button>
     </view>
   </view>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.end-repair-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-top: 12px;
+}
+</style>

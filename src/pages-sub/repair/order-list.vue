@@ -12,142 +12,340 @@
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
 import { ref } from 'vue'
-import { getRepairOrderList } from '@/api/repair'
+import { getRepairOrderList, getRepairStates, robRepairOrder } from '@/api/repair'
 import { TypedRouter } from '@/router'
+import { getCurrentCommunity, getUserInfo } from '@/utils/user'
 
 definePage({
   style: {
     navigationBarTitleText: '维修工单池',
-    enablePullDownRefresh: true,
+    enablePullDownRefresh: false,
   },
 })
 
+/** 搜索条件 */
+const searchName = ref('')
+const selectedStateIndex = ref(0)
+const stateOptions = ref<Array<{ label: string, value: string }>>([
+  { label: '请选择', value: '' },
+])
+
 /** 列表数据 */
 const repairList = ref<RepairOrder[]>([])
+const currentPage = ref(1)
+const pageSize = ref(15)
 const total = ref(0)
+const finished = ref(false)
 
-/** 请求管理 - 加载维修工单列表 */
-const {
-  loading,
-  send: loadList,
-  onSuccess,
-  onError,
-} = useRequest(() => getRepairOrderList({ page: 1, row: 10 }), { immediate: false })
+/** z-paging 组件引用 */
+const pagingRef = ref()
 
-/** 成功回调 */
-onSuccess((result) => {
-  repairList.value = result.ownerRepairs || []
-  total.value = result.total || 0
-  console.log('✅ 加载成功:', result)
-  uni.showToast({
-    title: `加载成功，共 ${result.total} 条`,
-    icon: 'success',
-  })
+/** 获取用户信息 */
+const userInfo = getUserInfo()
+const communityInfo = getCurrentCommunity()
+
+/** 加载维修状态字典 */
+const { send: loadStates } = useRequest(() => getRepairStates(), {
+  immediate: true,
 })
-
-/** 失败回调 */
-onError((error) => {
-  console.error('❌ 加载失败:', error)
-  uni.showToast({
-    title: '加载失败',
-    icon: 'none',
+  .onSuccess((result) => {
+    if (result.length > 0) {
+      stateOptions.value = [
+        { label: '请选择', value: '' },
+        ...result.map(item => ({
+          label: item.name || '',
+          value: item.statusCd || '',
+        })),
+      ]
+    }
   })
-})
+  .onError((error) => {
+    console.error('加载状态字典失败:', error)
+  })
 
-/** 加载数据 */
-function handleLoad() {
-  loadList()
+/** 查询维修工单列表 */
+async function queryList(pageNo: number, pageRow: number) {
+  const selectedState = selectedStateIndex.value === 0
+    ? ''
+    : stateOptions.value[selectedStateIndex.value]?.value || ''
+
+  const { data } = await getRepairOrderList({
+    page: pageNo,
+    row: pageRow,
+    storeId: userInfo.storeId || '',
+    userId: userInfo.userId || '',
+    communityId: communityInfo.communityId || '',
+    repairName: searchName.value,
+    state: selectedState,
+    reqSource: 'mobile',
+  })
+
+  return {
+    list: data.ownerRepairs || [],
+    total: data.total || 0,
+  }
 }
 
-/** 查看工单详情 - 使用列表中的第一个工单 */
-function handleGoToDetail() {
-  if (repairList.value.length > 0) {
-    TypedRouter.toRepairDetail(repairList.value[0].repairId)
+/** z-paging 查询回调 */
+async function handleQuery(pageNo: number, pageSize: number) {
+  try {
+    const result = await queryList(pageNo, pageSize)
+    total.value = result.total
+
+    // 通知 z-paging 数据加载完成
+    pagingRef.value?.complete(result.list)
   }
-  else {
-    TypedRouter.toRepairDetail('REP_001', 'STORE_001')
+  catch (error) {
+    console.error('加载列表失败:', error)
+    // 通知 z-paging 加载失败
+    pagingRef.value?.complete(false)
+    uni.showToast({
+      title: '加载失败',
+      icon: 'none',
+    })
   }
 }
 
-/** 派单 - 使用列表中的第一个工单 */
-function handleDispatch() {
-  const repairId = repairList.value.length > 0 ? repairList.value[0].repairId : 'REP_001'
+/** 搜索 */
+function handleSearch() {
+  // 重置到第一页并刷新
+  pagingRef.value?.reload()
+}
+
+/** 状态选择器改变 */
+function handleStateChange({ value }: { value: number }) {
+  selectedStateIndex.value = value
+}
+
+/** 查看详情 */
+function handleViewDetail(item: RepairOrder) {
+  TypedRouter.toRepairDetail(item.repairId!, userInfo.storeId)
+}
+
+/** 派单 */
+function handleDispatch(item: RepairOrder) {
   TypedRouter.toRepairHandle({
     action: 'DISPATCH',
-    repairId,
-    repairType: '水电维修',
+    repairId: item.repairId!,
+    repairType: item.repairType || '',
+    preStaffId: item.preStaffId,
+    preStaffName: item.preStaffName,
+    repairObjType: item.repairObjType,
   })
 }
 
-/** 结束订单 - 使用列表中的第一个工单 */
-function handleEndOrder() {
-  const repairId = repairList.value.length > 0 ? repairList.value[0].repairId : 'REP_001'
-  TypedRouter.toEndRepair(repairId, 'COMM_001')
+/** 结束工单 */
+function handleEndRepair(item: RepairOrder) {
+  TypedRouter.toEndRepair(item.repairId!, item.communityId)
+}
+
+/** 抢单 */
+async function handleRobOrder(item: RepairOrder) {
+  try {
+    uni.showLoading({ title: '请稍候...' })
+
+    await robRepairOrder({
+      communityId: communityInfo.communityId || '',
+      repairId: item.repairId!,
+      userName: userInfo.userName || '',
+    })
+
+    uni.hideLoading()
+    uni.showToast({
+      title: '抢单成功',
+      icon: 'success',
+    })
+
+    // 延迟刷新列表
+    setTimeout(() => {
+      pagingRef.value?.reload()
+    }, 1500)
+  }
+  catch (error: any) {
+    uni.hideLoading()
+    uni.showToast({
+      title: error.message || '抢单失败',
+      icon: 'none',
+    })
+  }
+}
+
+/** 检查权限 */
+function checkAuth(privilegeId: string): boolean {
+  // TODO: 实现权限检查逻辑
+  // 暂时返回 true，后续接入实际权限系统
+  return true
+}
+
+/** 格式化预约时间 */
+function formatAppointmentTime(timeStr?: string): string {
+  if (!timeStr)
+    return ''
+  try {
+    const date = new Date(timeStr.replace(/-/g, '/'))
+    return `${date.getMonth() + 1}-${date.getDate()}`
+  }
+  catch {
+    return timeStr
+  }
 }
 </script>
 
 <template>
-  <view class="repair-order-list-page p-4">
-    <view class="mb-4 text-center">
-      <text class="text-lg text-gray-600">维修工单池页面</text>
-    </view>
+  <view class="repair-order-list-page">
+    <!-- 搜索栏 -->
+    <view class="search-bar flex items-center gap-2 bg-white px-3 py-2">
+      <!-- 报修人搜索 -->
+      <wd-search
+        v-model="searchName"
+        placeholder="输入报修人"
+        :maxlength="20"
+        hide-cancel-button
+        class="flex-1"
+      />
 
-    <!-- 接口测试区域 -->
-    <view class="mb-4 rounded bg-blue-50 p-4">
-      <view class="mb-2">
-        <text class="text-sm font-bold">接口测试</text>
-      </view>
-      <button class="w-full" type="primary" :loading="loading" :disabled="loading" @click="handleLoad">
-        {{ loading ? '加载中...' : '加载维修工单列表' }}
-      </button>
-      <view v-if="total > 0" class="mt-2 text-sm text-gray-600">
-        <text>已加载 {{ repairList.length }} 条数据（共 {{ total }} 条）</text>
-      </view>
-    </view>
-
-    <!-- 数据展示区域 -->
-    <view v-if="repairList.length > 0" class="mb-4">
-      <view class="mb-2">
-        <text class="text-sm font-bold">工单列表</text>
-      </view>
-      <view
-        v-for="item in repairList.slice(0, 5)"
-        :key="item.repairId"
-        class="mb-2 rounded bg-white p-3 shadow"
+      <!-- 状态筛选 -->
+      <wd-picker
+        v-model="selectedStateIndex"
+        :columns="stateOptions"
+        label-key="label"
+        value-key="value"
+        @confirm="handleStateChange"
       >
-        <view class="mb-1 flex justify-between">
-          <text class="text-sm font-bold">{{ item.repairId }}</text>
-          <text class="text-xs text-gray-500">{{ item.status }}</text>
-        </view>
-        <view class="mb-1 text-sm text-gray-700">
-          <text>{{ item.title }}</text>
-        </view>
-        <view class="text-xs text-gray-500">
-          <text>{{ item.ownerName }} · {{ item.address }}</text>
-        </view>
-      </view>
-      <view v-if="repairList.length > 5" class="text-center text-sm text-gray-500">
-        <text>仅显示前 5 条，共 {{ repairList.length }} 条</text>
-      </view>
+        <wd-button custom-class="!px-3" size="small" type="primary">
+          {{ stateOptions[selectedStateIndex]?.label || '状态' }}
+        </wd-button>
+      </wd-picker>
+
+      <!-- 搜索按钮 -->
+      <wd-button type="success" size="small" @click="handleSearch">
+        搜索
+      </wd-button>
     </view>
 
-    <!-- 临时测试按钮 - 模拟业务流程跳转 -->
-    <view class="space-y-2">
-      <button class="w-full" type="primary" @click="handleGoToDetail">
-        查看工单详情
-      </button>
-      <button class="w-full" type="primary" @click="handleDispatch">
-        派单处理
-      </button>
-      <button class="w-full" type="warn" @click="handleEndOrder">
-        结束订单
-      </button>
+    <!-- 总记录数 -->
+    <view v-if="total > 0" class="px-3 py-2 text-right text-sm text-gray-600">
+      共{{ total }}条记录
     </view>
 
-    <view class="mt-4 text-center">
-      <text class="text-sm text-gray-400">此页面用于显示维修工单列表，支持搜索和筛选功能</text>
-    </view>
+    <!-- 列表 -->
+    <z-paging
+      ref="pagingRef"
+      v-model="repairList"
+      :default-page-size="pageSize"
+      @query="handleQuery"
+    >
+      <view class="repair-list px-3">
+        <view
+          v-for="item in repairList"
+          :key="item.repairId"
+          class="repair-card mb-3 rounded bg-white p-3 shadow-sm"
+        >
+          <!-- 工单号和状态 -->
+          <view class="flex items-center justify-between border-b border-gray-100 pb-2">
+            <text class="text-sm">{{ item.repairId }}</text>
+            <text class="text-sm text-gray-500">{{ item.stateName }}</text>
+          </view>
+
+          <!-- 工单信息 -->
+          <view class="mt-2 space-y-1">
+            <!-- 报修类型 -->
+            <view class="flex justify-between text-sm">
+              <text class="text-gray-500">报修类型</text>
+              <text class="text-gray-700">{{ item.repairTypeName }}</text>
+            </view>
+
+            <!-- 报修人 -->
+            <view class="flex justify-between text-sm">
+              <text class="text-gray-500">报修人</text>
+              <text class="text-gray-700">{{ item.repairName }}({{ item.tel }})</text>
+            </view>
+
+            <!-- 位置 -->
+            <view class="flex justify-between text-sm">
+              <text class="text-gray-500">位置</text>
+              <text class="text-gray-700">{{ item.repairObjName }}</text>
+            </view>
+
+            <!-- 预约时间 -->
+            <view class="flex justify-between text-sm">
+              <text class="text-gray-500">预约时间</text>
+              <text class="text-gray-700">{{ formatAppointmentTime(item.appointmentTime) }}</text>
+            </view>
+
+            <!-- 报修内容 -->
+            <view class="flex justify-between text-sm">
+              <text class="text-gray-500">报修内容</text>
+              <text class="text-gray-700">{{ item.context }}</text>
+            </view>
+          </view>
+
+          <!-- 操作按钮 -->
+          <view class="mt-3 flex justify-end gap-2 border-t border-gray-100 pt-2">
+            <!-- 详情按钮 -->
+            <wd-button size="small" plain @click="handleViewDetail(item)">
+              详情
+            </wd-button>
+
+            <!-- 派单按钮 -->
+            <wd-button
+              v-if="item.state === '1000' && checkAuth('502019101946430010')"
+              size="small"
+              type="warning"
+              @click="handleDispatch(item)"
+            >
+              派单
+            </wd-button>
+
+            <!-- 结束按钮 -->
+            <wd-button
+              v-if="item.state !== '1700' && item.state !== '1800' && item.state !== '1900' && checkAuth('502019101946430010')"
+              size="small"
+              type="error"
+              @click="handleEndRepair(item)"
+            >
+              结束
+            </wd-button>
+
+            <!-- 抢单按钮 -->
+            <wd-button
+              v-if="item.repairWay === '100' && item.state === '1000' && checkAuth('502021012099350016')"
+              size="small"
+              type="warning"
+              @click="handleRobOrder(item)"
+            >
+              抢单
+            </wd-button>
+          </view>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <template #empty>
+        <wd-status-tip image="search" tip="暂无维修工单" />
+      </template>
+    </z-paging>
   </view>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.repair-order-list-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.repair-card {
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+</style>

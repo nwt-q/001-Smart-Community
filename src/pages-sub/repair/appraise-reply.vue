@@ -9,7 +9,10 @@
 -->
 
 <script setup lang="ts">
-import { goBack } from '@/router'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { replyAppraise } from '@/api/repair'
+import { getCurrentCommunity } from '@/utils/user'
 
 definePage({
   style: {
@@ -18,35 +21,97 @@ definePage({
   },
 })
 
-/** 提交回复 - 模拟数据测试 */
-function handleSubmitReply() {
-  uni.showToast({
-    title: '回复成功',
-    icon: 'success',
-  })
-  setTimeout(() => {
-    goBack()
-  }, 1500)
+/** 页面参数 */
+const ruId = ref('')
+const repairId = ref('')
+
+/** 小区信息 */
+const communityInfo = getCurrentCommunity()
+
+/** 回复内容 */
+const replyContent = ref('')
+
+/** 页面加载 */
+onLoad((options) => {
+  ruId.value = (options?.ruId as string) || ''
+  repairId.value = (options?.repairId as string) || ''
+})
+
+/** 提交回复 */
+async function handleSubmitReply() {
+  if (!replyContent.value.trim()) {
+    uni.showToast({
+      title: '请输入回复说明',
+      icon: 'none',
+    })
+    return
+  }
+
+  try {
+    uni.showLoading({ title: '提交中...' })
+
+    await replyAppraise({
+      ruId: ruId.value,
+      repairId: repairId.value,
+      reply: replyContent.value,
+      communityId: communityInfo.communityId,
+    })
+
+    uni.hideLoading()
+    uni.showToast({
+      title: '回复成功',
+      icon: 'success',
+    })
+
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 1500)
+  }
+  catch (error: any) {
+    uni.hideLoading()
+    uni.showToast({
+      title: error.message || '回复失败',
+      icon: 'none',
+    })
+  }
 }
 </script>
 
 <template>
-  <view class="repair-appraise-reply-page p-4">
-    <view class="mb-4 text-center">
-      <text class="text-lg text-gray-600">回复评价页面</text>
+  <view class="reply-appraise-page">
+    <!-- 回复说明 -->
+    <view class="bg-white p-3">
+      <view class="mb-2 text-sm font-bold">
+        回复说明
+      </view>
+      <wd-textarea
+        v-model="replyContent"
+        placeholder="请输入回复说明"
+        :maxlength="200"
+        show-word-limit
+        :rows="6"
+      />
     </view>
 
-    <!-- 临时测试按钮 - 模拟业务流程跳转 -->
-    <view class="space-y-2">
-      <button class="w-full" type="primary" @click="handleSubmitReply">
-        提交回复
-      </button>
-    </view>
-
-    <view class="mt-4 text-center">
-      <text class="text-sm text-gray-400">此页面用于物业回复用户的维修评价</text>
+    <!-- 提交按钮 -->
+    <view class="mt-6 px-3">
+      <wd-button
+        block
+        type="success"
+        size="large"
+        :disabled="!replyContent.trim()"
+        @click="handleSubmitReply"
+      >
+        提交
+      </wd-button>
     </view>
   </view>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.reply-appraise-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-top: 12px;
+}
+</style>

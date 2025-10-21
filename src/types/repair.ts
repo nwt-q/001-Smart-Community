@@ -132,6 +132,8 @@ export interface ResourceStoreType {
 
 /** 维修工单流转记录 */
 export interface RepairStaffRecord {
+  /** 流转记录ID（用于回复评价） */
+  ruId?: string
   /** 师傅ID */
   staffId: string
   /** 师傅姓名 */
@@ -309,32 +311,30 @@ export interface RepairListResponse {
 
 /** 创建维修工单请求 */
 export interface CreateRepairReq {
-  /** 工单标题 */
-  title: string
-  /** 报修描述 */
-  description: string
-  /** 业主姓名 */
-  ownerName: string
-  /** 业主电话 */
-  ownerPhone: string
-  /** 维修地址 */
-  address: string
-  /** 维修类型 */
-  repairType?: RepairType
-  /** 优先级 */
-  priority?: PriorityType
-  /** 预估费用 */
-  estimatedCost?: number
-  /** 图片列表 */
-  images?: string[]
+  /** 报修人姓名 */
+  repairName: string
+  /** 报修类型 */
+  repairType: string
+  /** 预约时间 */
+  appointmentTime: string
+  /** 联系电话 */
+  tel: string
+  /** 报修内容 */
+  context: string
   /** 小区ID */
-  communityId?: string
+  communityId: string
   /** 报修对象类型 */
-  repairObjType?: RepairObjType
+  repairObjType: RepairObjType
+  /** 报修对象ID */
+  repairObjId: string
+  /** 报修对象名称 */
+  repairObjName: string
   /** 报修渠道 */
   repairChannel?: RepairChannel
-  /** 预约时间 */
-  appointmentTime?: string
+  /** 房屋ID */
+  roomId?: string
+  /** 图片ID列表 */
+  photos?: string[]
 }
 
 /** 更新维修工单请求 */
