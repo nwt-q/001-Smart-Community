@@ -33,7 +33,7 @@ route_mappings:
   address_modules:
     gitee-example/pages/addressList/addressList.vue: src/pages/addressList/index.vue
 
-  # ===== 3. 维修管理模块 (10个页面) =====
+  # ===== 3. 维修管理模块 (10个页面) - 已完成迁移 ✅ =====
   repair_modules:
     gitee-example/pages/repairOrder/repairOrder.vue: src/pages-sub/repair/order-list.vue
     gitee-example/pages/repairAdd/repairAdd.vue: src/pages-sub/repair/add-order.vue
