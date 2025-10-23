@@ -41,6 +41,14 @@
 3. 按照 `component-migration` 子代理的要求，完成全部 `维修工单流程模块系列页面` 的组件迁移。
 4. 这个阶段只负责实现组件迁移，不考虑样式迁移。
 
+#### 01 更改正确的图片预览写法
+
+针对 `src\pages-sub\repair\order-detail.vue` 的 `wd-image-preview` 组件，这个组件是不存在的。
+
+1. 请阅读 `https://github.com/Moonofweisheng/wot-design-uni/blob/master/docs/component/img.md` 文档。学会使用 `<wd-img>` 的预览功能写法。
+2. 阅读`旧项目`代码 `gitee-example/pages/repairDetail/repairDetail.vue` 。think hard 了解清楚旧项目如何使用图片预览的。
+3. 按照 `component-migration` 子代理的要求，修复 `src\pages-sub\repair\order-detail.vue` 组件错误使用不存在组件 `wd-image-preview` 的故障。
+
 ### 05 迁移样式
 
 1. 阅读 `docs\reports\vue2-route-navigation-map.md` 文档的 `维修工单流程模块` 。明确要迁移的代码。一共 13 个页面。
