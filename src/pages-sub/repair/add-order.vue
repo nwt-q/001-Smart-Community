@@ -238,7 +238,13 @@ function handleTimeConfirm({ value }: { value: string }) {
   showTimePicker.value = false
 }
 
-/** 表单验证 */
+/**
+ * 表单验证
+ * @returns 返回错误信息，如果验证通过则返回空字符串
+ * @example
+ * const error = validateForm()
+ * if (error) showToast(error)
+ */
 function validateForm(): string {
   if (!selectedRepairType.value?.repairType) {
     return '请选择报修类型'
@@ -275,6 +281,34 @@ function validateForm(): string {
   }
 
   return ''
+}
+
+/** 图片上传前处理 */
+function handleBeforeUpload(file: File) {
+  // 检查文件大小
+  if (file.size > 10 * 1024 * 1024) {
+    uni.showToast({
+      title: '图片大小不能超过10MB',
+      icon: 'none',
+    })
+    return false
+  }
+  return true
+}
+
+/** 图片上传成功 */
+function handleUploadSuccess(fileUrl: string) {
+  // 这里应该是实际的上传接口返回的URL
+  console.log('图片上传成功:', fileUrl)
+}
+
+/** 图片上传失败 */
+function handleUploadFail(error: Error) {
+  uni.showToast({
+    title: '图片上传失败',
+    icon: 'none',
+  })
+  console.error('图片上传失败:', error)
 }
 
 /** 提交维修工单 */
@@ -513,9 +547,14 @@ async function handleSubmit() {
       相关图片
     </view>
     <view class="bg-white p-3">
-      <view class="text-sm text-gray-400">
-        （图片上传功能待集成 vc-upload-async 组件）
-      </view>
+      <wd-upload
+        v-model="photos"
+        :limit="9"
+        :max-size="10 * 1024 * 1024"
+        :before-upload="handleBeforeUpload"
+        @success="handleUploadSuccess"
+        @fail="handleUploadFail"
+      />
     </view>
 
     <!-- 提交按钮 -->

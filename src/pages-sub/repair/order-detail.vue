@@ -145,18 +145,14 @@ function formatStaffRecords() {
           <text class="text-sm text-gray-700 font-bold">业主报修图片</text>
         </view>
         <view class="image-grid grid grid-cols-4 gap-2">
-          <view
+          <wd-img
             v-for="(photo, index) in repairDetail.repairPhotos"
             :key="index"
-            class="aspect-square"
-            @tap="handlePreviewImages(repairDetail.repairPhotos!, index)"
-          >
-            <image
-              :src="photo.url || photo.photo"
-              mode="aspectFill"
-              class="h-full w-full rounded"
-            />
-          </view>
+            :src="photo.url || photo.photo"
+            mode="aspectFill"
+            class="aspect-square h-full w-full rounded"
+            @click="handlePreviewImages(repairDetail.repairPhotos!, index)"
+          />
         </view>
       </view>
 
@@ -169,18 +165,14 @@ function formatStaffRecords() {
           <text class="text-sm text-gray-700 font-bold">维修前图片</text>
         </view>
         <view class="image-grid grid grid-cols-4 gap-2">
-          <view
+          <wd-img
             v-for="(photo, index) in repairDetail.beforePhotos"
             :key="index"
-            class="aspect-square"
-            @tap="handlePreviewImages(repairDetail.beforePhotos!, index)"
-          >
-            <image
-              :src="photo.url || photo.photo"
-              mode="aspectFill"
-              class="h-full w-full rounded"
-            />
-          </view>
+            :src="photo.url || photo.photo"
+            mode="aspectFill"
+            class="aspect-square h-full w-full rounded"
+            @click="handlePreviewImages(repairDetail.beforePhotos!, index)"
+          />
         </view>
       </view>
 
@@ -193,18 +185,14 @@ function formatStaffRecords() {
           <text class="text-sm text-gray-700 font-bold">维修后图片</text>
         </view>
         <view class="image-grid grid grid-cols-4 gap-2">
-          <view
+          <wd-img
             v-for="(photo, index) in repairDetail.afterPhotos"
             :key="index"
-            class="aspect-square"
-            @tap="handlePreviewImages(repairDetail.afterPhotos!, index)"
-          >
-            <image
-              :src="photo.url || photo.photo"
-              mode="aspectFill"
-              class="h-full w-full rounded"
-            />
-          </view>
+            :src="photo.url || photo.photo"
+            mode="aspectFill"
+            class="aspect-square h-full w-full rounded"
+            @click="handlePreviewImages(repairDetail.afterPhotos!, index)"
+          />
         </view>
       </view>
 
