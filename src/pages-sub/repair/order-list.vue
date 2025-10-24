@@ -161,10 +161,10 @@ async function handleRobOrder(item: RepairOrder) {
       pagingRef.value?.reload()
     }, 1500)
   }
-  catch (error: any) {
+  catch (error) {
     uni.hideLoading()
     uni.showToast({
-      title: error.message || '抢单失败',
+      title: (error as Error)?.message || '抢单失败',
       icon: 'none',
     })
   }

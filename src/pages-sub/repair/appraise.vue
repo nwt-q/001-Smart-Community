@@ -78,10 +78,10 @@ async function handleSubmit() {
       uni.navigateBack()
     }, 1500)
   }
-  catch (error: any) {
+  catch (error) {
     uni.hideLoading()
     uni.showToast({
-      title: error.message || '提交失败',
+      title: (error as Error)?.message || '提交失败',
       icon: 'none',
     })
   }

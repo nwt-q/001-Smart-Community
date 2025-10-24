@@ -31,9 +31,13 @@ export function getRepairFinishList(params: RepairListParams) {
 }
 
 /** 4. 获取维修工单详情 */
-export function getRepairDetail(repairId: string) {
+export function getRepairDetail(params: {
+  repairId: string
+  storeId?: string
+  communityId?: string
+}) {
   return http.Get<{ ownerRepair: RepairOrder }>('/app/ownerRepair.queryOwnerRepair', {
-    params: { repairId },
+    params,
   })
 }
 
@@ -133,7 +137,7 @@ export function finishRepair(data: {
   userId?: string
   userName?: string
   storeId?: string
-  choosedGoodsList?: any[]
+  choosedGoodsList?: RepairResource[]
   totalPrice?: number
   payType?: string
 }) {

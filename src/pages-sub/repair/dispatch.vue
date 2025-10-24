@@ -146,9 +146,9 @@ async function handleStartRepair(item: RepairOrder) {
         pagingRef.value?.reload()
       }, 1000)
     }
-    catch (error: any) {
+    catch (error) {
       uni.showToast({
-        title: error.message || '启动失败',
+        title: (error as Error)?.message || '启动失败',
         icon: 'none',
       })
     }
@@ -210,9 +210,9 @@ async function handleConfirmStop() {
       pagingRef.value?.reload()
     }, 1000)
   }
-  catch (error: any) {
+  catch (error) {
     uni.showToast({
-      title: error.message || '暂停失败',
+      title: (error as Error)?.message || '暂停失败',
       icon: 'none',
     })
   }

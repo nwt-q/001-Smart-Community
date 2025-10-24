@@ -48,8 +48,8 @@ const { loading: detailLoading, send: loadDetail } = useRequest(
   { immediate: false },
 )
   .onSuccess((result) => {
-    if (result.ownerRepairs && result.ownerRepairs.length > 0) {
-      repairDetail.value = result.ownerRepairs[0]
+    if (result.ownerRepair) {
+      repairDetail.value = result.ownerRepair
     }
   })
   .onError((error) => {

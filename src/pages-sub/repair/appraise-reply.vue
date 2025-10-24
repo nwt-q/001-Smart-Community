@@ -67,10 +67,10 @@ async function handleSubmitReply() {
       uni.navigateBack()
     }, 1500)
   }
-  catch (error: any) {
+  catch (error) {
     uni.hideLoading()
     uni.showToast({
-      title: error.message || '回复失败',
+      title: (error as Error)?.message || '回复失败',
       icon: 'none',
     })
   }
