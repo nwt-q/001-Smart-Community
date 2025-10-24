@@ -153,14 +153,40 @@ const mockRepairDatabase = {
 
   /** 维修物品/资源数据 */
   resources: [
-    { resId: 'RES_001', resName: '水龙头', resTypeName: '水电材料', price: 50, unit: '个', stock: 20 },
-    { resId: 'RES_002', resName: '插座', resTypeName: '水电材料', price: 15, unit: '个', stock: 50 },
-    { resId: 'RES_003', resName: '门锁', resTypeName: '五金材料', price: 120, unit: '把', stock: 10 },
-    { resId: 'RES_004', resName: '窗户密封条', resTypeName: '五金材料', price: 30, unit: '米', stock: 100 },
-    { resId: 'RES_005', resName: '空调氟利昂', resTypeName: '空调材料', price: 200, unit: '瓶', stock: 5 },
-    { resId: 'RES_006', resName: '瓷砖', resTypeName: '装修材料', price: 25, unit: '片', stock: 200 },
-    { resId: 'RES_007', resName: '电线', resTypeName: '水电材料', price: 8, unit: '米', stock: 500 },
-    { resId: 'RES_008', resName: '管道胶', resTypeName: '水电材料', price: 35, unit: '瓶', stock: 15 },
+    { resId: 'RES_001', resName: '水龙头', resTypeName: '水电材料', specName: '普通型', price: 50, outLowPrice: 40, outHighPrice: 60, unit: '个', stock: 20 },
+    { resId: 'RES_002', resName: '插座', resTypeName: '水电材料', specName: '五孔', price: 15, outLowPrice: 12, outHighPrice: 18, unit: '个', stock: 50 },
+    { resId: 'RES_003', resName: '门锁', resTypeName: '五金材料', specName: '防盗型', price: 120, outLowPrice: 100, outHighPrice: 150, unit: '把', stock: 10 },
+    { resId: 'RES_004', resName: '窗户密封条', resTypeName: '五金材料', specName: '隔音型', price: 30, outLowPrice: 25, outHighPrice: 35, unit: '米', stock: 100 },
+    { resId: 'RES_005', resName: '空调氟利昂', resTypeName: '空调材料', specName: 'R410A', price: 200, outLowPrice: 180, outHighPrice: 220, unit: '瓶', stock: 5 },
+    { resId: 'RES_006', resName: '瓷砖', resTypeName: '装修材料', specName: '釉面砖', price: 25, outLowPrice: 20, outHighPrice: 30, unit: '片', stock: 200 },
+    { resId: 'RES_007', resName: '电线', resTypeName: '水电材料', specName: '2.5平方', price: 8, outLowPrice: 7, outHighPrice: 10, unit: '米', stock: 500 },
+    { resId: 'RES_008', resName: '管道胶', resTypeName: '水电材料', specName: '防水型', price: 35, outLowPrice: 30, outHighPrice: 40, unit: '瓶', stock: 15 },
+  ],
+
+  /** 物资类型数据 */
+  resourceTypes: [
+    { rstId: 'RST_001', name: '水电材料', parentRstId: undefined },
+    { rstId: 'RST_002', name: '五金材料', parentRstId: undefined },
+    { rstId: 'RST_003', name: '空调材料', parentRstId: undefined },
+    { rstId: 'RST_004', name: '装修材料', parentRstId: undefined },
+  ],
+
+  /** 维修状态字典 */
+  repairStates: [
+    { statusCd: 'PENDING', name: '待派单' },
+    { statusCd: 'ASSIGNED', name: '已派单' },
+    { statusCd: 'IN_PROGRESS', name: '处理中' },
+    { statusCd: 'COMPLETED', name: '已完成' },
+    { statusCd: 'CANCELLED', name: '已取消' },
+  ],
+
+  /** 支付方式字典 */
+  payTypes: [
+    { statusCd: 'CASH', name: '现金' },
+    { statusCd: 'WECHAT', name: '微信支付' },
+    { statusCd: 'ALIPAY', name: '支付宝' },
+    { statusCd: 'BANK_CARD', name: '银行卡' },
+    { statusCd: 'PROPERTY_FEE', name: '物业费抵扣' },
   ],
 
   /** 获取工单详情 */
@@ -1029,6 +1055,185 @@ export default defineUniAppMock([
       catch (error: any) {
         console.error('❌ Mock API Error: grabbingRepair', error)
         return errorResponse(error.message || '抢单失败')
+      }
+    },
+  },
+
+  /** 21. 查询维修状态字典 */
+  {
+    url: '/app/dict.queryRepairStates',
+    method: ['GET', 'POST'],
+    delay: [200, 400],
+    body: async () => {
+      await randomDelay(200, 400)
+
+      try {
+        const states = mockRepairDatabase.repairStates
+
+        mockLog('queryRepairStates', `→ ${states.length} items`)
+        return successResponse(states, '查询成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: queryRepairStates', error)
+        return errorResponse(error.message || '查询维修状态失败')
+      }
+    },
+  },
+
+  /** 22. 查询工单流转记录 */
+  {
+    url: '/app/ownerRepair.listRepairStaffRecords',
+    method: ['GET', 'POST'],
+    delay: [200, 500],
+    body: async ({ query, body }) => {
+      await randomDelay(200, 500)
+      const params = { ...query, ...body }
+
+      try {
+        if (!params.repairId) {
+          return errorResponse('维修工单ID不能为空', ResultEnumMap.Error)
+        }
+
+        const repair = mockRepairDatabase.getRepairById(params.repairId)
+        if (!repair) {
+          return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
+        }
+
+        // 模拟工单流转记录
+        const staffRecords = [
+          {
+            ruId: 'RU_001',
+            repairId: params.repairId,
+            staffId: 'STAFF_001',
+            staffName: '张师傅',
+            state: '10001',
+            stateName: '待派单',
+            startTime: repair.createTime,
+            endTime: repair.status !== 'PENDING' ? new Date(new Date(repair.createTime).getTime() + 3600000).toISOString() : undefined,
+            context: '工单已创建',
+          },
+        ]
+
+        if (repair.status === 'ASSIGNED' || repair.status === 'IN_PROGRESS' || repair.status === 'COMPLETED') {
+          staffRecords.push({
+            ruId: 'RU_002',
+            repairId: params.repairId,
+            staffId: 'STAFF_002',
+            staffName: repair.assignedWorker || '李师傅',
+            state: '10002',
+            stateName: '已派单',
+            startTime: new Date(new Date(repair.createTime).getTime() + 3600000).toISOString(),
+            endTime: repair.status !== 'ASSIGNED' ? new Date(new Date(repair.createTime).getTime() + 7200000).toISOString() : undefined,
+            context: '已派单给维修师傅',
+          })
+        }
+
+        if (repair.status === 'IN_PROGRESS' || repair.status === 'COMPLETED') {
+          staffRecords.push({
+            ruId: 'RU_003',
+            repairId: params.repairId,
+            staffId: 'STAFF_002',
+            staffName: repair.assignedWorker || '李师傅',
+            state: '10003',
+            stateName: '处理中',
+            startTime: new Date(new Date(repair.createTime).getTime() + 7200000).toISOString(),
+            endTime: repair.status === 'COMPLETED' ? new Date(new Date(repair.createTime).getTime() + 10800000).toISOString() : undefined,
+            context: '正在处理维修问题',
+          })
+        }
+
+        if (repair.status === 'COMPLETED') {
+          staffRecords.push({
+            ruId: 'RU_004',
+            repairId: params.repairId,
+            staffId: 'STAFF_002',
+            staffName: repair.assignedWorker || '李师傅',
+            state: '10009',
+            stateName: '已完成',
+            startTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
+            endTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
+            context: '维修已完成，问题已解决',
+            payTypeName: repair.actualCost ? '现金' : undefined,
+          })
+
+          if (repair.evaluation) {
+            staffRecords.push({
+              ruId: 'RU_005',
+              repairId: params.repairId,
+              staffId: 'STAFF_002',
+              staffName: repair.assignedWorker || '李师傅',
+              state: '10007',
+              stateName: '业主评价',
+              startTime: repair.evaluation.evaluateTime,
+              endTime: repair.evaluation.evaluateTime,
+              context: repair.evaluation.comment,
+            })
+          }
+        }
+
+        mockLog('listRepairStaffRecords', params.repairId, `→ ${staffRecords.length} items`)
+        return successResponse({ staffRecords }, '查询成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: listRepairStaffRecords', error)
+        return errorResponse(error.message || '查询流转记录失败')
+      }
+    },
+  },
+
+  /** 23. 查询支付方式字典 */
+  {
+    url: '/app/dict.queryPayTypes',
+    method: ['GET', 'POST'],
+    delay: [200, 400],
+    body: async () => {
+      await randomDelay(200, 400)
+
+      try {
+        const payTypes = mockRepairDatabase.payTypes
+
+        mockLog('queryPayTypes', `→ ${payTypes.length} items`)
+        return successResponse(payTypes, '查询成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: queryPayTypes', error)
+        return errorResponse(error.message || '查询支付方式失败')
+      }
+    },
+  },
+
+  /** 24. 查询维修物资 */
+  {
+    url: '/app/resourceStore.listResources',
+    method: ['GET', 'POST'],
+    delay: [200, 600],
+    body: async ({ query, body }) => {
+      await randomDelay(200, 600)
+      const params = { ...query, ...body }
+
+      try {
+        let resources = [...mockRepairDatabase.resources]
+
+        // 按资源类型筛选
+        if (params.rstId) {
+          const resourceType = mockRepairDatabase.resourceTypes.find(type => type.rstId === params.rstId)
+          if (resourceType) {
+            resources = resources.filter(res => res.resTypeName === resourceType.name)
+          }
+        }
+
+        mockLog('listResources', params, `→ ${resources.length} items`)
+        return successResponse(
+          {
+            resources,
+            total: resources.length,
+          },
+          '查询成功',
+        )
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: listResources', error)
+        return errorResponse(error.message || '查询物资失败')
       }
     },
   },

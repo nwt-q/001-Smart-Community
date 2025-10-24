@@ -243,3 +243,59 @@ export function getRepairSettings(params: {
     publicArea: 'T' | 'F'
   }>>('/app/repairSetting.listRepairSettings', { params })
 }
+
+/** ==================== 新增缺失的 API 函数 ==================== */
+
+/** 22. 查询维修状态字典 */
+export function getRepairStates() {
+  return http.Get<Array<{ statusCd: string, name: string }>>('/app/dict.queryRepairStates', {})
+}
+
+/** 23. 查询维修师傅待办列表（别名，与 getRepairDispatchList 相同） */
+export function getRepairStaffList(params: RepairListParams) {
+  return http.Get<RepairListResponse>('/app/ownerRepair.listStaffRepairs', { params })
+}
+
+/** 24. 查询工单流转记录 */
+export function getRepairStaffRecords(params: { repairId: string, communityId?: string }) {
+  return http.Get<{ staffRecords: Array<{
+    ruId?: string
+    repairId: string
+    staffId: string
+    staffName?: string
+    state?: string
+    stateName?: string
+    startTime?: string
+    endTime?: string
+    context?: string
+    payTypeName?: string
+  }> }>('/app/ownerRepair.listRepairStaffRecords', { params })
+}
+
+/** 25. 查询支付方式字典 */
+export function getRepairPayTypes() {
+  return http.Get<Array<{ statusCd: string, name: string }>>('/app/dict.queryPayTypes', {})
+}
+
+/** 26. 查询维修物资 */
+export function getRepairResources(params: { rstId: string, communityId?: string }) {
+  return http.Get<{ resources: Array<{
+    resId: string
+    resName: string
+    resTypeName?: string
+    specName?: string
+    price?: number
+    outLowPrice?: number
+    outHighPrice?: number
+    unit?: string
+    stock?: number
+  }> }> ('/app/resourceStore.listResources', { params })
+}
+
+/** 27. 查询物资类型 */
+export function getRepairResourceTypes(params: { communityId?: string, parentId?: string }) {
+  return http.Get<Array<{ rstId: string, name: string, parentRstId?: string }>>(
+    '/app/resourceStoreType.listResourceStoreTypes',
+    { params },
+  )
+}

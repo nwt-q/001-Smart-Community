@@ -258,7 +258,7 @@ async function handleSubmitDispatch() {
 
     setTimeout(() => {
       if (action.value === 'DISPATCH') {
-        TypedRouter.toRepairOrderList()
+        TypedRouter.toRepairList()
       }
       else {
         TypedRouter.toRepairDispatch()
