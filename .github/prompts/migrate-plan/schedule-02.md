@@ -61,8 +61,6 @@
 
 ### 06 代码写法迁移
 
-<!-- TODO: -->
-
 1. 阅读 `docs\reports\vue2-route-navigation-map.md` 文档的 `维修工单流程模块` 。明确要迁移的代码。一共 13 个页面。
 2. 通过 `.github\prompts\route-migration-map.yml` 关于 `3. 维修管理模块 (10个页面)` 的内容，反向阅读 `旧项目` 的 vue 组件，准备实现代码迁移。
 3. 按照 `code-migration` 子代理的要求，完成全部 `维修工单流程模块系列页面` 的代码迁移。
