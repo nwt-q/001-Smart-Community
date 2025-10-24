@@ -34,11 +34,6 @@ const repairDetail = ref<RepairOrder>()
 /** 工单流转记录 */
 const staffRecords = ref<RepairStaffRecord[]>([])
 
-/** 图片预览 */
-const showImagePreview = ref(false)
-const previewImages = ref<string[]>([])
-const previewStartIndex = ref(0)
-
 /** 获取小区信息 */
 const communityInfo = getCurrentCommunity()
 
@@ -94,9 +89,13 @@ onLoad((options) => {
 
 /** 预览图片 */
 function handlePreviewImages(images: RepairPhoto[], index: number) {
-  previewImages.value = images.map(img => img.url || img.photo || '')
-  previewStartIndex.value = index
-  showImagePreview.value = true
+  const urls = images.map(img => img.url || img.photo || '').filter(url => url)
+  if (urls.length > 0) {
+    uni.previewImage({
+      current: index,
+      urls,
+    })
+  }
 }
 
 /** 回复评价 */
@@ -150,7 +149,7 @@ function formatStaffRecords() {
             v-for="(photo, index) in repairDetail.repairPhotos"
             :key="index"
             class="aspect-square"
-            @click="handlePreviewImages(repairDetail.repairPhotos!, index)"
+            @tap="handlePreviewImages(repairDetail.repairPhotos!, index)"
           >
             <image
               :src="photo.url || photo.photo"
@@ -174,7 +173,7 @@ function formatStaffRecords() {
             v-for="(photo, index) in repairDetail.beforePhotos"
             :key="index"
             class="aspect-square"
-            @click="handlePreviewImages(repairDetail.beforePhotos!, index)"
+            @tap="handlePreviewImages(repairDetail.beforePhotos!, index)"
           >
             <image
               :src="photo.url || photo.photo"
@@ -198,7 +197,7 @@ function formatStaffRecords() {
             v-for="(photo, index) in repairDetail.afterPhotos"
             :key="index"
             class="aspect-square"
-            @click="handlePreviewImages(repairDetail.afterPhotos!, index)"
+            @tap="handlePreviewImages(repairDetail.afterPhotos!, index)"
           >
             <image
               :src="photo.url || photo.photo"
@@ -257,13 +256,6 @@ function formatStaffRecords() {
         </view>
       </view>
     </view>
-
-    <!-- 图片预览 -->
-    <wd-image-preview
-      v-model="showImagePreview"
-      :urls="previewImages"
-      :start-position="previewStartIndex"
-    />
   </view>
 </template>
 
