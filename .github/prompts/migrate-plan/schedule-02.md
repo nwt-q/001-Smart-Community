@@ -49,6 +49,10 @@
 2. 阅读`旧项目`代码 `gitee-example/pages/repairDetail/repairDetail.vue` 。think hard 了解清楚旧项目如何使用图片预览的。
 3. 按照 `component-migration` 子代理的要求，修复 `src\pages-sub\repair\order-detail.vue` 组件错误使用不存在组件 `wd-image-preview` 的故障。
 
+#### 02 逐个复查组件并依次使用 `component-migration` 子代理完成修改
+
+<!-- TODO: 有很多 维修工单流程模块系列页面 的代码没有严格按照子代理的要求 更改替换组件 所以需要逐个检查 -->
+
 ### 05 迁移样式
 
 1. 阅读 `docs\reports\vue2-route-navigation-map.md` 文档的 `维修工单流程模块` 。明确要迁移的代码。一共 13 个页面。
