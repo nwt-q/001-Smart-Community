@@ -197,6 +197,7 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 
 1. 每次你完成更改时，都**不要运行**任何类型检查命令。我们项目不需要你去运行类型检查命令。
 2. 不要去更改 `prettier.config.js` 文件，**不要自作主张**的给这个配置文件**增加单引号**。
+3. 报告输出地址： 你在生成 markdown 格式的报告时，请默认输出到 `docs\reports` 目录下面，这便于我阅读。
 
 ## 项目概述
 
