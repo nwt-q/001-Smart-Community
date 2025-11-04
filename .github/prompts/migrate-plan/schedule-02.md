@@ -77,10 +77,22 @@
 
 ## 018 手动的实现 `维修工单流程模块系列页面` 的故障处理
 
-### 01 处理 `src\api\repair.ts` 类型故障
+### 01 处理类型故障
 
-<!-- TODO: -->
+阅读以下文件出现的类型故障，并修复。
 
-### 02
+- src\api\repair.ts
+- src\pages-sub\repair\add-order.vue
+- src\pages-sub\repair\order-detail.vue
+- src\pages-sub\repair\order-list.vue
+- src\pages-sub\repair\select-resource.vue
+- src\pages-sub\repair\dispatch.vue
+- src\pages-sub\repair\handle.vue
 
-<!-- 继续提前设计好需要批处理的故障和内容 -->
+请你阅读 `api-migration` code-migration component-migration 这三个子代理文件，并按照子代理的要求，修复上述文件的类型报错。并在必要的时候改写代码写法，改换合适的组件。
+
+**绝对不要独立运行子代理**。现在的业务场景是混合上下文场景，不需要独立上下文，请你不要独立运行子代理。
+
+你敢未经我允许就独立运行子代理，消耗了过多的 token。下次 claude code 调查文件出来的时候，我就给你打差评。
+
+听懂了么？阅读子代理，而不是运行子代理。
