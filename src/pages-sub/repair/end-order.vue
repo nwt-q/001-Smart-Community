@@ -49,7 +49,6 @@ async function handleEndRepair() {
     await endRepair({
       repairId: repairId.value,
       communityId: communityId.value,
-      context: content.value,
     })
 
     uni.hideLoading()

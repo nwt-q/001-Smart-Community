@@ -77,8 +77,6 @@
 
 ## 018 手动的实现 `维修工单流程模块系列页面` 的故障处理
 
-<!-- TODO: -->
-
 ### 01 处理类型故障
 
 阅读以下文件出现的类型故障，并修复。
@@ -98,3 +96,16 @@
 你敢未经我允许就独立运行子代理，消耗了过多的 token。下次 claude code 调查文件出来的时候，我就给你打差评。
 
 听懂了么？阅读子代理，而不是运行子代理。
+
+### 02 继续处理类型故障
+
+<!-- TODO: 等待claude code Anthropic 网络恢复后 继续运行并维修故障 2025-11-5 -->
+
+请继续处理以下文件出现的类型故障，请你通过运行类型检查命令的方式，统一处理这些类型报错：
+
+src\api\repair.ts
+src\pages-sub\repair\add-order.vue
+src\pages-sub\repair\order-detail.vue
+src\pages-sub\repair\select-resource.vue
+src\pages-sub\repair\end-order.vue
+src\pages-sub\repair\finish.vue

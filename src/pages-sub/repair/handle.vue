@@ -314,7 +314,7 @@ async function handleSubmitFinish() {
 
     await finishRepair({
       repairId: repairId.value,
-      maintenanceType: feeFlag.value as MaintenanceType,
+      feeFlag: feeFlag.value,
       context: content.value,
       repairType: repairType.value,
       communityId: communityInfo.communityId,
@@ -322,9 +322,9 @@ async function handleSubmitFinish() {
       userName: userInfo.userName,
       choosedGoodsList: resourceList.value,
       totalPrice: totalAmount.value,
-      payType: payType.value as PaymentType,
-      beforePhotos: beforePhotos.value.map(photo => ({ photo })),
-      afterPhotos: afterPhotos.value.map(photo => ({ photo })),
+      payType: payType.value,
+      beforeRepairPhotos: beforePhotos.value.map(photo => ({ photo })),
+      afterRepairPhotos: afterPhotos.value.map(photo => ({ photo })),
       publicArea: publicArea.value,
       repairChannel: repairChannel.value,
     })

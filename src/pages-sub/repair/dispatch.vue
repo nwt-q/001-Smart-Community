@@ -12,8 +12,8 @@
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
 import { ref } from 'vue'
-import { useMessage } from 'wot-design-uni'
 import { getRepairStaffList, getRepairStates, repairStart, repairStop } from '@/api/repair'
+import { useGlobalMessage } from '@/hooks/useGlobalMessage'
 import { TypedRouter } from '@/router'
 import { getCurrentCommunity, getUserInfo } from '@/utils/user'
 
@@ -24,7 +24,7 @@ definePage({
   },
 })
 
-const message = useMessage()
+const message = useGlobalMessage()
 
 /** 搜索条件 */
 const searchName = ref('')
@@ -55,8 +55,9 @@ const communityInfo = getCurrentCommunity()
 const { send: loadStates } = useRequest(() => getRepairStates(), {
   immediate: true,
 })
-  .onSuccess((result) => {
-    if (result.length > 0) {
+  .onSuccess((event) => {
+    const result = event.data
+    if (result && result.length > 0) {
       stateOptions.value = [
         { label: '请选择', value: '' },
         ...result.map(item => ({
@@ -131,9 +132,8 @@ async function handleStartRepair(item: RepairOrder) {
   }).then(async () => {
     try {
       await repairStart({
-        communityId: item.communityId!,
         repairId: item.repairId!,
-        repairType: item.repairType || '',
+        communityId: item.communityId,
       })
 
       uni.showToast({
@@ -193,10 +193,9 @@ async function handleConfirmStop() {
 
   try {
     await repairStop({
-      communityId: currentStopItem.value.communityId!,
-      remark: stopReason.value,
       repairId: currentStopItem.value.repairId!,
-      repairType: currentStopItem.value.repairType || '',
+      communityId: currentStopItem.value.communityId,
+      remark: stopReason.value,
     })
 
     showStopModal.value = false

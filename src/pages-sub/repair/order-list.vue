@@ -48,8 +48,9 @@ const communityInfo = getCurrentCommunity()
 const { send: loadStates } = useRequest(() => getRepairStates(), {
   immediate: true,
 })
-  .onSuccess((result) => {
-    if (result.length > 0) {
+  .onSuccess((event) => {
+    const result = event.data
+    if (result && result.length > 0) {
       stateOptions.value = [
         { label: '请选择', value: '' },
         ...result.map(item => ({
@@ -69,7 +70,7 @@ async function queryList(pageNo: number, pageRow: number) {
     ? ''
     : stateOptions.value[selectedStateIndex.value]?.value || ''
 
-  const { data } = await getRepairOrderList({
+  const response = await getRepairOrderList({
     page: pageNo,
     row: pageRow,
     storeId: userInfo.storeId || '',
@@ -81,8 +82,8 @@ async function queryList(pageNo: number, pageRow: number) {
   })
 
   return {
-    list: data.ownerRepairs || [],
-    total: data.total || 0,
+    list: response.ownerRepairs || [],
+    total: response.total || 0,
   }
 }
 
@@ -145,9 +146,10 @@ async function handleRobOrder(item: RepairOrder) {
     uni.showLoading({ title: '请稍候...' })
 
     await robRepairOrder({
-      communityId: communityInfo.communityId || '',
       repairId: item.repairId!,
-      userName: userInfo.userName || '',
+      staffId: userInfo.userId || '',
+      staffName: userInfo.userName || '',
+      communityId: communityInfo.communityId || '',
     })
 
     uni.hideLoading()

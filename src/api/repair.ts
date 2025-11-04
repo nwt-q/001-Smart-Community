@@ -8,6 +8,7 @@ import type {
   RepairListParams,
   RepairListResponse,
   RepairOrder,
+  RepairResource,
   RepairStatistics,
   UpdateRepairReq,
 } from '@/types/repair'

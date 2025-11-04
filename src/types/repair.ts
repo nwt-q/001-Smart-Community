@@ -51,6 +51,7 @@ export type DispatchAction
   = | 'DISPATCH' // 派单
     | 'TRANSFER' // 转单
     | 'RETURN' // 退单
+    | 'BACK' // 退单（与RETURN同义，兼容不同命名）
     | 'FINISH' // 办结
 
 /** 支付方式 */
@@ -90,12 +91,12 @@ export interface RepairStaff {
 
 /** 维修物品/资源 */
 export interface RepairResource {
-  /** 资源ID */
-  resId: string
+  /** 资源ID（自定义商品时可为空） */
+  resId?: string
   /** 资源名称 */
-  resName: string
+  resName?: string
   /** 资源类型名称 */
-  resTypeName: string
+  resTypeName?: string
   /** 资源类型ID */
   rstId?: string
   /** 规格名称 */
@@ -201,6 +202,10 @@ export interface RepairOrder {
   stateName?: string
   /** 优先级 */
   priority?: PriorityType
+  /** 维修方式（100=抢单方式） */
+  repairWay?: string
+  /** 回访标识（001/002=定时任务处理，003=需要回访） */
+  returnVisitFlag?: string
 
   // ========== 维修渠道和类型 ==========
   /** 报修渠道 */
@@ -281,10 +286,14 @@ export interface RepairListParams extends PaginationParams {
   communityId?: string
   /** 工单状态 */
   status?: RepairStatus
+  /** 工单状态码（与后端实际字段对应） */
+  state?: string
   /** 维修类型 */
   repairType?: RepairType
   /** 关键词搜索 */
   keyword?: string
+  /** 报修人姓名搜索（与后端实际字段对应） */
+  repairName?: string
   /** 开始日期 */
   startDate?: string
   /** 结束日期 */
@@ -293,6 +302,10 @@ export interface RepairListParams extends PaginationParams {
   assignedWorker?: string
   /** 门店ID */
   storeId?: string
+  /** 用户ID */
+  userId?: string
+  /** 请求来源 */
+  reqSource?: string
 }
 
 /** 维修工单列表响应 */
