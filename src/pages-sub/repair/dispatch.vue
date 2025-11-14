@@ -71,12 +71,12 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
     console.error('加载状态字典失败:', error)
   })
 
+// TODO: 重构代码 使用 alova 的 useRequest
 /** 查询维修工单列表 */
 async function queryList(pageNo: number, pageRow: number) {
   const selectedState = selectedStateIndex.value === 0
     ? ''
     : stateOptions.value[selectedStateIndex.value]?.value || ''
-
   const { data } = await getRepairStaffList({
     page: pageNo,
     row: pageRow,
@@ -85,7 +85,6 @@ async function queryList(pageNo: number, pageRow: number) {
     repairName: searchName.value,
     state: selectedState,
   })
-
   return {
     list: data.ownerRepairs || [],
     total: data.total || 0,

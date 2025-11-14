@@ -79,7 +79,7 @@ const { send: loadStaffs } = useRequest(
   .onSuccess((result) => {
     staffOptions.value = [
       { staffId: '', staffName: '请选择员工' },
-      ...result,
+      ...result.data.staffs,
     ]
   })
   .onError((error) => {
@@ -91,7 +91,7 @@ const { send: loadPayTypes } = useRequest(() => getRepairPayTypes())
   .onSuccess((result) => {
     payTypeOptions.value = [
       { statusCd: '', name: '请选择' },
-      ...result.map(item => ({
+      ...result.data.map(item => ({
         statusCd: item.statusCd as PaymentType,
         name: item.name || '',
       })),

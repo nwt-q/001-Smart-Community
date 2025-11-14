@@ -33,6 +33,7 @@ const pagingRef = ref()
 const userInfo = getUserInfo()
 const communityInfo = getCurrentCommunity()
 
+// TODO: 重构代码 使用 alova 的 useRequest
 /** 查询维修工单列表 */
 async function queryList(pageNo: number, pageRow: number) {
   const { data } = await getRepairFinishList({
@@ -41,7 +42,6 @@ async function queryList(pageNo: number, pageRow: number) {
     userId: userInfo.userId || '',
     communityId: communityInfo.communityId || '',
   })
-
   return {
     list: data.ownerRepairs || [],
     total: data.total || 0,

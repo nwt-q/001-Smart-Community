@@ -5,6 +5,7 @@
 
 import type {
   CreateRepairReq,
+  DispatchAction,
   RepairListParams,
   RepairListResponse,
   RepairOrder,
@@ -110,7 +111,7 @@ export function dispatchRepair(data: {
   repairId: string
   staffId: string
   staffName: string
-  action: 'DISPATCH' | 'TRANSFER' | 'RETURN'
+  action: DispatchAction
   context: string
   repairType?: string
   communityId?: string
