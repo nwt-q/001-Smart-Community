@@ -153,7 +153,7 @@ onStartSuccess(() => {
 
 onStartError((error) => {
   uni.showToast({
-    title: error?.message || '启动失败',
+    title: error.error || '启动失败',
     icon: 'none',
   })
 })
@@ -214,7 +214,7 @@ onStopSuccess(() => {
 
 onStopError((error) => {
   uni.showToast({
-    title: error?.message || '暂停失败',
+    title: error.error || '暂停失败',
     icon: 'none',
   })
 })
