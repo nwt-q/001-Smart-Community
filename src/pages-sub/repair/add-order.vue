@@ -94,7 +94,6 @@ const { send: loadRepairTypes } = useRequest(
       page: 1,
       row: 50,
     }),
-  { immediate: false },
 )
   .onSuccess((result) => {
     repairTypes.value = result.data

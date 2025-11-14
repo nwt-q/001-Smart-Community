@@ -595,12 +595,7 @@ src/pages-sub/repair/
    const repairList = ref<RepairOrder[]>([])
 
    /** 请求管理 */
-   const {
-     loading,
-     send: loadList,
-     onSuccess,
-     onError,
-   } = useRequest(() => getRepairOrderList({ page: 1, row: 10 }), { immediate: false })
+   const { loading, send: loadList, onSuccess, onError } = useRequest(() => getRepairOrderList({ page: 1, row: 10 }))
 
    /** 成功回调 */
    onSuccess((result) => {
@@ -965,14 +960,12 @@ src/pages-sub/repair/
      send: loadList,
      onSuccess: onLoadSuccess,
      onError: onLoadError,
-   } = useRequest(
-     () =>
-       getRepairOrderList({
-         page: page.value,
-         row: 10,
-         keyword: repairName.value,
-       }),
-     { immediate: false },
+   } = useRequest(() =>
+     getRepairOrderList({
+       page: page.value,
+       row: 10,
+       keyword: repairName.value,
+     }),
    )
 
    /** 加载成功回调 */

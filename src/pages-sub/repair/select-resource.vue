@@ -90,7 +90,6 @@ const { send: loadSonTypes } = useRequest(
       communityId: communityInfo.communityId,
       parentId,
     }),
-  { immediate: false },
 )
   .onSuccess((result) => {
     sonTypeOptions.value = [{ rstId: '', name: '请选择商品类型' }, ...result.data]
@@ -107,7 +106,6 @@ const { send: loadResources } = useRequest(
       rstId: typeId,
       communityId: communityInfo.communityId,
     }),
-  { immediate: false },
 )
   .onSuccess((result) => {
     if (result.data.resources && result.data.resources.length > 0) {

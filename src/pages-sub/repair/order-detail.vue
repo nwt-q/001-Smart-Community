@@ -45,7 +45,6 @@ const { loading: detailLoading, send: loadDetail } = useRequest(
       storeId: storeId.value,
       communityId: communityInfo.communityId,
     }),
-  { immediate: false },
 )
   .onSuccess((result) => {
     if (result.data.ownerRepair) {
@@ -67,7 +66,6 @@ const { loading: recordsLoading, send: loadRecords } = useRequest(
       repairId: repairId.value,
       communityId: communityInfo.communityId,
     }),
-  { immediate: false },
 )
   .onSuccess((result) => {
     staffRecords.value = result.data.staffRecords?.map(record => ({

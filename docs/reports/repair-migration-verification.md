@@ -346,7 +346,6 @@ export function getRepairSettings(params: { communityId: string; publicArea: 'T'
 ```typescript
 const { loading, send: loadList } = useRequest(
   () => getRepairList({ ... }),
-  { immediate: false }
 )
 ```
 

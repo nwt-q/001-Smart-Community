@@ -75,7 +75,6 @@ const { send: loadStaffs } = useRequest(
       repairType: repairType.value,
       communityId: communityInfo.communityId,
     }),
-  { immediate: false },
 )
   .onSuccess((result) => {
     staffOptions.value = [
@@ -88,7 +87,7 @@ const { send: loadStaffs } = useRequest(
   })
 
 /** 加载支付方式 */
-const { send: loadPayTypes } = useRequest(() => getRepairPayTypes(), { immediate: false })
+const { send: loadPayTypes } = useRequest(() => getRepairPayTypes())
   .onSuccess((result) => {
     payTypeOptions.value = [
       { statusCd: '', name: '请选择' },
