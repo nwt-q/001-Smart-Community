@@ -8,6 +8,10 @@
   完整示例: http://localhost:9000/#/pages-sub/repair/dispatch?page=1&row=10
 -->
 
+<!--
+  TODO: 认真思考一下 怎么在 alova 的 useRequest ， 的情况下，使用 `<z-paging>` 的 @query="handleQuery" 写法。
+-->
+
 <script setup lang="ts">
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
