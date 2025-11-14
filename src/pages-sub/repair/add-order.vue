@@ -360,6 +360,7 @@ async function handleSubmit() {
       photos: photos.value.length > 0 ? photos.value : undefined,
     }
 
+    // TODO: 重构代码 使用 alova 的 useRequest
     await createRepairOrder(requestData)
 
     uni.hideLoading()
