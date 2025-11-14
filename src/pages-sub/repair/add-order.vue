@@ -94,6 +94,7 @@ const { send: loadRepairTypes } = useRequest(
       page: 1,
       row: 50,
     }),
+  { immediate: false },
 )
   .onSuccess((result) => {
     repairTypes.value = result.data
@@ -311,6 +312,31 @@ function handleUploadFail(error: Error) {
 }
 
 /** 提交维修工单 */
+const { send: submitRepairOrder, onSuccess: onSubmitSuccess, onError: onSubmitError } = useRequest(
+  (data: CreateRepairReq) => createRepairOrder(data),
+  { immediate: false },
+)
+
+onSubmitSuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '提交成功',
+    icon: 'success',
+  })
+
+  setTimeout(() => {
+    TypedRouter.toRepairList()
+  }, 1500)
+})
+
+onSubmitError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '提交失败',
+    icon: 'none',
+  })
+})
+
 async function handleSubmit() {
   const errorMsg = validateForm()
   if (errorMsg) {
@@ -321,65 +347,45 @@ async function handleSubmit() {
     return
   }
 
-  try {
-    uni.showLoading({ title: '提交中...' })
+  uni.showLoading({ title: '提交中...' })
 
-    // 构建报修对象信息
-    let repairObjId = ''
-    let repairObjName = ''
+  // 构建报修对象信息
+  let repairObjId = ''
+  let repairObjName = ''
 
-    if (repairObjType.value === '001') {
-      repairObjId = communityInfo.communityId
-      repairObjName = communityInfo.communityName
-    }
-    else if (repairObjType.value === '002') {
-      repairObjId = floorId.value
-      repairObjName = floorNum.value
-    }
-    else if (repairObjType.value === '003') {
-      repairObjId = unitId.value
-      repairObjName = floorNum.value + unitNum.value
-    }
-    else {
-      repairObjId = roomId.value
-      repairObjName = floorNum.value + unitNum.value + roomNum.value
-    }
-
-    const requestData: CreateRepairReq = {
-      repairName: repairName.value,
-      repairType: selectedRepairType.value.repairType,
-      appointmentTime: `${appointmentDate.value} ${appointmentTime.value}:00`,
-      tel: tel.value,
-      context: context.value,
-      communityId: communityInfo.communityId,
-      repairObjType: repairObjType.value,
-      repairObjId,
-      repairObjName,
-      repairChannel: 'STAFF',
-      roomId: roomId.value || undefined,
-      photos: photos.value.length > 0 ? photos.value : undefined,
-    }
-
-    // TODO: 重构代码 使用 alova 的 useRequest
-    await createRepairOrder(requestData)
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '提交成功',
-      icon: 'success',
-    })
-
-    setTimeout(() => {
-      TypedRouter.toRepairList()
-    }, 1500)
+  if (repairObjType.value === '001') {
+    repairObjId = communityInfo.communityId
+    repairObjName = communityInfo.communityName
   }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '提交失败',
-      icon: 'none',
-    })
+  else if (repairObjType.value === '002') {
+    repairObjId = floorId.value
+    repairObjName = floorNum.value
   }
+  else if (repairObjType.value === '003') {
+    repairObjId = unitId.value
+    repairObjName = floorNum.value + unitNum.value
+  }
+  else {
+    repairObjId = roomId.value
+    repairObjName = floorNum.value + unitNum.value + roomNum.value
+  }
+
+  const requestData: CreateRepairReq = {
+    repairName: repairName.value,
+    repairType: selectedRepairType.value.repairType,
+    appointmentTime: `${appointmentDate.value} ${appointmentTime.value}:00`,
+    tel: tel.value,
+    context: context.value,
+    communityId: communityInfo.communityId,
+    repairObjType: repairObjType.value,
+    repairObjId,
+    repairObjName,
+    repairChannel: 'STAFF',
+    roomId: roomId.value || undefined,
+    photos: photos.value.length > 0 ? photos.value : undefined,
+  }
+
+  await submitRepairOrder(requestData)
 }
 </script>
 

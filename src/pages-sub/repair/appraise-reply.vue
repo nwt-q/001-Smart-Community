@@ -9,7 +9,7 @@
 -->
 
 <script setup lang="ts">
-import { onLoad } from '@dcloudio/uni-app'
+import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { replyAppraise } from '@/api/repair'
 import { getCurrentCommunity } from '@/utils/user'
@@ -31,6 +31,37 @@ const communityInfo = getCurrentCommunity()
 /** 回复内容 */
 const replyContent = ref('')
 
+/** 提交回复请求 */
+const { send: submitReply, onSuccess: onReplySuccess, onError: onReplyError } = useRequest(
+  (params: {
+    ruId: string
+    repairId: string
+    reply: string
+    communityId: string
+  }) => replyAppraise(params),
+  { immediate: false },
+)
+
+onReplySuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '回复成功',
+    icon: 'success',
+  })
+
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1500)
+})
+
+onReplyError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '回复失败',
+    icon: 'none',
+  })
+})
+
 /** 页面加载 */
 onLoad((options) => {
   ruId.value = (options?.ruId as string) || ''
@@ -47,33 +78,14 @@ async function handleSubmitReply() {
     return
   }
 
-  try {
-    uni.showLoading({ title: '提交中...' })
+  uni.showLoading({ title: '提交中...' })
 
-    await replyAppraise({
-      ruId: ruId.value,
-      repairId: repairId.value,
-      reply: replyContent.value,
-      communityId: communityInfo.communityId,
-    })
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '回复成功',
-      icon: 'success',
-    })
-
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1500)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '回复失败',
-      icon: 'none',
-    })
-  }
+  await submitReply({
+    ruId: ruId.value,
+    repairId: repairId.value,
+    reply: replyContent.value,
+    communityId: communityInfo.communityId,
+  })
 }
 </script>
 

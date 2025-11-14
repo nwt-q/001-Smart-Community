@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
+import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { appraiseRepair } from '@/api/repair'
 import { getUserInfo } from '@/utils/user'
@@ -37,6 +38,39 @@ const rating = ref(5)
 /** 评价内容 */
 const content = ref('')
 
+/** 提交评价请求 */
+const { send: submitAppraise, onSuccess: onAppraiseSuccess, onError: onAppraiseError } = useRequest(
+  (params: {
+    repairId: string
+    repairType: string
+    repairChannel: string
+    publicArea: string
+    communityId: string
+    context: string
+  }) => appraiseRepair(params),
+  { immediate: false },
+)
+
+onAppraiseSuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '评价成功',
+    icon: 'success',
+  })
+
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1500)
+})
+
+onAppraiseError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '提交失败',
+    icon: 'none',
+  })
+})
+
 /** 页面加载 */
 onLoad((options) => {
   repairId.value = (options?.repairId as string) || ''
@@ -56,35 +90,16 @@ async function handleSubmit() {
     return
   }
 
-  try {
-    uni.showLoading({ title: '提交中...' })
+  uni.showLoading({ title: '提交中...' })
 
-    await appraiseRepair({
-      repairId: repairId.value,
-      repairType: repairType.value,
-      repairChannel: repairChannel.value,
-      publicArea: publicArea.value,
-      communityId: communityId.value,
-      context: content.value,
-    })
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '评价成功',
-      icon: 'success',
-    })
-
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1500)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '提交失败',
-      icon: 'none',
-    })
-  }
+  await submitAppraise({
+    repairId: repairId.value,
+    repairType: repairType.value,
+    repairChannel: repairChannel.value,
+    publicArea: publicArea.value,
+    communityId: communityId.value,
+    context: content.value,
+  })
 }
 </script>
 

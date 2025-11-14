@@ -53,7 +53,7 @@ const communityInfo = getCurrentCommunity()
 
 /** 加载维修状态字典 */
 const { send: loadStates } = useRequest(() => getRepairStates(), {
-  immediate: true,
+  immediate: false,
 })
   .onSuccess((event) => {
     const result = event.data
@@ -71,20 +71,30 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
     console.error('加载状态字典失败:', error)
   })
 
-// TODO: 重构代码 使用 alova 的 useRequest
+/** 查询维修工单列表请求 */
+const { send: loadRepairStaffList } = useRequest(
+  (params: { page: number, row: number, state?: string }) =>
+    getRepairStaffList({
+      ...params,
+      userId: userInfo.userId || '',
+      communityId: communityInfo.communityId || '',
+      repairName: searchName.value,
+    }),
+  { immediate: false },
+)
+
 /** 查询维修工单列表 */
 async function queryList(pageNo: number, pageRow: number) {
   const selectedState = selectedStateIndex.value === 0
     ? ''
     : stateOptions.value[selectedStateIndex.value]?.value || ''
-  const { data } = await getRepairStaffList({
+
+  const { data } = await loadRepairStaffList({
     page: pageNo,
     row: pageRow,
-    userId: userInfo.userId || '',
-    communityId: communityInfo.communityId || '',
-    repairName: searchName.value,
     state: selectedState,
   })
+
   return {
     list: data.ownerRepairs || [],
     total: data.total || 0,
@@ -124,33 +134,39 @@ function handleViewDetail(item: RepairOrder) {
 }
 
 /** 启动维修 */
-async function handleStartRepair(item: RepairOrder) {
+const { send: startRepair, onSuccess: onStartSuccess, onError: onStartError } = useRequest(
+  (params: { repairId: string, communityId: string }) => repairStart(params),
+  { immediate: false },
+)
+
+onStartSuccess(() => {
+  uni.showToast({
+    title: '启动成功',
+    icon: 'success',
+  })
+
+  // 刷新列表
+  setTimeout(() => {
+    pagingRef.value?.reload()
+  }, 1000)
+})
+
+onStartError((error) => {
+  uni.showToast({
+    title: error?.message || '启动失败',
+    icon: 'none',
+  })
+})
+
+function handleStartRepair(item: RepairOrder) {
   message.confirm({
     title: '提示',
     msg: '确认启动报修？',
   }).then(async () => {
-    try {
-      await repairStart({
-        repairId: item.repairId!,
-        communityId: item.communityId,
-      })
-
-      uni.showToast({
-        title: '启动成功',
-        icon: 'success',
-      })
-
-      // 刷新列表
-      setTimeout(() => {
-        pagingRef.value?.reload()
-      }, 1000)
-    }
-    catch (error) {
-      uni.showToast({
-        title: (error as Error)?.message || '启动失败',
-        icon: 'none',
-      })
-    }
+    await startRepair({
+      repairId: item.repairId!,
+      communityId: item.communityId,
+    })
   }).catch(() => {
     // 用户取消
   })
@@ -178,6 +194,31 @@ function handleStopRepair(item: RepairOrder) {
 }
 
 /** 确认暂停 */
+const { send: stopRepair, onSuccess: onStopSuccess, onError: onStopError } = useRequest(
+  (params: { repairId: string, communityId: string, remark: string }) => repairStop(params),
+  { immediate: false },
+)
+
+onStopSuccess(() => {
+  showStopModal.value = false
+  uni.showToast({
+    title: '暂停成功',
+    icon: 'success',
+  })
+
+  // 刷新列表
+  setTimeout(() => {
+    pagingRef.value?.reload()
+  }, 1000)
+})
+
+onStopError((error) => {
+  uni.showToast({
+    title: error?.message || '暂停失败',
+    icon: 'none',
+  })
+})
+
 async function handleConfirmStop() {
   if (!stopReason.value.trim()) {
     uni.showToast({
@@ -190,30 +231,11 @@ async function handleConfirmStop() {
   if (!currentStopItem.value)
     return
 
-  try {
-    await repairStop({
-      repairId: currentStopItem.value.repairId!,
-      communityId: currentStopItem.value.communityId,
-      remark: stopReason.value,
-    })
-
-    showStopModal.value = false
-    uni.showToast({
-      title: '暂停成功',
-      icon: 'success',
-    })
-
-    // 刷新列表
-    setTimeout(() => {
-      pagingRef.value?.reload()
-    }, 1000)
-  }
-  catch (error) {
-    uni.showToast({
-      title: (error as Error)?.message || '暂停失败',
-      icon: 'none',
-    })
-  }
+  await stopRepair({
+    repairId: currentStopItem.value.repairId!,
+    communityId: currentStopItem.value.communityId,
+    remark: stopReason.value,
+  })
 }
 
 /** 退单 */

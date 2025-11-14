@@ -70,7 +70,7 @@ const { send: loadParentTypes } = useRequest(
       communityId: communityInfo.communityId,
       parentId: '0',
     }),
-  { immediate: true },
+  { immediate: false },
 )
   .onSuccess((result) => {
     parentTypeOptions.value = [
@@ -82,6 +82,12 @@ const { send: loadParentTypes } = useRequest(
   .onError((error) => {
     console.error('加载商品类型失败:', error)
   })
+
+/** 页面加载 */
+onLoad(() => {
+  // 加载商品类型
+  loadParentTypes()
+})
 
 /** 加载商品子类型（二级分类） */
 const { send: loadSonTypes } = useRequest(

@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
+import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { endRepair } from '@/api/repair'
 
@@ -27,6 +28,32 @@ const communityId = ref('')
 /** 结束原因 */
 const content = ref('')
 
+/** 结束工单请求 */
+const { send: submitEndRepair, onSuccess: onEndSuccess, onError: onEndError } = useRequest(
+  (params: { repairId: string, communityId: string }) => endRepair(params),
+  { immediate: false },
+)
+
+onEndSuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '工单已结束',
+    icon: 'success',
+  })
+
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 1500)
+})
+
+onEndError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '结束失败',
+    icon: 'none',
+  })
+})
+
 /** 页面加载 */
 onLoad((options) => {
   repairId.value = (options?.repairId as string) || ''
@@ -43,31 +70,12 @@ async function handleEndRepair() {
     return
   }
 
-  try {
-    uni.showLoading({ title: '处理中...' })
+  uni.showLoading({ title: '处理中...' })
 
-    await endRepair({
-      repairId: repairId.value,
-      communityId: communityId.value,
-    })
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '工单已结束',
-      icon: 'success',
-    })
-
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1500)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '结束失败',
-      icon: 'none',
-    })
-  }
+  await submitEndRepair({
+    repairId: repairId.value,
+    communityId: communityId.value,
+  })
 }
 </script>
 

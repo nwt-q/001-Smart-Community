@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import type { RepairOrder } from '@/types/repair'
+import { useRequest } from 'alova/client'
 import { ref } from 'vue'
 import { getRepairFinishList } from '@/api/repair'
 import { TypedRouter } from '@/router'
@@ -33,18 +34,36 @@ const pagingRef = ref()
 const userInfo = getUserInfo()
 const communityInfo = getCurrentCommunity()
 
-// TODO: 重构代码 使用 alova 的 useRequest
+/** 查询维修工单列表请求 */
+const { send: loadRepairFinishList, onSuccess: onFinishListSuccess, onError: onFinishListError } = useRequest(
+  (params: { page: number, row: number }) =>
+    getRepairFinishList({
+      ...params,
+      userId: userInfo.userId || '',
+      communityId: communityInfo.communityId || '',
+    }),
+  { immediate: false },
+)
+
+onFinishListSuccess((result) => {
+  pagingRef.value?.complete(result.data.ownerRepairs || [])
+})
+
+onFinishListError((error) => {
+  console.error('加载列表失败:', error)
+  pagingRef.value?.complete(false)
+  uni.showToast({
+    title: '加载失败',
+    icon: 'none',
+  })
+})
+
 /** 查询维修工单列表 */
 async function queryList(pageNo: number, pageRow: number) {
-  const { data } = await getRepairFinishList({
-    page: pageNo,
-    row: pageRow,
-    userId: userInfo.userId || '',
-    communityId: communityInfo.communityId || '',
-  })
+  const result = await loadRepairFinishList({ page: pageNo, row: pageRow })
   return {
-    list: data.ownerRepairs || [],
-    total: data.total || 0,
+    list: result.ownerRepairs || [],
+    total: result.total || 0,
   }
 }
 

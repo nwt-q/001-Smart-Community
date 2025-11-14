@@ -75,6 +75,7 @@ const { send: loadStaffs } = useRequest(
       repairType: repairType.value,
       communityId: communityInfo.communityId,
     }),
+  { immediate: false },
 )
   .onSuccess((result) => {
     staffOptions.value = [
@@ -87,7 +88,7 @@ const { send: loadStaffs } = useRequest(
   })
 
 /** 加载支付方式 */
-const { send: loadPayTypes } = useRequest(() => getRepairPayTypes())
+const { send: loadPayTypes } = useRequest(() => getRepairPayTypes(), { immediate: false })
   .onSuccess((result) => {
     payTypeOptions.value = [
       { statusCd: '', name: '请选择' },
@@ -216,6 +217,46 @@ function handleAfterPhotosChange(fileIds: string[]) {
 }
 
 /** 提交派单/转单/退单 */
+const { send: submitDispatch, onSuccess: onDispatchSuccess, onError: onDispatchError } = useRequest(
+  (params: {
+    repairId: string
+    staffId: string
+    staffName: string
+    action: DispatchAction
+    context: string
+    repairType: string
+    communityId: string
+    userId: string
+    userName: string
+  }) => dispatchRepair(params),
+  { immediate: false },
+)
+
+onDispatchSuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '提交成功',
+    icon: 'success',
+  })
+
+  setTimeout(() => {
+    if (action.value === 'DISPATCH') {
+      TypedRouter.toRepairList()
+    }
+    else {
+      TypedRouter.toRepairDispatch()
+    }
+  }, 1500)
+})
+
+onDispatchError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '提交失败',
+    icon: 'none',
+  })
+})
+
 async function handleSubmitDispatch() {
   // 验证
   if (selectedStaffIndex.value === 0) {
@@ -234,46 +275,62 @@ async function handleSubmitDispatch() {
     return
   }
 
-  try {
-    uni.showLoading({ title: '提交中...' })
+  uni.showLoading({ title: '提交中...' })
 
-    await dispatchRepair({
-      repairId: repairId.value,
-      staffId: selectedStaff.value.staffId,
-      staffName: selectedStaff.value.staffName || '',
-      action: action.value,
-      context: content.value,
-      repairType: repairType.value,
-      communityId: communityInfo.communityId,
-      userId: userInfo.userId,
-      userName: userInfo.userName,
-    })
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '提交成功',
-      icon: 'success',
-    })
-
-    setTimeout(() => {
-      if (action.value === 'DISPATCH') {
-        TypedRouter.toRepairList()
-      }
-      else {
-        TypedRouter.toRepairDispatch()
-      }
-    }, 1500)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '提交失败',
-      icon: 'none',
-    })
-  }
+  await submitDispatch({
+    repairId: repairId.value,
+    staffId: selectedStaff.value.staffId,
+    staffName: selectedStaff.value.staffName || '',
+    action: action.value,
+    context: content.value,
+    repairType: repairType.value,
+    communityId: communityInfo.communityId,
+    userId: userInfo.userId,
+    userName: userInfo.userName,
+  })
 }
 
 /** 提交办结 */
+const { send: submitFinish, onSuccess: onFinishSuccess, onError: onFinishError } = useRequest(
+  (params: {
+    repairId: string
+    feeFlag: string
+    context: string
+    repairType: string
+    communityId: string
+    userId: string
+    userName: string
+    choosedGoodsList: any[]
+    totalPrice: number
+    payType: string
+    beforeRepairPhotos: any[]
+    afterRepairPhotos: any[]
+    publicArea: string
+    repairChannel: string
+  }) => finishRepair(params),
+  { immediate: false },
+)
+
+onFinishSuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '办结成功',
+    icon: 'success',
+  })
+
+  setTimeout(() => {
+    TypedRouter.toRepairDispatch()
+  }, 1500)
+})
+
+onFinishError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '办结失败',
+    icon: 'none',
+  })
+})
+
 async function handleSubmitFinish() {
   // 验证
   if (selectedFeeIndex.value === 0) {
@@ -308,43 +365,24 @@ async function handleSubmitFinish() {
     return
   }
 
-  try {
-    uni.showLoading({ title: '处理中...' })
+  uni.showLoading({ title: '处理中...' })
 
-    await finishRepair({
-      repairId: repairId.value,
-      feeFlag: feeFlag.value,
-      context: content.value,
-      repairType: repairType.value,
-      communityId: communityInfo.communityId,
-      userId: userInfo.userId,
-      userName: userInfo.userName,
-      choosedGoodsList: resourceList.value,
-      totalPrice: totalAmount.value,
-      payType: payType.value,
-      beforeRepairPhotos: beforePhotos.value.map(photo => ({ photo })),
-      afterRepairPhotos: afterPhotos.value.map(photo => ({ photo })),
-      publicArea: publicArea.value,
-      repairChannel: repairChannel.value,
-    })
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '办结成功',
-      icon: 'success',
-    })
-
-    setTimeout(() => {
-      TypedRouter.toRepairDispatch()
-    }, 1500)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '办结失败',
-      icon: 'none',
-    })
-  }
+  await submitFinish({
+    repairId: repairId.value,
+    feeFlag: feeFlag.value,
+    context: content.value,
+    repairType: repairType.value,
+    communityId: communityInfo.communityId,
+    userId: userInfo.userId,
+    userName: userInfo.userName,
+    choosedGoodsList: resourceList.value,
+    totalPrice: totalAmount.value,
+    payType: payType.value,
+    beforeRepairPhotos: beforePhotos.value.map(photo => ({ photo })),
+    afterRepairPhotos: afterPhotos.value.map(photo => ({ photo })),
+    publicArea: publicArea.value,
+    repairChannel: repairChannel.value,
+  })
 }
 
 /** 提交处理 */

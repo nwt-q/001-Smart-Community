@@ -46,7 +46,7 @@ const communityInfo = getCurrentCommunity()
 
 /** 加载维修状态字典 */
 const { send: loadStates } = useRequest(() => getRepairStates(), {
-  immediate: true,
+  immediate: false,
 })
   .onSuccess((event) => {
     const result = event.data
@@ -64,21 +64,29 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
     console.error('加载状态字典失败:', error)
   })
 
+/** 查询维修工单列表请求 */
+const { send: loadRepairOrderList } = useRequest(
+  (params: { page: number, row: number, state?: string }) => getRepairOrderList({
+    ...params,
+    storeId: userInfo.storeId || '',
+    userId: userInfo.userId || '',
+    communityId: communityInfo.communityId || '',
+    repairName: searchName.value,
+    reqSource: 'mobile',
+  }),
+  { immediate: false },
+)
+
 /** 查询维修工单列表 */
 async function queryList(pageNo: number, pageRow: number) {
   const selectedState = selectedStateIndex.value === 0
     ? ''
     : stateOptions.value[selectedStateIndex.value]?.value || ''
 
-  const response = await getRepairOrderList({
+  const response = await loadRepairOrderList({
     page: pageNo,
     row: pageRow,
-    storeId: userInfo.storeId || '',
-    userId: userInfo.userId || '',
-    communityId: communityInfo.communityId || '',
-    repairName: searchName.value,
     state: selectedState,
-    reqSource: 'mobile',
   })
 
   return {
@@ -141,35 +149,41 @@ function handleEndRepair(item: RepairOrder) {
 }
 
 /** 抢单 */
+const { send: robOrder, onSuccess: onRobSuccess, onError: onRobError } = useRequest(
+  (params: { repairId: string, staffId: string, staffName: string, communityId: string }) => robRepairOrder(params),
+  { immediate: false },
+)
+
+onRobSuccess(() => {
+  uni.hideLoading()
+  uni.showToast({
+    title: '抢单成功',
+    icon: 'success',
+  })
+
+  // 延迟刷新列表
+  setTimeout(() => {
+    pagingRef.value?.reload()
+  }, 1500)
+})
+
+onRobError((error) => {
+  uni.hideLoading()
+  uni.showToast({
+    title: error.error || '抢单失败',
+    icon: 'none',
+  })
+})
+
 async function handleRobOrder(item: RepairOrder) {
-  try {
-    uni.showLoading({ title: '请稍候...' })
+  uni.showLoading({ title: '请稍候...' })
 
-    await robRepairOrder({
-      repairId: item.repairId!,
-      staffId: userInfo.userId || '',
-      staffName: userInfo.userName || '',
-      communityId: communityInfo.communityId || '',
-    })
-
-    uni.hideLoading()
-    uni.showToast({
-      title: '抢单成功',
-      icon: 'success',
-    })
-
-    // 延迟刷新列表
-    setTimeout(() => {
-      pagingRef.value?.reload()
-    }, 1500)
-  }
-  catch (error) {
-    uni.hideLoading()
-    uni.showToast({
-      title: (error as Error)?.message || '抢单失败',
-      icon: 'none',
-    })
-  }
+  await robOrder({
+    repairId: item.repairId!,
+    staffId: userInfo.userId || '',
+    staffName: userInfo.userName || '',
+    communityId: communityInfo.communityId || '',
+  })
 }
 
 /** 检查权限 */
