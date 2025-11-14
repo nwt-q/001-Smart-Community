@@ -1153,7 +1153,6 @@ export default defineUniAppMock([
             startTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
             endTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
             context: '维修已完成，问题已解决',
-            payTypeName: repair.actualCost ? '现金' : undefined,
           })
 
           if (repair.evaluation) {

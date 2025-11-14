@@ -97,8 +97,8 @@ const { send: loadRepairTypes } = useRequest(
   { immediate: false },
 )
   .onSuccess((result) => {
-    repairTypes.value = result
-    if (result.length > 0) {
+    repairTypes.value = result.data
+    if (result.data.length > 0) {
       selectedRepairTypeIndex.value = 0
     }
   })

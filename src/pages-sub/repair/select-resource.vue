@@ -75,7 +75,7 @@ const { send: loadParentTypes } = useRequest(
   .onSuccess((result) => {
     parentTypeOptions.value = [
       { rstId: '', name: '请选择商品类型' },
-      ...result,
+      ...result.data,
       { rstId: 'custom', name: '自定义' },
     ]
   })
@@ -93,7 +93,7 @@ const { send: loadSonTypes } = useRequest(
   { immediate: false },
 )
   .onSuccess((result) => {
-    sonTypeOptions.value = [{ rstId: '', name: '请选择商品类型' }, ...result]
+    sonTypeOptions.value = [{ rstId: '', name: '请选择商品类型' }, ...result.data]
     selectedSonTypeIndex.value = 0
   })
   .onError((error) => {
@@ -110,8 +110,8 @@ const { send: loadResources } = useRequest(
   { immediate: false },
 )
   .onSuccess((result) => {
-    if (result.resources && result.resources.length > 0) {
-      resourceOptions.value = result.resources
+    if (result.data.resources && result.data.resources.length > 0) {
+      resourceOptions.value = result.data.resources
       selectedResourceIndex.value = 0
     }
     else {

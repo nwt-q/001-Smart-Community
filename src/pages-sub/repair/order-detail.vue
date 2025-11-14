@@ -48,8 +48,8 @@ const { loading: detailLoading, send: loadDetail } = useRequest(
   { immediate: false },
 )
   .onSuccess((result) => {
-    if (result.ownerRepair) {
-      repairDetail.value = result.ownerRepair
+    if (result.data.ownerRepair) {
+      repairDetail.value = result.data.ownerRepair
     }
   })
   .onError((error) => {
@@ -70,7 +70,14 @@ const { loading: recordsLoading, send: loadRecords } = useRequest(
   { immediate: false },
 )
   .onSuccess((result) => {
-    staffRecords.value = result.staffRecords || []
+    staffRecords.value = result.data.staffRecords?.map(record => ({
+      ...record,
+      staffName: record.staffName ?? '',
+      startTime: record.startTime ?? '',
+      endTime: record.endTime ?? '',
+      state: record.state ?? '',
+      stateName: record.stateName ?? '',
+    })) ?? []
   })
   .onError((error) => {
     console.error('加载流转记录失败:', error)
