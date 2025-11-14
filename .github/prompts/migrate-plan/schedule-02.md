@@ -99,13 +99,25 @@
 
 ### 02 继续处理类型故障
 
-<!-- TODO: 等待claude code Anthropic 网络恢复后 继续运行并维修故障 2025-11-5 -->
-
 请继续处理以下文件出现的类型故障，请你通过运行类型检查命令的方式，统一处理这些类型报错：
 
 src\api\repair.ts
+src\api\mock\repair.mock.ts
 src\pages-sub\repair\add-order.vue
 src\pages-sub\repair\order-detail.vue
 src\pages-sub\repair\select-resource.vue
 src\pages-sub\repair\end-order.vue
 src\pages-sub\repair\finish.vue
+
+src\pages-sub\repair\add-order.vue
+src\pages-sub\repair\order-detail.vue
+src\pages-sub\repair\select-resource.vue
+src\pages-sub\repair\finish.vue
+src\pages-sub\repair\dispatch.vue
+src\pages-sub\repair\handle.vue
+
+请你在处理类型报错时，以 `src\types\repair.ts` 提供的类型为准，以 `src\api\repair.ts` 接口的字段为准，适当的修改上述 vue 组件的代码，确保满足类型约束。使得上述代码不出现类型报错。
+
+---
+
+请你以 ultrathink 的思考模式，认真阅读并思考文档要求。在思考上，请你大胆的多使用 token 做深度的，全面的，细致的推理思考。这是一个复杂的多步骤任务，请你认真的动态编排。执行每一个步骤时，都务必要主动使用尽可能多的 token 做充分详实完善完整的思考，允许你多花费时间做阅读，对比，思考。最后严格按照文档要求落实。
