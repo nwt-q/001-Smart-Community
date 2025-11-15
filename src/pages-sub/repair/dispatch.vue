@@ -8,10 +8,6 @@
   完整示例: http://localhost:9000/#/pages-sub/repair/dispatch?page=1&row=10
 -->
 
-<!--
-  TODO: 认真思考一下 怎么在 alova 的 useRequest ， 的情况下，使用 `<z-paging>` 的 @query="handleQuery" 写法。
--->
-
 <script setup lang="ts">
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
@@ -75,28 +71,30 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
     console.error('加载状态字典失败:', error)
   })
 
-/** 查询维修工单列表请求 */
+/** 查询维修工单列表请求 - 集成搜索条件到 useRequest */
 const { send: loadRepairStaffList } = useRequest(
-  (params: { page: number, row: number, state?: string }) =>
-    getRepairStaffList({
-      ...params,
+  (params: { page: number, row: number }) => {
+    const selectedState = selectedStateIndex.value === 0
+      ? ''
+      : stateOptions.value[selectedStateIndex.value]?.value || ''
+
+    return getRepairStaffList({
+      page: params.page,
+      row: params.row,
+      state: selectedState,
       userId: userInfo.userId || '',
       communityId: communityInfo.communityId || '',
       repairName: searchName.value,
-    }),
+    })
+  },
   { immediate: false },
 )
 
 /** 查询维修工单列表 */
 async function queryList(pageNo: number, pageRow: number) {
-  const selectedState = selectedStateIndex.value === 0
-    ? ''
-    : stateOptions.value[selectedStateIndex.value]?.value || ''
-
   const response = await loadRepairStaffList({
     page: pageNo,
     row: pageRow,
-    state: selectedState,
   })
 
   return {
@@ -163,17 +161,19 @@ onStartError((error) => {
 })
 
 function handleStartRepair(item: RepairOrder) {
-  // TODO: 阅读 src\components\global\message\README.md 文档，使用正确的方式修复这里
   message.confirm({
     title: '提示',
     msg: '确认启动报修？',
-  }).then(() => {
-    startRepair({
-      repairId: item.repairId!,
-      communityId: item.communityId,
-    }).catch((error) => {
-      console.error('启动维修失败:', error)
-    })
+    success: (res) => {
+      if (res.action === 'confirm') {
+        startRepair({
+          repairId: item.repairId!,
+          communityId: item.communityId,
+        }).catch((error) => {
+          console.error('启动维修失败:', error)
+        })
+      }
+    },
   })
 }
 
@@ -246,7 +246,7 @@ async function handleConfirmStop() {
 /** 退单 */
 function handleReturn(item: RepairOrder) {
   TypedRouter.toRepairHandle({
-    action: 'RETURN',
+    action: 'BACK',
     repairId: item.repairId!,
     repairType: item.repairType || '',
     preStaffId: item.preStaffId,
@@ -276,9 +276,6 @@ function handleAppraise(item: RepairOrder) {
   TypedRouter.toAppraiseRepair({
     repairId: item.repairId!,
     repairType: item.repairType || '',
-    preStaffId: item.preStaffId,
-    preStaffName: item.preStaffName,
-    repairObjType: item.repairObjType,
     repairChannel: item.repairChannel,
     publicArea: item.publicArea,
     communityId: item.communityId!,
