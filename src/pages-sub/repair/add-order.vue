@@ -9,7 +9,7 @@
 -->
 
 <script setup lang="ts">
-import type { BeforeUploadHook, UploadFile } from 'wot-design-uni/components/wd-upload/types'
+import type { UploadBeforeUpload, UploadFile } from 'wot-design-uni/components/wd-upload/types'
 import type { CreateRepairReq, RepairObjType } from '@/types/repair'
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
@@ -50,9 +50,12 @@ const repairScopes = [
   { id: '004' as RepairObjType, name: '房屋' },
 ]
 
-/** 选中的位置类型 */
-const selectedScopeIndex = ref(0)
-const repairObjType = computed(() => repairScopes[selectedScopeIndex.value].id)
+/** 选中的位置类型 (绑定到 id，string 类型) */
+const selectedScopeId = ref<string>('001')
+const repairObjType = computed(() => selectedScopeId.value as RepairObjType)
+const selectedScopeIndex = computed(() =>
+  repairScopes.findIndex(item => item.id === selectedScopeId.value),
+)
 const publicArea = computed(() => repairObjType.value === '004' ? 'F' : 'T')
 
 /** 楼栋信息 */
@@ -74,8 +77,12 @@ const repairTypes = ref<Array<{
   payFeeFlag: 'T' | 'F'
   priceScope?: string
 }>>([])
-const selectedRepairTypeIndex = ref(0)
-const selectedRepairType = computed(() => repairTypes.value[selectedRepairTypeIndex.value])
+
+/** 选中的报修类型 id (string 类型，绑定到 repairType) */
+const selectedRepairTypeId = ref<string>('')
+const selectedRepairType = computed(() =>
+  repairTypes.value.find(item => item.repairType === selectedRepairTypeId.value),
+)
 const priceScope = computed(() => {
   if (selectedRepairType.value?.payFeeFlag === 'T') {
     return selectedRepairType.value.priceScope || ''
@@ -88,8 +95,8 @@ const repairName = ref('')
 const tel = ref('')
 
 /** 预约时间 */
-const appointmentDate = ref('')
-const appointmentTime = ref('')
+const appointmentDate = ref<number>()
+const appointmentTime = ref<string>('')
 const showDatePicker = ref(false)
 const showTimePicker = ref(false)
 
@@ -113,7 +120,7 @@ const { send: loadRepairTypes } = useRequest(
   .onSuccess((result) => {
     repairTypes.value = result.data
     if (result.data.length > 0) {
-      selectedRepairTypeIndex.value = 0
+      selectedRepairTypeId.value = result.data[0].repairType
     }
   })
   .onError((error) => {
@@ -158,8 +165,8 @@ onUnload(() => {
 })
 
 /** 位置类型改变 */
-function handleScopeChange({ value }: { value: number }) {
-  selectedScopeIndex.value = value
+function handleScopeChange({ value }: { value: string }) {
+  selectedScopeId.value = value
   // 重新加载报修类型
   loadRepairTypes()
   // 清空位置信息
@@ -222,26 +229,18 @@ function handleChooseRoom() {
 }
 
 /** 报修类型改变 */
-function handleRepairTypeChange({ value }: { value: number }) {
-  selectedRepairTypeIndex.value = value
+function handleRepairTypeChange({ value }: { value: string }) {
+  selectedRepairTypeId.value = value
 }
 
-/** 日期选择确认 */
-function handleDateConfirm(event: DatetimePickerConfirmEvent) {
-  const { value } = event
-  if (typeof value === 'number') {
-    appointmentDate.value = dayjs(value).format('YYYY-MM-DD')
-    showDatePicker.value = false
-  }
+/** 日期选择确认 - 关闭日期选择器 */
+function handleDateConfirm() {
+  showDatePicker.value = false
 }
 
-/** 时间选择确认 */
-function handleTimeConfirm(event: DatetimePickerConfirmEvent) {
-  const { value } = event
-  if (typeof value === 'string') {
-    appointmentTime.value = value
-    showTimePicker.value = false
-  }
+/** 时间选择确认 - 关闭时间选择器 */
+function handleTimeConfirm() {
+  showTimePicker.value = false
 }
 
 /**
@@ -265,10 +264,10 @@ function validateForm(): string {
   if (!/^1[3-9]\d{9}$/.test(tel.value)) {
     return '手机号格式不正确'
   }
-  if (!appointmentDate.value) {
+  if (!appointmentDate.value || typeof appointmentDate.value !== 'number') {
     return '请选择预约日期'
   }
-  if (!appointmentTime.value) {
+  if (!appointmentTime.value.trim()) {
     return '请选择预约时间'
   }
   if (!context.value.trim()) {
@@ -290,7 +289,7 @@ function validateForm(): string {
 }
 
 /** 图片上传前处理 */
-const handleBeforeUpload: BeforeUploadHook = ({ files, resolve }) => {
+const handleBeforeUpload: UploadBeforeUpload = ({ files, resolve }) => {
   const file = files[0]
   const maxSize = 10 * 1024 * 1024 // 10MB
 
@@ -367,7 +366,7 @@ async function handleSubmit() {
   const requestData: CreateRepairReq = {
     repairName: repairName.value,
     repairType: selectedRepairType.value.repairType,
-    appointmentTime: `${appointmentDate.value} ${appointmentTime.value}:00`,
+    appointmentTime: `${appointmentDate.value ? dayjs(appointmentDate.value).format('YYYY-MM-DD') : ''} ${appointmentTime.value}:00`,
     tel: tel.value,
     context: context.value,
     communityId: communityInfo.communityId,
@@ -394,7 +393,7 @@ async function handleSubmit() {
         <wd-cell title="位置" center>
           <template #value>
             <wd-picker
-              v-model="selectedScopeIndex"
+              v-model="selectedScopeId"
               :columns="repairScopes"
               label-key="name"
               value-key="id"
@@ -464,7 +463,7 @@ async function handleSubmit() {
         <wd-cell title="报修类型" center>
           <template #value>
             <wd-picker
-              v-model="selectedRepairTypeIndex"
+              v-model="selectedRepairTypeId"
               :columns="repairTypes"
               label-key="repairTypeName"
               value-key="repairType"
