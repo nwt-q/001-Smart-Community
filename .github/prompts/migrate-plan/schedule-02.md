@@ -128,3 +128,7 @@ src\pages-sub\repair\handle.vue
 2. 你要处理 `维修工单流程模块系列页面` 涉及到的 vue 组件。
 3. 检查我列举给你的代码，确保这些异步请求，是否都统一使用了 `api-migration` 所要求的 `useRequest` 函数。如果没有，请按照 `api-migration` 的要求做
 4. 检查是否缺少了 `immediate: false` 配置。缺少了就手动补全。
+
+## 020 补全 `src\api\mock\repair.mock.ts` 的 mock 接口
+
+<!-- TODO:  -->
