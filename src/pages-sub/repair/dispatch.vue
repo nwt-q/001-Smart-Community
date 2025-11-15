@@ -93,15 +93,15 @@ async function queryList(pageNo: number, pageRow: number) {
     ? ''
     : stateOptions.value[selectedStateIndex.value]?.value || ''
 
-  const { data } = await loadRepairStaffList({
+  const response = await loadRepairStaffList({
     page: pageNo,
     row: pageRow,
     state: selectedState,
   })
 
   return {
-    list: data.ownerRepairs || [],
-    total: data.total || 0,
+    list: response.ownerRepairs || [],
+    total: response.total || 0,
   }
 }
 
@@ -163,16 +163,17 @@ onStartError((error) => {
 })
 
 function handleStartRepair(item: RepairOrder) {
+  // TODO: 阅读 src\components\global\message\README.md 文档，使用正确的方式修复这里
   message.confirm({
     title: '提示',
     msg: '确认启动报修？',
-  }).then(async () => {
-    await startRepair({
+  }).then(() => {
+    startRepair({
       repairId: item.repairId!,
       communityId: item.communityId,
+    }).catch((error) => {
+      console.error('启动维修失败:', error)
     })
-  }).catch(() => {
-    // 用户取消
   })
 }
 
