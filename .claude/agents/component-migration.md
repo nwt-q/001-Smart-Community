@@ -594,11 +594,11 @@ color: blue
 
 #### 组件映射表
 
-|            旧方式             |             新方式             |                             使用文档                             |
-| :---------------------------: | :----------------------------: | :--------------------------------------------------------------: |
-|    子组件内 `<wd-toast />`    |  `useGlobalToast()`组合式函数  |   [Toast 文档](../../../src/components/global/toast/README.md)   |
-| 子组件内 `<wd-message-box />` | `useGlobalMessage()`组合式函数 | [Message 文档](../../../src/components/global/message/README.md) |
-|     手动管理 loading 状态     | `useGlobalLoading()`组合式函数 | [Loading 文档](../../../src/components/global/loading/README.md) |
+|            旧方式             |             新方式             |                           使用文档                            |
+| :---------------------------: | :----------------------------: | :-----------------------------------------------------------: |
+|    子组件内 `<wd-toast />`    |  `useGlobalToast()`组合式函数  |   [Toast 文档](../../src/components/global/toast/README.md)   |
+| 子组件内 `<wd-message-box />` | `useGlobalMessage()`组合式函数 | [Message 文档](../../src/components/global/message/README.md) |
+|     手动管理 loading 状态     | `useGlobalLoading()`组合式函数 | [Loading 文档](../../src/components/global/loading/README.md) |
 
 #### 使用示例
 
