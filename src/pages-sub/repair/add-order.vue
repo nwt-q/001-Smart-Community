@@ -9,14 +9,22 @@
 -->
 
 <script setup lang="ts">
+import type { BeforeUploadHook, UploadFile } from 'wot-design-uni/components/wd-upload/types'
 import type { CreateRepairReq, RepairObjType } from '@/types/repair'
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import dayjs from 'dayjs'
 import { computed, ref } from 'vue'
 import { createRepairOrder, getRepairSettings } from '@/api/repair'
+import { useGlobalLoading } from '@/hooks/useGlobalLoading'
+import { useGlobalToast } from '@/hooks/useGlobalToast'
 import { TypedRouter } from '@/router'
 import { getCurrentCommunity } from '@/utils/user'
+
+// 添加 datetime-picker 的类型定义
+interface DatetimePickerConfirmEvent {
+  value: number | string | (number | string)[]
+}
 
 definePage({
   style: {
@@ -27,6 +35,12 @@ definePage({
 
 /** 小区信息 */
 const communityInfo = getCurrentCommunity()
+
+/** 全局 Toast */
+const toast = useGlobalToast()
+
+/** 全局 Loading */
+const loading = useGlobalLoading()
 
 /** 位置类型选项 */
 const repairScopes = [
@@ -83,7 +97,7 @@ const showTimePicker = ref(false)
 const context = ref('')
 
 /** 图片列表 */
-const photos = ref<string[]>([])
+const photos = ref<UploadFile[]>([])
 
 /** 加载报修类型 */
 const { send: loadRepairTypes } = useRequest(
@@ -104,6 +118,7 @@ const { send: loadRepairTypes } = useRequest(
   })
   .onError((error) => {
     console.error('加载报修类型失败:', error)
+    toast.error('加载报修类型失败')
   })
 
 /** 页面加载 */
@@ -170,19 +185,13 @@ function handleChooseFloor() {
   clearLocationInfo()
 
   // TODO: 跳转到楼栋选择页面（暂时提示）
-  uni.showToast({
-    title: '楼栋选择页面待实现',
-    icon: 'none',
-  })
+  toast.info('楼栋选择页面待实现')
 }
 
 /** 选择单元 */
 function handleChooseUnit() {
   if (!floorId.value) {
-    uni.showToast({
-      title: '请先选择楼栋',
-      icon: 'none',
-    })
+    toast.warning('请先选择楼栋')
     return
   }
 
@@ -194,19 +203,13 @@ function handleChooseUnit() {
   roomId.value = ''
 
   // TODO: 跳转到单元选择页面（暂时提示）
-  uni.showToast({
-    title: '单元选择页面待实现',
-    icon: 'none',
-  })
+  toast.info('单元选择页面待实现')
 }
 
 /** 选择房屋 */
 function handleChooseRoom() {
   if (!unitId.value) {
-    uni.showToast({
-      title: '请先选择单元',
-      icon: 'none',
-    })
+    toast.warning('请先选择单元')
     return
   }
 
@@ -215,10 +218,7 @@ function handleChooseRoom() {
   roomId.value = ''
 
   // TODO: 跳转到房屋选择页面（暂时提示）
-  uni.showToast({
-    title: '房屋选择页面待实现',
-    icon: 'none',
-  })
+  toast.info('房屋选择页面待实现')
 }
 
 /** 报修类型改变 */
@@ -227,15 +227,21 @@ function handleRepairTypeChange({ value }: { value: number }) {
 }
 
 /** 日期选择确认 */
-function handleDateConfirm({ value }: { value: number }) {
-  appointmentDate.value = dayjs(value).format('YYYY-MM-DD')
-  showDatePicker.value = false
+function handleDateConfirm(event: DatetimePickerConfirmEvent) {
+  const { value } = event
+  if (typeof value === 'number') {
+    appointmentDate.value = dayjs(value).format('YYYY-MM-DD')
+    showDatePicker.value = false
+  }
 }
 
 /** 时间选择确认 */
-function handleTimeConfirm({ value }: { value: string }) {
-  appointmentTime.value = value
-  showTimePicker.value = false
+function handleTimeConfirm(event: DatetimePickerConfirmEvent) {
+  const { value } = event
+  if (typeof value === 'string') {
+    appointmentTime.value = value
+    showTimePicker.value = false
+  }
 }
 
 /**
@@ -284,30 +290,27 @@ function validateForm(): string {
 }
 
 /** 图片上传前处理 */
-function handleBeforeUpload(file: File) {
-  // 检查文件大小
-  if (file.size > 10 * 1024 * 1024) {
-    uni.showToast({
-      title: '图片大小不能超过10MB',
-      icon: 'none',
-    })
-    return false
+const handleBeforeUpload: BeforeUploadHook = ({ files, resolve }) => {
+  const file = files[0]
+  const maxSize = 10 * 1024 * 1024 // 10MB
+
+  if (file.size && file.size > maxSize) {
+    toast.warning('图片大小不能超过10MB')
+    resolve(false)
+    return
   }
-  return true
+
+  resolve(true)
 }
 
 /** 图片上传成功 */
-function handleUploadSuccess(fileUrl: string) {
-  // 这里应该是实际的上传接口返回的URL
-  console.log('图片上传成功:', fileUrl)
+function handleUploadSuccess(response: any) {
+  console.log('图片上传成功:', response)
 }
 
 /** 图片上传失败 */
-function handleUploadFail(error: Error) {
-  uni.showToast({
-    title: '图片上传失败',
-    icon: 'none',
-  })
+function handleUploadFail(error: any) {
+  toast.error('图片上传失败')
   console.error('图片上传失败:', error)
 }
 
@@ -318,11 +321,8 @@ const { send: submitRepairOrder, onSuccess: onSubmitSuccess, onError: onSubmitEr
 )
 
 onSubmitSuccess(() => {
-  uni.hideLoading()
-  uni.showToast({
-    title: '提交成功',
-    icon: 'success',
-  })
+  loading.close()
+  toast.success('提交成功')
 
   setTimeout(() => {
     TypedRouter.toRepairList()
@@ -330,24 +330,18 @@ onSubmitSuccess(() => {
 })
 
 onSubmitError((error) => {
-  uni.hideLoading()
-  uni.showToast({
-    title: error.error || '提交失败',
-    icon: 'none',
-  })
+  loading.close()
+  toast.error(error.error || '提交失败')
 })
 
 async function handleSubmit() {
   const errorMsg = validateForm()
   if (errorMsg) {
-    uni.showToast({
-      title: errorMsg,
-      icon: 'none',
-    })
+    toast.warning(errorMsg)
     return
   }
 
-  uni.showLoading({ title: '提交中...' })
+  loading.loading('提交中...')
 
   // 构建报修对象信息
   let repairObjId = ''
@@ -382,7 +376,6 @@ async function handleSubmit() {
     repairObjName,
     repairChannel: 'STAFF',
     roomId: roomId.value || undefined,
-    photos: photos.value.length > 0 ? photos.value : undefined,
   }
 
   await submitRepairOrder(requestData)
@@ -494,23 +487,25 @@ async function handleSubmit() {
         <!-- 报修人 -->
         <wd-cell title="报修人" center>
           <template #value>
-            <input
+            <wd-input
               v-model="repairName"
               placeholder="请输入报修人"
-              class="text-right"
-            >
+              clearable
+              no-border
+            />
           </template>
         </wd-cell>
 
         <!-- 手机号 -->
         <wd-cell title="手机号" center>
           <template #value>
-            <input
+            <wd-input
               v-model="tel"
-              type="number"
               placeholder="请输入手机号"
-              class="text-right"
-            >
+              type="digit"
+              clearable
+              no-border
+            />
           </template>
         </wd-cell>
 
@@ -577,7 +572,8 @@ async function handleSubmit() {
 
     <!-- 日期选择器 -->
     <wd-datetime-picker
-      v-model="showDatePicker"
+      v-if="showDatePicker"
+      v-model="appointmentDate"
       type="date"
       :min-date="Date.now()"
       @confirm="handleDateConfirm"
@@ -585,7 +581,8 @@ async function handleSubmit() {
 
     <!-- 时间选择器 -->
     <wd-datetime-picker
-      v-model="showTimePicker"
+      v-if="showTimePicker"
+      v-model="appointmentTime"
       type="time"
       @confirm="handleTimeConfirm"
     />
