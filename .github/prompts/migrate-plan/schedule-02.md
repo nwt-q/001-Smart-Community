@@ -142,3 +142,23 @@ src\pages-sub\repair\handle.vue
 1. 补充的 mock 接口请注意按照注释说明的序号，做好排序。
 2. 在 `docs\reports\2025-11-16-api-migration-validation-repair.md` 编写你的报告。
 3. 继续按照 `api-migration` 子代理的要求实现，独立运行子代理。
+
+<!-- TODO: -->
+
+## 021 设计迁移 selectFloor selectUnit selectRoom 这三个页面的迁移计划
+
+1. 阅读 `docs\reports\vue2-route-navigation-map.md` 文档的 `维修工单流程模块` 。明确清楚该模块的引用关系。
+2. 重点阅读 `选择房屋相关页面` 和其他模块的关联关系。
+3. 从 `维修工单流程模块` 的 `选择房屋相关页面` 内，得知 `旧项目` 的代码，搞清楚这三个页面在旧项目的 `维修工单流程模块` 内，是如何使用的。
+4. 阅读 `.github\prompts\route-migration-map.yml` 关于 `选择器页面 (3个)` 的内容。明确清楚这三个旧页面在新项目内如何新建页面，如何新建路由。
+5. 安排任务，依次按照子代理的要求，对这三个 `选择器页面` 实现代码迁移改造。
+   - `api-migration`： api 迁移子代理。位于 `.claude\agents` 目录内。
+   - `code-migration`： 代码写法迁移子代理。位于 `.claude\agents` 目录内。
+   - `component-migration`： 组件迁移子代理。位于 `.claude\agents` 目录内。
+   - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
+   - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
+6. 按照顺序，按照上述子代理的要求，逐步对三个 `选择器页面` 实现代码迁移改造。
+7. 这是复杂的任务，请你设计好合适的任务执行步骤。
+8. 在你执行时，请**不要直接运行子代理**。否则 token 的消耗会过快。
+9. 请你先设计好一个完整的，全面的迁移计划，未来我会择机要求你独立执行完整的迁移任务计划。
+10. 有疑问请直接咨询我。
