@@ -171,6 +171,17 @@ const mockRepairDatabase = {
     { rstId: 'RST_004', name: '装修材料', parentRstId: undefined },
   ],
 
+  /** 维修设置配置（维修类型配置） */
+  repairSettings: [
+    { repairType: '1001', repairTypeName: '水电维修', payFeeFlag: 'T' as const, priceScope: '50-300元', publicArea: 'T' as const },
+    { repairType: '1002', repairTypeName: '门窗维修', payFeeFlag: 'T' as const, priceScope: '80-400元', publicArea: 'T' as const },
+    { repairType: '1003', repairTypeName: '空调维修', payFeeFlag: 'T' as const, priceScope: '100-500元', publicArea: 'T' as const },
+    { repairType: '1004', repairTypeName: '电梯维修', payFeeFlag: 'F' as const, priceScope: undefined, publicArea: 'T' as const },
+    { repairType: '1005', repairTypeName: '管道疏通', payFeeFlag: 'T' as const, priceScope: '60-200元', publicArea: 'F' as const },
+    { repairType: '1006', repairTypeName: '墙面修补', payFeeFlag: 'T' as const, priceScope: '40-250元', publicArea: 'F' as const },
+    { repairType: '1007', repairTypeName: '其他维修', payFeeFlag: 'T' as const, priceScope: '30-500元', publicArea: 'F' as const },
+  ],
+
   /** 维修状态字典 */
   repairStates: [
     { statusCd: 'PENDING', name: '待派单' },
@@ -302,6 +313,46 @@ const mockRepairDatabase = {
       ...params,
       status: 'COMPLETED',
     })
+  },
+
+  /** 根据维修类型获取维修师傅 */
+  getRepairStaffsByType(repairType: string) {
+    return this.staffs.filter(staff => staff.repairTypes.includes(repairType))
+  },
+
+  /** 获取维修设置配置列表，支持筛选和分页 */
+  getRepairSettings(params: { communityId?: string, publicArea?: string, page?: number, row?: number }) {
+    let settings = [...this.repairSettings]
+
+    // 按公共区域筛选
+    if (params.publicArea) {
+      settings = settings.filter(setting => setting.publicArea === params.publicArea)
+    }
+
+    // 分页处理
+    const page = Number(params.page) || 1
+    const row = Number(params.row) || 10
+    const start = (page - 1) * row
+    const end = start + row
+
+    return {
+      list: settings.slice(start, end),
+      total: settings.length,
+      page,
+      pageSize: row,
+    }
+  },
+
+  /** 根据 rstId 获取物资类型名称 */
+  getResourceTypeName(rstId: string) {
+    const type = this.resourceTypes.find(t => t.rstId === rstId)
+    return type ? type.name : '未知类型'
+  },
+
+  /** 根据 rstId 获取物资列表 */
+  getResourcesByType(rstId: string) {
+    const typeName = this.getResourceTypeName(rstId)
+    return this.resources.filter(res => res.resTypeName === typeName)
   },
 }
 
@@ -884,7 +935,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 16. 查询维修相关配置信息 */
+  /** 16. 查询维修相关配置信息和物资类型（支持 parentId 参数） */
   {
     url: '/app/resourceStoreType.listResourceStoreTypes',
     method: ['GET', 'POST'],
@@ -893,14 +944,17 @@ export default defineUniAppMock([
       await randomDelay(200, 400)
 
       try {
-        const resourceStoreTypes = [
-          { rstId: 'RST_001', name: '水电材料', parentRstId: null },
-          { rstId: 'RST_002', name: '五金材料', parentRstId: null },
-          { rstId: 'RST_003', name: '空调材料', parentRstId: null },
-          { rstId: 'RST_004', name: '装修材料', parentRstId: null },
-        ]
+        const params = { ...query, ...body }
+        let resourceStoreTypes = [...mockRepairDatabase.resourceTypes]
 
-        mockLog('listResourceStoreTypes', '→ 查询成功')
+        // 如果提供了 parentId，筛选子类型（树形结构查询）
+        if (params.parentId) {
+          resourceStoreTypes = resourceStoreTypes.filter(
+            type => type.parentRstId === params.parentId,
+          )
+        }
+
+        mockLog('listResourceStoreTypes', params, `→ ${resourceStoreTypes.length} items`)
         return successResponse({ resourceStoreTypes }, '查询成功')
       }
       catch (error: any) {
@@ -910,7 +964,41 @@ export default defineUniAppMock([
     },
   },
 
-  /** 17. 查询字典数据 */
+  /** 17. 获取报修类型配置列表 */
+  {
+    url: '/app/repairSetting.listRepairSettings',
+    method: ['GET', 'POST'],
+    delay: [200, 500],
+    body: async ({ query, body }) => {
+      await randomDelay(200, 500)
+
+      try {
+        const params = { ...query, ...body }
+        let settings = [...mockRepairDatabase.repairSettings]
+
+        // 按公共区域筛选
+        if (params.publicArea) {
+          settings = settings.filter(setting => setting.publicArea === params.publicArea)
+        }
+
+        // 分页处理
+        const page = Number(params.page) || 1
+        const row = Number(params.row) || 10
+        const start = (page - 1) * row
+        const end = start + row
+        const paginatedSettings = settings.slice(start, end)
+
+        mockLog('listRepairSettings', params, `→ ${paginatedSettings.length} items`)
+        return successResponse(paginatedSettings, '查询成功')
+      }
+      catch (error: any) {
+        console.error('❌ Mock API Error: listRepairSettings', error)
+        return errorResponse(error.message || '查询报修配置失败')
+      }
+    },
+  },
+
+  /** 18. 查询字典数据 */
   {
     url: '/callComponent/core/list',
     method: ['GET', 'POST'],
@@ -958,7 +1046,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 18. 开始维修 */
+  /** 19. 开始维修 */
   {
     url: '/app/ownerRepair.repairStart',
     method: 'POST',
@@ -989,7 +1077,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 19. 暂停维修 */
+  /** 20. 暂停维修 */
   {
     url: '/app/ownerRepair.repairStop',
     method: 'POST',
@@ -1020,7 +1108,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 20. 抢单 */
+  /** 21. 抢单 */
   {
     url: '/app/ownerRepair.grabbingRepair',
     method: 'POST',
@@ -1059,7 +1147,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 21. 查询维修状态字典 */
+  /** 22. 查询维修状态字典 */
   {
     url: '/app/dict.queryRepairStates',
     method: ['GET', 'POST'],
@@ -1080,7 +1168,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 22. 查询工单流转记录 */
+  /** 23. 查询工单流转记录 */
   {
     url: '/app/ownerRepair.listRepairStaffRecords',
     method: ['GET', 'POST'],
@@ -1180,7 +1268,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 23. 查询支付方式字典 */
+  /** 24. 查询支付方式字典 */
   {
     url: '/app/dict.queryPayTypes',
     method: ['GET', 'POST'],
@@ -1201,7 +1289,7 @@ export default defineUniAppMock([
     },
   },
 
-  /** 24. 查询维修物资 */
+  /** 25. 查询维修物资 */
   {
     url: '/app/resourceStore.listResources',
     method: ['GET', 'POST'],

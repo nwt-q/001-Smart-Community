@@ -136,3 +136,9 @@ src\pages-sub\repair\handle.vue
 3. 完整阅读 `src\api\mock\repair.mock.ts` 接口。
 4. 在不允许修改 `src\api\repair.ts` 接口的情况下，按照 `api-migration` 的要求，为 `src\api\mock\repair.mock.ts` mock 接口文件，补充接口。
 5. 独立运行 `api-migration` 子代理。
+
+### 01
+
+1. 补充的 mock 接口请注意按照注释说明的序号，做好排序。
+2. 在 `docs\reports\2025-11-16-api-migration-validation-repair.md` 编写你的报告。
+3. 继续按照 `api-migration` 子代理的要求实现，独立运行子代理。
