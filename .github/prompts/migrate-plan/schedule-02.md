@@ -131,4 +131,8 @@ src\pages-sub\repair\handle.vue
 
 ## 020 补全 `src\api\mock\repair.mock.ts` 的 mock 接口
 
-<!-- TODO:  -->
+1. 完整阅读 `api-migration` 子代理文件。
+2. 完整阅读 `src\api\repair.ts` 接口。
+3. 完整阅读 `src\api\mock\repair.mock.ts` 接口。
+4. 在不允许修改 `src\api\repair.ts` 接口的情况下，按照 `api-migration` 的要求，为 `src\api\mock\repair.mock.ts` mock 接口文件，补充接口。
+5. 独立运行 `api-migration` 子代理。
