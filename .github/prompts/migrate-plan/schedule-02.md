@@ -143,8 +143,6 @@ src\pages-sub\repair\handle.vue
 2. 在 `docs\reports\2025-11-16-api-migration-validation-repair.md` 编写你的报告。
 3. 继续按照 `api-migration` 子代理的要求实现，独立运行子代理。
 
-<!-- TODO: -->
-
 ## 021 设计迁移 selectFloor selectUnit selectRoom 这三个页面的迁移计划
 
 1. 阅读 `docs\reports\vue2-route-navigation-map.md` 文档的 `维修工单流程模块` 。明确清楚该模块的引用关系。
