@@ -162,3 +162,8 @@ src\pages-sub\repair\handle.vue
 8. 在你执行时，请**不要直接运行子代理**。否则 token 的消耗会过快。
 9. 请你先设计好一个完整的，全面的迁移计划，未来我会择机要求你独立执行完整的迁移任务计划。
 10. 有疑问请直接咨询我。
+
+### 01
+
+1. 生成你的迁移计划 markdown 文档，生成在 `.github\prompts\migrate-plan` 目录内。
+2. 不要更新 `docs\reports\vue2-route-navigation-map.md` 文档，你应该更新 `.github\prompts\route-migration-map.yml` 的 `选择器页面 (3个)` 部分，来标记你已完成迁移任务。
