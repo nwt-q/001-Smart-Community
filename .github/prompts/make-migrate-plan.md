@@ -611,3 +611,19 @@
    - 切换到 tabBar 页面。不做显示，脑图不展示该内容。
    - 条件跳转（如登录检查后跳转）。不做显示，脑图不展示该内容。
 5. 输出形式： 选项 B。且不需要文本版本的跳转关系清单。不需要。
+
+### 044 <!-- TODO: 用高级模型来完成一次 --> 细化 `api-migration` 子代理对生成 api.ts 接口文件的标准和要求
+
+我没有在 `api-migration` 文档内看到关于生成 `src\api\*.ts` 接口的例子，也不清楚在 `api-migration` 子代理内，要如何使用以下这些基础业务类型：
+
+- `ApiResponse`
+- `PaginationParams`
+- `PaginationResponse`
+
+请你深度的调研 `gitee-example` 即旧项目内接口的使用方式，阅读 `https://unibest.tech/base/8-request` 文档，深度思考一下，`api-migration` 接口迁移子代理子代理，应该如何使用这些基础业务类型？在 mock 的时候，如何充分的复用这些基础业务类型？
+
+#### 01 整合文档
+
+1. 请你将 `docs\reports\2025-11-20-api-migration-interface-standards.md` 整合到 `api-migration` 接口迁移子代理文件内。
+2. 在整合内容时，请你认真思考。有机整合，做恰当的补充。如果需要有覆盖的场景，请你以最新的 `2025-11-20-api-migration-interface-standards` 来为准。
+3. 删除掉 `docs\reports\2025-11-20-api-migration-interface-standards.md` 文件，以后只能用唯一的 `api-migration` 接口迁移子代理来完成 api 迁移任务。
