@@ -165,3 +165,18 @@ src\pages-sub\repair\handle.vue
 
 1. 生成你的迁移计划 markdown 文档，生成在 `.github\prompts\migrate-plan` 目录内。
 2. 不要更新 `docs\reports\vue2-route-navigation-map.md` 文档，你应该更新 `.github\prompts\route-migration-map.yml` 的 `选择器页面 (3个)` 部分，来标记你已完成迁移任务。
+
+## 022 补全完善接口
+
+<!-- TODO: 先完成子代理拓展 -->
+
+阅读以下文件：
+
+1. src\api\floor.ts
+2. src\api\room.ts
+3. src\api\unit.ts
+
+根据 `api-migration` 代理的要求，同时阅读相关的，与文件名对应的 mock 接口文件。
+
+1. 按照 `api-migration` 代理的要求，运行 `api-migration` 代理，修复这些接口文件不规范的部分。
+2. 运行 `api-migration` 代理，修复这些对应 mock 接口的内容，确保每一个接口都有对应的 mock 接口实现。
