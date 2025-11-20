@@ -3,6 +3,7 @@
  * 提供通用的数据生成、响应处理等工具函数
  */
 
+import type { ApiResponse } from '@/types/api'
 import { createDefineMock } from 'vite-plugin-mock-dev-server'
 // FIXME: 无法使用路径别名 出现路径识别错误 编译失败
 // import { ResultEnum } from '@/http/tools/enum'
@@ -144,7 +145,7 @@ export function generatePriority(): 'HIGH' | 'MEDIUM' | 'LOW' {
 }
 
 /** 模拟成功响应 */
-export function successResponse<T>(data: T, message: string = '操作成功') {
+export function successResponse<T>(data: T, message: string = '操作成功'): ApiResponse<T> {
   return {
     success: true,
     code: String(ResultEnum.Success),
@@ -155,7 +156,7 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 }
 
 /** 模拟错误响应 */
-export function errorResponse(message: string = '操作失败', code?: string) {
+export function errorResponse(message: string = '操作失败', code?: string): ApiResponse<null> {
   code = code || String(ResultEnum.InternalServerError)
   return {
     success: false,
