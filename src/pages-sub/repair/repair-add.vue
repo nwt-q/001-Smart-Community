@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useGlobalToast } from '@/hooks/useGlobal'
+import { useGlobalToast } from '@/hooks/useGlobalToast'
 import { TypedRouter } from '@/router/helpers'
 import { useSelectorStore } from '@/stores/useSelectorStore'
 
@@ -22,7 +22,7 @@ function handleSelectFloor() {
 // 选择单元
 function handleSelectUnit() {
   if (!selectorStore.selectedFloor) {
-    toast.show({ message: '请先选择楼栋' })
+    toast.show({ msg: '请先选择楼栋' })
     return
   }
   TypedRouter.toSelectUnit(selectorStore.selectedFloor.floorId)
@@ -31,11 +31,11 @@ function handleSelectUnit() {
 // 选择房屋
 function handleSelectRoom() {
   if (!selectorStore.selectedUnit) {
-    toast.show({ message: '请先选择单元' })
+    toast.show({ msg: '请先选择单元' })
     return
   }
   if (!selectorStore.selectedFloor) {
-    toast.show({ message: '请先选择楼栋' })
+    toast.show({ msg: '请先选择楼栋' })
     return
   }
   TypedRouter.toSelectRoom(
@@ -47,7 +47,7 @@ function handleSelectRoom() {
 // 清空选择
 function handleClearSelection() {
   selectorStore.clearSelection()
-  toast.show({ message: '已清空选择' })
+  toast.show({ msg: '已清空选择' })
 }
 
 // 显示文本
