@@ -12,7 +12,18 @@ color: blue
 
 **⚠️ 重要说明**: 本迁移计划严格遵循 CLAUDE.md 无登录原则，完全移除认证逻辑，采用纯模拟接口方式，确保所有业务功能都无需登录即可访问。
 
-## 🆕 Mock 数据存储新规范
+## API 接口文件生成标准
+
+### 核心设计原则
+
+基于对旧项目（Vue2）接口使用方式的深度调研和现代化最佳实践，制定以下核心设计原则：
+
+1. **🎯 类型安全优先**: 使用 TypeScript 完整的类型定义，确保编译时类型检查
+2. **📦 统一基础类型**: 强制使用 `src/types/api.ts` 中的基础业务类型
+3. **🔄 保持接口兼容性**: 与旧项目的接口 URL 和数据结构保持兼容
+4. **🚀 现代化架构**: 采用 Alova + Composition API 的现代化请求模式
+
+## Mock 数据存储新规范
 
 **强制执行的核心规则**:
 
@@ -276,7 +287,7 @@ console.debug('Result:', result)
 4. **timestamp 必需字段**: `timestamp` 字段是必需的，不可省略，`successResponse/errorResponse` 函数会自动添加
 5. **类型安全**: `successResponse<T>` 支持泛型，确保数据类型正确
 6. **语义清晰**: `success` 字段明确标识请求成功/失败状态
-7. **🆕 统一日志输出**: 所有 Mock 接口必须使用 `mockLog()` 函数输出日志
+7. **统一日志输出**: 所有 Mock 接口必须使用 `mockLog()` 函数输出日志
    - 禁止使用手动的 `console.log('🚀 Mock API: ...')` 格式
    - 禁止使用其他 console 方法（info、debug、warn 等）用于常规日志
    - 确保日志格式统一、便于调试和追踪
@@ -752,128 +763,236 @@ const activityData = await getActivityDetail({ id: '001' }) // ❌ 失去状态�
 
 #### 1.3 TypeScript 类型定义体系
 
-**首先建立完整的类型定义**:
+**📦 基础业务类型详解**:
+
+首先建立完整的类型定义体系，强制使用 `src/types/api.ts` 中的基础业务类型：
 
 ```typescript
 // src/types/api.ts - 基础 API 类型
 export interface ApiResponse<T = any> {
-  code: string
-  message: string
-  data: T
-  timestamp?: number
+  success: boolean // 请求是否成功
+  code: string // 业务状态码
+  message: string // 响应消息
+  data: T // 业务数据
+  timestamp: number // 时间戳
 }
 
+/** 分页请求参数 */
 export interface PaginationParams {
-  page: number
-  pageSize: number
+  page: number // 当前页码
+  row: number // 每页条数
 }
 
+/** 分页响应结构 */
 export interface PaginationResponse<T> {
-  list: T[]
-  total: number
-  page: number
-  pageSize: number
-  hasMore: boolean
+  list: T[] // 当前页数据列表
+  total: number // 总记录数
+  page: number // 当前页码
+  pageSize: number // 每页条数
+  hasMore: boolean // 是否有更多数据
 }
+```
 
-// src/types/maintainance.ts - 维修模块类型定义
-export interface MaintainanceTask {
-  id: string
-  taskId: string
-  title: string
-  description: string
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
-  priority: 'LOW' | 'MEDIUM' | 'HIGH'
-  assigneeId: string
-  assigneeName: string
+**业务模块类型定义标准**:
+
+```typescript
+// src/types/[模块名].ts - 业务模块类型定义
+export interface [Entity] {
+  [entity]Id: string
+  name: string
+  status?: [StatusType]
   createTime: string
   updateTime: string
-  dueDate?: string
-  images?: string[]
-  location?: string
-  remark?: string
+  [otherFields]: [FieldType]
 }
 
-export interface UpdateMaintainanceTaskReq {
-  taskId: string
-  status: MaintainanceTask['status']
-  remark?: string
-  images?: string[]
+export interface Create[Entity]Req {
+  name: string               // 必填字段
+  description?: string       // 可选字段
+  [otherFields]: [FieldType] // 其他业务字段
 }
 
-export interface MaintainanceTaskListParams extends PaginationParams {
-  status?: string
-  assigneeId?: string
-  keyword?: string
-  startTime?: string
-  endTime?: string
+export interface Update[Entity]Req {
+  [entity]Id: string         // 必填：实体ID
+  name?: string              // 可选更新字段
+  status?: [StatusType]      // 状态更新
+  [otherFields]?: [FieldType] // 其他可选更新字段
+}
+
+export interface [Entity]QueryParams extends PaginationParams {
+  [entity]Id?: string        // 实体ID筛选
+  name?: string              // 名称模糊搜索
+  status?: [StatusType]      // 状态筛选
+  [otherFilter]?: string     // 其他筛选条件
+}
+```
+
+**使用示例 - 维修模块类型定义**:
+
+```typescript
+// src/types/repair.ts - 维修模块类型定义
+export interface RepairOrder {
+  repairId: string
+  title: string
+  description: string
+  ownerName: string
+  ownerPhone: string
+  address: string
+  repairType: RepairType
+  status: RepairStatus
+  priority: PriorityType
+  createTime: string
+  updateTime: string
+  [otherFields]: any
+}
+
+export interface CreateRepairReq {
+  title: string
+  description: string
+  repairType: RepairType
+  [otherFields]: any
+}
+
+export interface UpdateRepairReq {
+  repairId: string
+  status?: RepairStatus
+  remark?: string
+  [otherFields]: any
+}
+
+export interface RepairListParams extends PaginationParams {
+  status?: RepairStatus
+  repairType?: RepairType
+  communityId?: string
+  [otherFilter]?: string
 }
 ```
 
 #### 1.4 API 定义方式对比
 
-**Vue2 项目 API 定义**:
+**🔴 旧项目接口模式（基于调研）**:
 
 ```javascript
-// api/maintainance/maintainance.js - 无类型约束
-export function UpdateMaintainanceTask(_that, _data) {
-  return new Promise(function (resolve, reject) {
-    _that.context.post({
-      url: url.UpdateMaintainanceTask,
+// 旧项目 (Vue2) - Java110Context 模式
+export function query[Entity]List(_that, _data) {
+  return new Promise(function(resolve, reject) {
+    _that.context.get({
+      url: url.query[Entity]List,
       data: _data,
-      success: function (res) {
-        resolve(res.data) // 不知道返回什么类型
+      success: function(res) {
+        if (res.data.code != 0) {
+          uni.showToast({ title: res.data.msg, icon: 'none' })
+          return
+        }
+        resolve(res.data)
       },
-      fail: function (e) {
-        wx.showToast({
-          title: '服务器异常了',
-          icon: 'none',
-          duration: 2000,
-        })
+      fail: function(e) {
+        uni.showToast({ title: '服务器异常了', icon: 'none' })
         reject(e)
-      },
+      }
     })
   })
 }
 ```
 
-**Vue3 项目 API 定义 (含模拟接口)**:
+**✅ 新项目接口模式（现代化标准）**:
 
 ```typescript
-// src/api/maintainance.ts
+/**
+ * [模块名] API 接口定义
+ * 对应业务：[业务功能说明]
+ */
+
+// 1. 类型导入（优先）
+import type { ApiResponse, PaginationResponse } from '@/types/api'
+import type { [业务类型定义] } from '@/types/[模块名]'
+
+// 2. 工具导入
 import { http } from '@/http/alova'
-import type {
-  MaintainanceTask,
-  UpdateMaintainanceTaskReq,
-  MaintainanceTaskListParams,
-  PaginationResponse,
-} from '@/types'
 
-// 1. 更新维修任务
-export const updateMaintainanceTask = (data: UpdateMaintainanceTaskReq) =>
-  http.Post<MaintainanceTask>('/app/ownerRepair.updateOwnerRepair', data)
+/** ==================== 查询接口 ==================== */
 
-// 2. 查询维修任务列表
-export const getMaintainanceTaskList = (params: MaintainanceTaskListParams) =>
-  http.Get<PaginationResponse<MaintainanceTask>>('/app/ownerRepair.listOwnerRepairs', {
+/** 查询 [实体] 列表 */
+export function get[Entity]List(params: [Entity]QueryParams & PaginationParams) {
+  return http.Get<PaginationResponse<[Entity]>>('/app/[entity].query[Entity]s', { params })
+}
+
+/** 查询 [实体] 详情 */
+export function get[Entity]Detail(params: { [entity]Id: string }) {
+  return http.Get<ApiResponse<[Entity]>>('/app/[entity].query[Entity]Detail', {
     params,
   })
+}
 
-// 3. 获取任务详情
-export const getMaintainanceTaskDetail = (taskId: string) =>
-  http.Get<MaintainanceTask>('/app/ownerRepair.getOwnerRepair', {
-    params: { taskId },
+/** ==================== 创建和更新接口 ==================== */
+
+/** 创建 [实体] */
+export function create[Entity](data: Create[Entity]Req) {
+  return http.Post<ApiResponse<[Entity]>>('/app/[entity].save[Entity]', data)
+}
+
+/** 更新 [实体] */
+export function update[Entity](data: Update[Entity]Req) {
+  return http.Post<ApiResponse<[Entity]>>('/app/[entity].update[Entity]', data)
+}
+```
+
+**📋 迁移对照表**:
+
+| 特性         | 旧项目模式                   | 新项目模式                           |
+| ------------ | ---------------------------- | ------------------------------------ |
+| **请求方式** | `_that.context.get()`        | `http.Get<>()`                       |
+| **参数传递** | `data: _data`                | `{ params }`                         |
+| **返回类型** | `Promise<any>`               | `Promise<ApiResponse<T>>`            |
+| **错误处理** | 手动 `uni.showToast`         | 全局拦截器 + 自动处理                |
+| **类型安全** | JavaScript 无类型            | TypeScript 完整类型                  |
+| **分页参数** | `{ page, row }`              | `PaginationParams`                   |
+| **响应数据** | `{ code, msg, data, total }` | `ApiResponse<PaginationResponse<T>>` |
+
+**实际使用示例 - 维修模块**:
+
+```typescript
+/**
+ * 维修工单模块 API 接口定义
+ * 对应业务：维修工单流程管理
+ */
+
+import type { ApiResponse, PaginationResponse } from '@/types/api'
+import type { RepairOrder, RepairListParams, CreateRepairReq, UpdateRepairReq, RepairStatistics } from '@/types/repair'
+import { http } from '@/http/alova'
+
+/** ==================== 查询接口 ==================== */
+
+/** 1. 查询维修工单列表 */
+export function getRepairOrderList(params: RepairListParams) {
+  return http.Get<PaginationResponse<RepairOrder>>('/app/ownerRepair.listOwnerRepairs', { params })
+}
+
+/** 2. 获取维修工单详情 */
+export function getRepairDetail(params: { repairId: string }) {
+  return http.Get<ApiResponse<{ ownerRepair: RepairOrder }>>('/app/ownerRepair.queryOwnerRepair', {
+    params,
   })
+}
 
-// 4. 创建维修任务
-export const createMaintainanceTask = (data: Omit<MaintainanceTask, 'id' | 'taskId' | 'createTime' | 'updateTime'>) =>
-  http.Post<MaintainanceTask>('/app/ownerRepair.saveOwnerRepair', data)
-
-// 5. 删除维修任务
-export const deleteMaintainanceTask = (taskId: string) =>
-  http.Delete<{ success: boolean }>('/app/ownerRepair.deleteOwnerRepair', {
-    params: { taskId },
+/** 3. 获取维修统计数据 */
+export function getRepairStatistics(communityId?: string) {
+  return http.Get<ApiResponse<RepairStatistics>>('/app/ownerRepair.getRepairStatistics', {
+    params: { communityId },
   })
+}
+
+/** ==================== 创建和更新接口 ==================== */
+
+/** 4. 创建维修工单 */
+export function createRepairOrder(data: CreateRepairReq) {
+  return http.Post<ApiResponse<{ ownerRepair: RepairOrder }>>('/app/ownerRepair.saveOwnerRepair', data)
+}
+
+/** 5. 更新维修工单 */
+export function updateRepairOrder(data: UpdateRepairReq) {
+  return http.Post<ApiResponse<{ ownerRepair: RepairOrder }>>('/app/ownerRepair.updateOwnerRepair', data)
+}
 ```
 
 ### 2. 模拟接口实现策略
@@ -889,7 +1008,7 @@ export const deleteMaintainanceTask = (taskId: string) =>
 - **注意**: Mock 文件与 API 接口文件在同一目录层级，便于管理和维护
 - **必须使用**: `defineUniAppMock` 函数代替 `defineMock` 函数，自动处理 URL 前缀
 
-**🆕 Mock 数据存储规则 (更新规范)**:
+**Mock 数据存储规则 (强制执行)**:
 
 1. **单文件完整性原则**:
    - 每一个 `*.mock.ts` 单文件必须包含：**数据库对象** + **接口定义**
@@ -1542,16 +1661,16 @@ export default defineUniAppMock([
 
 #### 3.1 开发流程规范
 
-**标准开发流程 (更新规范要求)**:
+**标准开发流程**:
 
 1. **分析原 Vue2 接口** - 理解业务逻辑和数据结构
-2. **🆕 创建拆分后的 TypeScript 类型定义** - 在 `src/types/{模块名}.ts` 中定义业务类型
-3. **🆕 创建完整的 Mock 文件** - 必须包含内联数据 + 数据库对象 + 接口定义
+2. **创建拆分后的 TypeScript 类型定义** - 在 `src/types/{模块名}.ts` 中定义业务类型
+3. **创建完整的 Mock 文件** - 必须包含内联数据 + 数据库对象 + 接口定义
 4. **创建 Alova API 接口** - 现代化的请求定义，使用拆分后的类型
-5. **🆕 类型安全验证** - 确保所有 Mock 数据 100%符合业务类型
+5. **类型安全验证** - 确保所有 Mock 数据 100%符合业务类型
 6. **测试验证** - 确保 Mock 接口正常工作
 
-**🔴 更新后的强制要求**:
+**强制要求**:
 
 - **类型导入**: 必须从 `@/types/{模块名}` 导入业务类型
 - **内联数据存储**: 模拟数据直接定义在各自的 `*.mock.ts` 文件的数据库对象内
@@ -1754,6 +1873,71 @@ export default defineUniAppMock([
 
 ## 迁移实施计划
 
+### 在组件中使用接口的最佳实践
+
+#### 🔴 useRequest 组合式 API 使用规范
+
+**核心原则**: 使用 Alova 提供的 `useRequest` Hook 管理接口请求状态，替代手动管理 loading、error、data 等状态。
+
+**默认规范**: 所有 `useRequest` 必须设置 `immediate: false`，禁止自动运行请求，必须手动触发。
+
+**在组件中的标准使用方式**:
+
+```typescript
+<script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { getRepairOrderList, type RepairListParams } from '@/api/repair'
+import { ref, onMounted } from 'vue'
+
+// 查询参数
+const queryParams = ref<RepairListParams>({
+  page: 1,
+  row: 10,
+  status: undefined,
+  communityId: 'COMM_001',
+})
+
+// 🔴 必须使用 useRequest 管理请求状态
+const {
+  loading,
+  data: repairData,
+  send: loadRepairList,
+  onSuccess,
+  onError,
+  onComplete,
+} = useRequest(
+  () => getRepairOrderList(queryParams.value),
+  {
+    immediate: false, // 🔴 强制要求: 不自动执行
+  },
+)
+
+// 成功回调
+onSuccess((result) => {
+  console.log('维修工单列表加载成功:', result)
+  // result 类型: PaginationResponse<RepairOrder>
+  // result.list: RepairOrder[]
+  // result.total: number
+})
+
+// 失败回调
+onError((error) => {
+  console.error('维修工单列表加载失败:', error)
+  uni.showToast({ title: '加载失败', icon: 'none' })
+})
+
+// 完成回调（无论成功失败都执行）
+onComplete(() => {
+  uni.stopPullDownRefresh()
+})
+
+// 页面加载时手动触发
+onMounted(() => {
+  loadRepairList()
+})
+</script>
+```
+
 ### 配置标准
 
 #### Vite 配置要求
@@ -1783,7 +1967,7 @@ export default defineConfig({
 
 ### 实施标准
 
-**🔴 基础格式要求**:
+**基础格式要求**:
 
 - ✅ 所有 Mock 文件使用 `*.mock.ts` 格式
 - ✅ Mock 文件都在 `src/api/mock` 目录下
@@ -1797,7 +1981,7 @@ export default defineConfig({
   - 禁止手动构造返回对象，确保响应格式的一致性
   - 禁止使用手动的 `console.log('🚀 Mock API: ...')` 格式，必须统一使用 `mockLog()` 函数
 
-**🆕 类型安全要求**:
+**类型安全要求**:
 
 - ✅ 必须从 `@/types/{模块名}` 导入拆分后的业务类型
 - ✅ 模拟数据直接定义在各自的 `*.mock.ts` 文件的数据库对象内
@@ -1805,7 +1989,7 @@ export default defineConfig({
 - ✅ 所有函数参数和返回值都有明确的 TypeScript 类型注解
 - ✅ 严禁使用 `any` 类型，确保 100%类型安全
 
-**🆕 文件结构要求**:
+**文件结构要求**:
 
 - ✅ 每个 `*.mock.ts` 文件必须包含：内联数据 + 数据库对象 + 接口定义
 - ✅ 数据库对象包含完整的 CRUD 操作方法和模拟数据存储
@@ -1835,7 +2019,29 @@ export default defineConfig({
 
 #### 类型安全验证
 
-1. **TypeScript 编译检查**:
+**✅ API 文件类型检查清单**:
+
+- [ ] 所有接口函数都有明确的参数类型注解
+- [ ] 所有接口函数都有明确的返回类型注解
+- [ ] 正确导入和使用基础业务类型（`ApiResponse<T>`, `PaginationResponse<T>`）
+- [ ] 业务类型从 `@/types/[模块名]` 导入
+- [ ] 严格禁止使用 `any` 类型
+- [ ] 分页接口使用 `PaginationParams` 和 `PaginationResponse<T>`
+- [ ] 详情接口使用 `ApiResponse<T>` 包装
+- [ ] 创建/更新接口参数类型完整
+
+**✅ Mock 文件类型检查清单**:
+
+- [ ] Mock 数据使用业务类型定义
+- [ ] 数据库对象方法有完整的类型注解
+- [ ] Mock 响应使用 `successResponse()` 和 `errorResponse()` 包装
+- [ ] 所有日志输出使用 `mockLog()` 函数
+- [ ] 严格禁止使用 `ResultEnum` 枚举，只使用 `ResultEnumMap`
+- [ ] 使用相对路径导入工具函数，禁止路径别名
+
+**✅ TypeScript 编译检查**:
+
+1. **无编译错误**:
    - Mock 文件应无 TypeScript 编译错误
    - 所有类型注解应正确且无 `any` 类型
 2. **IDE 类型提示**:
@@ -1844,6 +2050,10 @@ export default defineConfig({
 3. **类型覆盖率**:
    - 确保 Mock 生成的数据 100%符合业务类型定义
    - 验证所有必需字段都已提供
+4. **基础类型使用验证**:
+   - 验证 `ApiResponse<T>` 的泛型类型正确
+   - 验证 `PaginationResponse<T>` 的类型结构完整
+   - 验证 `PaginationParams` 的参数传递正确
 
 #### 功能完整性验证
 
