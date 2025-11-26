@@ -168,8 +168,6 @@ src\pages-sub\repair\handle.vue
 
 ## 022 补全完善接口
 
-<!-- TODO: 先完成子代理拓展 -->
-
 阅读以下文件：
 
 1. src\api\floor.ts
@@ -180,3 +178,6 @@ src\pages-sub\repair\handle.vue
 
 1. 按照 `api-migration` 代理的要求，运行 `api-migration` 代理，修复这些接口文件不规范的部分。
 2. 运行 `api-migration` 代理，修复这些对应 mock 接口的内容，确保每一个接口都有对应的 mock 接口实现。
+3. 不要修改掉上述文件的接口，以上述文件接口为数据源，以 `api-migration` 代理为要求，补全，修复内容。
+4. 请你修复接口文件不规范的部分，但是不要新增，删除接口。接口数目不应该变化。
+5. 修复完接口文件后，请你修复，补全对应的 mock 接口文件。
