@@ -36,6 +36,10 @@ export type PageRoute
     | '/pages-sub/property/apply-room-record'
     | '/pages-sub/property/apply-room-record-handle'
     | '/pages-sub/property/apply-room-record-detail'
+    /** 选择器模块 */
+    | '/pages-sub/selector/select-floor'
+    | '/pages-sub/selector/select-unit'
+    | '/pages-sub/selector/select-room'
 
 /** Tab页面路由类型 */
 export type TabRoute
@@ -161,6 +165,15 @@ export interface PageParams {
     communityId: string
     state: string
     stateName: string
+  }
+  /** 选择器模块参数 */
+  '/pages-sub/selector/select-floor': {}
+  '/pages-sub/selector/select-unit': {
+    floorId: string
+  }
+  '/pages-sub/selector/select-room': {
+    floorId: string
+    unitId: string
   }
 }
 

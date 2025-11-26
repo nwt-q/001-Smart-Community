@@ -196,6 +196,23 @@ export class TypedRouter {
   static toApplyRoomRecordDetail(params: PageParams['/pages-sub/property/apply-room-record-detail']) {
     return navigateToTyped('/pages-sub/property/apply-room-record-detail', params)
   }
+
+  /** 选择器模块导航 */
+
+  /** 跳转到选择楼栋页面 */
+  static toSelectFloor() {
+    return navigateToTyped('/pages-sub/selector/select-floor', {})
+  }
+
+  /** 跳转到选择单元页面 */
+  static toSelectUnit(floorId: string) {
+    return navigateToTyped('/pages-sub/selector/select-unit', { floorId })
+  }
+
+  /** 跳转到选择房屋页面 */
+  static toSelectRoom(floorId: string, unitId: string) {
+    return navigateToTyped('/pages-sub/selector/select-room', { floorId, unitId })
+  }
 }
 
 /** 路由参数解析工具 */
@@ -258,6 +275,10 @@ export function isValidRoute(path: string): path is PageRoute {
     '/pages-sub/property/apply-room-record',
     '/pages-sub/property/apply-room-record-handle',
     '/pages-sub/property/apply-room-record-detail',
+    // 选择器模块
+    '/pages-sub/selector/select-floor',
+    '/pages-sub/selector/select-unit',
+    '/pages-sub/selector/select-room',
   ]
 
   return validRoutes.includes(path as PageRoute)
