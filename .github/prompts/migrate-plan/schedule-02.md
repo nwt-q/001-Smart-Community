@@ -181,3 +181,27 @@ src\pages-sub\repair\handle.vue
 3. 不要修改掉上述文件的接口，以上述文件接口为数据源，以 `api-migration` 代理为要求，补全，修复内容。
 4. 请你修复接口文件不规范的部分，但是不要新增，删除接口。接口数目不应该变化。
 5. 修复完接口文件后，请你修复，补全对应的 mock 接口文件。
+
+<!-- TODO: -->
+
+## 023 处理代码报错
+
+1. 阅读 `.github\prompts\migrate-plan\2025-11-17-select-floor-unit-room-migration-plan.md` 迁移报告。
+2. 阅读 `.github\prompts\route-migration-map.yml` `选择器页面 (3个)` 部分的路由迁移映射。
+3. 反向阅读旧项目内对应的代码。
+4. 针对 `src\pages-sub\selector` 目录下的几个选择用途的页面。
+5. 这几个页面出现明显的故障，请对这三个页面，安排任务，依次按照子代理的要求，对这三个 `选择器页面` 实现代码迁移改造。
+   - `api-migration`： api 迁移子代理。位于 `.claude\agents` 目录内。
+   - `code-migration`： 代码写法迁移子代理。位于 `.claude\agents` 目录内。
+   - `component-migration`： 组件迁移子代理。位于 `.claude\agents` 目录内。
+   - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
+   - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
+
+## <!-- TODO: 先完成代码报错修改 再开始对接这些页面 --> 添加维修记录 页面，补全选择列表的入口页面
+
+1. 阅读 `src\pages-sub\repair\add-order.vue` 出现的 TODO 部分。
+2. 阅读 `src\pages-sub\selector` 目录下的几个选择用途的页面。
+3. 目前已经实现了这些选择器页面，请你在 `添加维修记录` 页面内，对接实现这些功能。
+4. 实现路由跳转时，请务必使用 `.claude\agents\route-migration.md` 子代理，按照 `路由迁移子代理` 的要求实现页面跳转。
+5. 请你主动使用谷歌浏览器 MCP，实现该页面的测试，测试 `添加维修记录` 页面是否能访问这些选择页面。
+6. `添加维修记录` 页面可访问的 url 地址，在 `src\pages-sub\repair\add-order.vue` 文件最上面提供的 url 内可见。

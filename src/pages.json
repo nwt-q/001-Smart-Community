@@ -231,11 +231,43 @@
           }
         },
         {
+          "path": "repair/repair-add",
+          "type": "page",
+          "name": "repair-add",
+          "style": {
+            "navigationBarTitleText": "维修录单"
+          }
+        },
+        {
           "path": "repair/select-resource",
           "type": "page",
           "style": {
             "navigationBarTitleText": "选择物品",
             "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "selector/select-floor",
+          "type": "page",
+          "name": "select-floor",
+          "style": {
+            "navigationBarTitleText": "选择楼栋"
+          }
+        },
+        {
+          "path": "selector/select-room",
+          "type": "page",
+          "name": "select-room",
+          "style": {
+            "navigationBarTitleText": "选择房屋"
+          }
+        },
+        {
+          "path": "selector/select-unit",
+          "type": "page",
+          "name": "select-unit",
+          "style": {
+            "navigationBarTitleText": "选择单元"
           }
         }
       ]
