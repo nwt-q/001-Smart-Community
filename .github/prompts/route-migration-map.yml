@@ -128,18 +128,13 @@ route_mappings:
     gitee-example/pages/report/chargeMachineOrder.vue: src/pages-sub/report/charge-machine-order.vue
     gitee-example/pages/report/openDoorLog.vue: src/pages-sub/report/open-door-log.vue
 
-  # ===== 8. 房屋管理模块 (19个页面) =====
+  # ===== 8. 房屋管理模块 (16个页面) =====
   property_modules:
     # 房屋基础管理 (4个)
     gitee-example/pages/roomList/roomList.vue: src/pages-sub/property/room-list.vue
     gitee-example/pages/roomDetail/roomDetail.vue: src/pages-sub/property/room-detail.vue
     gitee-example/pages/floorList/floorList.vue: src/pages-sub/property/floor-list.vue
     gitee-example/pages/unitList/unitList.vue: src/pages-sub/property/unit-list.vue
-
-    # 选择器页面 (3个)
-    gitee-example/pages/selectRoom/selectRoom.vue: src/pages-sub/property/select-room.vue
-    gitee-example/pages/selectFloor/selectFloor.vue: src/pages-sub/property/select-floor.vue
-    gitee-example/pages/selectUnit/selectUnit.vue: src/pages-sub/property/select-unit.vue
 
     # 业主管理 (3个)
     gitee-example/pages/owner/owner.vue: src/pages-sub/property/owner-list.vue
@@ -159,6 +154,12 @@ route_mappings:
     gitee-example/pages/roomRenovationRecord/roomRenovationRecord.vue: src/pages-sub/property/renovation-record.vue
     gitee-example/pages/roomRenovationRecordDetail/roomRenovationRecordDetail.vue: src/pages-sub/property/renovation-record-detail.vue
     gitee-example/pages/roomRenovationRecordHandle/roomRenovationRecordHandle.vue: src/pages-sub/property/renovation-record-handle.vue
+
+  # ===== 8.1. 选择器模块 (3个页面) - 已完成迁移 ✅ =====
+  selector_modules:
+    gitee-example/pages/selectFloor/selectFloor.vue: src/pages-sub/selector/select-floor.vue
+    gitee-example/pages/selectUnit/selectUnit.vue: src/pages-sub/selector/select-unit.vue
+    gitee-example/pages/selectRoom/selectRoom.vue: src/pages-sub/selector/select-room.vue
 
   # ===== 9. OA工作流模块 (8个页面) =====
   oa_modules:
@@ -242,7 +243,7 @@ route_mappings:
 # ====================================================================
 migration_stats:
   total_pages: 140
-  modules_count: 13
+  modules_count: 14
   pages_sub_count: 123 # 使用分包的页面数量
   main_pages_count: 17 # 主包页面数量
 
@@ -254,7 +255,8 @@ migration_stats:
     inspection_modules: 8
     resource_modules: 29
     fee_modules: 14
-    property_modules: 19
+    property_modules: 16
+    selector_modules: 3
     oa_modules: 8
     notice_modules: 4
     parking_modules: 5
@@ -272,7 +274,7 @@ usage_instructions: |
   5. 保持了业务逻辑的连续性和扩展性
 
 migration_priority: |
-  高优先级: basic_modules, address_modules, repair_modules, complaint_modules
+  高优先级: basic_modules, address_modules, repair_modules, complaint_modules, selector_modules
   中优先级: inspection_modules, resource_modules, oa_modules, notice_modules
   低优先级: fee_modules, property_modules, parking_modules, work_modules, other_modules
 
