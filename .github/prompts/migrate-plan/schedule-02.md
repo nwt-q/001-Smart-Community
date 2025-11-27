@@ -197,6 +197,24 @@ src\pages-sub\repair\handle.vue
    - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
    - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 
+## 024 <!-- TODO: --> 对接口代码做处理
+
+针对 `<z-paging>` 组件的使用。分页请求接口应该如何调整？需要调研。
+
+---
+
+阅读以下文件：
+
+1. src\api\floor.ts
+2. src\api\room.ts
+3. src\api\unit.ts
+
+根据 `api-migration` 代理的要求，同时阅读相关的，与文件名对应的 mock 接口文件。
+
+1. 按照 `api-migration` 代理的要求，运行 `api-migration` 代理，修复这些接口文件不规范的部分。
+2. 不要修改掉上述文件的接口，以上述文件接口为数据源，以 `api-migration` 代理为要求，补全，修复内容。
+3. 请你修复接口文件不规范的部分，但是不要新增，删除接口。接口数目不应该变化。
+
 ## <!-- TODO: 先完成代码报错修改 再开始对接这些页面 --> 添加维修记录 页面，补全选择列表的入口页面
 
 1. 阅读 `src\pages-sub\repair\add-order.vue` 出现的 TODO 部分。
