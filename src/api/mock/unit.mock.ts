@@ -18,15 +18,23 @@ import {
 // ==================== 单元数据生成器 ====================
 
 /** 核心单元数据生成器 */
-function createMockUnit(floorIndex: number, unitIndex: number): Unit {
+function createMockUnit(communityId: string, floorIndex: number, unitIndex: number): Unit {
+  const floorId = `F_${communityId}_${floorIndex.toString().padStart(3, '0')}`
   return {
-    unitId: `U_${floorIndex}_${unitIndex}`,
-    unitNum: `${unitIndex}`,
-    floorId: `F_COMM_001_${floorIndex}`,
+    unitId: `U_${communityId}_${floorIndex.toString().padStart(3, '0')}_${unitIndex.toString().padStart(2, '0')}`,
+    unitNum: `${unitIndex}单元`,
+    floorId,
   }
 }
 
 // ==================== 单元数据库对象 ====================
+
+/** 社区配置（与floor.mock.ts保持一致） */
+const COMMUNITIES = [
+  { communityId: 'COMM_001', communityName: '阳光花园小区' },
+  { communityId: 'COMM_002', communityName: '绿洲新城' },
+  { communityId: 'COMM_003', communityName: '滨江花园' },
+]
 
 const mockUnitDatabase = {
   /** 初始化数据 - 内联数据存储 */
@@ -34,12 +42,14 @@ const mockUnitDatabase = {
 
   /** 初始化数据库 */
   init() {
-    // 每栋楼生成6个单元（1-6单元）
-    for (let floorIndex = 1; floorIndex <= 20; floorIndex++) {
-      for (let unitIndex = 1; unitIndex <= 6; unitIndex++) {
-        this.units.push(createMockUnit(floorIndex, unitIndex))
+    // 每个社区每栋楼生成8个单元（增加数据量）
+    COMMUNITIES.forEach((community) => {
+      for (let floorIndex = 1; floorIndex <= 30; floorIndex++) {
+        for (let unitIndex = 1; unitIndex <= 8; unitIndex++) {
+          this.units.push(createMockUnit(community.communityId, floorIndex, unitIndex))
+        }
       }
-    }
+    })
   },
 
   /** 获取单元详情 */

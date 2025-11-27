@@ -4,7 +4,6 @@
  * 包含：内联数据 + 数据库对象 + 接口定义
  */
 
-import type { PaginationResponse } from '@/types/api'
 import type { Floor } from '@/types/selector'
 import {
   defineUniAppMock,
@@ -45,12 +44,12 @@ const mockFloorDatabase = {
     }
   },
 
-  /** 生成楼栋列表（每个社区生成20栋） */
+  /** 生成楼栋列表（每个社区生成30栋） */
   generateFloorList(): Floor[] {
     const floors: Floor[] = []
 
     COMMUNITIES.forEach((community) => {
-      for (let i = 1; i <= 20; i++) {
+      for (let i = 1; i <= 30; i++) {
         floors.push({
           floorId: `F_${community.communityId}_${i.toString().padStart(3, '0')}`,
           floorNum: i.toString(),
@@ -85,24 +84,25 @@ const mockFloorDatabase = {
     return this.floors.find(floor => floor.floorId === floorId)
   },
 
-  /** 获取楼栋列表（支持分页） */
+  /** 获取楼栋列表（支持分页） - z-paging兼容格式 */
   getFloorList(params: {
     communityId?: string
     floorNum?: string
     keyword?: string
     page?: number
     row?: number
-  }): PaginationResponse<Floor> {
+  }): { list: Floor[], total: number } {
     const filteredFloors = this.filterFloors(params)
     const page = params.page || 1
     const row = params.row || 50
 
+    const start = (page - 1) * row
+    const end = start + row
+    const list = filteredFloors.slice(start, end)
+
     return {
-      list: filteredFloors.slice((page - 1) * row, page * row),
+      list,
       total: filteredFloors.length,
-      page,
-      pageSize: row,
-      hasMore: page * row < filteredFloors.length,
     }
   },
 }
