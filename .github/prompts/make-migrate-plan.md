@@ -635,3 +635,9 @@
 请你全面的，整体性的调研清楚，在使用 `wot-design-uni` 组件和 `unibest` 模板的前提下，如何实现优雅美观的错误提示？
 
 用 `gitmcp` 的 `wot-design-uni` 和 `unibest-docs` 工具，来查询最佳实践。
+
+---
+
+<!-- TODO:  -->
+
+阅读文档： `docs\reports\2025-11-28-api-error-handling-research.md` ，考虑让接口请求内部整合好接口报错提示方案。
