@@ -18,7 +18,11 @@ color: blue
 
 ## 看情况阅读 `wot-design-uni` 组件库的文档
 
-你可以直接在 github 仓库内，阅读 `wot-design-uni` 组件库的 markdown 格式文档。如果你在使用 `wot-design-uni` 组件时，不清楚如何使用，请有策略的，部分地阅读来自 github 的 markdown 文档。请你自主使用合适的获取 markdown 的 MCP 工具，或者是其他的 fetch 网站获取工具，获取具体的文档。
+你可以直接在 github 仓库内，阅读 `wot-design-uni` 组件库的 markdown 格式文档。如果你在使用 `wot-design-uni` 组件时，不清楚如何使用，请有策略的，部分地阅读来自 github 的 markdown 文档。请你自主使用合适的工具查找文档：
+
+1. 其他的 fetch 网站获取工具。
+2. markdown 的 MCP 工具。
+3. 用 `gitmcp__wot-design-uni__Moonofweisheng` mcp 查找。
 
 `wot-design-uni` 组件文档全都在以下 github 仓库目录内。
 
