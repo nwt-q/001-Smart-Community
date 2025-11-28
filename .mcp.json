@@ -3,6 +3,14 @@
     "gitmcp__wot-design-uni__Moonofweisheng": {
       "type": "http",
       "url": "https://gitmcp.io/Moonofweisheng/wot-design-uni"
+    },
+    "gitmcp__unibest-tech__unibest": {
+      "type": "http",
+      "url": "https://gitmcp.io/unibest-tech/unibest"
+    },
+    "gitmcp__unibest-tech__unibest-docs": {
+      "type": "http",
+      "url": "https://gitmcp.io/unibest-tech/unibest-docs"
     }
   }
 }
