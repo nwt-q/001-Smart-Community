@@ -197,19 +197,43 @@ export class TypedRouter {
     return navigateToTyped('/pages-sub/property/apply-room-record-detail', params)
   }
 
-  /** 选择器模块导航 */
+  /** 选择器模块导航 - 级联选择功能 */
 
-  /** 跳转到选择楼栋页面 */
+  /**
+   * 跳转到选择楼栋页面
+   * @description 选择器流程的第一步，无需任何参数
+   * @example
+   * ```typescript
+   * TypedRouter.toSelectFloor()
+   * ```
+   */
   static toSelectFloor() {
     return navigateToTyped('/pages-sub/selector/select-floor', {})
   }
 
-  /** 跳转到选择单元页面 */
+  /**
+   * 跳转到选择单元页面
+   * @description 选择器流程的第二步，需要提供楼栋ID
+   * @param floorId 楼栋ID，从选择楼栋页面获取
+   * @example
+   * ```typescript
+   * TypedRouter.toSelectUnit('F001')
+   * ```
+   */
   static toSelectUnit(floorId: string) {
     return navigateToTyped('/pages-sub/selector/select-unit', { floorId })
   }
 
-  /** 跳转到选择房屋页面 */
+  /**
+   * 跳转到选择房屋页面
+   * @description 选择器流程的第三步，需要提供楼栋ID和单元ID
+   * @param floorId 楼栋ID，从选择楼栋页面获取
+   * @param unitId 单元ID，从选择单元页面获取
+   * @example
+   * ```typescript
+   * TypedRouter.toSelectRoom('F001', 'U001')
+   * ```
+   */
   static toSelectRoom(floorId: string, unitId: string) {
     return navigateToTyped('/pages-sub/selector/select-room', { floorId, unitId })
   }
@@ -275,7 +299,7 @@ export function isValidRoute(path: string): path is PageRoute {
     '/pages-sub/property/apply-room-record',
     '/pages-sub/property/apply-room-record-handle',
     '/pages-sub/property/apply-room-record-detail',
-    // 选择器模块
+    // 选择器模块 - 级联选择功能
     '/pages-sub/selector/select-floor',
     '/pages-sub/selector/select-unit',
     '/pages-sub/selector/select-room',
