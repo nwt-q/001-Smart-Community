@@ -305,6 +305,17 @@ export default defineConfig({
     'i-carbon-user',
     'i-carbon-home',
     'i-carbon-settings',
+    'i-carbon-building',
+    'i-carbon-grid',
+    'i-carbon-time',
+    'i-carbon-trash-can',
+    'i-carbon-arrow-up',
+    'i-carbon-arrow-left',
+    'i-carbon-warning',
+    'i-carbon-checkmark',
+    'i-carbon-add',
+    'i-carbon-checkmark-filled',
+    'i-carbon-chevron-right',
 
     // 动态类名安全列表
     'text-primary',
