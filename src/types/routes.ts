@@ -36,10 +36,10 @@ export type PageRoute
     | '/pages-sub/property/apply-room-record'
     | '/pages-sub/property/apply-room-record-handle'
     | '/pages-sub/property/apply-room-record-detail'
-    /** 选择器模块 */
-    | '/pages-sub/selector/select-floor'
-    | '/pages-sub/selector/select-unit'
-    | '/pages-sub/selector/select-room'
+    /** 选择器模块 (3个页面) - 级联选择功能 */
+    | '/pages-sub/selector/select-floor' // 选择楼栋 (无参数)
+    | '/pages-sub/selector/select-unit' // 选择单元 (需要 floorId 参数)
+    | '/pages-sub/selector/select-room' // 选择房屋 (需要 floorId 和 unitId 参数)
 
 /** Tab页面路由类型 */
 export type TabRoute
@@ -166,14 +166,14 @@ export interface PageParams {
     state: string
     stateName: string
   }
-  /** 选择器模块参数 */
-  '/pages-sub/selector/select-floor': {}
+  /** 选择器模块参数 - 级联选择页面参数 */
+  '/pages-sub/selector/select-floor': {} // 选择楼栋页面，无需参数
   '/pages-sub/selector/select-unit': {
-    floorId: string
+    floorId: string // 楼栋ID，必填参数
   }
   '/pages-sub/selector/select-room': {
-    floorId: string
-    unitId: string
+    floorId: string // 楼栋ID，必填参数
+    unitId: string // 单元ID，必填参数
   }
 }
 
