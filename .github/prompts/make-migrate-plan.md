@@ -627,3 +627,11 @@
 1. 请你将 `docs\reports\2025-11-20-api-migration-interface-standards.md` 整合到 `api-migration` 接口迁移子代理文件内。
 2. 在整合内容时，请你认真思考。有机整合，做恰当的补充。如果需要有覆盖的场景，请你以最新的 `2025-11-20-api-migration-interface-standards` 来为准。
 3. 删除掉 `docs\reports\2025-11-20-api-migration-interface-standards.md` 文件，以后只能用唯一的 `api-migration` 接口迁移子代理来完成 api 迁移任务。
+
+### 045 调研清楚项目应该如何使用接口错误提示能力？
+
+在本项目内，接口请求出现错误的时候，应该怎么使用 api 请求回调函数？使用那个组件来实现统一的接口请求错误提示？
+
+请你全面的，整体性的调研清楚，在使用 `wot-design-uni` 组件和 `unibest` 模板的前提下，如何实现优雅美观的错误提示？
+
+用 `gitmcp` 的 `wot-design-uni` 和 `unibest-docs` 工具，来查询最佳实践。
