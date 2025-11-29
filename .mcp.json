@@ -11,6 +11,10 @@
     "gitmcp__unibest-tech__unibest-docs": {
       "type": "http",
       "url": "https://gitmcp.io/unibest-tech/unibest-docs"
+    },
+    "gitmcp__uni-z-paging__SmileZXLee": {
+      "type": "http",
+      "url": "https://gitmcp.io/SmileZXLee/uni-z-paging"
     }
   }
 }
