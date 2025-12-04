@@ -647,10 +647,20 @@
 
 阅读文档： `docs\reports\2025-11-28-api-error-handling-research.md` ，考虑让接口请求内部整合好接口报错提示方案。
 
-### 047 <!-- TODO: --> 反哺补全 `api-migration` 子代理文档
+### 047 反哺补全 `api-migration` 子代理文档
 
 刚才我们迭代了 `docs\reports\2025-11-28-api-error-handling-research.md` `接口错误提示能力` 报告，我希望你把这个 `接口错误提示能力` 变成一份 claude code skill 。
 
 1. 将 `接口错误提示能力` 报告变成一个本地的 claude code skills。
 2. 适当的迭代更新 `api-migration` 子代理文档，让 `api-migration` 子代理以后在处理接口错误提示能力时，可以使用正确的 `接口错误提示能力`，并主动借助 claude code skill 的能力，确保编写的接口能够正确做出满足标准的错误提示。
 3. 适当更新 `api-migration` 子代理文档，避免 `api-migration` 子代理文档文件长度过长。
+
+### 048 调研 `<z-paging>` 组件的使用
+
+我们现在知道，在本项目中，使用接口请求时，需要遵循 `api-migration` 子代理的要求。
+
+但是本项目使用的 uniapp 分页组件 `<z-paging>` ，有着特定的接口分页函数写法。
+
+请你适当的使用 `gitmcp__uni-z-paging__SmileZXLee` 这款 mcp，阅读相关的代码，并思考一下我们项目在使用接口请求时，如何适当地改写，在基于并满足`api-migration` 子代理要求的前提下，怎么去适配，并使用 `<z-paging>` 所要求的代码写法格式？
+
+在你使用 `gitmcp__uni-z-paging__SmileZXLee` 这款 mcp 时，很容易出现上下文超限的情况，请你酌情使用，或者是变通地访问 `SmileZXLee/uni-z-paging` github 仓库，阅读相关的 demo 案例代码。
