@@ -645,6 +645,13 @@
 3. 请你认真思考，在使用 Alova 的 `useRequest` 工具并使用三个回调函数的情况下，该如何与`接口错误提示能力`所提供的工具结合起来，实现在 `useRequest` 回调内实现统一的错误提示处理。
 4. 请你迭代更新`接口错误提示能力`报告，使得里面的实例代码，能够完美的符合 `api-migration` 子代理所述的接口请求写法。
 
-<!-- TODO:  -->
-
 阅读文档： `docs\reports\2025-11-28-api-error-handling-research.md` ，考虑让接口请求内部整合好接口报错提示方案。
+
+<!-- TODO: -->
+
+### 047 反哺补全 `api-migration` 子代理文档
+
+刚才我们迭代了 `docs\reports\2025-11-28-api-error-handling-research.md` `接口错误提示能力` 报告，我希望你把这个 `接口错误提示能力` 变成一份 claude code skill 。
+
+1. 将 `接口错误提示能力` 报告变成一个本地的 claude code skills。
+2. 适当的迭代更新 `api-migration` 子代理文档，让 `api-migration` 子代理以后在处理接口错误提示能力时，可以使用正确的 `接口错误提示能力`，并主动借助 claude code skill 的能力，确保编写的接口能够正确做出满足标准的错误提示。
