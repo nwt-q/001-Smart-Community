@@ -638,6 +638,13 @@
 
 ---
 
+### 046 迭代更好接口错误提示能力实施方案
+
+1. 请你阅读 `docs\reports\2025-11-28-api-error-handling-research.md` 报告，我们将重点迭代本报告。
+2. 阅读 `.claude\agents\api-migration.md` 子代理文件。了解清楚本项目是如何使用 Alova 提供的 `useRequest` 工具，并在 onSuccess onError onComplete 这三个钩子内完成接口数据回调的。
+3. 请你认真思考，在使用 Alova 的 `useRequest` 工具并使用三个回调函数的情况下，该如何与`接口错误提示能力`所提供的工具结合起来，实现在 `useRequest` 回调内实现统一的错误提示处理。
+4. 请你迭代更新`接口错误提示能力`报告，使得里面的实例代码，能够完美的符合 `api-migration` 子代理所述的接口请求写法。
+
 <!-- TODO:  -->
 
 阅读文档： `docs\reports\2025-11-28-api-error-handling-research.md` ，考虑让接口请求内部整合好接口报错提示方案。
