@@ -54,9 +54,9 @@ const repairScopes = [
   { id: '004' as RepairObjType, name: '房屋' },
 ]
 
-/** 选中的位置类型索引 */
-const selectedScopeIndex = ref<number>(0)
-const repairObjType = computed(() => repairScopes[selectedScopeIndex.value]?.id as RepairObjType)
+/** 选中的位置类型 */
+const selectedScopeId = ref<string>('001')
+const repairObjType = computed(() => selectedScopeId.value as RepairObjType)
 const publicArea = computed(() => repairObjType.value === '004' ? 'F' : 'T')
 
 /** 楼栋信息 */
@@ -189,8 +189,8 @@ onUnload(() => {
 })
 
 /** 位置类型改变 */
-function handleScopeChange({ value }: { value: number }) {
-  selectedScopeIndex.value = value
+function handleScopeChange({ value }: { value: string }) {
+  selectedScopeId.value = value
   // 重新加载报修类型
   loadRepairTypes()
   // 清空位置信息和缓存
@@ -424,7 +424,7 @@ async function handleSubmit() {
       <wd-cell-group border>
         <!-- 位置类型 -->
         <wd-picker
-          v-model="selectedScopeIndex"
+          v-model="selectedScopeId"
           :columns="repairScopes"
           label-key="name"
           value-key="id"
@@ -433,7 +433,7 @@ async function handleSubmit() {
           <wd-cell title="位置" is-link center>
             <template #value>
               <text class="text-blue-500">
-                {{ repairScopes[selectedScopeIndex]?.name || '小区' }}
+                {{ repairScopes.find(item => item.id === selectedScopeId)?.name || '小区' }}
               </text>
             </template>
           </wd-cell>
