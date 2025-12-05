@@ -431,11 +431,9 @@ async function handleSubmit() {
           @confirm="handleScopeChange"
         >
           <wd-cell title="位置" is-link center>
-            <template #value>
-              <text class="text-blue-500">
-                {{ repairScopes.find(item => item.id === selectedScopeId)?.name || '小区' }}
-              </text>
-            </template>
+            <text class="text-blue-500">
+              {{ repairScopes.find(item => item.id === selectedScopeId)?.name || '小区' }}
+            </text>
           </wd-cell>
         </wd-picker>
 
@@ -488,69 +486,57 @@ async function handleSubmit() {
       <wd-cell-group border>
         <!-- 报修类型 -->
         <wd-cell title="报修类型" center>
-          <template #value>
-            <wd-picker
-              v-model="selectedRepairTypeId"
-              :columns="repairTypes"
-              label-key="repairTypeName"
-              value-key="repairType"
-              @confirm="handleRepairTypeChange"
-            >
-              <text class="text-blue-500">
-                {{ selectedRepairType?.repairTypeName || '请选择' }}
-              </text>
-            </wd-picker>
-          </template>
+          <wd-picker
+            v-model="selectedRepairTypeId"
+            :columns="repairTypes"
+            label-key="repairTypeName"
+            value-key="repairType"
+            @confirm="handleRepairTypeChange"
+          >
+            <text class="text-blue-500">
+              {{ selectedRepairType?.repairTypeName || '请选择' }}
+            </text>
+          </wd-picker>
         </wd-cell>
 
         <!-- 收费标准 -->
         <wd-cell v-if="priceScope" title="收费标准" center>
-          <template #value>
-            <text class="text-gray-600">{{ priceScope }}</text>
-          </template>
+          <text class="text-gray-600">{{ priceScope }}</text>
         </wd-cell>
 
         <!-- 报修人 -->
         <wd-cell title="报修人" center>
-          <template #value>
-            <wd-input
-              v-model="repairName"
-              placeholder="请输入报修人"
-              clearable
-              no-border
-            />
-          </template>
+          <wd-input
+            v-model="repairName"
+            placeholder="请输入报修人"
+            clearable
+            no-border
+          />
         </wd-cell>
 
         <!-- 手机号 -->
         <wd-cell title="手机号" center>
-          <template #value>
-            <wd-input
-              v-model="tel"
-              placeholder="请输入手机号"
-              type="digit"
-              clearable
-              no-border
-            />
-          </template>
+          <wd-input
+            v-model="tel"
+            placeholder="请输入手机号"
+            type="digit"
+            clearable
+            no-border
+          />
         </wd-cell>
 
         <!-- 预约日期 -->
         <wd-cell title="预约日期" center @click="showDatePicker = true">
-          <template #value>
-            <text :class="appointmentDate ? 'text-blue-500' : 'text-gray-400'">
-              {{ appointmentDate || '请选择日期' }}
-            </text>
-          </template>
+          <text :class="appointmentDate ? 'text-blue-500' : 'text-gray-400'">
+            {{ appointmentDate || '请选择日期' }}
+          </text>
         </wd-cell>
 
         <!-- 预约时间 -->
         <wd-cell title="预约时间" center @click="showTimePicker = true">
-          <template #value>
-            <text :class="appointmentTime ? 'text-blue-500' : 'text-gray-400'">
-              {{ appointmentTime || '请选择时间' }}
-            </text>
-          </template>
+          <text :class="appointmentTime ? 'text-blue-500' : 'text-gray-400'">
+            {{ appointmentTime || '请选择时间' }}
+          </text>
         </wd-cell>
       </wd-cell-group>
     </view>
