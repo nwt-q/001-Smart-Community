@@ -655,6 +655,18 @@
 2. 适当的迭代更新 `api-migration` 子代理文档，让 `api-migration` 子代理以后在处理接口错误提示能力时，可以使用正确的 `接口错误提示能力`，并主动借助 claude code skill 的能力，确保编写的接口能够正确做出满足标准的错误提示。
 3. 适当更新 `api-migration` 子代理文档，避免 `api-migration` 子代理文档文件长度过长。
 
+#### 01 彻底消化内化 `接口错误提示能力` 报告
+
+我希望你将 `docs\reports\2025-11-28-api-error-handling-research.md` `接口错误提示能力` 报告彻底的，完整的变成一款 claude code skills 。
+
+完整的内化，吸收成 `.claude\skills\api-error-handling.md` 文件。
+
+将具体做法和案例保留。
+
+只保留具体的做法，和实施标准，按照方法论，和实际技能的标准来吸收 `docs\reports\2025-11-28-api-error-handling-research.md` 的内容。
+
+最后我们会永久删除掉 `docs\reports\2025-11-28-api-error-handling-research.md` 文档，只留下能够高强度复用的 `.claude\skills\api-error-handling.md` 技能文件。
+
 ### 048 调研 `<z-paging>` 组件的使用
 
 我们现在知道，在本项目中，使用接口请求时，需要遵循 `api-migration` 子代理的要求。
