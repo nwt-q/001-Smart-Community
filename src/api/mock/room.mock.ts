@@ -16,7 +16,11 @@ import {
 
 // ==================== 房屋数据生成器 ====================
 
-/** 生成单个房屋数据 */
+/**
+ * 生成单个房屋数据
+ * @param id - 房屋序号ID
+ * @returns 房屋对象
+ */
 function createMockRoom(id: string): Room {
   const floorIndex = Math.floor(Number.parseInt(id) / 36) + 1 // 每栋楼36个房间（6单元×6房间）
   const unitIndex = Math.floor((Number.parseInt(id) % 36) / 6) + 1
@@ -42,7 +46,11 @@ const mockRoomDatabase = {
   rooms: Array.from({ length: 720 }, (_, index) =>
     createMockRoom(index.toString().padStart(3, '0'))) as Room[],
 
-  /** 根据参数获取房屋列表 */
+  /**
+   * 根据参数获取房屋列表
+   * @param params - 查询参数
+   * @returns 分页后的房屋列表响应
+   */
   getRoomList(params: RoomQueryParams): PaginationResponse<Room> {
     let filteredRooms = [...this.rooms]
 
@@ -77,18 +85,31 @@ const mockRoomDatabase = {
     }
   },
 
-  /** 根据 roomId 获取房屋详情 */
+  /**
+   * 根据 roomId 获取房屋详情
+   * @param roomId - 房屋ID
+   * @returns 房屋对象或 undefined
+   */
   getRoomById(roomId: string): Room | undefined {
     return this.rooms.find(room => room.roomId === roomId)
   },
 
-  /** 添加房屋 */
+  /**
+   * 添加房屋
+   * @param room - 房屋对象
+   * @returns 添加的房屋对象
+   */
   addRoom(room: Room): Room {
     this.rooms.unshift(room)
     return room
   },
 
-  /** 更新房屋 */
+  /**
+   * 更新房屋
+   * @param roomId - 房屋ID
+   * @param updateData - 更新的数据
+   * @returns 更新后的房屋对象或 null
+   */
   updateRoom(roomId: string, updateData: Partial<Room>): Room | null {
     const room = this.getRoomById(roomId)
     if (room) {
@@ -98,7 +119,11 @@ const mockRoomDatabase = {
     return null
   },
 
-  /** 删除房屋 */
+  /**
+   * 删除房屋
+   * @param roomId - 房屋ID
+   * @returns 删除成功返回 true，否则返回 false
+   */
   deleteRoom(roomId: string): boolean {
     const index = this.rooms.findIndex(room => room.roomId === roomId)
     if (index !== -1) {
@@ -120,26 +145,20 @@ export default defineUniAppMock([
     body: async ({ query, body }) => {
       await randomDelay(300, 600)
 
-      try {
-        const params = { ...query, ...body } as RoomQueryParams
-        mockLog('queryRooms', params)
+      const params = { ...query, ...body } as RoomQueryParams
+      mockLog('queryRooms', params)
 
-        const result = mockRoomDatabase.getRoomList({
-          communityId: params.communityId || 'COMM_001',
-          page: Number(params.page) || 1,
-          row: Number(params.row) || 50,
-          floorId: params.floorId,
-          unitId: params.unitId,
-          roomNum: params.roomNum,
-        })
+      const result = mockRoomDatabase.getRoomList({
+        communityId: params.communityId || 'COMM_001',
+        page: Number(params.page) || 1,
+        row: Number(params.row) || 50,
+        floorId: params.floorId,
+        unitId: params.unitId,
+        roomNum: params.roomNum,
+      })
 
-        mockLog('queryRooms result', `→ ${result.list.length} items`)
-        return successResponse(result, '查询成功')
-      }
-      catch (error: any) {
-        console.error('❌ Mock API Error: queryRooms', error)
-        return errorResponse(error.message || '查询房屋列表失败')
-      }
+      mockLog('queryRooms result', `${result.list.length} items`)
+      return successResponse(result, '查询成功')
     },
   },
 
@@ -151,30 +170,24 @@ export default defineUniAppMock([
     body: async ({ query, body }) => {
       await randomDelay(200, 500)
 
-      try {
-        const params = { ...query, ...body }
-        const roomId = params.roomId
+      const params = { ...query, ...body }
+      const roomId = params.roomId
 
-        mockLog('queryRoomDetail', { roomId })
+      mockLog('queryRoomDetail', { roomId })
 
-        // 参数验证
-        if (!roomId) {
-          return errorResponse('房间ID不能为空', ResultEnumMap.Error)
-        }
-
-        const room = mockRoomDatabase.getRoomById(roomId)
-
-        if (!room) {
-          return errorResponse('房屋不存在', ResultEnumMap.NotFound)
-        }
-
-        mockLog('queryRoomDetail result', `→ ${room.roomNum}`)
-        return successResponse(room, '查询成功')
+      // 参数验证
+      if (!roomId) {
+        return errorResponse('房间ID不能为空', ResultEnumMap.Error)
       }
-      catch (error: any) {
-        console.error('❌ Mock API Error: queryRoomDetail', error)
-        return errorResponse(error.message || '查询房屋详情失败')
+
+      const room = mockRoomDatabase.getRoomById(roomId)
+
+      if (!room) {
+        return errorResponse('房屋不存在', ResultEnumMap.NotFound)
       }
+
+      mockLog('queryRoomDetail result', room.roomNum)
+      return successResponse(room, '查询成功')
     },
   },
 ])

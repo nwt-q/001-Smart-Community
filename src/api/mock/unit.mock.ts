@@ -17,7 +17,13 @@ import {
 
 // ==================== 单元数据生成器 ====================
 
-/** 核心单元数据生成器 */
+/**
+ * 核心单元数据生成器
+ * @param communityId - 社区ID
+ * @param floorIndex - 楼栋序号
+ * @param unitIndex - 单元序号
+ * @returns 单元对象
+ */
 function createMockUnit(communityId: string, floorIndex: number, unitIndex: number): Unit {
   const floorId = `F_${communityId}_${floorIndex.toString().padStart(3, '0')}`
   return {
@@ -40,7 +46,10 @@ const mockUnitDatabase = {
   /** 初始化数据 - 内联数据存储 */
   units: [] as Unit[],
 
-  /** 初始化数据库 */
+  /**
+   * 初始化数据库
+   * 每个社区每栋楼生成8个单元
+   */
   init() {
     // 每个社区每栋楼生成8个单元（增加数据量）
     COMMUNITIES.forEach((community) => {
@@ -52,12 +61,20 @@ const mockUnitDatabase = {
     })
   },
 
-  /** 获取单元详情 */
+  /**
+   * 获取单元详情
+   * @param unitId - 单元ID
+   * @returns 单元对象或 undefined
+   */
   getUnitById(unitId: string): Unit | undefined {
     return this.units.find(unit => unit.unitId === unitId)
   },
 
-  /** 获取单元列表（支持筛选和分页） */
+  /**
+   * 获取单元列表（支持筛选和分页）
+   * @param params - 查询参数
+   * @returns 分页后的单元列表响应
+   */
   getUnitList(params: UnitQueryParams): PaginationResponse<Unit> {
     let filteredUnits = [...this.units]
 
@@ -81,18 +98,31 @@ const mockUnitDatabase = {
     )
   },
 
-  /** 根据楼栋ID获取单元列表 */
+  /**
+   * 根据楼栋ID获取单元列表
+   * @param floorId - 楼栋ID
+   * @returns 单元数组
+   */
   getUnitsByFloorId(floorId: string): Unit[] {
     return this.units.filter(unit => unit.floorId === floorId)
   },
 
-  /** 添加单元 */
+  /**
+   * 添加单元
+   * @param unit - 单元对象
+   * @returns 添加的单元对象
+   */
   addUnit(unit: Unit): Unit {
     this.units.unshift(unit)
     return unit
   },
 
-  /** 更新单元 */
+  /**
+   * 更新单元
+   * @param unitId - 单元ID
+   * @param updateData - 更新的数据
+   * @returns 更新后的单元对象或 null
+   */
   updateUnit(unitId: string, updateData: Partial<Unit>): Unit | null {
     const unit = this.getUnitById(unitId)
     if (unit) {
@@ -102,7 +132,11 @@ const mockUnitDatabase = {
     return null
   },
 
-  /** 删除单元 */
+  /**
+   * 删除单元
+   * @param unitId - 单元ID
+   * @returns 删除成功返回 true，否则返回 false
+   */
   deleteUnit(unitId: string): boolean {
     const index = this.units.findIndex(unit => unit.unitId === unitId)
     if (index !== -1) {
@@ -128,22 +162,18 @@ export default defineUniAppMock([
       await randomDelay(300, 600)
       const params = { ...query, ...body }
 
-      try {
-        const result = mockUnitDatabase.getUnitList({
-          page: Number(params.page) || 1,
-          row: Number(params.row) || 10,
-          communityId: params.communityId,
-          floorId: params.floorId,
-          unitNum: params.unitNum,
-        })
+      mockLog('queryUnits', params)
 
-        mockLog('queryUnits', params, `→ ${result.list.length} items`)
-        return successResponse(result, '查询成功')
-      }
-      catch (error: any) {
-        console.error('❌ Mock API Error: queryUnits', error)
-        return errorResponse(error.message || '查询单元列表失败')
-      }
+      const result = mockUnitDatabase.getUnitList({
+        page: Number(params.page) || 1,
+        row: Number(params.row) || 10,
+        communityId: params.communityId,
+        floorId: params.floorId,
+        unitNum: params.unitNum,
+      })
+
+      mockLog('queryUnits result', `${result.list.length} items`)
+      return successResponse(result, '查询成功')
     },
   },
 
@@ -156,23 +186,19 @@ export default defineUniAppMock([
       await randomDelay(200, 400)
       const params = { ...query, ...body }
 
-      try {
-        if (!params.unitId) {
-          return errorResponse('单元ID不能为空', ResultEnumMap.Error)
-        }
+      mockLog('queryUnitDetail', params.unitId)
 
-        const unit = mockUnitDatabase.getUnitById(params.unitId)
-        if (!unit) {
-          return errorResponse('单元不存在', ResultEnumMap.NotFound)
-        }
+      if (!params.unitId) {
+        return errorResponse('单元ID不能为空', ResultEnumMap.Error)
+      }
 
-        mockLog('queryUnitDetail', params.unitId, `→ ${unit.unitNum}单元`)
-        return successResponse(unit, '查询成功')
+      const unit = mockUnitDatabase.getUnitById(params.unitId)
+      if (!unit) {
+        return errorResponse('单元不存在', ResultEnumMap.NotFound)
       }
-      catch (error: any) {
-        console.error('❌ Mock API Error: queryUnitDetail', error)
-        return errorResponse(error.message || '获取单元详情失败')
-      }
+
+      mockLog('queryUnitDetail result', unit.unitNum)
+      return successResponse(unit, '查询成功')
     },
   },
 ])

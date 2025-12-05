@@ -37,14 +37,20 @@ const mockFloorDatabase = {
   /** 楼栋数据存储 */
   floors: [] as Floor[],
 
-  /** 初始化楼栋数据 */
+  /**
+   * 初始化楼栋数据
+   * 如果数据为空则生成初始数据
+   */
   initFloors() {
     if (this.floors.length === 0) {
       this.floors = this.generateFloorList()
     }
   },
 
-  /** 生成楼栋列表（每个社区生成30栋） */
+  /**
+   * 生成楼栋列表（每个社区生成30栋）
+   * @returns 生成的楼栋数据数组
+   */
   generateFloorList(): Floor[] {
     const floors: Floor[] = []
 
@@ -62,7 +68,14 @@ const mockFloorDatabase = {
     return floors
   },
 
-  /** 根据条件筛选楼栋 */
+  /**
+   * 根据条件筛选楼栋
+   * @param params - 筛选条件
+   * @param params.communityId - 社区ID
+   * @param params.floorNum - 楼栋编号
+   * @param params.keyword - 搜索关键词
+   * @returns 筛选后的楼栋数组
+   */
   filterFloors(params: {
     communityId?: string
     floorNum?: string
@@ -79,12 +92,25 @@ const mockFloorDatabase = {
     })
   },
 
-  /** 根据ID查询楼栋 */
+  /**
+   * 根据ID查询楼栋
+   * @param floorId - 楼栋ID
+   * @returns 楼栋对象或 undefined
+   */
   getFloorById(floorId: string): Floor | undefined {
     return this.floors.find(floor => floor.floorId === floorId)
   },
 
-  /** 获取楼栋列表（支持分页） - z-paging兼容格式 */
+  /**
+   * 获取楼栋列表（支持分页） - z-paging兼容格式
+   * @param params - 查询参数
+   * @param params.communityId - 社区ID
+   * @param params.floorNum - 楼栋编号
+   * @param params.keyword - 搜索关键词
+   * @param params.page - 页码
+   * @param params.row - 每页数量
+   * @returns 分页后的楼栋列表和总数
+   */
   getFloorList(params: {
     communityId?: string
     floorNum?: string
@@ -120,32 +146,27 @@ export default defineUniAppMock([
     body: async ({ query, body }) => {
       await randomDelay(300, 600)
 
-      try {
-        const params = { ...query, ...body }
-        mockLog('queryFloors', params)
+      const params = { ...query, ...body }
+      mockLog('queryFloors', params)
 
-        const {
-          communityId = 'COMM_001',
-          page = 1,
-          row = 50,
-          floorNum,
-          keyword,
-        } = params
+      const {
+        communityId = 'COMM_001',
+        page = 1,
+        row = 50,
+        floorNum,
+        keyword,
+      } = params
 
-        const result = mockFloorDatabase.getFloorList({
-          communityId,
-          floorNum,
-          keyword,
-          page: Number(page),
-          row: Number(row),
-        })
+      const result = mockFloorDatabase.getFloorList({
+        communityId,
+        floorNum,
+        keyword,
+        page: Number(page),
+        row: Number(row),
+      })
 
-        mockLog('queryFloors result', `${result.list.length} items`)
-        return successResponse(result, '查询楼栋列表成功')
-      }
-      catch (error) {
-        return errorResponse('查询楼栋列表失败', ResultEnumMap.InternalServerError)
-      }
+      mockLog('queryFloors result', `${result.list.length} items`)
+      return successResponse(result, '查询楼栋列表成功')
     },
   },
   {
@@ -155,26 +176,21 @@ export default defineUniAppMock([
     body: async ({ query, body }) => {
       await randomDelay(200, 500)
 
-      try {
-        const params = { ...query, ...body }
-        mockLog('queryFloorDetail', params)
+      const params = { ...query, ...body }
+      mockLog('queryFloorDetail', params)
 
-        const { floorId } = params
-        if (!floorId) {
-          return errorResponse('楼栋ID不能为空', ResultEnumMap.Error)
-        }
-
-        const floor = mockFloorDatabase.getFloorById(floorId as string)
-        if (!floor) {
-          return errorResponse('楼栋不存在', ResultEnumMap.NotFound)
-        }
-
-        mockLog('queryFloorDetail result', floor.floorName)
-        return successResponse(floor, '查询楼栋详情成功')
+      const { floorId } = params
+      if (!floorId) {
+        return errorResponse('楼栋ID不能为空', ResultEnumMap.Error)
       }
-      catch (error) {
-        return errorResponse('查询楼栋详情失败', ResultEnumMap.InternalServerError)
+
+      const floor = mockFloorDatabase.getFloorById(floorId as string)
+      if (!floor) {
+        return errorResponse('楼栋不存在', ResultEnumMap.NotFound)
       }
+
+      mockLog('queryFloorDetail result', floor.floorName)
+      return successResponse(floor, '查询楼栋详情成功')
     },
   },
 ])
