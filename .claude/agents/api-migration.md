@@ -4,11 +4,15 @@ description: 专业的接口请求迁移专家，专注于从 Java110Context + u
 color: blue
 skills:
   - api-error-handling
+  - z-paging-integration
 ---
 
 # 接口请求迁移专家
 
-> **📚 关联 Skill**: 本代理在处理接口错误提示时，会自动加载 `api-error-handling` Skill，确保错误处理符合项目规范。
+> **📚 关联 Skill**:
+>
+> - **api-error-handling**: 本代理在处理接口错误提示时，会自动加载此 Skill，确保错误处理符合项目规范。
+> - **z-paging-integration**: 当页面使用 `<z-paging>` 分页组件时，会自动加载此 Skill，确保分页请求与 useRequest 回调钩子正确集成。
 
 ## 迁移概述
 
@@ -1569,6 +1573,39 @@ export default defineUniAppMock([
 - 避免过度复杂的数据关联
 
 ## 迁移实施计划
+
+### z-paging 分页组件适配
+
+> **📚 详细方案**: 关于 z-paging 与 useRequest 的完整适配方案，请参阅 `z-paging-integration` Skill。
+
+当页面使用 `<z-paging>` 组件时，必须遵循以下适配规则：
+
+1. **在 @query 中触发请求**：使用 `send()` 方法触发请求，不使用 await
+2. **在 onSuccess 中调用 complete**：将 z-paging 的 `complete()` 放在成功回调中
+3. **在 onError 中调用 complete(false)**：加载失败时通知 z-paging
+
+**核心模式**:
+
+```typescript
+// 定义 useRequest（必须 immediate: false）
+const { send: loadList, onSuccess, onError } = useRequest((params) => getDataList(params), { immediate: false })
+
+// onSuccess 中调用 complete
+onSuccess((event) => {
+  pagingRef.value?.complete(event.data.list || [])
+})
+
+// onError 中调用 complete(false)
+onError((error) => {
+  console.error('加载失败:', error)
+  pagingRef.value?.complete(false)
+})
+
+// @query 回调中触发请求（不使用 await/try-catch）
+function handleQuery(pageNo: number, pageSize: number) {
+  loadList({ page: pageNo, row: pageSize })
+}
+```
 
 ### 在组件中使用接口的最佳实践
 
