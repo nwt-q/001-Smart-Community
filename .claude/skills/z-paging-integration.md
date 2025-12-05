@@ -258,12 +258,81 @@ onSuccess((event) => {
 
 ## 6. 常见错误模式
 
-|             错误模式             |                  原因                  |              正确做法               |
-| :------------------------------: | :------------------------------------: | :---------------------------------: |
-|    在 @query 中使用 try/catch    | 违反 api-migration 禁止 try/catch 规范 |     使用 onSuccess/onError 回调     |
-| 在 @query 中直接调用 uni.request |       未使用 useRequest 管理状态       |    使用 useRequest 的 send 方法     |
-|      手动管理 loading 状态       |         useRequest 已自动管理          | 直接使用 useRequest 的 loading 状态 |
-|  在 onError 中重复显示错误提示   |          全局拦截器已自动处理          |  仅记录日志和调用 complete(false)   |
+|                  错误模式                   |                  原因                  |              正确做法               |
+| :-----------------------------------------: | :------------------------------------: | :---------------------------------: |
+|         在 @query 中使用 try/catch          | 违反 api-migration 禁止 try/catch 规范 |     使用 onSuccess/onError 回调     |
+|      在 @query 中直接调用 uni.request       |       未使用 useRequest 管理状态       |    使用 useRequest 的 send 方法     |
+|            手动管理 loading 状态            |         useRequest 已自动管理          | 直接使用 useRequest 的 loading 状态 |
+|        在 onError 中重复显示错误提示        |          全局拦截器已自动处理          |  仅记录日志和调用 complete(false)   |
+|   同时使用 `:query` 属性和 `@query` 事件    |            两种绑定方式冲突            |         只选择其中一种方式          |
+| 在 @query 回调中调用 `refresh()`/`reload()` |              触发无限循环              |  仅调用 `complete()` 通知加载结果   |
+|     使用 @query 时设置 `:auto="false"`      |          阻止自动触发首次加载          |        移除 `:auto="false"`         |
+|        `complete()` 传入对象而非数组        |              参数类型错误              |         传入数组或 `false`          |
+
+## 6.5 危险模式与陷阱
+
+> **警告**：以下模式会导致页面卡死或严重性能问题，务必避免。
+
+### 6.5.1 属性与事件混用禁忌
+
+z-paging 提供两种查询绑定方式，**必须二选一**，不可混用：
+
+|     用法      |                     正确方式                      |                 错误方式                 |
+| :-----------: | :-----------------------------------------------: | :--------------------------------------: |
+| `:query` 属性 |     传入查询函数，z-paging 内部调用并管理状态     | 与 `@query` 事件混用，导致重复触发或冲突 |
+| `@query` 事件 | 监听查询事件，在回调中执行请求并调用 `complete()` | 在回调中调用 `refresh()`/`reload()` 方法 |
+
+```vue
+<!-- 错误：属性和事件混用 -->
+<z-paging :query="queryList" @query="handleRefresh"></z-paging>
+```
+
+### 6.5.2 无限循环陷阱
+
+在 `@query` 回调中调用 `refresh()` 或 `reload()` 会导致**无限循环**，页面完全卡死：
+
+```mermaid
+flowchart TD
+    A[z-paging 初始化] --> B[触发 @query 事件]
+    B --> C[handleQuery 被调用]
+    C --> D["pagingRef.value?.refresh()"]
+    D --> E[z-paging 重新加载]
+    E --> B
+
+    style A fill:#e1f5fe
+    style B fill:#fff3e0
+    style C fill:#fff3e0
+    style D fill:#ffebee
+    style E fill:#ffebee
+```
+
+**错误代码示例**：
+
+```typescript
+// 错误：在 @query 回调中调用 refresh，导致无限循环！
+function handleQuery(pageNo: number, pageSize: number) {
+  currentPage.value = 1
+  pagingRef.value?.refresh() // ❌ 这会再次触发 @query，形成死循环
+}
+
+// 正确：@query 回调只负责发起请求
+function handleQuery(pageNo: number, pageSize: number) {
+  loadList({
+    page: pageNo,
+    row: pageSize,
+  })
+  // complete() 在 onSuccess/onError 回调中调用
+}
+```
+
+### 6.5.3 `:auto="false"` 配合规则
+
+使用 `@query` 事件时，**不要**设置 `:auto="false"`，否则 z-paging 不会自动触发首次加载：
+
+```vue
+<!-- 错误：@query + :auto="false" 会阻止首次加载 -->
+<z-paging :auto="false" @query="handleQuery"></z-paging>
+```
 
 ## 7. immediate: false 必要性
 
@@ -295,3 +364,28 @@ onMounted(() => {
 2. **在回调钩子中调用 complete**：将 z-paging 的完成通知放在 onSuccess/onError 中
 3. **不使用 try/catch**：遵循回调钩子模式
 4. **保持职责分离**：错误提示由全局拦截器处理，组件层仅负责日志和 UI 状态
+
+## 10. 代码审查检查点
+
+在代码审查时，针对 z-paging 组件应检查以下事项：
+
+- [ ] 是否同时使用了 `:query` 属性和 `@query` 事件？（禁止混用）
+- [ ] `@query` 回调中是否调用了 `refresh()` 或 `reload()`？（会导致无限循环）
+- [ ] `complete()` 方法的参数类型是否正确？（应为数组或 `false`）
+- [ ] 是否有不必要的 `:auto="false"` 配置？（使用 `@query` 时应移除）
+- [ ] `useRequest` 是否设置了 `immediate: false`？（必须设置）
+- [ ] 是否使用了 try/catch 包装请求？（违反 api-migration 规范）
+
+## 11. 相关事故案例
+
+### 2025-12-05 页面卡死事故
+
+**事故文件**：`docs/reports/2025-12-05-z-paging-infinite-loop-bug-report.md`
+
+**影响范围**：选择器模块三个页面（楼栋/单元/房屋选择）完全卡死
+
+**根本原因**：
+
+1. 同时使用 `:query` 属性和 `@query` 事件
+2. 在 `@query` 回调中调用 `refresh()` 导致无限循环
+3. 使用 `@query` 时设置了 `:auto="false"`
