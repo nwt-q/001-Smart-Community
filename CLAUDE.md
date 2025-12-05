@@ -29,6 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
 - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 - `api-error-handling`： 接口错误提示能力。即 `.claude\skills\api-error-handling.md` 文件。
+- `z-paging-integration`： `z-paging 分页组件集成方案` 。 即 `.claude\skills\z-paging-integration.md` 文件。
 
 ### 业务术语
 
