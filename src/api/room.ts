@@ -5,7 +5,7 @@
  * @fileoverview 提供房屋信息的查询接口，支持列表查询和详情查询
  */
 
-import type { ApiResponse, PaginationResponse } from '@/types/api'
+import type { PaginationResponse } from '@/types/api'
 import type { Room, RoomQueryParams } from '@/types/selector'
 import { http } from '@/http/alova'
 
@@ -24,7 +24,7 @@ import { http } from '@/http/alova'
  * @example getRoomList({ floorId: 'F_COMM_001_001', unitId: 'U_001_01', page: 1, row: 10 })
  */
 export function getRoomList(params: RoomQueryParams) {
-  return http.Get<ApiResponse<PaginationResponse<Room>>>('/app/room.queryRooms', {
+  return http.Get<PaginationResponse<Room>>('/app/room.queryRooms', {
     params,
     meta: {
       ignoreAuth: true,
@@ -40,7 +40,7 @@ export function getRoomList(params: RoomQueryParams) {
  * @example getRoomDetail({ roomId: 'R_001_01_01' })
  */
 export function getRoomDetail(params: { roomId: string }) {
-  return http.Get<ApiResponse<Room>>('/app/room.queryRoomDetail', {
+  return http.Get<Room>('/app/room.queryRoomDetail', {
     params,
     meta: {
       ignoreAuth: true,

@@ -5,7 +5,7 @@
  * @fileoverview 提供单元信息的查询接口，支持列表查询和详情查询
  */
 
-import type { ApiResponse, PaginationResponse } from '@/types/api'
+import type { PaginationResponse } from '@/types/api'
 import type { Unit, UnitQueryParams } from '@/types/selector'
 import { http } from '@/http/alova'
 
@@ -23,7 +23,7 @@ import { http } from '@/http/alova'
  * @example getUnitList({ floorId: 'F_COMM_001_001', page: 1, row: 10 })
  */
 export function getUnitList(params: UnitQueryParams) {
-  return http.Get<ApiResponse<PaginationResponse<Unit>>>('/app/unit.queryUnits', {
+  return http.Get<PaginationResponse<Unit>>('/app/unit.queryUnits', {
     params,
     meta: {
       ignoreAuth: true,
@@ -39,7 +39,7 @@ export function getUnitList(params: UnitQueryParams) {
  * @example getUnitDetail({ unitId: 'U_COMM_001_001_01' })
  */
 export function getUnitDetail(params: { unitId: string }) {
-  return http.Get<ApiResponse<Unit>>('/app/unit.queryUnitDetail', {
+  return http.Get<Unit>('/app/unit.queryUnitDetail', {
     params,
     meta: {
       ignoreAuth: true,

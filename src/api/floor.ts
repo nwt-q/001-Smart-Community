@@ -5,7 +5,7 @@
  * @fileoverview 提供楼栋信息的查询接口，支持列表查询和详情查询
  */
 
-import type { ApiResponse, PaginationResponse } from '@/types/api'
+import type { PaginationResponse } from '@/types/api'
 import type { Floor, FloorQueryParams } from '@/types/selector'
 import { http } from '@/http/alova'
 
@@ -23,7 +23,7 @@ import { http } from '@/http/alova'
  * @example getFloorList({ communityId: 'COMM_001', page: 1, row: 10 })
  */
 export function getFloorList(params: FloorQueryParams) {
-  return http.Get<ApiResponse<PaginationResponse<Floor>>>('/app/floor.queryFloors', {
+  return http.Get<PaginationResponse<Floor>>('/app/floor.queryFloors', {
     params,
     meta: {
       ignoreAuth: true,
@@ -39,7 +39,7 @@ export function getFloorList(params: FloorQueryParams) {
  * @example getFloorDetail({ floorId: 'F_COMM_001_001' })
  */
 export function getFloorDetail(params: { floorId: string }) {
-  return http.Get<ApiResponse<Floor>>('/app/floor.queryFloorDetail', {
+  return http.Get<Floor>('/app/floor.queryFloorDetail', {
     params,
     meta: {
       ignoreAuth: true,

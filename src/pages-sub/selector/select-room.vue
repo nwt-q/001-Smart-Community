@@ -80,12 +80,12 @@ const {
 
 /** 成功回调 */
 onSuccess((event) => {
-  if (event.data?.data) {
+  if (event.data) {
     // z-paging 要求返回格式: { list: any[], total: number }
-    // 修复：正确访问嵌套在 data 字段中的分页数据
+    // 响应拦截器已处理,event.data 直接是 PaginationResponse<Room>
     const pagingData = {
-      list: event.data.data.list || [],
-      total: event.data.data.total || 0,
+      list: event.data.list || [],
+      total: event.data.total || 0,
     }
     pagingRef.value?.complete(pagingData)
   }
@@ -360,7 +360,7 @@ onMounted(() => {
 
         <!-- 搜索中状态指示器 -->
         <view v-if="isSearching" class="absolute right-16 top-1/2 -translate-y-1/2">
-          <wd-loading type="circle" size="16px" />
+          <wd-loading size="16px" />
         </view>
 
         <!-- 搜索历史弹层 -->
@@ -490,12 +490,11 @@ onMounted(() => {
               <view class="relative">
                 <wd-icon
                   name="home"
-                  :custom-class="[
-                    'mr-3 transition-all duration-200',
+                  :custom-class="`mr-3 transition-all duration-200 ${
                     selectedRoomId === room.roomId
                       ? 'i-carbon-home text-purple-500 scale-110'
-                      : 'i-carbon-home text-purple-400',
-                  ]"
+                      : 'i-carbon-home text-purple-400'
+                  }`"
                 />
                 <!-- 选中指示器 -->
                 <view
@@ -512,12 +511,11 @@ onMounted(() => {
             <template #right-icon>
               <wd-icon
                 :name="selectedRoomId === room.roomId ? 'check-circle' : 'arrow-right'"
-                :custom-class="[
-                  'transition-all duration-200',
+                :custom-class="`transition-all duration-200 ${
                   selectedRoomId === room.roomId
                     ? 'i-carbon-checkmark-filled text-purple-500 scale-110'
-                    : 'i-carbon-chevron-right text-gray-400',
-                ]"
+                    : 'i-carbon-chevron-right text-gray-400'
+                }`"
               />
             </template>
           </wd-cell>
@@ -531,10 +529,9 @@ onMounted(() => {
               <view class="relative mb-6">
                 <wd-icon
                   :name="searchValue ? 'search' : 'home'"
-                  :custom-class="[
-                    'text-8xl transition-all duration-300',
-                    searchValue ? 'i-carbon-search text-orange-400 animate-pulse' : 'i-carbon-home text-gray-300',
-                  ]"
+                  :custom-class="`text-8xl transition-all duration-300 ${
+                    searchValue ? 'i-carbon-search text-orange-400 animate-pulse' : 'i-carbon-home text-gray-300'
+                  }`"
                 />
                 <!-- 装饰性元素 -->
                 <view
@@ -576,31 +573,6 @@ onMounted(() => {
                   刷新数据
                 </wd-button>
               </view>
-            </view>
-          </view>
-        </template>
-
-        <!-- 加载更多失败状态 -->
-        <template #loading-more-fail>
-          <view class="flex flex-col items-center justify-center p-4">
-            <wd-icon name="warning" custom-class="i-carbon-warning text-orange-400 mb-2" />
-            <text class="mb-3 text-sm text-gray-500">加载失败，请稍后重试</text>
-            <wd-button
-              type="primary"
-              size="small"
-              @click="handleRetry"
-            >
-              重试加载
-            </wd-button>
-          </view>
-        </template>
-
-        <!-- 没有更多数据 -->
-        <template #no-more>
-          <view class="flex items-center justify-center bg-gray-50 p-6">
-            <view class="flex items-center">
-              <wd-icon name="checkmark" custom-class="i-carbon-checkmark text-purple-500 mr-2" />
-              <text class="text-sm text-gray-500">已加载全部房屋信息</text>
             </view>
           </view>
         </template>
