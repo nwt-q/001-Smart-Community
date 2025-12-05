@@ -14,7 +14,7 @@
 pnpm dev
 ```
 
-默认访问地址: http://localhost:9000
+默认访问地址: `http://localhost:9000`
 
 ### 1.2 测试页面清单
 
@@ -34,7 +34,7 @@ pnpm dev
 #### 操作步骤
 
 1. **访问维修录单页面**
-   - 地址: http://localhost:9000/#/pages-sub/repair/repair-add
+   - 地址: `http://localhost:9000/#/pages-sub/repair/repair-add`
    - 预期: 显示"楼栋: 请选择"、"单元: 请选择"、"房屋: 请选择"
 
 2. **选择楼栋**
