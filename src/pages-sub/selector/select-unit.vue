@@ -1,3 +1,14 @@
+<!--
+  选择单元页面
+  功能：选择单元，支持搜索和分页加载
+
+  访问方式: TypedRouter.toSelectUnit(floorId)
+  访问地址: http://localhost:9000/#/pages-sub/selector/select-unit?floorId=F_COMM_001_001
+  必须参数: floorId - 楼栋ID（从选择楼栋页面获取）
+
+  完整示例: http://localhost:9000/#/pages-sub/selector/select-unit?floorId=F_COMM_001_001
+-->
+
 <script setup lang="ts">
 import type { Unit } from '@/types/selector'
 import { onLoad } from '@dcloudio/uni-app'
@@ -59,10 +70,7 @@ const pageSize = ref(50)
  */
 const {
   loading,
-  data: unitData,
   send: loadUnitData,
-  onSuccess,
-  onError,
 } = useRequest(
   () => getUnitList({
     communityId: communityId.value,
@@ -76,39 +84,32 @@ const {
   },
 )
 
-/** 成功回调 */
-onSuccess((event) => {
-  if (event.data) {
-    // z-paging 要求返回格式: { list: any[], total: number }
-    // 响应拦截器已处理,event.data 直接是 PaginationResponse<Unit>
-    const pagingData = {
-      list: event.data.list || [],
-      total: event.data.total || 0,
-    }
-    pagingRef.value?.complete(pagingData)
-  }
-})
-
-/** 错误回调 */
-onError((event) => {
-  console.error('获取单元列表失败:', event.error)
-  pagingRef.value?.complete({
-    list: [],
-    total: 0,
-  })
-
-  // 对于网络错误等严重问题，显示提示
-  if (event.error.message?.includes('网络') || event.error.message?.includes('超时')) {
-    toast.error('加载单元列表失败')
-  }
-})
-
-/** 获取单元列表数据（兼容 z-paging） */
-async function queryList(pageNo: number, pageSizeValue: number) {
+/** z-paging 查询回调 */
+async function handleQuery(pageNo: number, pageSizeValue: number) {
   currentPage.value = pageNo
   pageSize.value = pageSizeValue
 
-  await loadUnitData()
+  try {
+    const response = await loadUnitData()
+
+    if (response) {
+      // z-paging complete 接收数组
+      pagingRef.value?.complete(response.list || [])
+    }
+    else {
+      pagingRef.value?.complete([])
+    }
+  }
+  catch (error) {
+    console.error('获取单元列表失败:', error)
+    // 通知 z-paging 加载失败
+    pagingRef.value?.complete(false)
+
+    uni.showToast({
+      title: '加载单元列表失败',
+      icon: 'none',
+    })
+  }
 }
 
 /** 选择单元 */
@@ -289,11 +290,6 @@ onLoad((options) => {
     catch (error) {
       console.error('加载搜索历史失败:', error)
     }
-
-    // 延迟一下确保 DOM 已经渲染
-    setTimeout(() => {
-      pagingRef.value?.reload()
-    }, 100)
   }
   catch (error) {
     hasParameterError.value = true
@@ -316,12 +312,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--
-    选择单元页面
-    功能：选择单元，支持搜索和分页加载
-
-    访问地址: http://localhost:9000/#/pages-sub/selector/select-unit?floorId=F_COMM_001_001
-  -->
   <view class="safe-area-inset-top safe-area-inset-bottom min-h-screen flex flex-col bg-gray-50">
     <!-- 参数错误状态 -->
     <view v-if="hasParameterError" class="flex flex-1 items-center justify-center p-4">
@@ -402,9 +392,7 @@ onMounted(() => {
       <z-paging
         ref="pagingRef"
         v-model="unitList"
-        :query="queryList"
         :default-page-size="50"
-        :auto="false"
         :refresher-enabled="true"
         :loading-more-enabled="true"
         :show-scrollbar="false"
@@ -413,7 +401,7 @@ onMounted(() => {
         class="flex-1"
         role="main"
         aria-label="单元列表"
-        @query="handleRefresh"
+        @query="handleQuery"
       >
         <!-- 加载状态提示 -->
         <template #loading>

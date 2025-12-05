@@ -1,3 +1,19 @@
+<!--
+  选择楼栋页面
+  功能：选择楼栋，支持搜索和分页加载
+
+  访问方式: TypedRouter.toSelectFloor()
+  访问地址: http://localhost:9000/#/pages-sub/selector/select-floor
+  参数: 无
+
+  完整示例: http://localhost:9000/#/pages-sub/selector/select-floor
+
+  级联选择流程:
+    1. 选择楼栋 (当前页面) → 无参数
+    2. 选择单元 → 需要 floorId
+    3. 选择房屋 → 需要 floorId + unitId
+-->
+
 <script setup lang="ts">
 import type { Floor } from '@/types/selector'
 import { onLoad } from '@dcloudio/uni-app'
@@ -274,12 +290,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--
-    选择楼栋页面
-    功能：选择楼栋，支持搜索和分页加载
-
-    访问地址: http://localhost:9000/#/pages-sub/selector/select-floor
-  -->
   <view class="safe-area-inset-top safe-area-inset-bottom min-h-screen flex flex-col bg-gray-50">
     <!-- 搜索栏 -->
     <view class="relative border-b border-gray-100 bg-white p-4 shadow-sm sm:p-6">

@@ -1,3 +1,16 @@
+<!--
+  选择房屋页面
+  功能：选择房屋，支持搜索和分页加载
+
+  访问方式: TypedRouter.toSelectRoom(floorId, unitId)
+  访问地址: http://localhost:9000/#/pages-sub/selector/select-room?floorId=F_COMM_001_001&unitId=U_001_01
+  必须参数:
+    - floorId - 楼栋ID（从选择楼栋页面获取）
+    - unitId - 单元ID（从选择单元页面获取）
+
+  完整示例: http://localhost:9000/#/pages-sub/selector/select-room?floorId=F_COMM_001_001&unitId=U_001_01
+-->
+
 <script setup lang="ts">
 import type { Room } from '@/types/selector'
 import { onLoad } from '@dcloudio/uni-app'
@@ -60,10 +73,7 @@ const pageSize = ref(50)
  */
 const {
   loading,
-  data: roomData,
   send: loadRoomData,
-  onSuccess,
-  onError,
 } = useRequest(
   () => getRoomList({
     communityId: communityId.value,
@@ -78,39 +88,32 @@ const {
   },
 )
 
-/** 成功回调 */
-onSuccess((event) => {
-  if (event.data) {
-    // z-paging 要求返回格式: { list: any[], total: number }
-    // 响应拦截器已处理,event.data 直接是 PaginationResponse<Room>
-    const pagingData = {
-      list: event.data.list || [],
-      total: event.data.total || 0,
-    }
-    pagingRef.value?.complete(pagingData)
-  }
-})
-
-/** 错误回调 */
-onError((event) => {
-  console.error('获取房屋列表失败:', event.error)
-  pagingRef.value?.complete({
-    list: [],
-    total: 0,
-  })
-
-  // 对于网络错误等严重问题，显示提示
-  if (event.error.message?.includes('网络') || event.error.message?.includes('超时')) {
-    toast.error('加载房屋列表失败')
-  }
-})
-
-/** 获取房屋列表数据（兼容 z-paging） */
-async function queryList(pageNo: number, pageSizeValue: number) {
+/** z-paging 查询回调 */
+async function handleQuery(pageNo: number, pageSizeValue: number) {
   currentPage.value = pageNo
   pageSize.value = pageSizeValue
 
-  await loadRoomData()
+  try {
+    const response = await loadRoomData()
+
+    if (response) {
+      // z-paging complete 接收数组
+      pagingRef.value?.complete(response.list || [])
+    }
+    else {
+      pagingRef.value?.complete([])
+    }
+  }
+  catch (error) {
+    console.error('获取房屋列表失败:', error)
+    // 通知 z-paging 加载失败
+    pagingRef.value?.complete(false)
+
+    uni.showToast({
+      title: '加载房屋列表失败',
+      icon: 'none',
+    })
+  }
 }
 
 /** 选择房屋 */
@@ -292,11 +295,6 @@ onLoad((options) => {
     catch (error) {
       console.error('加载搜索历史失败:', error)
     }
-
-    // 延迟一下确保 DOM 已经渲染
-    setTimeout(() => {
-      pagingRef.value?.reload()
-    }, 100)
   }
   catch (error) {
     hasParameterError.value = true
@@ -319,12 +317,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--
-    选择房屋页面
-    功能：选择房屋，支持搜索和分页加载
-
-    访问地址: http://localhost:9000/#/pages-sub/selector/select-room?floorId=F_COMM_001_001&unitId=U_001_01
-  -->
   <view class="safe-area-inset-top safe-area-inset-bottom min-h-screen flex flex-col bg-gray-50">
     <!-- 参数错误状态 -->
     <view v-if="hasParameterError" class="flex flex-1 items-center justify-center p-4">
@@ -405,9 +397,7 @@ onMounted(() => {
       <z-paging
         ref="pagingRef"
         v-model="roomList"
-        :query="queryList"
         :default-page-size="50"
-        :auto="false"
         :refresher-enabled="true"
         :loading-more-enabled="true"
         :show-scrollbar="false"
@@ -416,7 +406,7 @@ onMounted(() => {
         class="flex-1"
         role="main"
         aria-label="房屋列表"
-        @query="handleRefresh"
+        @query="handleQuery"
       >
         <!-- 加载状态提示 -->
         <template #loading>
