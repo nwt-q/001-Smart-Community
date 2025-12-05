@@ -240,6 +240,40 @@ color: blue
 2. **禁止 try/catch**：遵循 `api-migration` 规范，不使用 try/catch 包装请求
 3. **immediate: false**：useRequest 必须设置 `immediate: false`，由 z-paging 控制请求时机
 
+#### z-paging 危险模式警告
+
+> **⚠️ 警告**: 以下模式会导致页面卡死或严重性能问题，务必避免。
+
+|                  错误模式                   |          后果          |             正确做法             |
+| :-----------------------------------------: | :--------------------: | :------------------------------: |
+|   同时使用 `:query` 属性和 `@query` 事件    |      两种方式冲突      |        只选择其中一种方式        |
+| 在 @query 回调中调用 `refresh()`/`reload()` | **页面卡死（死循环）** | 仅调用 `complete()` 通知加载结果 |
+|     使用 @query 时设置 `:auto="false"`      |    首次加载不会触发    |       移除 `:auto="false"`       |
+|        `complete()` 传入对象而非数组        |      参数类型错误      |        传入数组或 `false`        |
+
+**无限循环触发机制**:
+
+```plain
+z-paging 初始化 → 触发 @query → handleQuery() → refresh() → z-paging 重新加载 → 触发 @query → ...（死循环）
+```
+
+**正确模板**:
+
+```vue
+<!-- 正确：只使用 @query 事件，不设置 :auto="false" -->
+<z-paging ref="pagingRef" v-model="dataList" @query="handleQuery">
+  <!-- 内容 -->
+</z-paging>
+```
+
+```typescript
+// 正确：@query 回调只负责发起请求，不调用 refresh/reload
+function handleQuery(pageNo: number, pageSize: number) {
+  loadList({ page: pageNo, row: pageSize })
+  // complete() 在 onSuccess/onError 回调中调用
+}
+```
+
 **基础用法**:
 
 ```vue
@@ -295,6 +329,19 @@ function handleQuery(pageNo: number, pageSize: number) {
 |   `complete()`    | `list` 或 `false` |              通知数据加载完成或失败               |
 | `completeByTotal` |  `list`, `total`  |            传入总数，精确控制分页状态             |
 |    `reload()`     |        无         | 重新加载数据（重置到第 1 页），用于筛选条件变化时 |
+
+**代码审查检查点**:
+
+在代码审查时，针对 z-paging 组件应检查以下事项：
+
+- [ ] 是否同时使用了 `:query` 属性和 `@query` 事件？（禁止混用）
+- [ ] `@query` 回调中是否调用了 `refresh()` 或 `reload()`？（会导致无限循环）
+- [ ] `complete()` 方法的参数类型是否正确？（应为数组或 `false`）
+- [ ] 是否有不必要的 `:auto="false"` 配置？（使用 `@query` 时应移除）
+- [ ] `useRequest` 是否设置了 `immediate: false`？（必须设置）
+- [ ] 是否使用了 try/catch 包装请求？（违反 api-migration 规范）
+
+> 详细规范请参阅 `z-paging-integration` Skill 文档。
 
 ### 空状态组件映射
 
