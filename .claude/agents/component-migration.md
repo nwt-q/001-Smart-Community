@@ -221,6 +221,81 @@ color: blue
 | `vc-upload` 自定义上传 | 图片上传 |    `wd-upload`     | 使用 wot-design-uni 上传组件 |
 |      图片预览功能      | 图片查看 | `wd-image-preview` |       专用图片预览组件       |
 
+### 分页列表组件映射
+
+|       旧组件/类名        |    使用场景    |        新组件         |                   迁移说明                    |
+| :----------------------: | :------------: | :-------------------: | :-------------------------------------------: |
+|  手动分页逻辑（onLoad）  |    分页列表    |      `z-paging`       |        使用 z-paging 替代手动分页管理         |
+|  下拉刷新（onRefresh）   |    刷新列表    |  `z-paging` 内置功能  |         z-paging 自动处理下拉刷新逻辑         |
+| 上拉加载更多（loadmore） |    加载更多    |  `z-paging` 内置功能  |         z-paging 自动处理上拉加载更多         |
+|    空状态（no-data）     | 列表为空时显示 | `z-paging` + `#empty` | 使用 z-paging 的 empty 插槽配合 wd-status-tip |
+
+#### z-paging 使用规范
+
+> **📚 重要**: 当使用 `z-paging` 组件进行分页请求时，必须参阅 `z-paging-integration` Skill，确保与 `api-migration` 规范正确集成。
+
+**核心要点**:
+
+1. **与 useRequest 集成**：必须使用 `useRequest` 管理请求状态，在 `onSuccess`/`onError` 回调中调用 `complete()`
+2. **禁止 try/catch**：遵循 `api-migration` 规范，不使用 try/catch 包装请求
+3. **immediate: false**：useRequest 必须设置 `immediate: false`，由 z-paging 控制请求时机
+
+**基础用法**:
+
+```vue
+<template>
+  <z-paging ref="pagingRef" v-model="dataList" :default-page-size="15" @query="handleQuery">
+    <view v-for="item in dataList" :key="item.id">
+      {{ item.name }}
+    </view>
+
+    <template #empty>
+      <wd-status-tip image="search" tip="暂无数据" />
+    </template>
+  </z-paging>
+</template>
+
+<script setup lang="ts">
+import { useRequest } from 'alova/client'
+import { ref } from 'vue'
+
+const pagingRef = ref()
+const dataList = ref([])
+
+const { send: loadList, onSuccess, onError } = useRequest((params) => getDataList(params), { immediate: false })
+
+onSuccess((event) => {
+  pagingRef.value?.complete(event.data.list || [])
+})
+
+onError((error) => {
+  console.error('加载失败:', error)
+  pagingRef.value?.complete(false)
+})
+
+function handleQuery(pageNo: number, pageSize: number) {
+  loadList({ page: pageNo, row: pageSize })
+}
+</script>
+```
+
+**常用属性**:
+
+|        属性         |   类型    | 默认值 |            说明             |
+| :-----------------: | :-------: | :----: | :-------------------------: |
+| `default-page-size` | `number`  |  `10`  |        默认每页条数         |
+|       `auto`        | `boolean` | `true` | 是否在挂载时自动触发 @query |
+|     `refresher`     | `boolean` | `true` |      是否启用下拉刷新       |
+|     `load-more`     | `boolean` | `true` |    是否启用上拉加载更多     |
+
+**常用方法**:
+
+|       方法        |       参数        |                       说明                        |
+| :---------------: | :---------------: | :-----------------------------------------------: |
+|   `complete()`    | `list` 或 `false` |              通知数据加载完成或失败               |
+| `completeByTotal` |  `list`, `total`  |            传入总数，精确控制分页状态             |
+|    `reload()`     |        无         | 重新加载数据（重置到第 1 页），用于筛选条件变化时 |
+
 ### 空状态组件映射
 
 |         旧组件/类名         |   使用场景   |          新组件          |                       迁移说明                        |
