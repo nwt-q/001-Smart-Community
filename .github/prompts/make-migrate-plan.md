@@ -676,3 +676,9 @@
 请你适当的使用 `gitmcp__uni-z-paging__SmileZXLee` 这款 mcp，阅读相关的代码，并思考一下我们项目在使用接口请求时，如何适当地改写，在基于并满足`api-migration` 子代理要求的前提下，怎么去适配，并使用 `<z-paging>` 所要求的代码写法格式？
 
 在你使用 `gitmcp__uni-z-paging__SmileZXLee` 这款 mcp 时，很容易出现上下文超限的情况，请你酌情使用，或者是变通地访问 `SmileZXLee/uni-z-paging` github 仓库，阅读相关的 demo 案例代码。
+
+### 049 将调研报告变成 claude code skills 技能文件，让 `api-migration` 和 `component-migration` 子代理明确清楚合适的使用时机
+
+1. 将 `docs\reports\2025-12-05-z-paging-api-migration-research.md` 变成一份可以高强度复用的 claude code skills，成为一份可以执行落地的技能实践文件。
+2. 在 `api-migration` 子代理文件内，增加适当的说明，并确保以后在使用 `api-migration` 子代理时，遇到 `<z-paging>` 组件和接口使用时，能正确的使用本技能来正确使用。
+3. 在 `component-migration` 子代理内，针对 `<z-paging>` 组件的使用，也要做引用说明。说明清楚如何恰当使用 `<z-paging>` 组件。
