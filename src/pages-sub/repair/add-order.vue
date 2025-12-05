@@ -447,11 +447,9 @@ async function handleSubmit() {
           center
           @click="handleChooseFloor"
         >
-          <template #value>
-            <text :class="floorNum ? '' : 'text-gray-400'">
-              {{ floorNum || '请选择楼栋' }}
-            </text>
-          </template>
+          <text :class="floorNum ? 'text-black' : 'text-gray-400'">
+            {{ floorNum || '请选择楼栋' }}
+          </text>
         </wd-cell>
 
         <!-- 单元选择 -->
@@ -462,11 +460,9 @@ async function handleSubmit() {
           center
           @click="handleChooseUnit"
         >
-          <template #value>
-            <text :class="unitNum ? '' : 'text-gray-400'">
-              {{ unitNum || '请选择单元' }}
-            </text>
-          </template>
+          <text :class="unitNum ? 'text-black' : 'text-gray-400'">
+            {{ unitNum || '请选择单元' }}
+          </text>
         </wd-cell>
 
         <!-- 房屋选择 -->
@@ -477,11 +473,9 @@ async function handleSubmit() {
           center
           @click="handleChooseRoom"
         >
-          <template #value>
-            <text :class="roomNum ? '' : 'text-gray-400'">
-              {{ roomNum || '请选择房屋' }}
-            </text>
-          </template>
+          <text :class="roomNum ? 'text-black' : 'text-gray-400'">
+            {{ roomNum || '请选择房屋' }}
+          </text>
         </wd-cell>
       </wd-cell-group>
     </view>
