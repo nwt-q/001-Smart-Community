@@ -197,11 +197,7 @@ src\pages-sub\repair\handle.vue
    - `route-migration`： 路由迁移子代理。位于 `.claude\agents` 目录内。
    - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 
-## 024 <!-- TODO: --> 对接口代码做处理
-
-针对 `<z-paging>` 组件的使用。分页请求接口应该如何调整？需要调研。
-
----
+## 024 对接口代码做处理
 
 阅读以下文件：
 
