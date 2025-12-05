@@ -53,10 +53,7 @@ const pageSize = ref(50)
  */
 const {
   loading,
-  data: floorData,
   send: loadFloorData,
-  onSuccess,
-  onError,
 } = useRequest(
   () => getFloorList({
     communityId: communityId.value,
@@ -69,42 +66,32 @@ const {
   },
 )
 
-/** 成功回调 */
-onSuccess((event) => {
-  if (event.data) {
-    // z-paging 要求返回格式: { list: any[], total: number }
-    // 响应拦截器已处理,event.data 直接是 PaginationResponse<Floor>
-    const pagingData = {
-      list: event.data.list || [],
-      total: event.data.total || 0,
+/** z-paging 查询回调 */
+async function handleQuery(pageNo: number, pageSizeValue: number) {
+  currentPage.value = pageNo
+  pageSize.value = pageSizeValue
+
+  try {
+    const response = await loadFloorData()
+
+    if (response) {
+      // z-paging complete 接收数组
+      pagingRef.value?.complete(response.list || [])
     }
-    pagingRef.value?.complete(pagingData)
+    else {
+      pagingRef.value?.complete([])
+    }
   }
-})
+  catch (error) {
+    console.error('获取楼栋列表失败:', error)
+    // 通知 z-paging 加载失败
+    pagingRef.value?.complete(false)
 
-/** 错误回调 */
-onError((event) => {
-  console.error('获取楼栋列表失败:', event.error)
-  pagingRef.value?.complete({
-    list: [],
-    total: 0,
-  })
-
-  // 对于网络错误等严重问题，显示提示
-  if (event.error.message?.includes('网络') || event.error.message?.includes('超时')) {
     uni.showToast({
       title: '加载楼栋列表失败',
       icon: 'none',
     })
   }
-})
-
-/** 获取楼栋列表数据（兼容 z-paging） */
-async function queryList(pageNo: number, pageSizeValue: number) {
-  currentPage.value = pageNo
-  pageSize.value = pageSizeValue
-
-  await loadFloorData()
 }
 
 /** 选择楼栋 */
@@ -267,11 +254,6 @@ onLoad(() => {
   catch (error) {
     console.error('加载搜索历史失败:', error)
   }
-
-  // 延迟一下确保 DOM 已经渲染
-  setTimeout(() => {
-    pagingRef.value?.reload()
-  }, 100)
 })
 
 // 监听搜索输入变化，实现实时搜索
@@ -358,9 +340,7 @@ onMounted(() => {
     <z-paging
       ref="pagingRef"
       v-model="floorList"
-      :query="queryList"
       :default-page-size="50"
-      :auto="false"
       :refresher-enabled="true"
       :loading-more-enabled="true"
       :show-scrollbar="false"
@@ -369,7 +349,7 @@ onMounted(() => {
       class="flex-1"
       role="main"
       aria-label="楼栋列表"
-      @query="handleRefresh"
+      @query="handleQuery"
     >
       <!-- 加载状态提示 -->
       <template #loading>
