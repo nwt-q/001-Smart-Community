@@ -682,3 +682,10 @@
 1. 将 `docs\reports\2025-12-05-z-paging-api-migration-research.md` 变成一份可以高强度复用的 claude code skills，成为一份可以执行落地的技能实践文件。
 2. 在 `api-migration` 子代理文件内，增加适当的说明，并确保以后在使用 `api-migration` 子代理时，遇到 `<z-paging>` 组件和接口使用时，能正确的使用本技能来正确使用。
 3. 在 `component-migration` 子代理内，针对 `<z-paging>` 组件的使用，也要做引用说明。说明清楚如何恰当使用 `<z-paging>` 组件。
+
+### 050 迭代 `z-paging-integration` 文档
+
+1. 阅读 `z-paging-integration` 文档。
+2. 阅读 `docs\reports\2025-12-05-z-paging-infinite-loop-bug-report.md` 事故报告。
+3. 告诉我这两份报告的差异点。我准备以 `z-paging-integration` 为核心，用 `2025-12-05-z-paging-infinite-loop-bug-report` 事故报告作为增量迭代的文件，更新，迭代，细化 `z-paging-integration` 技能文件在以后使用 `z-paging` 组件时的注意事项。
+4. 请你根据事故报告的说明，更新迭代 `z-paging-integration` 文档的内容。
