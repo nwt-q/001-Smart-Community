@@ -19,6 +19,7 @@ import { createRepairOrder, getRepairSettings } from '@/api/repair'
 import { useGlobalLoading } from '@/hooks/useGlobalLoading'
 import { useGlobalToast } from '@/hooks/useGlobalToast'
 import { TypedRouter } from '@/router'
+import { useSelectorStore } from '@/stores/useSelectorStore'
 import { getCurrentCommunity } from '@/utils/user'
 
 // 添加 datetime-picker 的类型定义
@@ -36,6 +37,9 @@ definePage({
 /** 小区信息 */
 const communityInfo = getCurrentCommunity()
 
+/** 选择器状态管理 */
+const selectorStore = useSelectorStore()
+
 /** 全局 Toast */
 const toast = useGlobalToast()
 
@@ -50,12 +54,9 @@ const repairScopes = [
   { id: '004' as RepairObjType, name: '房屋' },
 ]
 
-/** 选中的位置类型 (绑定到 id，string 类型) */
-const selectedScopeId = ref<string>('001')
-const repairObjType = computed(() => selectedScopeId.value as RepairObjType)
-const selectedScopeIndex = computed(() =>
-  repairScopes.findIndex(item => item.id === selectedScopeId.value),
-)
+/** 选中的位置类型索引 */
+const selectedScopeIndex = ref<number>(0)
+const repairObjType = computed(() => repairScopes[selectedScopeIndex.value]?.id as RepairObjType)
 const publicArea = computed(() => repairObjType.value === '004' ? 'F' : 'T')
 
 /** 楼栋信息 */
@@ -136,23 +137,44 @@ onLoad(() => {
 
 /** 页面显示（从楼栋/单元/房屋选择页返回） */
 onShow(() => {
-  // 从缓存读取选择的楼栋/单元/房屋
-  const selectFloor = uni.getStorageSync('_selectFloor')
-  if (selectFloor) {
-    floorNum.value = `${selectFloor.floorNum}栋`
-    floorId.value = selectFloor.floorId
+  // 优先从 store 读取选择的楼栋/单元/房屋（新方式）
+  if (selectorStore.selectedFloor) {
+    floorNum.value = `${selectorStore.selectedFloor.floorNum}栋`
+    floorId.value = selectorStore.selectedFloor.floorId
+  }
+  else {
+    // 兼容旧的缓存方式
+    const selectFloor = uni.getStorageSync('_selectFloor')
+    if (selectFloor) {
+      floorNum.value = `${selectFloor.floorNum}栋`
+      floorId.value = selectFloor.floorId
+    }
   }
 
-  const selectUnit = uni.getStorageSync('_selectUnit')
-  if (selectUnit) {
-    unitNum.value = `${selectUnit.unitNum}单元`
-    unitId.value = selectUnit.unitId
+  if (selectorStore.selectedUnit) {
+    unitNum.value = `${selectorStore.selectedUnit.unitNum}单元`
+    unitId.value = selectorStore.selectedUnit.unitId
+  }
+  else {
+    // 兼容旧的缓存方式
+    const selectUnit = uni.getStorageSync('_selectUnit')
+    if (selectUnit) {
+      unitNum.value = `${selectUnit.unitNum}单元`
+      unitId.value = selectUnit.unitId
+    }
   }
 
-  const selectRoom = uni.getStorageSync('_selectRoom')
-  if (selectRoom) {
-    roomNum.value = `${selectRoom.roomNum}室`
-    roomId.value = selectRoom.roomId
+  if (selectorStore.selectedRoom) {
+    roomNum.value = `${selectorStore.selectedRoom.roomNum}室`
+    roomId.value = selectorStore.selectedRoom.roomId
+  }
+  else {
+    // 兼容旧的缓存方式
+    const selectRoom = uni.getStorageSync('_selectRoom')
+    if (selectRoom) {
+      roomNum.value = `${selectRoom.roomNum}室`
+      roomId.value = selectRoom.roomId
+    }
   }
 })
 
@@ -162,15 +184,22 @@ onUnload(() => {
   uni.removeStorageSync('_selectFloor')
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
+  // 清空 store
+  selectorStore.clearSelection()
 })
 
 /** 位置类型改变 */
-function handleScopeChange({ value }: { value: string }) {
-  selectedScopeId.value = value
+function handleScopeChange({ value }: { value: number }) {
+  selectedScopeIndex.value = value
   // 重新加载报修类型
   loadRepairTypes()
-  // 清空位置信息
+  // 清空位置信息和缓存
   clearLocationInfo()
+  // 清空缓存和 store
+  uni.removeStorageSync('_selectFloor')
+  uni.removeStorageSync('_selectUnit')
+  uni.removeStorageSync('_selectRoom')
+  selectorStore.clearSelection()
 }
 
 /** 清空位置信息 */
@@ -189,10 +218,11 @@ function handleChooseFloor() {
   uni.removeStorageSync('_selectFloor')
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
+  selectorStore.clearSelection() // 清空 store 中的选择
   clearLocationInfo()
 
-  // TODO: 跳转到楼栋选择页面（暂时提示）
-  toast.info('楼栋选择页面待实现')
+  // 跳转到楼栋选择页面
+  TypedRouter.toSelectFloor()
 }
 
 /** 选择单元 */
@@ -204,13 +234,15 @@ function handleChooseUnit() {
 
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
+  selectorStore.clearUnit() // 清空单元选择
+  selectorStore.clearRoom() // 清空房屋选择
   unitNum.value = ''
   unitId.value = ''
   roomNum.value = ''
   roomId.value = ''
 
-  // TODO: 跳转到单元选择页面（暂时提示）
-  toast.info('单元选择页面待实现')
+  // 跳转到单元选择页面，携带楼栋ID
+  TypedRouter.toSelectUnit(floorId.value)
 }
 
 /** 选择房屋 */
@@ -221,11 +253,12 @@ function handleChooseRoom() {
   }
 
   uni.removeStorageSync('_selectRoom')
+  selectorStore.clearRoom() // 清空房屋选择
   roomNum.value = ''
   roomId.value = ''
 
-  // TODO: 跳转到房屋选择页面（暂时提示）
-  toast.info('房屋选择页面待实现')
+  // 跳转到房屋选择页面，携带楼栋ID和单元ID
+  TypedRouter.toSelectRoom(floorId.value, unitId.value)
 }
 
 /** 报修类型改变 */
@@ -390,21 +423,21 @@ async function handleSubmit() {
     <view class="bg-white">
       <wd-cell-group border>
         <!-- 位置类型 -->
-        <wd-cell title="位置" center>
-          <template #value>
-            <wd-picker
-              v-model="selectedScopeId"
-              :columns="repairScopes"
-              label-key="name"
-              value-key="id"
-              @confirm="handleScopeChange"
-            >
+        <wd-picker
+          v-model="selectedScopeIndex"
+          :columns="repairScopes"
+          label-key="name"
+          value-key="id"
+          @confirm="handleScopeChange"
+        >
+          <wd-cell title="位置" is-link center>
+            <template #value>
               <text class="text-blue-500">
-                {{ repairScopes[selectedScopeIndex].name }}
+                {{ repairScopes[selectedScopeIndex]?.name || '小区' }}
               </text>
-            </wd-picker>
-          </template>
-        </wd-cell>
+            </template>
+          </wd-cell>
+        </wd-picker>
 
         <!-- 楼栋选择 -->
         <wd-cell

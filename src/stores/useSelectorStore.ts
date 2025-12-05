@@ -40,6 +40,15 @@ export const useSelectorStore = defineStore('selector', () => {
     selectedRoom.value = null
   }
 
+  const clearUnit = () => {
+    selectedUnit.value = null
+    selectedRoom.value = null
+  }
+
+  const clearRoom = () => {
+    selectedRoom.value = null
+  }
+
   return {
     // 状态
     selectedFloor,
@@ -54,5 +63,7 @@ export const useSelectorStore = defineStore('selector', () => {
     selectUnit,
     selectRoom,
     clearSelection,
+    clearUnit,
+    clearRoom,
   }
 })
