@@ -24,7 +24,7 @@ import { http } from '@/http/alova'
  * @example getRoomList({ floorId: 'F_COMM_001_001', unitId: 'U_001_01', page: 1, row: 10 })
  */
 export function getRoomList(params: RoomQueryParams) {
-  return http.Get<PaginationResponse<Room>>('/app/room.queryRooms', {
+  return http.Get<ApiResponse<PaginationResponse<Room>>>('/app/room.queryRooms', {
     params,
     meta: {
       ignoreAuth: true,

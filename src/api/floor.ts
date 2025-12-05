@@ -23,7 +23,7 @@ import { http } from '@/http/alova'
  * @example getFloorList({ communityId: 'COMM_001', page: 1, row: 10 })
  */
 export function getFloorList(params: FloorQueryParams) {
-  return http.Get<PaginationResponse<Floor>>('/app/floor.queryFloors', {
+  return http.Get<ApiResponse<PaginationResponse<Floor>>>('/app/floor.queryFloors', {
     params,
     meta: {
       ignoreAuth: true,

@@ -23,7 +23,7 @@ import { http } from '@/http/alova'
  * @example getUnitList({ floorId: 'F_COMM_001_001', page: 1, row: 10 })
  */
 export function getUnitList(params: UnitQueryParams) {
-  return http.Get<PaginationResponse<Unit>>('/app/unit.queryUnits', {
+  return http.Get<ApiResponse<PaginationResponse<Unit>>>('/app/unit.queryUnits', {
     params,
     meta: {
       ignoreAuth: true,
