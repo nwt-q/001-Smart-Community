@@ -22,11 +22,6 @@ import { TypedRouter } from '@/router'
 import { useSelectorStore } from '@/stores/useSelectorStore'
 import { getCurrentCommunity } from '@/utils/user'
 
-// 添加 datetime-picker 的类型定义
-interface DatetimePickerConfirmEvent {
-  value: number | string | (number | string)[]
-}
-
 definePage({
   style: {
     navigationBarTitleText: '添加维修记录',
@@ -98,8 +93,6 @@ const tel = ref('')
 /** 预约时间 */
 const appointmentDate = ref<number>()
 const appointmentTime = ref<string>('')
-const showDatePicker = ref(false)
-const showTimePicker = ref(false)
 
 /** 报修内容 */
 const context = ref('')
@@ -264,16 +257,6 @@ function handleChooseRoom() {
 /** 报修类型改变 */
 function handleRepairTypeChange({ value }: { value: string }) {
   selectedRepairTypeId.value = value
-}
-
-/** 日期选择确认 - 关闭日期选择器 */
-function handleDateConfirm() {
-  showDatePicker.value = false
-}
-
-/** 时间选择确认 - 关闭时间选择器 */
-function handleTimeConfirm() {
-  showTimePicker.value = false
 }
 
 /**
@@ -526,18 +509,19 @@ async function handleSubmit() {
         </wd-cell>
 
         <!-- 预约日期 -->
-        <wd-cell title="预约日期" center @click="showDatePicker = true">
-          <text :class="appointmentDate ? 'text-blue-500' : 'text-gray-400'">
-            {{ appointmentDate || '请选择日期' }}
-          </text>
-        </wd-cell>
+        <wd-datetime-picker
+          v-model="appointmentDate"
+          type="date"
+          label="预约日期"
+          :min-date="Date.now()"
+        />
 
         <!-- 预约时间 -->
-        <wd-cell title="预约时间" center @click="showTimePicker = true">
-          <text :class="appointmentTime ? 'text-blue-500' : 'text-gray-400'">
-            {{ appointmentTime || '请选择时间' }}
-          </text>
-        </wd-cell>
+        <wd-datetime-picker
+          v-model="appointmentTime"
+          type="time"
+          label="预约时间"
+        />
       </wd-cell-group>
     </view>
 
@@ -581,23 +565,6 @@ async function handleSubmit() {
         提交
       </wd-button>
     </view>
-
-    <!-- 日期选择器 -->
-    <wd-datetime-picker
-      v-if="showDatePicker"
-      v-model="appointmentDate"
-      type="date"
-      :min-date="Date.now()"
-      @confirm="handleDateConfirm"
-    />
-
-    <!-- 时间选择器 -->
-    <wd-datetime-picker
-      v-if="showTimePicker"
-      v-model="appointmentTime"
-      type="time"
-      @confirm="handleTimeConfirm"
-    />
   </view>
 </template>
 
