@@ -45,6 +45,9 @@ const loading = useGlobalLoading()
 /** 表单引用 */
 const formRef = ref()
 
+/** 表单标签统一宽度 */
+const LABEL_WIDTH = '80px'
+
 /** 表单数据模型 */
 const model = reactive({
   /** 位置类型 */
@@ -412,6 +415,7 @@ async function handleSubmit() {
         <wd-picker
           v-model="model.scopeId"
           label="位置"
+          :label-width="LABEL_WIDTH"
           :columns="repairScopes"
           label-key="name"
           value-key="id"
@@ -422,31 +426,46 @@ async function handleSubmit() {
         <wd-cell
           v-if="repairObjType === '002' || repairObjType === '003' || repairObjType === '004'"
           title="楼栋"
-          :value="model.floorNum || '请选择楼栋'"
+          :title-width="LABEL_WIDTH"
           is-link
           center
+          custom-value-class="cell-value-left"
           @click="handleChooseFloor"
-        />
+        >
+          <text :class="model.floorNum ? '' : 'text-gray-400'">
+            {{ model.floorNum || '请选择楼栋' }}
+          </text>
+        </wd-cell>
 
         <!-- 单元选择 -->
         <wd-cell
           v-if="repairObjType === '003' || repairObjType === '004'"
           title="单元"
-          :value="model.unitNum || '请选择单元'"
+          :title-width="LABEL_WIDTH"
           is-link
           center
+          custom-value-class="cell-value-left"
           @click="handleChooseUnit"
-        />
+        >
+          <text :class="model.unitNum ? '' : 'text-gray-400'">
+            {{ model.unitNum || '请选择单元' }}
+          </text>
+        </wd-cell>
 
         <!-- 房屋选择 -->
         <wd-cell
           v-if="repairObjType === '004'"
           title="房屋信息"
-          :value="model.roomNum || '请选择房屋'"
+          :title-width="LABEL_WIDTH"
           is-link
           center
+          custom-value-class="cell-value-left"
           @click="handleChooseRoom"
-        />
+        >
+          <text :class="model.roomNum ? '' : 'text-gray-400'">
+            {{ model.roomNum || '请选择房屋' }}
+          </text>
+        </wd-cell>
       </wd-cell-group>
 
       <!-- 报修信息 -->
@@ -458,6 +477,7 @@ async function handleSubmit() {
         <wd-picker
           v-model="model.repairType"
           label="报修类型"
+          :label-width="LABEL_WIDTH"
           prop="repairType"
           :columns="repairTypes"
           label-key="repairTypeName"
@@ -469,6 +489,7 @@ async function handleSubmit() {
         <wd-cell
           v-if="priceScope"
           title="收费标准"
+          :title-width="LABEL_WIDTH"
           :value="priceScope"
           center
         />
@@ -477,6 +498,7 @@ async function handleSubmit() {
         <wd-input
           v-model="model.repairName"
           label="报修人"
+          :label-width="LABEL_WIDTH"
           prop="repairName"
           placeholder="请输入报修人"
           clearable
@@ -487,6 +509,7 @@ async function handleSubmit() {
         <wd-input
           v-model="model.tel"
           label="手机号"
+          :label-width="LABEL_WIDTH"
           prop="tel"
           placeholder="请输入手机号"
           type="digit"
@@ -499,6 +522,7 @@ async function handleSubmit() {
           v-model="model.appointmentDate"
           type="date"
           label="预约日期"
+          :label-width="LABEL_WIDTH"
           prop="appointmentDate"
           :min-date="Date.now()"
           :rules="formRules.appointmentDate"
@@ -509,6 +533,7 @@ async function handleSubmit() {
           v-model="model.appointmentTime"
           type="time"
           label="预约时间"
+          :label-width="LABEL_WIDTH"
           prop="appointmentTime"
           :rules="formRules.appointmentTime"
         />
@@ -522,6 +547,7 @@ async function handleSubmit() {
         <wd-textarea
           v-model="model.context"
           label="报修内容"
+          :label-width="LABEL_WIDTH"
           prop="context"
           placeholder="请输入报修内容"
           :maxlength="500"
@@ -572,5 +598,11 @@ async function handleSubmit() {
   font-size: 14px;
   color: rgba(69, 90, 100, 0.6);
   padding: 20px 15px 10px;
+}
+
+/** wd-cell 值靠左对齐 */
+:deep(.cell-value-left) {
+  flex: 1;
+  text-align: left !important;
 }
 </style>
