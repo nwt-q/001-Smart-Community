@@ -9,12 +9,13 @@
 -->
 
 <script setup lang="ts">
+import type { FormRules } from 'wot-design-uni/components/wd-form/types'
 import type { UploadBeforeUpload, UploadFile } from 'wot-design-uni/components/wd-upload/types'
 import type { CreateRepairReq, RepairObjType } from '@/types/repair'
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
 import { useRequest } from 'alova/client'
 import dayjs from 'dayjs'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { createRepairOrder, getRepairSettings } from '@/api/repair'
 import { useGlobalLoading } from '@/hooks/useGlobalLoading'
 import { useGlobalToast } from '@/hooks/useGlobalToast'
@@ -41,6 +42,41 @@ const toast = useGlobalToast()
 /** 全局 Loading */
 const loading = useGlobalLoading()
 
+/** 表单引用 */
+const formRef = ref()
+
+/** 表单数据模型 */
+const model = reactive({
+  /** 位置类型 */
+  scopeId: '001' as string,
+  /** 楼栋ID */
+  floorId: '',
+  /** 楼栋名称 */
+  floorNum: '',
+  /** 单元ID */
+  unitId: '',
+  /** 单元名称 */
+  unitNum: '',
+  /** 房屋ID */
+  roomId: '',
+  /** 房屋名称 */
+  roomNum: '',
+  /** 报修类型 */
+  repairType: '',
+  /** 报修人 */
+  repairName: '',
+  /** 手机号 */
+  tel: '',
+  /** 预约日期 */
+  appointmentDate: undefined as number | undefined,
+  /** 预约时间 */
+  appointmentTime: '',
+  /** 报修内容 */
+  context: '',
+  /** 图片列表 */
+  photos: [] as UploadFile[],
+})
+
 /** 位置类型选项 */
 const repairScopes = [
   { id: '001' as RepairObjType, name: '小区' },
@@ -49,22 +85,11 @@ const repairScopes = [
   { id: '004' as RepairObjType, name: '房屋' },
 ]
 
-/** 选中的位置类型 */
-const selectedScopeId = ref<string>('001')
-const repairObjType = computed(() => selectedScopeId.value as RepairObjType)
+/** 报修对象类型 */
+const repairObjType = computed(() => model.scopeId as RepairObjType)
+
+/** 是否公共区域 */
 const publicArea = computed(() => repairObjType.value === '004' ? 'F' : 'T')
-
-/** 楼栋信息 */
-const floorNum = ref('')
-const floorId = ref('')
-
-/** 单元信息 */
-const unitNum = ref('')
-const unitId = ref('')
-
-/** 房屋信息 */
-const roomNum = ref('')
-const roomId = ref('')
 
 /** 报修类型列表 */
 const repairTypes = ref<Array<{
@@ -74,11 +99,12 @@ const repairTypes = ref<Array<{
   priceScope?: string
 }>>([])
 
-/** 选中的报修类型 id (string 类型，绑定到 repairType) */
-const selectedRepairTypeId = ref<string>('')
+/** 选中的报修类型详情 */
 const selectedRepairType = computed(() =>
-  repairTypes.value.find(item => item.repairType === selectedRepairTypeId.value),
+  repairTypes.value.find(item => item.repairType === model.repairType),
 )
+
+/** 收费标准 */
 const priceScope = computed(() => {
   if (selectedRepairType.value?.payFeeFlag === 'T') {
     return selectedRepairType.value.priceScope || ''
@@ -86,19 +112,34 @@ const priceScope = computed(() => {
   return ''
 })
 
-/** 报修人信息 */
-const repairName = ref('')
-const tel = ref('')
-
-/** 预约时间 */
-const appointmentDate = ref<number>()
-const appointmentTime = ref<string>('')
-
-/** 报修内容 */
-const context = ref('')
-
-/** 图片列表 */
-const photos = ref<UploadFile[]>([])
+/** 表单校验规则 */
+const formRules: FormRules = {
+  repairType: [
+    { required: true, message: '请选择报修类型' },
+  ],
+  repairName: [
+    { required: true, message: '请填写报修人' },
+  ],
+  tel: [
+    { required: true, message: '请填写手机号' },
+    { required: false, pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确' },
+  ],
+  appointmentDate: [
+    {
+      required: true,
+      message: '请选择预约日期',
+      validator: (value) => {
+        return value && typeof value === 'number' ? Promise.resolve() : Promise.reject(new Error('请选择预约日期'))
+      },
+    },
+  ],
+  appointmentTime: [
+    { required: true, message: '请选择预约时间' },
+  ],
+  context: [
+    { required: true, message: '请填写报修内容' },
+  ],
+}
 
 /** 加载报修类型 */
 const { send: loadRepairTypes } = useRequest(
@@ -114,7 +155,7 @@ const { send: loadRepairTypes } = useRequest(
   .onSuccess((result) => {
     repairTypes.value = result.data
     if (result.data.length > 0) {
-      selectedRepairTypeId.value = result.data[0].repairType
+      model.repairType = result.data[0].repairType
     }
   })
   .onError((error) => {
@@ -124,7 +165,6 @@ const { send: loadRepairTypes } = useRequest(
 
 /** 页面加载 */
 onLoad(() => {
-  // 加载报修类型
   loadRepairTypes()
 })
 
@@ -132,63 +172,55 @@ onLoad(() => {
 onShow(() => {
   // 优先从 store 读取选择的楼栋/单元/房屋（新方式）
   if (selectorStore.selectedFloor) {
-    floorNum.value = `${selectorStore.selectedFloor.floorNum}栋`
-    floorId.value = selectorStore.selectedFloor.floorId
+    model.floorNum = `${selectorStore.selectedFloor.floorNum}栋`
+    model.floorId = selectorStore.selectedFloor.floorId
   }
   else {
-    // 兼容旧的缓存方式
     const selectFloor = uni.getStorageSync('_selectFloor')
     if (selectFloor) {
-      floorNum.value = `${selectFloor.floorNum}栋`
-      floorId.value = selectFloor.floorId
+      model.floorNum = `${selectFloor.floorNum}栋`
+      model.floorId = selectFloor.floorId
     }
   }
 
   if (selectorStore.selectedUnit) {
-    unitNum.value = `${selectorStore.selectedUnit.unitNum}单元`
-    unitId.value = selectorStore.selectedUnit.unitId
+    model.unitNum = `${selectorStore.selectedUnit.unitNum}单元`
+    model.unitId = selectorStore.selectedUnit.unitId
   }
   else {
-    // 兼容旧的缓存方式
     const selectUnit = uni.getStorageSync('_selectUnit')
     if (selectUnit) {
-      unitNum.value = `${selectUnit.unitNum}单元`
-      unitId.value = selectUnit.unitId
+      model.unitNum = `${selectUnit.unitNum}单元`
+      model.unitId = selectUnit.unitId
     }
   }
 
   if (selectorStore.selectedRoom) {
-    roomNum.value = `${selectorStore.selectedRoom.roomNum}室`
-    roomId.value = selectorStore.selectedRoom.roomId
+    model.roomNum = `${selectorStore.selectedRoom.roomNum}室`
+    model.roomId = selectorStore.selectedRoom.roomId
   }
   else {
-    // 兼容旧的缓存方式
     const selectRoom = uni.getStorageSync('_selectRoom')
     if (selectRoom) {
-      roomNum.value = `${selectRoom.roomNum}室`
-      roomId.value = selectRoom.roomId
+      model.roomNum = `${selectRoom.roomNum}室`
+      model.roomId = selectRoom.roomId
     }
   }
 })
 
 /** 页面卸载 */
 onUnload(() => {
-  // 清理缓存
   uni.removeStorageSync('_selectFloor')
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
-  // 清空 store
   selectorStore.clearSelection()
 })
 
 /** 位置类型改变 */
 function handleScopeChange({ value }: { value: string }) {
-  selectedScopeId.value = value
-  // 重新加载报修类型
+  model.scopeId = value
   loadRepairTypes()
-  // 清空位置信息和缓存
   clearLocationInfo()
-  // 清空缓存和 store
   uni.removeStorageSync('_selectFloor')
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
@@ -197,124 +229,64 @@ function handleScopeChange({ value }: { value: string }) {
 
 /** 清空位置信息 */
 function clearLocationInfo() {
-  floorNum.value = ''
-  floorId.value = ''
-  unitNum.value = ''
-  unitId.value = ''
-  roomNum.value = ''
-  roomId.value = ''
+  model.floorNum = ''
+  model.floorId = ''
+  model.unitNum = ''
+  model.unitId = ''
+  model.roomNum = ''
+  model.roomId = ''
 }
 
 /** 选择楼栋 */
 function handleChooseFloor() {
-  // 清空所有位置信息
   uni.removeStorageSync('_selectFloor')
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
-  selectorStore.clearSelection() // 清空 store 中的选择
+  selectorStore.clearSelection()
   clearLocationInfo()
-
-  // 跳转到楼栋选择页面
   TypedRouter.toSelectFloor()
 }
 
 /** 选择单元 */
 function handleChooseUnit() {
-  if (!floorId.value) {
+  if (!model.floorId) {
     toast.warning('请先选择楼栋')
     return
   }
-
   uni.removeStorageSync('_selectUnit')
   uni.removeStorageSync('_selectRoom')
-  selectorStore.clearUnit() // 清空单元选择
-  selectorStore.clearRoom() // 清空房屋选择
-  unitNum.value = ''
-  unitId.value = ''
-  roomNum.value = ''
-  roomId.value = ''
-
-  // 跳转到单元选择页面，携带楼栋ID
-  TypedRouter.toSelectUnit(floorId.value)
+  selectorStore.clearUnit()
+  selectorStore.clearRoom()
+  model.unitNum = ''
+  model.unitId = ''
+  model.roomNum = ''
+  model.roomId = ''
+  TypedRouter.toSelectUnit(model.floorId)
 }
 
 /** 选择房屋 */
 function handleChooseRoom() {
-  if (!unitId.value) {
+  if (!model.unitId) {
     toast.warning('请先选择单元')
     return
   }
-
   uni.removeStorageSync('_selectRoom')
-  selectorStore.clearRoom() // 清空房屋选择
-  roomNum.value = ''
-  roomId.value = ''
-
-  // 跳转到房屋选择页面，携带楼栋ID和单元ID
-  TypedRouter.toSelectRoom(floorId.value, unitId.value)
-}
-
-/** 报修类型改变 */
-function handleRepairTypeChange({ value }: { value: string }) {
-  selectedRepairTypeId.value = value
-}
-
-/**
- * 表单验证
- * @returns 返回错误信息，如果验证通过则返回空字符串
- * @example
- * const error = validateForm()
- * if (error) showToast(error)
- */
-function validateForm(): string {
-  if (!selectedRepairType.value?.repairType) {
-    return '请选择报修类型'
-  }
-  if (!repairName.value.trim()) {
-    return '请填写报修人'
-  }
-  if (!tel.value.trim()) {
-    return '请填写手机号'
-  }
-  // 简单的手机号验证
-  if (!/^1[3-9]\d{9}$/.test(tel.value)) {
-    return '手机号格式不正确'
-  }
-  if (!appointmentDate.value || typeof appointmentDate.value !== 'number') {
-    return '请选择预约日期'
-  }
-  if (!appointmentTime.value.trim()) {
-    return '请选择预约时间'
-  }
-  if (!context.value.trim()) {
-    return '请填写报修内容'
-  }
-
-  // 根据位置类型验证位置信息
-  if (repairObjType.value === '002' && !floorId.value) {
-    return '请选择楼栋'
-  }
-  if (repairObjType.value === '003' && (!floorId.value || !unitId.value)) {
-    return '请选择完整的楼栋和单元'
-  }
-  if (repairObjType.value === '004' && (!floorId.value || !unitId.value || !roomId.value)) {
-    return '请选择完整的楼栋、单元和房屋'
-  }
-
-  return ''
+  selectorStore.clearRoom()
+  model.roomNum = ''
+  model.roomId = ''
+  TypedRouter.toSelectRoom(model.floorId, model.unitId)
 }
 
 /** 图片上传前处理 */
 const handleBeforeUpload: UploadBeforeUpload = ({ files, resolve }) => {
   const file = files[0]
-  const maxSize = 10 * 1024 * 1024 // 10MB
+  const maxSize = 10 * 1024 * 1024
 
   if (file.size && file.size > maxSize) {
     toast.warning('图片大小不能超过10MB')
     resolve(false)
     return
   }
-
   resolve(true)
 }
 
@@ -329,6 +301,23 @@ function handleUploadFail(error: any) {
   console.error('图片上传失败:', error)
 }
 
+/**
+ * 位置信息校验
+ * @returns 返回错误信息，如果验证通过则返回空字符串
+ */
+function validateLocation(): string {
+  if (repairObjType.value === '002' && !model.floorId) {
+    return '请选择楼栋'
+  }
+  if (repairObjType.value === '003' && (!model.floorId || !model.unitId)) {
+    return '请选择完整的楼栋和单元'
+  }
+  if (repairObjType.value === '004' && (!model.floorId || !model.unitId || !model.roomId)) {
+    return '请选择完整的楼栋、单元和房屋'
+  }
+  return ''
+}
+
 /** 提交维修工单 */
 const { send: submitRepairOrder, onSuccess: onSubmitSuccess, onError: onSubmitError } = useRequest(
   (data: CreateRepairReq) => createRepairOrder(data),
@@ -338,7 +327,6 @@ const { send: submitRepairOrder, onSuccess: onSubmitSuccess, onError: onSubmitEr
 onSubmitSuccess(() => {
   loading.close()
   toast.success('提交成功')
-
   setTimeout(() => {
     TypedRouter.toRepairList()
   }, 1500)
@@ -349,222 +337,226 @@ onSubmitError((error) => {
   toast.error(error.error || '提交失败')
 })
 
+/** 提交表单 */
 async function handleSubmit() {
-  const errorMsg = validateForm()
-  if (errorMsg) {
-    toast.warning(errorMsg)
+  // 位置信息校验（表单组件不支持动态校验）
+  const locationError = validateLocation()
+  if (locationError) {
+    toast.warning(locationError)
     return
   }
 
-  loading.loading('提交中...')
+  // 表单校验
+  formRef.value
+    .validate()
+    .then(async ({ valid, errors }: { valid: boolean, errors: any[] }) => {
+      if (!valid) {
+        console.error('表单校验失败:', errors)
+        return
+      }
 
-  // 构建报修对象信息
-  let repairObjId = ''
-  let repairObjName = ''
+      loading.loading('提交中...')
 
-  if (repairObjType.value === '001') {
-    repairObjId = communityInfo.communityId
-    repairObjName = communityInfo.communityName
-  }
-  else if (repairObjType.value === '002') {
-    repairObjId = floorId.value
-    repairObjName = floorNum.value
-  }
-  else if (repairObjType.value === '003') {
-    repairObjId = unitId.value
-    repairObjName = floorNum.value + unitNum.value
-  }
-  else {
-    repairObjId = roomId.value
-    repairObjName = floorNum.value + unitNum.value + roomNum.value
-  }
+      // 构建报修对象信息
+      let repairObjId = ''
+      let repairObjName = ''
 
-  const requestData: CreateRepairReq = {
-    repairName: repairName.value,
-    repairType: selectedRepairType.value.repairType,
-    appointmentTime: `${appointmentDate.value ? dayjs(appointmentDate.value).format('YYYY-MM-DD') : ''} ${appointmentTime.value}:00`,
-    tel: tel.value,
-    context: context.value,
-    communityId: communityInfo.communityId,
-    repairObjType: repairObjType.value,
-    repairObjId,
-    repairObjName,
-    repairChannel: 'STAFF',
-    roomId: roomId.value || undefined,
-  }
+      if (repairObjType.value === '001') {
+        repairObjId = communityInfo.communityId
+        repairObjName = communityInfo.communityName
+      }
+      else if (repairObjType.value === '002') {
+        repairObjId = model.floorId
+        repairObjName = model.floorNum
+      }
+      else if (repairObjType.value === '003') {
+        repairObjId = model.unitId
+        repairObjName = model.floorNum + model.unitNum
+      }
+      else {
+        repairObjId = model.roomId
+        repairObjName = model.floorNum + model.unitNum + model.roomNum
+      }
 
-  await submitRepairOrder(requestData)
+      const requestData: CreateRepairReq = {
+        repairName: model.repairName,
+        repairType: selectedRepairType.value!.repairType,
+        appointmentTime: `${model.appointmentDate ? dayjs(model.appointmentDate).format('YYYY-MM-DD') : ''} ${model.appointmentTime}:00`,
+        tel: model.tel,
+        context: model.context,
+        communityId: communityInfo.communityId,
+        repairObjType: repairObjType.value,
+        repairObjId,
+        repairObjName,
+        repairChannel: 'STAFF',
+        roomId: model.roomId || undefined,
+      }
+
+      await submitRepairOrder(requestData)
+    })
+    .catch((error: any) => {
+      console.error('表单校验异常:', error)
+    })
 }
 </script>
 
 <template>
   <view class="add-order-page">
-    <!-- 房屋信息 -->
-    <view class="section-title">
-      房屋信息
-    </view>
-    <view class="bg-white">
+    <wd-form ref="formRef" :model="model" :rules="formRules">
+      <!-- 房屋信息 -->
+      <view class="section-title">
+        房屋信息
+      </view>
       <wd-cell-group border>
         <!-- 位置类型 -->
         <wd-picker
-          v-model="selectedScopeId"
+          v-model="model.scopeId"
+          label="位置"
           :columns="repairScopes"
           label-key="name"
           value-key="id"
           @confirm="handleScopeChange"
-        >
-          <wd-cell title="位置" is-link center>
-            <text class="text-blue-500">
-              {{ repairScopes.find(item => item.id === selectedScopeId)?.name || '小区' }}
-            </text>
-          </wd-cell>
-        </wd-picker>
+        />
 
         <!-- 楼栋选择 -->
         <wd-cell
           v-if="repairObjType === '002' || repairObjType === '003' || repairObjType === '004'"
           title="楼栋"
+          :value="model.floorNum || '请选择楼栋'"
           is-link
           center
           @click="handleChooseFloor"
-        >
-          <text :class="floorNum ? 'text-black' : 'text-gray-400'">
-            {{ floorNum || '请选择楼栋' }}
-          </text>
-        </wd-cell>
+        />
 
         <!-- 单元选择 -->
         <wd-cell
           v-if="repairObjType === '003' || repairObjType === '004'"
           title="单元"
+          :value="model.unitNum || '请选择单元'"
           is-link
           center
           @click="handleChooseUnit"
-        >
-          <text :class="unitNum ? 'text-black' : 'text-gray-400'">
-            {{ unitNum || '请选择单元' }}
-          </text>
-        </wd-cell>
+        />
 
         <!-- 房屋选择 -->
         <wd-cell
           v-if="repairObjType === '004'"
           title="房屋信息"
+          :value="model.roomNum || '请选择房屋'"
           is-link
           center
           @click="handleChooseRoom"
-        >
-          <text :class="roomNum ? 'text-black' : 'text-gray-400'">
-            {{ roomNum || '请选择房屋' }}
-          </text>
-        </wd-cell>
+        />
       </wd-cell-group>
-    </view>
 
-    <!-- 报修信息 -->
-    <view class="section-title">
-      报修信息
-    </view>
-    <view class="bg-white">
+      <!-- 报修信息 -->
+      <view class="section-title">
+        报修信息
+      </view>
       <wd-cell-group border>
         <!-- 报修类型 -->
-        <wd-cell title="报修类型" center>
-          <wd-picker
-            v-model="selectedRepairTypeId"
-            :columns="repairTypes"
-            label-key="repairTypeName"
-            value-key="repairType"
-            @confirm="handleRepairTypeChange"
-          >
-            <text class="text-blue-500">
-              {{ selectedRepairType?.repairTypeName || '请选择' }}
-            </text>
-          </wd-picker>
-        </wd-cell>
+        <wd-picker
+          v-model="model.repairType"
+          label="报修类型"
+          prop="repairType"
+          :columns="repairTypes"
+          label-key="repairTypeName"
+          value-key="repairType"
+          :rules="formRules.repairType"
+        />
 
         <!-- 收费标准 -->
-        <wd-cell v-if="priceScope" title="收费标准" center>
-          <text class="text-gray-600">{{ priceScope }}</text>
-        </wd-cell>
+        <wd-cell
+          v-if="priceScope"
+          title="收费标准"
+          :value="priceScope"
+          center
+        />
 
         <!-- 报修人 -->
-        <wd-cell title="报修人" center>
-          <wd-input
-            v-model="repairName"
-            placeholder="请输入报修人"
-            clearable
-            no-border
-          />
-        </wd-cell>
+        <wd-input
+          v-model="model.repairName"
+          label="报修人"
+          prop="repairName"
+          placeholder="请输入报修人"
+          clearable
+          :rules="formRules.repairName"
+        />
 
         <!-- 手机号 -->
-        <wd-cell title="手机号" center>
-          <wd-input
-            v-model="tel"
-            placeholder="请输入手机号"
-            type="digit"
-            clearable
-            no-border
-          />
-        </wd-cell>
+        <wd-input
+          v-model="model.tel"
+          label="手机号"
+          prop="tel"
+          placeholder="请输入手机号"
+          type="digit"
+          clearable
+          :rules="formRules.tel"
+        />
 
         <!-- 预约日期 -->
         <wd-datetime-picker
-          v-model="appointmentDate"
+          v-model="model.appointmentDate"
           type="date"
           label="预约日期"
+          prop="appointmentDate"
           :min-date="Date.now()"
+          :rules="formRules.appointmentDate"
         />
 
         <!-- 预约时间 -->
         <wd-datetime-picker
-          v-model="appointmentTime"
+          v-model="model.appointmentTime"
           type="time"
           label="预约时间"
+          prop="appointmentTime"
+          :rules="formRules.appointmentTime"
         />
       </wd-cell-group>
-    </view>
 
-    <!-- 报修内容 -->
-    <view class="mt-3 bg-white p-3">
-      <view class="mb-2 text-sm font-bold">
+      <!-- 报修内容 -->
+      <view class="section-title">
         报修内容
       </view>
-      <wd-textarea
-        v-model="context"
-        placeholder="请输入报修内容"
-        :maxlength="500"
-        show-word-limit
-        :rows="6"
-      />
-    </view>
+      <wd-cell-group border>
+        <wd-textarea
+          v-model="model.context"
+          label="报修内容"
+          prop="context"
+          placeholder="请输入报修内容"
+          :maxlength="500"
+          show-word-limit
+          :rules="formRules.context"
+        />
+      </wd-cell-group>
 
-    <!-- 相关图片 -->
-    <view class="section-title">
-      相关图片
-    </view>
-    <view class="bg-white p-3">
-      <wd-upload
-        v-model="photos"
-        :limit="9"
-        :max-size="10 * 1024 * 1024"
-        :before-upload="handleBeforeUpload"
-        @success="handleUploadSuccess"
-        @fail="handleUploadFail"
-      />
-    </view>
+      <!-- 相关图片 -->
+      <view class="section-title">
+        相关图片
+      </view>
+      <view class="bg-white p-3">
+        <wd-upload
+          v-model="model.photos"
+          :limit="9"
+          :max-size="10 * 1024 * 1024"
+          :before-upload="handleBeforeUpload"
+          @success="handleUploadSuccess"
+          @fail="handleUploadFail"
+        />
+      </view>
 
-    <!-- 提交按钮 -->
-    <view class="mt-6 px-3 pb-6">
-      <wd-button
-        block
-        type="success"
-        size="large"
-        @click="handleSubmit"
-      >
-        提交
-      </wd-button>
-    </view>
+      <!-- 提交按钮 -->
+      <view class="mt-6 px-3 pb-6">
+        <wd-button
+          block
+          type="success"
+          size="large"
+          @click="handleSubmit"
+        >
+          提交
+        </wd-button>
+      </view>
+    </wd-form>
   </view>
 </template>
 
