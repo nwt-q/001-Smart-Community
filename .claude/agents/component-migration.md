@@ -221,6 +221,11 @@ color: blue
 | `vc-upload` 自定义上传 | 图片上传 |    `wd-upload`     | 使用 wot-design-uni 上传组件 |
 |      图片预览功能      | 图片查看 | `wd-image-preview` |       专用图片预览组件       |
 
+#### 9.1 wd-upload 开发注意事项（经验回顾）
+
+- 组件的受控字段是 `fileList`，需使用 `v-model:file-list`（或 `v-model:fileList`）绑定，而不是默认的 `v-model`/`modelValue`，否则会出现 “Extraneous non-props attributes (modelValue)” 警告。
+- 故障排查：一旦看到上述警告，优先检查模板是否遗漏 `file-list` 修饰符；同时确认 `model` 初始值为数组（如 `[]`），避免 undefined。
+
 ### 分页列表组件映射
 
 |       旧组件/类名        |    使用场景    |        新组件         |                   迁移说明                    |
