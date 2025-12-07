@@ -715,3 +715,13 @@
 1. 在步骤 1 内，展现了很多不同于 `api-migration` 子代理文件的做法。这些做法属于新的迁移规范，对于全部的 `*.mock.ts` 而言，出现了新的规范，请及时更新其规范。
 2. 请你将数据字典常量的代码写法，以及注意事项，都写到 `code-migration` 子代理文件内，为`code-migration` 子代理增加新的代码编写规范。为旧项目代码做数据字典常量迁移时，提供明确的迁移规范标准。
 3. 步骤 1 说明了明确的类型报错解决方案与注意事项，请你更新 `code-migration` 子代理文件，说明清楚类型约束写法和注意事项。
+
+#### 01 回答 AI 问题
+
+1. 作用范围确认：立即对 src/api/mock 下全部 `*.mock.ts` 一次性处理。文件较多，建议分批（例如维修模块→活动模块→其他）。
+2. 常量文件命名/分组：按业务模块拆分（如 src/constants/repair.ts、activity.ts、complaint.ts……）。若遇到跨模块共用的字典（例如通用状态/优先级），请放入 `src/constants/common.ts` 。
+3. 导出形式：统一使用具名导出（如 export const REPAIR_STATUSES: ColumnItem[] = [...]），并保持全大写蛇形命名。
+4. 现有 src/constants/repair.ts 已存在，允许在其中合并新增字典。若已有同名常量，需要改名。
+5. ColumnItem 的 value 类型：**本身就是**接受混合类型（string/number/boolean 同数组内混用）。但是，我要求单一类型。以保证前端使用一致性。实际编写的时候一律使用单一的 string 字符串类型。
+6. 代码引用方式：mock 文件内统一用相对路径引用常量。当前 mock 对 alias 支持有限，一律使用相对路径。
+7. 规范文档更新：更新 .claude/agents/code-migration.md 时，需要补充示例代码片段（包含 ColumnItem 声明、mock 文件引用、类型检查注意事项）。
