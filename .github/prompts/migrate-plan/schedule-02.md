@@ -231,7 +231,7 @@ src\pages-sub\repair\handle.vue
 5. 请你主动使用谷歌浏览器 MCP，实现该页面的测试，测试 `添加维修记录` 页面是否能访问这些选择页面。
 6. `添加维修记录` 页面可访问的 url 地址，在 `src\pages-sub\repair\add-order.vue` 文件最上面提供的 url 内可见。
 
-## <!-- TODO: --> 027 反向检查业务字段是否准确
+## 027 反向检查业务字段是否准确
 
 1. 请你阅读 `docs\reports\vue2-route-navigation-map.md` 的 `维修工单流程模块` 。
 2. 根据 `.github\prompts\route-migration-map.yml` ，反向的阅读旧代码对应的 vue2 代码，确定在旧代码内，已经有的业务类型。
