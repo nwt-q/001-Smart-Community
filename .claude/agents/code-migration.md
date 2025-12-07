@@ -1413,6 +1413,31 @@ describe('迁移后功能测试', () => {
   - [ ] 内存使用合理
   - [ ] 无明显的性能回归
 
+### 11. 数据字典常量使用规范
+
+- 所有下拉/枚举字典存放于 `src/constants/{模块}.ts`，命名全大写蛇形，如 `REPAIR_STATUSES`、`COMPLAINT_TYPE_OPTIONS`。
+- 类型统一用 `ColumnItem[]`（`wot-design-uni/components/wd-picker-view/types`），`value` 必须是字符串（禁止混用 number/boolean），`label` 为展示文案。
+- 跨模块通用选项放 `src/constants/common.ts`，业务内聚放各自模块文件（`repair.ts`、`complaint.ts`、`property-application.ts` 等）。
+- mock 文件引用常量一律使用相对路径（例如 `../../constants/repair`），避免 mock 插件解析别名失败。
+- 在 mock 生成器中，先取 `ColumnItem` 再写入业务字段：`value` 存储字段值，`label` 用于显示名称。
+
+示例：
+
+```ts
+// src/constants/repair.ts
+import type { ColumnItem } from 'wot-design-uni/components/wd-picker-view/types'
+export const REPAIR_STATUSES: ColumnItem[] = [
+  { value: '10001', label: '待派单' },
+  { value: '10002', label: '已派单' },
+]
+
+// src/api/mock/repair.mock.ts
+import { REPAIR_STATUSES } from '../../constants/repair'
+const statusItem = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
+const statusCd = statusItem.value // 字段值用 value（字符串）
+const statusName = statusItem.label // 展示文案用 label
+```
+
 ---
 
 ## 总结
