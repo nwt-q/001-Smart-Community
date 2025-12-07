@@ -725,3 +725,15 @@
 5. ColumnItem 的 value 类型：**本身就是**接受混合类型（string/number/boolean 同数组内混用）。但是，我要求单一类型。以保证前端使用一致性。实际编写的时候一律使用单一的 string 字符串类型。
 6. 代码引用方式：mock 文件内统一用相对路径引用常量。当前 mock 对 alias 支持有限，一律使用相对路径。
 7. 规范文档更新：更新 .claude/agents/code-migration.md 时，需要补充示例代码片段（包含 ColumnItem 声明、mock 文件引用、类型检查注意事项）。
+
+### 052 <!-- TODO: --> 为 vue 组件代码的文件注释，增加普遍的`旧代码`文件地址
+
+以文件 `src\pages-sub\repair\order-list.vue` 为例子。
+
+1. 根据 `.github\prompts\route-migration-map.yml` 的说明，新代码 `src\pages-sub\repair\order-list.vue` 对应的旧代码为 `gitee-example/pages/repairOrder/repairOrder.vue` 。
+2. 在 `src\pages-sub\repair\order-list.vue` 的文件注释内，增加一行 `旧代码：` 。
+
+请你以上述文件为例子，根据 `.github\prompts\route-migration-map.yml` 的说明，对以下全部的 vue 组件增加旧代码映射地址，便于阅读。
+
+- `src\pages\**\*.vue`
+- `src\pages-sub\**\*.vue`
