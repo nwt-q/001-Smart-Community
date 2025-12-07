@@ -1,4 +1,5 @@
 import type { Staff, StaffListResponse, StaffQueryParams } from '@/types/staff'
+import { STAFF_ORGANIZATION_OPTIONS, STAFF_POSITION_OPTIONS } from '../../constants/staff'
 import { defineUniAppMock, errorResponse, mockLog, randomDelay, successResponse } from './shared/utils'
 
 /**
@@ -9,29 +10,6 @@ import { defineUniAppMock, errorResponse, mockLog, randomDelay, successResponse 
  */
 
 // ==================== 员工数据生成器 ====================
-
-/** 职位配置（基于原项目的物业管理体系） */
-const POSITIONS = [
-  '项目经理',
-  '物业主管',
-  '客服专员',
-  '维修工程师',
-  '保安队长',
-  '清洁主管',
-  '财务专员',
-  '行政助理',
-]
-
-/** 部门/组织配置 */
-const ORGANIZATIONS = [
-  '物业管理处',
-  '客服部',
-  '维修部',
-  '保安部',
-  '清洁部',
-  '财务部',
-  '行政部',
-]
 
 /** 中文姓名生成器 */
 function generateChineseName(): string {
@@ -84,14 +62,16 @@ function getInitials(name: string): string {
 function createMockStaff(id: string): Staff {
   const name = generateChineseName()
   const initials = getInitials(name)
+  const positionItem = STAFF_POSITION_OPTIONS[Math.floor(Math.random() * STAFF_POSITION_OPTIONS.length)]
+  const orgItem = STAFF_ORGANIZATION_OPTIONS[Math.floor(Math.random() * STAFF_ORGANIZATION_OPTIONS.length)]
 
   return {
     id: `STAFF_${id}`,
     name,
     tel: generatePhoneNumber(),
-    orgName: ORGANIZATIONS[Math.floor(Math.random() * ORGANIZATIONS.length)],
+    orgName: orgItem.value,
     initials,
-    position: POSITIONS[Math.floor(Math.random() * POSITIONS.length)],
+    position: positionItem.value,
     email: `staff${id}@property.com`,
     avatar: `https://picsum.photos/100/100?random=${id}`,
     isOnline: Math.random() > 0.3,

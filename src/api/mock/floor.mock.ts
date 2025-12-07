@@ -5,6 +5,8 @@
  */
 
 import type { Floor } from '@/types/selector'
+import { COMMUNITY_OPTIONS } from '../../constants/common'
+import { BUILDING_NAME_OPTIONS } from '../../constants/floor'
 import {
   defineUniAppMock,
   errorResponse,
@@ -15,22 +17,6 @@ import {
 } from './shared/utils'
 
 // ==================== 楼栋数据生成器 ====================
-
-/** 社区配置 */
-const COMMUNITIES = [
-  { communityId: 'COMM_001', communityName: '阳光花园小区' },
-  { communityId: 'COMM_002', communityName: '绿洲新城' },
-  { communityId: 'COMM_003', communityName: '滨江花园' },
-]
-
-/** 楼栋名称模板 */
-const BUILDING_NAMES = [
-  '住宅楼',
-  '商住楼',
-  '公寓楼',
-  '高层住宅',
-  '小高层',
-]
 
 /** Mock 楼栋数据库对象 */
 const mockFloorDatabase = {
@@ -54,13 +40,14 @@ const mockFloorDatabase = {
   generateFloorList(): Floor[] {
     const floors: Floor[] = []
 
-    COMMUNITIES.forEach((community) => {
+    COMMUNITY_OPTIONS.forEach((community) => {
       for (let i = 1; i <= 30; i++) {
+        const buildingItem = BUILDING_NAME_OPTIONS[Math.floor(Math.random() * BUILDING_NAME_OPTIONS.length)]
         floors.push({
-          floorId: `F_${community.communityId}_${i.toString().padStart(3, '0')}`,
+          floorId: `F_${community.value}_${i.toString().padStart(3, '0')}`,
           floorNum: i.toString(),
-          floorName: `${i}${BUILDING_NAMES[Math.floor(Math.random() * BUILDING_NAMES.length)]}`,
-          communityId: community.communityId,
+          floorName: `${i}${buildingItem.label}`,
+          communityId: community.value as string,
         })
       }
     })

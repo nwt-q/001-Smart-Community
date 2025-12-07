@@ -24,6 +24,12 @@ import type {
   SaveApplicationRecordRequest,
 } from '@/types/property-application'
 
+import {
+  PROPERTY_APPLICATION_STATE_OPTIONS,
+  PROPERTY_APPLY_TYPE_OPTIONS,
+  PROPERTY_RECORD_STATE_OPTIONS,
+  PROPERTY_RELATION_TYPE_OPTIONS,
+} from '../../constants/property-application'
 import { defineUniAppMock, delay, errorResponse, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
@@ -232,28 +238,26 @@ const mockApplyRoomDatabase = {
 
   /** 生成模拟申请数据 */
   createMockApplyRoom(id: string): PropertyApplication {
-    const states: ApplicationState[] = ['0', '1', '2', '3', '4', '5', '6']
-    const stateNames = ['待提交', '待验房', '待审核', '验房不通过', '审批通过', '审批不通过', '已取消']
-    const randomState = states[Math.floor(Math.random() * states.length)]
-    const stateIndex = states.indexOf(randomState)
+    const stateItem = PROPERTY_APPLICATION_STATE_OPTIONS[Math.floor(Math.random() * PROPERTY_APPLICATION_STATE_OPTIONS.length)]
+    const applyType = PROPERTY_APPLY_TYPE_OPTIONS[0]
 
     return {
       ardId: `ARD_${id}`,
-      applyType: '1001',
-      applyTypeName: '空置房申请',
+      applyType: applyType.value as string,
+      applyTypeName: applyType.label,
       roomId: `ROOM_${id}`,
       roomName: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
       communityId: 'COMM_001',
       createUserName: generateChineseName(),
       createUserTel: generatePhoneNumber(),
       createRemark: '业主申请空置房，希望获得费用减免',
-      checkRemark: randomState === '3' ? '验房不通过，房屋存在损坏' : '验房通过，房屋状况良好',
-      reviewRemark: randomState === '4' ? '审批通过，同意给予费用减免' : '',
+      checkRemark: stateItem.value === '3' ? '验房不通过，房屋存在损坏' : '验房通过，房屋状况良好',
+      reviewRemark: stateItem.value === '4' ? '审批通过，同意给予费用减免' : '',
       startTime: `${generateTimeRange(-30, 0).split('T')[0]} 00:00:00`,
       endTime: `${generateTimeRange(0, 90).split('T')[0]} 23:59:59`,
       feeId: `FEE_${id}`,
-      state: randomState,
-      stateName: stateNames[stateIndex],
+      state: stateItem.value as ApplicationState,
+      stateName: stateItem.label,
       urls: [`https://picsum.photos/400/300?random=${id}`],
       createTime: generateTimeRange(-60, -1),
       updateTime: generateTimeRange(-30, 0),
@@ -262,18 +266,15 @@ const mockApplyRoomDatabase = {
 
   /** 生成模拟跟踪记录 */
   createMockRecord(id: string, applicationId: string): ApplicationRecord {
-    const states = ['1', '2', '3', '4', '5', '6']
-    const stateNames = ['待验房', '待审核', '验房不通过', '审批通过', '审批不通过', '已取消']
-    const randomState = states[Math.floor(Math.random() * states.length)]
-    const stateIndex = states.indexOf(randomState)
+    const stateItem = PROPERTY_RECORD_STATE_OPTIONS[Math.floor(Math.random() * PROPERTY_RECORD_STATE_OPTIONS.length)]
 
     return {
       ardrId: `ARDR_${id}`,
       applicationId,
       roomId: `ROOM_${id}`,
       roomName: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
-      state: randomState,
-      stateName: stateNames[stateIndex],
+      state: stateItem.value as ApplicationState,
+      stateName: stateItem.label,
       remark: '处理记录详情',
       createUserName: generateChineseName(),
       createTime: generateTimeRange(-30, 0),
@@ -283,19 +284,18 @@ const mockApplyRoomDatabase = {
 
   /** 生成模拟记录详情 */
   createMockRecordDetail(id: string, ardrId: string): ApplicationRecordDetail {
-    const relationTypes: RelationTypeCd[] = ['19000', '21000']
-    const randomType = relationTypes[Math.floor(Math.random() * relationTypes.length)]
+    const relationItem = PROPERTY_RELATION_TYPE_OPTIONS[Math.floor(Math.random() * PROPERTY_RELATION_TYPE_OPTIONS.length)]
 
     return {
       ardrId,
       applicationId: `ARD_${id}`,
       roomId: `ROOM_${id}`,
       roomName: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
-      relTypeCd: randomType,
-      url: randomType === '19000'
+      relTypeCd: relationItem.value as RelationTypeCd,
+      url: relationItem.value === '19000'
         ? `https://picsum.photos/400/300?random=detail${id}`
         : 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-      remark: randomType === '19000' ? '相关图片' : '相关视频',
+      remark: relationItem.value === '19000' ? '相关图片' : '相关视频',
       createTime: generateTimeRange(-30, 0),
     }
   },

@@ -5,6 +5,7 @@
 
 import type { PaginationResponse } from '@/types/api'
 import type { Room, RoomQueryParams } from '@/types/selector'
+import { COMMUNITY_OPTIONS } from '../../constants/common'
 import {
   defineUniAppMock,
   errorResponse,
@@ -15,12 +16,6 @@ import {
 } from './shared/utils'
 
 // ==================== 房屋数据生成器 ====================
-
-const COMMUNITIES = [
-  { communityId: 'COMM_001', communityName: '阳光花园小区' },
-  { communityId: 'COMM_002', communityName: '绿洲新城' },
-  { communityId: 'COMM_003', communityName: '滨江花园' },
-]
 
 /**
  * 生成单个房屋数据
@@ -53,11 +48,11 @@ const mockRoomDatabase = {
   rooms: (() => {
     const rooms: Room[] = []
     // 每个社区 30 栋楼，每栋 8 单元，每单元 6 房间 => 30*8*6=1440/社区
-    COMMUNITIES.forEach((community) => {
+    COMMUNITY_OPTIONS.forEach((community) => {
       for (let floorIndex = 1; floorIndex <= 30; floorIndex++) {
         for (let unitIndex = 1; unitIndex <= 8; unitIndex++) {
           for (let roomIndex = 1; roomIndex <= 6; roomIndex++) {
-            rooms.push(createMockRoom(community.communityId, floorIndex, unitIndex, roomIndex))
+            rooms.push(createMockRoom(community.value as string, floorIndex, unitIndex, roomIndex))
           }
         }
       }

@@ -1,5 +1,6 @@
 import type { PriorityType } from '@/types/api'
 import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/complaint'
+import { COMPLAINT_STATUS_OPTIONS, COMPLAINT_TYPE_OPTIONS } from '../../constants/complaint'
 
 import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
@@ -9,24 +10,6 @@ import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddr
  */
 
 // ==================== 投诉数据生成器 ====================
-
-/** 投诉类型配置 */
-const COMPLAINT_TYPES: ComplaintType[] = [
-  '噪音投诉',
-  '卫生问题',
-  '设施损坏',
-  '服务态度',
-  '收费问题',
-  '其他投诉',
-]
-
-/** 投诉状态配置 */
-const COMPLAINT_STATUSES: ComplaintStatus[] = [
-  'SUBMITTED',
-  'PROCESSING',
-  'RESOLVED',
-  'CLOSED',
-]
 
 /** 生成投诉描述 */
 function generateComplaintDescription(type: ComplaintType): string {
@@ -120,32 +103,32 @@ function generateResponseContent(type: ComplaintType): string {
 
 /** 核心投诉数据生成器 */
 function createMockComplaint(id: string): Complaint {
-  const complaintType = COMPLAINT_TYPES[Math.floor(Math.random() * COMPLAINT_TYPES.length)]
-  const status = COMPLAINT_STATUSES[Math.floor(Math.random() * COMPLAINT_STATUSES.length)]
+  const typeItem = COMPLAINT_TYPE_OPTIONS[Math.floor(Math.random() * COMPLAINT_TYPE_OPTIONS.length)]
+  const statusItem = COMPLAINT_STATUS_OPTIONS[Math.floor(Math.random() * COMPLAINT_STATUS_OPTIONS.length)]
   const priority = (['HIGH', 'MEDIUM', 'LOW'] as PriorityType[])[Math.floor(Math.random() * 3)]
   const createTime = generateTimeRange(-30, 0)
 
   return {
     complaintId: `COMP_${id}`,
-    title: `${complaintType} - ${generateChineseName()}的投诉`,
-    description: generateComplaintDescription(complaintType),
-    complaintType,
+    title: `${typeItem.label} - ${generateChineseName()}的投诉`,
+    description: generateComplaintDescription(typeItem.value as ComplaintType),
+    complaintType: typeItem.value as ComplaintType,
     ownerName: generateChineseName(),
     ownerPhone: generatePhoneNumber(),
     address: generateAddress(),
-    status,
+    status: statusItem.value as ComplaintStatus,
     priority,
     createTime,
-    updateTime: status === 'SUBMITTED' ? createTime : generateTimeRange(-15, 0),
-    assignedHandler: status === 'SUBMITTED' ? undefined : `处理员${Math.floor(Math.random() * 5 + 1)}`,
+    updateTime: statusItem.value === 'SUBMITTED' ? createTime : generateTimeRange(-15, 0),
+    assignedHandler: statusItem.value === 'SUBMITTED' ? undefined : `处理员${Math.floor(Math.random() * 5 + 1)}`,
     images: Math.random() > 0.5 ? [`https://picsum.photos/400/300?random=${id}`] : [],
     communityId: 'COMM_001',
-    response: status === 'RESOLVED' || status === 'CLOSED' ? {
-      content: generateResponseContent(complaintType),
+    response: statusItem.value === 'RESOLVED' || statusItem.value === 'CLOSED' ? {
+      content: generateResponseContent(typeItem.value as ComplaintType),
       handlerName: `处理员${Math.floor(Math.random() * 5 + 1)}`,
       responseTime: generateTimeRange(-10, 0),
     } : undefined,
-    satisfaction: status === 'CLOSED' && Math.random() > 0.3 ? {
+    satisfaction: statusItem.value === 'CLOSED' && Math.random() > 0.3 ? {
       rating: Math.floor(Math.random() * 2) + 4, // 4-5星
       comment: ['服务很好，处理及时', '态度不错，问题解决了', '效率很高，感谢', '处理得当'][Math.floor(Math.random() * 4)],
       evaluateTime: generateTimeRange(-5, 0),

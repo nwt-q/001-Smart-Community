@@ -1,5 +1,6 @@
 import type { PriorityType } from '@/types/api'
 import type { RepairOrder, RepairStatus, RepairType } from '@/types/repair'
+import { REPAIR_FLOW_STATUS_OPTIONS, REPAIR_TYPE_NAME_OPTIONS } from '../../constants/repair'
 
 import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateAmount, generateChineseName, generateId, generatePhoneNumber, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
@@ -9,26 +10,6 @@ import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddr
  */
 
 // ==================== 维修数据生成器 ====================
-
-/** 维修类型配置 */
-const REPAIR_TYPES: RepairType[] = [
-  '水电维修',
-  '门窗维修',
-  '空调维修',
-  '电梯维修',
-  '管道疏通',
-  '墙面修补',
-  '其他维修',
-]
-
-/** 维修状态配置 */
-const REPAIR_STATUSES: RepairStatus[] = [
-  'PENDING',
-  'ASSIGNED',
-  'IN_PROGRESS',
-  'COMPLETED',
-  'CANCELLED',
-]
 
 /** 生成维修描述 */
 function generateRepairDescription(repairType: RepairType): string {
@@ -90,30 +71,30 @@ function generateRepairDescription(repairType: RepairType): string {
 
 /** 核心维修数据生成器 */
 function createMockRepair(id: string): RepairOrder {
-  const repairType = REPAIR_TYPES[Math.floor(Math.random() * REPAIR_TYPES.length)]
-  const status = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
+  const repairTypeItem = REPAIR_TYPE_NAME_OPTIONS[Math.floor(Math.random() * REPAIR_TYPE_NAME_OPTIONS.length)]
+  const statusItem = REPAIR_FLOW_STATUS_OPTIONS[Math.floor(Math.random() * REPAIR_FLOW_STATUS_OPTIONS.length)]
   const priority = (['HIGH', 'MEDIUM', 'LOW'] as PriorityType[])[Math.floor(Math.random() * 3)]
   const now = Date.now()
   const randomDays = Math.floor(Math.random() * 30)
 
   return {
     repairId: `REP_${id}`,
-    title: `${repairType} - ${generateChineseName()}的维修申请`,
-    description: generateRepairDescription(repairType),
+    title: `${repairTypeItem.label} - ${generateChineseName()}的维修申请`,
+    description: generateRepairDescription(repairTypeItem.value as RepairType),
     ownerName: generateChineseName(),
     ownerPhone: generatePhoneNumber(),
     address: generateAddress(),
-    repairType,
-    status,
+    repairType: repairTypeItem.value as RepairType,
+    status: statusItem.value as RepairStatus,
     priority,
     createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
     updateTime: new Date().toISOString(),
-    assignedWorker: status === 'PENDING' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
+    assignedWorker: statusItem.value === 'PENDING' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
     estimatedCost: generateAmount(50, 500),
-    actualCost: status === 'COMPLETED' ? generateAmount(40, 600) : null,
+    actualCost: statusItem.value === 'COMPLETED' ? generateAmount(40, 600) : null,
     images: Math.random() > 0.5 ? [`https://picsum.photos/400/300?random=${id}`] : [],
     communityId: 'COMM_001',
-    evaluation: status === 'COMPLETED' && Math.random() > 0.3 ? {
+    evaluation: statusItem.value === 'COMPLETED' && Math.random() > 0.3 ? {
       rating: Math.floor(Math.random() * 2) + 4, // 4-5星
       comment: ['服务很好，维修及时', '师傅很专业，问题解决了', '效率很高，满意', '态度不错'][Math.floor(Math.random() * 4)],
       evaluateTime: new Date().toISOString(),

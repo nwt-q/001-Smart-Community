@@ -5,6 +5,7 @@
 
 import type { PaginationResponse } from '@/types/api'
 import type { Unit, UnitQueryParams } from '@/types/selector'
+import { COMMUNITY_OPTIONS } from '../../constants/common'
 import {
   createPaginationResponse,
   defineUniAppMock,
@@ -36,13 +37,6 @@ function createMockUnit(communityId: string, floorIndex: number, unitIndex: numb
 
 // ==================== 单元数据库对象 ====================
 
-/** 社区配置（与floor.mock.ts保持一致） */
-const COMMUNITIES = [
-  { communityId: 'COMM_001', communityName: '阳光花园小区' },
-  { communityId: 'COMM_002', communityName: '绿洲新城' },
-  { communityId: 'COMM_003', communityName: '滨江花园' },
-]
-
 const mockUnitDatabase = {
   /** 初始化数据 - 内联数据存储 */
   units: [] as Unit[],
@@ -53,10 +47,10 @@ const mockUnitDatabase = {
    */
   init() {
     // 每个社区每栋楼生成8个单元（增加数据量）
-    COMMUNITIES.forEach((community) => {
+    COMMUNITY_OPTIONS.forEach((community) => {
       for (let floorIndex = 1; floorIndex <= 30; floorIndex++) {
         for (let unitIndex = 1; unitIndex <= 8; unitIndex++) {
-          this.units.push(createMockUnit(community.communityId, floorIndex, unitIndex))
+          this.units.push(createMockUnit(community.value as string, floorIndex, unitIndex))
         }
       }
     })

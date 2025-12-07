@@ -5,7 +5,12 @@
 
 import type { PriorityType } from '@/types/api'
 import type { RepairListParams, RepairOrder, RepairStatus, RepairType } from '@/types/repair'
-import { REPAIR_STATUSES } from '@/constants/repair'
+import {
+  REPAIR_PAY_TYPE_OPTIONS,
+  REPAIR_RESOURCE_TYPE_OPTIONS,
+  REPAIR_STATUSES,
+  REPAIR_TYPE_OPTIONS,
+} from '../../constants/repair'
 import {
   createPaginationResponse,
   defineUniAppMock,
@@ -22,17 +27,6 @@ import {
 } from './shared/utils'
 
 // ==================== 维修数据生成器 ====================
-
-/** 维修类型配置（代码 + 名称） */
-const REPAIR_TYPES: Array<{ code: RepairType, name: string }> = [
-  { code: '1001', name: '水电维修' },
-  { code: '1002', name: '门窗维修' },
-  { code: '1003', name: '空调维修' },
-  { code: '1004', name: '电梯维修' },
-  { code: '1005', name: '管道疏通' },
-  { code: '1006', name: '墙面修补' },
-  { code: '1007', name: '其他维修' },
-]
 
 /** 生成维修描述 */
 function generateRepairDescription(repairTypeName: string): string {
@@ -94,7 +88,7 @@ function generateRepairDescription(repairTypeName: string): string {
 
 /** 核心维修数据生成器 */
 function createMockRepair(id: string): RepairOrder {
-  const typeItem = REPAIR_TYPES[Math.floor(Math.random() * REPAIR_TYPES.length)]
+  const typeItem = REPAIR_TYPE_OPTIONS[Math.floor(Math.random() * REPAIR_TYPE_OPTIONS.length)]
   const statusItem = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
   const priority = (['HIGH', 'MEDIUM', 'LOW'] as PriorityType[])[Math.floor(Math.random() * 3)]
   const now = Date.now()
@@ -102,8 +96,8 @@ function createMockRepair(id: string): RepairOrder {
 
   return {
     repairId: `REP_${id}`,
-    repairType: typeItem.code,
-    repairTypeName: typeItem.name,
+    repairType: typeItem.value as RepairType,
+    repairTypeName: typeItem.label,
     context: generateRepairDescription(typeItem.name),
     repairName: generateChineseName(),
     tel: generatePhoneNumber(),
@@ -157,12 +151,11 @@ const mockRepairDatabase = {
   ],
 
   /** 物资类型数据 */
-  resourceTypes: [
-    { rstId: 'RST_001', name: '水电材料', parentRstId: undefined },
-    { rstId: 'RST_002', name: '五金材料', parentRstId: undefined },
-    { rstId: 'RST_003', name: '空调材料', parentRstId: undefined },
-    { rstId: 'RST_004', name: '装修材料', parentRstId: undefined },
-  ],
+  resourceTypes: REPAIR_RESOURCE_TYPE_OPTIONS.map(item => ({
+    rstId: item.value as string,
+    name: item.label,
+    parentRstId: undefined,
+  })),
 
   /** 维修设置配置（维修类型配置） */
   repairSettings: [
@@ -176,22 +169,10 @@ const mockRepairDatabase = {
   ],
 
   /** 维修状态字典 */
-  repairStates: [
-    { statusCd: '10001', name: '待派单' },
-    { statusCd: '10002', name: '已派单' },
-    { statusCd: '10003', name: '处理中' },
-    { statusCd: '10004', name: '已完成' },
-    { statusCd: '10005', name: '已取消' },
-  ],
+  repairStates: REPAIR_STATUSES.map(item => ({ statusCd: item.value, name: item.label })),
 
   /** 支付方式字典 */
-  payTypes: [
-    { statusCd: 'CASH', name: '现金' },
-    { statusCd: 'WECHAT', name: '微信支付' },
-    { statusCd: 'ALIPAY', name: '支付宝' },
-    { statusCd: 'BANK_CARD', name: '银行卡' },
-    { statusCd: 'PROPERTY_FEE', name: '物业费抵扣' },
-  ],
+  payTypes: REPAIR_PAY_TYPE_OPTIONS.map(item => ({ statusCd: item.value as string, name: item.label })),
 
   /** 获取工单详情 */
   getRepairById(repairId: string): RepairOrder | undefined {

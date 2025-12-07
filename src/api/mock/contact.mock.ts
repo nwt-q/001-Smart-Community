@@ -1,4 +1,5 @@
 import type { Contact, DepartmentType } from '@/types/contact'
+import { CONTACT_DEPARTMENT_OPTIONS, CONTACT_POSITION_OPTIONS } from '../../constants/contact'
 
 import { createPaginationResponse, defineUniAppMock, errorResponse, generateChineseName, generatePhoneNumber, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
@@ -9,26 +10,15 @@ import { createPaginationResponse, defineUniAppMock, errorResponse, generateChin
 
 // ==================== 通讯录数据生成器 ====================
 
-/** 部门类型配置 */
-const DEPARTMENT_TYPES: DepartmentType[] = [
-  '物业管理处',
-  '保安部',
-  '清洁部',
-  '维修部',
-  '客服部',
-  '财务部',
-]
-
-/** 职位配置 */
-const POSITIONS = ['主管', '专员', '助理', '经理', '组长', '副主管']
-
 /** 核心联系人数据生成器 */
 function createMockContact(id: string): Contact {
+  const departmentItem = CONTACT_DEPARTMENT_OPTIONS[Math.floor(Math.random() * CONTACT_DEPARTMENT_OPTIONS.length)]
+  const positionItem = CONTACT_POSITION_OPTIONS[Math.floor(Math.random() * CONTACT_POSITION_OPTIONS.length)]
   return {
     contactId: `CON_${id}`,
     name: generateChineseName(),
-    position: POSITIONS[Math.floor(Math.random() * POSITIONS.length)],
-    department: DEPARTMENT_TYPES[Math.floor(Math.random() * DEPARTMENT_TYPES.length)],
+    position: positionItem.value,
+    department: departmentItem.value as DepartmentType,
     phone: generatePhoneNumber(),
     email: `employee${id}@property.com`,
     workTime: '09:00-18:00',

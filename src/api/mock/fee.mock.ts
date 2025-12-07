@@ -4,6 +4,7 @@
  */
 
 import type { FeeDetailParams, FeeDetailResponse } from '@/types/fee'
+import { FEE_NAME_OPTIONS, FEE_PAY_METHOD_OPTIONS } from '../../constants/fee'
 import { defineUniAppMock, delay, generateId, generateTimeRange, mockLog, successResponse } from './shared/utils'
 
 /**
@@ -101,20 +102,20 @@ const mockFeeDatabase = {
 
   /** 生成模拟费用详情 */
   createMockFeeDetail(feeId: string, roomId: string, roomName: string, ownerName: string) {
-    const feeNames = ['物业管理费', '垃圾处理费', '公共区域维护费', '水电公摊费', '安保服务费']
-    const payMethods = ['微信支付', '支付宝', '银行卡', '现金', '转账']
+    const feeNameItem = FEE_NAME_OPTIONS[Math.floor(Math.random() * FEE_NAME_OPTIONS.length)]
+    const payMethodItem = FEE_PAY_METHOD_OPTIONS[Math.floor(Math.random() * FEE_PAY_METHOD_OPTIONS.length)]
 
     return {
       detailId: generateId('FEE_DETAIL'),
       feeId,
-      feeName: feeNames[Math.floor(Math.random() * feeNames.length)],
+      feeName: feeNameItem.value as string,
       roomId,
       roomName,
       communityId: 'COMM_001',
       ownerName,
       receivedAmount: Math.floor(Math.random() * 500 + 50),
       payTime: generateTimeRange(-90, 0),
-      payMethod: payMethods[Math.floor(Math.random() * payMethods.length)],
+      payMethod: payMethodItem.value as string,
       payState: 'PAID',
       createTime: generateTimeRange(-90, 0),
     }
