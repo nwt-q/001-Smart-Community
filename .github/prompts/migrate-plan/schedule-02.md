@@ -244,3 +244,11 @@ src\pages-sub\repair\handle.vue
    - src\api\repair.ts
 6. 修改以上几个业务接口对应的 mock 接口，确保这些接口满足正确的业务类型命名。不要出现任何兼容字段名的写法。确保字段缺漏的校验写法，满足业务类型字段的要求。
 7. 请你确定以旧代码出现的业务类型为准，修改现有代码的业务类型。
+
+### 01 回答 AI 问题
+
+1. 维修类型值：旧版 repairAdd 从 listRepairSettings 拿到的 repairType 是代码（如 1001/1002...），repairTypeName 才是中文。当前新代码的类型/Mock 使用中文枚举（如“水电维修”）。需要改成 `以代码为准，配合 repairTypeName 字段`。同时要去掉 RepairOrder 里与中文枚举绑定的类型定义（改成 string）。`repairType` 和 `repairTypeName` 都一起使用。
+2. 兼容字段清理：Repair 类型里现在有 description/context、ownerName/repairName、ownerPhone/tel 等并存。按照严格的“**不要出现兼容字段名**”的要求，**全部收敛为旧版主字段**（如 context/repairName/tel 等），并同步页面/Mock。
+3. 选择器接口响应形态：旧版返回字段是 apiFloorDataVoList / rooms 等，新版 API/Mock 统一返回 { list,total,... }，页面用 z-paging 直接吃 list。**保持新版分页形态**，只保证**列表元素字段**（floorId/floorNum/floorName 等）对齐旧版即可。
+4. 单元/房屋字段取值：旧版 unitNum/roomNum 是纯编号，新版 Mock 里 unitNum 带了“单元”后缀，roomNum 也有构造规则。需要改成纯编号（与旧版一致）。需要补充 communityId 返回到单元/房屋项里。并且去对应使用 `unitNum/roomNum` 字段的前端页面内，加上基于 computed 的字段格式化，加上“单元”后缀。
+5. 维修状态/字典：旧版状态/字典字段是 statusCd/name。当前 API/Mock 已用 statusCd/name，但 RepairStatus 类型枚举是英文单词。需要把列表里的 status/state 完全切换为 statusCd 代码（与旧版一致）。
