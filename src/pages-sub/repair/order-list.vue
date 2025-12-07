@@ -200,101 +200,85 @@ function formatAppointmentTime(timeStr?: string): string {
 
 <template>
   <view class="repair-order-list-page">
-    <!-- 搜索栏 -->
-    <view class="search-bar flex items-center gap-2 bg-white px-3 py-2">
-      <!-- 报修人搜索 -->
-      <wd-search
-        v-model="searchName"
-        placeholder="输入报修人"
-        :maxlength="20"
-        hide-cancel-button
-        class="flex-1"
-      />
-
-      <!-- 状态筛选 -->
-      <wd-picker
-        v-model="selectedStateIndex"
-        :columns="stateOptions"
-        label-key="label"
-        value-key="value"
-        @confirm="handleStateChange"
-      >
-        <wd-button custom-class="!px-3" size="small" type="primary">
-          {{ stateOptions[selectedStateIndex]?.label || '状态' }}
-        </wd-button>
-      </wd-picker>
-
-      <!-- 搜索按钮 -->
-      <wd-button type="success" size="small" @click="handleSearch">
-        搜索
-      </wd-button>
-    </view>
-
-    <!-- 总记录数 -->
-    <view v-if="total > 0" class="px-3 py-2 text-right text-sm text-gray-600">
-      共{{ total }}条记录
-    </view>
-
-    <!-- 列表 -->
     <z-paging
       ref="pagingRef"
       v-model="repairList"
       :default-page-size="pageSize"
+      refresher-only
       @query="handleQuery"
     >
-      <view class="repair-list px-3">
+      <!-- 顶部吸顶工具栏 -->
+      <template #top>
+        <view class="toolbar">
+          <view class="toolbar-row">
+            <wd-search
+              v-model="searchName"
+              placeholder="输入报修人"
+              :maxlength="20"
+              hide-cancel-button
+              clearable
+              class="flex-1"
+            />
+            <wd-picker
+              v-model="selectedStateIndex"
+              :columns="stateOptions"
+              label-key="label"
+              value-key="value"
+              @confirm="handleStateChange"
+            >
+              <wd-button custom-class="!px-3" size="small" type="primary">
+                {{ stateOptions[selectedStateIndex]?.label || '状态' }}
+              </wd-button>
+            </wd-picker>
+            <wd-button type="success" size="small" @click="handleSearch">
+              搜索
+            </wd-button>
+          </view>
+          <view v-if="total > 0" class="toolbar-total">
+            共 {{ total }} 条记录
+          </view>
+        </view>
+      </template>
+
+      <!-- 列表内容 -->
+      <view class="repair-list">
         <view
           v-for="item in repairList"
           :key="item.repairId"
-          class="repair-card mb-3 rounded bg-white p-3 shadow-sm"
+          class="repair-card"
         >
-          <!-- 工单号和状态 -->
-          <view class="flex items-center justify-between border-b border-gray-100 pb-2">
-            <text class="text-sm">{{ item.repairId }}</text>
-            <text class="text-sm text-gray-500">{{ item.statusName }}</text>
+          <view class="card-header">
+            <text class="id-text">{{ item.repairId }}</text>
+            <text class="status-text">{{ item.statusName }}</text>
           </view>
 
-          <!-- 工单信息 -->
-          <view class="mt-2 space-y-1">
-            <!-- 报修类型 -->
-            <view class="flex justify-between text-sm">
-              <text class="text-gray-500">报修类型</text>
-              <text class="text-gray-700">{{ item.repairTypeName }}</text>
+          <view class="card-body">
+            <view class="row">
+              <text class="label">报修类型</text>
+              <text class="value">{{ item.repairTypeName }}</text>
             </view>
-
-            <!-- 报修人 -->
-            <view class="flex justify-between text-sm">
-              <text class="text-gray-500">报修人</text>
-              <text class="text-gray-700">{{ item.repairName }}({{ item.tel }})</text>
+            <view class="row">
+              <text class="label">报修人</text>
+              <text class="value">{{ item.repairName }} ({{ item.tel }})</text>
             </view>
-
-            <!-- 位置 -->
-            <view class="flex justify-between text-sm">
-              <text class="text-gray-500">位置</text>
-              <text class="text-gray-700">{{ item.repairObjName }}</text>
+            <view class="row">
+              <text class="label">位置</text>
+              <text class="value">{{ item.repairObjName }}</text>
             </view>
-
-            <!-- 预约时间 -->
-            <view class="flex justify-between text-sm">
-              <text class="text-gray-500">预约时间</text>
-              <text class="text-gray-700">{{ formatAppointmentTime(item.appointmentTime) }}</text>
+            <view class="row">
+              <text class="label">预约时间</text>
+              <text class="value">{{ formatAppointmentTime(item.appointmentTime) }}</text>
             </view>
-
-            <!-- 报修内容 -->
-            <view class="flex justify-between text-sm">
-              <text class="text-gray-500">报修内容</text>
-              <text class="text-gray-700">{{ item.context }}</text>
+            <view class="row">
+              <text class="label">报修内容</text>
+              <text class="value multiline">{{ item.context }}</text>
             </view>
           </view>
 
-          <!-- 操作按钮 -->
-          <view class="mt-3 flex justify-end gap-2 border-t border-gray-100 pt-2">
-            <!-- 详情按钮 -->
+          <view class="card-actions">
             <wd-button size="small" plain @click="handleViewDetail(item)">
               详情
             </wd-button>
-
-            <!-- 派单按钮：待派单 -->
             <wd-button
               v-if="item.statusCd === '10001' && checkAuth('502019101946430010')"
               size="small"
@@ -303,8 +287,6 @@ function formatAppointmentTime(timeStr?: string): string {
             >
               派单
             </wd-button>
-
-            <!-- 结束按钮：未完成未取消 -->
             <wd-button
               v-if="item.statusCd !== '10004' && item.statusCd !== '10005' && checkAuth('502019101946430010')"
               size="small"
@@ -313,8 +295,6 @@ function formatAppointmentTime(timeStr?: string): string {
             >
               结束
             </wd-button>
-
-            <!-- 抢单按钮：待派单 -->
             <wd-button
               v-if="item.repairWay === '100' && item.statusCd === '10001' && checkAuth('502021012099350016')"
               size="small"
@@ -329,7 +309,16 @@ function formatAppointmentTime(timeStr?: string): string {
 
       <!-- 空状态 -->
       <template #empty>
-        <wd-status-tip image="search" tip="暂无维修工单" />
+        <view class="empty-wrap">
+          <wd-status-tip image="search" tip="暂无维修工单" />
+        </view>
+      </template>
+
+      <!-- 加载状态 -->
+      <template #loading>
+        <view class="loading-wrap">
+          <wd-loading />
+        </view>
       </template>
     </z-paging>
   </view>
@@ -341,18 +330,106 @@ function formatAppointmentTime(timeStr?: string): string {
   background-color: #f5f5f5;
 }
 
-.search-bar {
+.toolbar {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: #f5f5f5;
+  padding: 12px 12px 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-total {
+  margin-top: 6px;
+  text-align: right;
+  font-size: 12px;
+  color: #607d8b;
+}
+
+.repair-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .repair-card {
-  transition: all 0.3s ease;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
 
-  &:active {
-    transform: scale(0.98);
-  }
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.id-text {
+  font-size: 14px;
+  color: #263238;
+  font-weight: 600;
+}
+
+.status-text {
+  font-size: 13px;
+  color: #26a69a;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.label {
+  font-size: 13px;
+  color: #607d8b;
+  flex-shrink: 0;
+}
+
+.value {
+  font-size: 14px;
+  color: #263238;
+  text-align: right;
+  flex: 1;
+}
+
+.multiline {
+  white-space: normal;
+  text-align: right;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid #f1f1f1;
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+.empty-wrap,
+.loading-wrap {
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

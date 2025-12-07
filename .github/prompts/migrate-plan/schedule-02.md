@@ -257,3 +257,17 @@ src\pages-sub\repair\handle.vue
 2. 阅读其旧代码 `gitee-example/pages/repairOrder/repairOrder.vue` 。
 3. 维修工单池列表页，其 `z-paging` 组件的使用并没有按照 `z-paging 分页组件集成方案` 来做，请按照 `z-paging 分页组件集成方案` 的要求来修改。
 4. 维修工单池列表页，请按照 `组件迁移子代理` 的要求更改。
+
+## 029 优化 `维修工单池` 的 UI 前端界面
+
+如图：
+
+![2025-12-07-16-12-12](https://s2.loli.net/2025/12/07/MQlxa29OYKGDeAV.png)
+
+整个 `维修工单池` 的 UI 前端界面，很不美观，很不好看。
+
+1. 请参考结合 `src\pages-sub\selector\select-floor.vue` 选择页，对这个列表页，也使用相同的 `z-paging` 组件写法。补全，完成空状态、加载态的内容。
+2. 必须遵守 `component-migration` 子代理的要求。
+3. 保留按钮的颜色，文本字段的排序位置。
+4. 重点修改文本的响应式效果。避免出现文字一个大一个小的情况。
+5. 重点避免页面出现明显的滚动条。这是移动端页面，不应该出现任何形式的滚动条。
