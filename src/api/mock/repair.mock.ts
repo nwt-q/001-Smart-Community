@@ -507,30 +507,38 @@ export default defineUniAppMock([
       await randomDelay(500, 1200)
 
       try {
+        // 兼容前端字段命名（Vue3表单使用 repairTitle/repairName/tel/context/repairObjName/photos）
+        const title = (body.title ?? body.repairTitle ?? '').trim()
+        const description = (body.description ?? body.context ?? '').trim()
+        const ownerName = (body.ownerName ?? body.repairName ?? '').trim()
+        const ownerPhone = (body.ownerPhone ?? body.tel ?? '').trim()
+        const address = (body.address ?? body.repairObjName ?? '').trim()
+        const images = body.images ?? (Array.isArray(body.photos) ? body.photos.map((p: any) => p?.url).filter(Boolean) : [])
+
         // 数据验证
-        if (!body.title?.trim()) {
+        if (!title) {
           return errorResponse('维修标题不能为空', ResultEnumMap.Error)
         }
-        if (!body.description?.trim()) {
+        if (!description) {
           return errorResponse('维修描述不能为空', ResultEnumMap.Error)
         }
-        if (!body.ownerName?.trim()) {
+        if (!ownerName) {
           return errorResponse('业主姓名不能为空', ResultEnumMap.Error)
         }
-        if (!body.ownerPhone?.trim()) {
+        if (!ownerPhone) {
           return errorResponse('联系电话不能为空', ResultEnumMap.Error)
         }
-        if (!body.address?.trim()) {
+        if (!address) {
           return errorResponse('维修地址不能为空', ResultEnumMap.Error)
         }
 
         const newRepair: RepairOrder = {
           repairId: generateId('REP'),
-          title: body.title,
-          description: body.description,
-          ownerName: body.ownerName,
-          ownerPhone: body.ownerPhone,
-          address: body.address,
+          title,
+          description,
+          ownerName,
+          ownerPhone,
+          address,
           repairType: body.repairType || '其他维修',
           status: 'PENDING',
           priority: body.priority || 'MEDIUM',
@@ -539,12 +547,12 @@ export default defineUniAppMock([
           assignedWorker: null,
           estimatedCost: body.estimatedCost || 0,
           actualCost: null,
-          images: body.images || [],
+          images,
           communityId: body.communityId || 'COMM_001',
         }
 
         mockRepairDatabase.addRepair(newRepair)
-        mockLog('saveOwnerRepair', body.title, `→ ${newRepair.repairId}`)
+        mockLog('saveOwnerRepair', title, `→ ${newRepair.repairId}`)
         return successResponse({ ownerRepair: newRepair }, '创建维修工单成功')
       }
       catch (error: any) {

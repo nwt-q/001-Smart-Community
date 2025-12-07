@@ -324,6 +324,8 @@ export interface RepairListResponse {
 
 /** 创建维修工单请求 */
 export interface CreateRepairReq {
+  /** 维修标题 */
+  repairTitle: string
   /** 报修人姓名 */
   repairName: string
   /** 报修类型 */

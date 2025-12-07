@@ -52,6 +52,8 @@ const LABEL_WIDTH = '80px'
 const model = reactive({
   /** 位置类型 */
   scopeId: '001' as string,
+  /** 维修标题 */
+  repairTitle: '',
   /** 楼栋ID */
   floorId: '',
   /** 楼栋名称 */
@@ -117,6 +119,9 @@ const priceScope = computed(() => {
 
 /** 表单校验规则 */
 const formRules: FormRules = {
+  repairTitle: [
+    { required: true, message: '请填写维修标题' },
+  ],
   repairType: [
     { required: true, message: '请选择报修类型' },
   ],
@@ -382,6 +387,7 @@ async function handleSubmit() {
       }
 
       const requestData: CreateRepairReq = {
+        repairTitle: model.repairTitle,
         repairName: model.repairName,
         repairType: selectedRepairType.value!.repairType,
         appointmentTime: `${model.appointmentDate ? dayjs(model.appointmentDate).format('YYYY-MM-DD') : ''} ${model.appointmentTime}:00`,
@@ -473,6 +479,17 @@ async function handleSubmit() {
         报修信息
       </view>
       <wd-cell-group border>
+        <!-- 维修标题 -->
+        <wd-input
+          v-model="model.repairTitle"
+          label="维修标题"
+          :label-width="LABEL_WIDTH"
+          prop="repairTitle"
+          placeholder="请输入维修标题"
+          clearable
+          :rules="formRules.repairTitle"
+        />
+
         <!-- 报修类型 -->
         <wd-picker
           v-model="model.repairType"
