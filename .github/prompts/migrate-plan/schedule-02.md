@@ -230,3 +230,17 @@ src\pages-sub\repair\handle.vue
 4. 实现路由跳转时，请务必使用 `.claude\agents\route-migration.md` 子代理，按照 `路由迁移子代理` 的要求实现页面跳转。
 5. 请你主动使用谷歌浏览器 MCP，实现该页面的测试，测试 `添加维修记录` 页面是否能访问这些选择页面。
 6. `添加维修记录` 页面可访问的 url 地址，在 `src\pages-sub\repair\add-order.vue` 文件最上面提供的 url 内可见。
+
+## <!-- TODO: --> 027 反向检查业务字段是否准确
+
+1. 请你阅读 `docs\reports\vue2-route-navigation-map.md` 的 `维修工单流程模块` 。
+2. 根据 `.github\prompts\route-migration-map.yml` ，反向的阅读旧代码对应的 vue2 代码，确定在旧代码内，已经有的业务类型。
+3. 检查 `src\pages-sub\repair` 和 `src\pages-sub\selector` 的 vue 组件，确保这些组件内的代码均满足旧代码的业务类型。
+4. 按照 `.github\prompts\migrate-plan\2025-11-17-select-floor-unit-room-migration-plan.md` 文档的要求，修改对应的迁移后的代码。
+5. 修改以下几个接口文件，确保这些接口文件所对应的业务类型都是准确的：
+   - src\api\floor.ts
+   - src\api\room.ts
+   - src\api\unit.ts
+   - src\api\repair.ts
+6. 修改以上几个业务接口对应的 mock 接口，确保这些接口满足正确的业务类型命名。不要出现任何兼容字段名的写法。确保字段缺漏的校验写法，满足业务类型字段的要求。
+7. 请你确定以旧代码出现的业务类型为准，修改现有代码的业务类型。
