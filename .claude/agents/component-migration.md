@@ -107,6 +107,40 @@ color: blue
 | `cu-tag badge`  | 徽章标签 |       `wd-badge`       |  专用徽章组件  |
 | `cu-tag bg-red` | 红色标签 | `wd-tag type="danger"` | 使用 type 属性 |
 
+## ⚙️ z-paging 迁移与使用规范
+
+> 使用 z-paging 时务必同步参阅 `z-paging-integration` Skill。
+
+### 必配项（核心 props）
+
+|             必配项             |  作用  |                            说明                            |
+| :----------------------------: | :----: | :--------------------------------------------------------: |
+|       `ref="pagingRef"`        |  引用  | 搭配 `onMounted(() => pagingRef.value?.reload())` 首屏加载 |
+|        `v-model="list"`        |  数据  |                列表绑定，complete 直接填充                 |
+|     `@query="handleQuery"`     |  触发  |  只发请求，勿 `await/try/catch`，勿在此 `reload/refresh`   |
+|   `:default-page-size="xx"`    | 每页数 |                     与后端 `row` 对齐                      |
+|  `:refresher-enabled="true"`   |  下拉  |                        开启下拉刷新                        |
+| `:loading-more-enabled="true"` |  上拉  |                        开启触底加载                        |
+|   `:show-scrollbar="false"`    |   UI   |                      移动端隐藏滚动条                      |
+
+### 迁移路径（旧版手动分页 → z-paging）
+
+- **替换容器**：用 `<z-paging ref="pagingRef" v-model="list" @query="handleQuery">` 包裹列表，移除 onLoad/onReachBottom 等手写分页逻辑。
+- **参数映射**：旧的 page/row/filters 传递到 `handleQuery(pageNo, pageSize)`，内部只负责发请求（请求集成细节见 `z-paging-integration` Skill）。
+- **首屏加载**：`onMounted(() => pagingRef.value?.reload())` 触发首次加载。
+- **UI 配置**：补齐必配 props；有吸顶搜索/筛选时可加 `:fixed="false"` 避免遮挡；移动端 `:show-scrollbar="false"` 保持观感。
+- **状态反馈**：提供 `#empty`、`#loading` 插槽，避免白屏。
+
+> 接口集成（useRequest、complete 调用、危险模式、审查清单）集中在 `.claude/skills/z-paging-integration.md`，本节不再重复。
+
+### 基础映射提示
+
+|            旧用法             |                  新组件/策略                   |                 说明                 |
+| :---------------------------: | :--------------------------------------------: | :----------------------------------: |
+| 手动分页 onLoad/onReachBottom |                   `z-paging`                   | 用 complete/completeByTotal 管理分页 |
+|         自写下拉/上拉         | `:refresher-enabled` / `:loading-more-enabled` |               内置处理               |
+|          空状态手写           |    `z-paging` + `#empty` + `wd-status-tip`     |             统一空态样式             |
+
 ### 图标映射
 
 #### Icon 迁移的核心方针
@@ -225,129 +259,6 @@ color: blue
 
 - 组件的受控字段是 `fileList`，需使用 `v-model:file-list`（或 `v-model:fileList`）绑定，而不是默认的 `v-model`/`modelValue`，否则会出现 “Extraneous non-props attributes (modelValue)” 警告。
 - 故障排查：一旦看到上述警告，优先检查模板是否遗漏 `file-list` 修饰符；同时确认 `model` 初始值为数组（如 `[]`），避免 undefined。
-
-### 分页列表组件映射
-
-|       旧组件/类名        |    使用场景    |        新组件         |                   迁移说明                    |
-| :----------------------: | :------------: | :-------------------: | :-------------------------------------------: |
-|  手动分页逻辑（onLoad）  |    分页列表    |      `z-paging`       |        使用 z-paging 替代手动分页管理         |
-|  下拉刷新（onRefresh）   |    刷新列表    |  `z-paging` 内置功能  |         z-paging 自动处理下拉刷新逻辑         |
-| 上拉加载更多（loadmore） |    加载更多    |  `z-paging` 内置功能  |         z-paging 自动处理上拉加载更多         |
-|    空状态（no-data）     | 列表为空时显示 | `z-paging` + `#empty` | 使用 z-paging 的 empty 插槽配合 wd-status-tip |
-
-#### z-paging 使用规范
-
-> **📚 重要**: 当使用 `z-paging` 组件进行分页请求时，必须参阅 `z-paging-integration` Skill，确保与 `api-migration` 规范正确集成。
-
-**核心要点**:
-
-1. **与 useRequest 集成**：必须使用 `useRequest` 管理请求状态，在 `onSuccess`/`onError` 回调中调用 `complete()`
-2. **禁止 try/catch**：遵循 `api-migration` 规范，不使用 try/catch 包装请求
-3. **immediate: false**：useRequest 必须设置 `immediate: false`，由 z-paging 控制请求时机
-4. **避免遮挡头部区域**：如页面顶部有搜索栏/筛选栏，需要显式设置 `:fixed="false"`，防止 z-paging 默认 fixed 定位把头部内容盖住。
-
-#### z-paging 危险模式警告
-
-> **⚠️ 警告**: 以下模式会导致页面卡死或严重性能问题，务必避免。
-
-|                  错误模式                   |          后果          |             正确做法             |
-| :-----------------------------------------: | :--------------------: | :------------------------------: |
-|   同时使用 `:query` 属性和 `@query` 事件    |      两种方式冲突      |        只选择其中一种方式        |
-| 在 @query 回调中调用 `refresh()`/`reload()` | **页面卡死（死循环）** | 仅调用 `complete()` 通知加载结果 |
-|     使用 @query 时设置 `:auto="false"`      |    首次加载不会触发    |       移除 `:auto="false"`       |
-|        `complete()` 传入对象而非数组        |      参数类型错误      |        传入数组或 `false`        |
-
-**无限循环触发机制**:
-
-```plain
-z-paging 初始化 → 触发 @query → handleQuery() → refresh() → z-paging 重新加载 → 触发 @query → ...（死循环）
-```
-
-**正确模板**:
-
-```vue
-<!-- 正确：只使用 @query 事件，不设置 :auto="false" -->
-<z-paging ref="pagingRef" v-model="dataList" @query="handleQuery">
-  <!-- 内容 -->
-</z-paging>
-```
-
-```typescript
-// 正确：@query 回调只负责发起请求，不调用 refresh/reload
-function handleQuery(pageNo: number, pageSize: number) {
-  loadList({ page: pageNo, row: pageSize })
-  // complete() 在 onSuccess/onError 回调中调用
-}
-```
-
-**基础用法**:
-
-```vue
-<template>
-  <z-paging ref="pagingRef" v-model="dataList" :default-page-size="15" @query="handleQuery">
-    <view v-for="item in dataList" :key="item.id">
-      {{ item.name }}
-    </view>
-
-    <template #empty>
-      <wd-status-tip image="search" tip="暂无数据" />
-    </template>
-  </z-paging>
-</template>
-
-<script setup lang="ts">
-import { useRequest } from 'alova/client'
-import { ref } from 'vue'
-
-const pagingRef = ref()
-const dataList = ref([])
-
-const { send: loadList, onSuccess, onError } = useRequest((params) => getDataList(params), { immediate: false })
-
-onSuccess((event) => {
-  pagingRef.value?.complete(event.data.list || [])
-})
-
-onError((error) => {
-  console.error('加载失败:', error)
-  pagingRef.value?.complete(false)
-})
-
-function handleQuery(pageNo: number, pageSize: number) {
-  loadList({ page: pageNo, row: pageSize })
-}
-</script>
-```
-
-**常用属性**:
-
-|        属性         |   类型    | 默认值 |            说明             |
-| :-----------------: | :-------: | :----: | :-------------------------: |
-| `default-page-size` | `number`  |  `10`  |        默认每页条数         |
-|       `auto`        | `boolean` | `true` | 是否在挂载时自动触发 @query |
-|     `refresher`     | `boolean` | `true` |      是否启用下拉刷新       |
-|     `load-more`     | `boolean` | `true` |    是否启用上拉加载更多     |
-
-**常用方法**:
-
-|       方法        |       参数        |                       说明                        |
-| :---------------: | :---------------: | :-----------------------------------------------: |
-|   `complete()`    | `list` 或 `false` |              通知数据加载完成或失败               |
-| `completeByTotal` |  `list`, `total`  |            传入总数，精确控制分页状态             |
-|    `reload()`     |        无         | 重新加载数据（重置到第 1 页），用于筛选条件变化时 |
-
-**代码审查检查点**:
-
-在代码审查时，针对 z-paging 组件应检查以下事项：
-
-- [ ] 是否同时使用了 `:query` 属性和 `@query` 事件？（禁止混用）
-- [ ] `@query` 回调中是否调用了 `refresh()` 或 `reload()`？（会导致无限循环）
-- [ ] `complete()` 方法的参数类型是否正确？（应为数组或 `false`）
-- [ ] 是否有不必要的 `:auto="false"` 配置？（使用 `@query` 时应移除）
-- [ ] `useRequest` 是否设置了 `immediate: false`？（必须设置）
-- [ ] 是否使用了 try/catch 包装请求？（违反 api-migration 规范）
-
-> 详细规范请参阅 `z-paging-integration` Skill 文档。
 
 ### 空状态组件映射
 

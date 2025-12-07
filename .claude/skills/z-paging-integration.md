@@ -389,3 +389,45 @@ onMounted(() => {
 1. 同时使用 `:query` 属性和 `@query` 事件
 2. 在 `@query` 回调中调用 `refresh()` 导致无限循环
 3. 使用 `@query` 时设置了 `:auto="false"`
+
+## 12. 实战复用方法论（进页即自动加载）
+
+### 12.1 核心步骤
+
+1. **ref + reload 首屏加载**：定义 `pagingRef = ref()`，在 `onMounted(() => pagingRef.value?.reload())` 触发首屏请求。
+2. **useRequest 回调收口**：`immediate: false`，`onSuccess` 里调用 `pagingRef.value?.complete(list, total)`，`onError` 调用 `complete(false)`；不在 `@query` 中写 `await/try/catch`。
+3. **@query 只发请求**：`handleQuery(pageNo, pageSize)` 仅调用 `send({ page: pageNo, row: pageSize, ...filters })`，不触发 `reload/refresh`。
+4. **常用 props**：`:refresher-enabled="true"`, `:loading-more-enabled="true"`, `:show-scrollbar="false"`, `:default-page-size="xx"`，根据需要补 `:fixed`、安全区配置。
+5. **插槽补全**：提供 `#empty`、`#loading`，避免白屏无反馈。
+
+### 12.2 快速模板
+
+```ts
+const pagingRef = ref()
+const dataList = ref<Item[]>([])
+
+const { send: loadList } = useRequest((params) => api(params), { immediate: false })
+  .onSuccess((event) => {
+    const res = event.data
+    pagingRef.value?.complete(res.list || [], res.total || 0)
+  })
+  .onError(() => {
+    pagingRef.value?.complete(false)
+  })
+
+function handleQuery(pageNo: number, pageSize: number) {
+  loadList({ page: pageNo, row: pageSize, ...filters })
+}
+
+onMounted(() => {
+  pagingRef.value?.reload()
+})
+```
+
+### 12.3 必查清单
+
+- [ ] `immediate: false` 已设置
+- [ ] `onSuccess/onError` 调用 `complete/complete(false)` 或 `completeByTotal`
+- [ ] `@query` 未使用 `await/try/catch`，未调用 `reload/refresh`
+- [ ] `onMounted` 首屏 `reload()`
+- [ ] `refresher-enabled/loading-more-enabled/show-scrollbar` 等常用 props 已配置
