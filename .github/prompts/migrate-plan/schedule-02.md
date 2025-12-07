@@ -182,8 +182,6 @@ src\pages-sub\repair\handle.vue
 4. 请你修复接口文件不规范的部分，但是不要新增，删除接口。接口数目不应该变化。
 5. 修复完接口文件后，请你修复，补全对应的 mock 接口文件。
 
-<!-- TODO: -->
-
 ## 023 处理代码报错
 
 1. 阅读 `.github\prompts\migrate-plan\2025-11-17-select-floor-unit-room-migration-plan.md` 迁移报告。
