@@ -71,7 +71,7 @@ const model = reactive({
   /** 手机号 */
   tel: '',
   /** 预约日期 */
-  appointmentDate: undefined as number | undefined,
+  appointmentDate: '' as number | '',
   /** 预约时间 */
   appointmentTime: '',
   /** 报修内容 */
