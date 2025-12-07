@@ -391,3 +391,19 @@ src/
 3. 遵循 uni-app Vue3 + TypeScript 开发规范
 4. 新增组件会自动注册，无需手动引入
 5. 使用 UnoCSS 进行样式开发，支持原子化 CSS
+
+## 获取技术栈对应的上下文
+
+## 阅读 `wot-design-uni` 组件库的文档
+
+我们项目是移动端项目，高强度的使用了 `wot-design-uni` 组件库。你应该在编写 vue 组件时，主动地获取组件库的文档，及时使用正确的组件。
+
+你可以直接在 github 仓库内，阅读 `wot-design-uni` 组件库的 markdown 格式文档。如果你在使用 `wot-design-uni` 组件时，不清楚如何使用，请有策略的，部分地阅读来自 github 的 markdown 文档。请你自主使用合适的工具查找文档：
+
+1. 其他的 fetch 网站获取工具。
+2. markdown 的 MCP 工具。
+3. 用 `gitmcp__wot-design-uni__Moonofweisheng` mcp 查找。
+
+`wot-design-uni` 组件文档全都在以下 github 仓库目录内。
+
+- https://github.com/Moonofweisheng/wot-design-uni/tree/master/docs/component
