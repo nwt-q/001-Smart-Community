@@ -562,7 +562,7 @@ async function handleSubmit() {
       </view>
       <view class="bg-white p-3">
         <wd-upload
-          v-model="model.photos"
+          v-model:file-list="model.photos"
           :limit="9"
           :max-size="10 * 1024 * 1024"
           :before-upload="handleBeforeUpload"
