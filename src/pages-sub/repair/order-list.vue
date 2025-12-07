@@ -28,7 +28,7 @@ definePage({
 
 /** 搜索条件 */
 const searchName = ref('')
-const selectedStateIndex = ref(0)
+const selectedState = ref<string>('')
 const defaultStateOptions: Array<{ label: string, value: string }> = [
   { label: '全部状态', value: '' },
   ...REPAIR_STATUSES.map(item => ({
@@ -102,17 +102,13 @@ const { send: loadRepairOrderList } = useRequest(
 
 /** z-paging 查询回调 */
 function handleQuery(pageNo: number, pageSizeValue: number) {
-  const selectedState = selectedStateIndex.value === 0
-    ? ''
-    : stateOptions.value[selectedStateIndex.value]?.value || ''
-
   currentPage.value = pageNo
   pageSize.value = pageSizeValue
 
   loadRepairOrderList({
     page: pageNo,
     row: pageSizeValue,
-    statusCd: selectedState,
+    statusCd: selectedState.value,
   })
 }
 
@@ -128,8 +124,8 @@ function handleSearch() {
 }
 
 /** 状态选择器改变 */
-function handleStateChange({ value }: { value: number }) {
-  selectedStateIndex.value = value
+function handleStateChange({ value }: { value: string }) {
+  selectedState.value = value
   pagingRef.value?.reload()
 }
 
@@ -213,6 +209,20 @@ function formatAppointmentTime(timeStr?: string): string {
   }
 }
 
+function displayLocation(item: RepairOrder): string {
+  return item.repairObjName || item.address || '未填写位置'
+}
+
+function displayAppointment(item: RepairOrder): string {
+  return formatAppointmentTime(item.appointmentTime || item.createTime) || '未填写时间'
+}
+
+function displayReporter(item: RepairOrder): string {
+  const name = item.repairName || '未填写报修人'
+  const phone = (item.tel || '').trim()
+  return phone ? `${name} (${phone})` : name
+}
+
 type TagType = 'primary' | 'success' | 'warning' | 'danger'
 
 /** 派单状态对应的标签颜色 */
@@ -258,14 +268,14 @@ function getStatusTagType(statusCd?: string): TagType {
             >
               <template #prefix>
                 <wd-picker
-                  v-model="selectedStateIndex"
+                  v-model="selectedState"
                   :columns="stateOptions"
                   label-key="label"
                   value-key="value"
                   @confirm="handleStateChange"
                 >
                   <view class="prefix-filter">
-                    <text class="prefix-text">{{ stateOptions[selectedStateIndex]?.label || '状态' }}</text>
+                    <text class="prefix-text">{{ stateOptions.find(item => item.value === selectedState) ?.label || '状态' }}</text>
                     <wd-icon name="" custom-class="i-carbon-chevron-down text-28rpx text-gray-500 ml-2rpx" />
                   </view>
                 </wd-picker>
@@ -304,23 +314,23 @@ function getStatusTagType(statusCd?: string): TagType {
           <view class="card-body">
             <view class="row">
               <text class="label">报修类型</text>
-              <text class="value">{{ item.repairTypeName }}</text>
+              <text class="value value-strong">{{ item.repairTypeName || '其他维修' }}</text>
             </view>
             <view class="row">
               <text class="label">报修人</text>
-              <text class="value">{{ item.repairName }} ({{ item.tel }})</text>
+              <text class="value value-strong">{{ displayReporter(item) }}</text>
             </view>
             <view class="row">
               <text class="label">位置</text>
-              <text class="value">{{ item.repairObjName }}</text>
+              <text class="value value-strong">{{ displayLocation(item) }}</text>
             </view>
             <view class="row">
               <text class="label">预约时间</text>
-              <text class="value">{{ formatAppointmentTime(item.appointmentTime) }}</text>
+              <text class="value value-strong">{{ displayAppointment(item) }}</text>
             </view>
             <view class="row">
               <text class="label">报修内容</text>
-              <text class="value multiline">{{ item.context }}</text>
+              <text class="value multiline value-strong">{{ item.context || '暂无报修内容' }}</text>
             </view>
           </view>
 
@@ -491,10 +501,16 @@ function getStatusTagType(statusCd?: string): TagType {
 }
 
 .value {
-  font-size: 14px;
+  font-size: 15px;
   color: #263238;
   text-align: right;
   flex: 1;
+}
+
+.value-strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2d3d;
 }
 
 .multiline {

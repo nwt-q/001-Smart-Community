@@ -93,15 +93,19 @@ function createMockRepair(id: string): RepairOrder {
   const priority = (['HIGH', 'MEDIUM', 'LOW'] as PriorityType[])[Math.floor(Math.random() * 3)]
   const now = Date.now()
   const randomDays = Math.floor(Math.random() * 30)
+  const address = generateAddress()
+  const appointment = new Date(now + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000).toISOString()
 
   return {
     repairId: `REP_${id}`,
     repairType: typeItem.value as RepairType,
     repairTypeName: typeItem.label,
-    context: generateRepairDescription(typeItem.name),
+    context: generateRepairDescription(typeItem.label),
     repairName: generateChineseName(),
     tel: generatePhoneNumber(),
-    address: generateAddress(),
+    address,
+    repairObjName: address,
+    appointmentTime: appointment,
     statusCd: statusItem.value as string,
     statusName: statusItem.label,
     priority,
@@ -120,6 +124,36 @@ function createMockRepair(id: string): RepairOrder {
         }
       : undefined,
   }
+}
+
+/** 补齐列表展示必需字段，避免前端出现空白值 */
+function normalizeRepairOrder(repair: RepairOrder): RepairOrder {
+  const typeItem = REPAIR_TYPE_OPTIONS.find(item => item.value === repair.repairType)
+  const statusItem = REPAIR_STATUSES.find(item => item.value === repair.statusCd)
+  const normalizedTitle = (repair.title || '').trim()
+  const nameFromTitle = normalizedTitle.includes('维修申请')
+    ? normalizedTitle.replace(/^.*-\s*/, '').replace(/的维修申请.*$/, '').trim()
+    : ''
+  const typeFromTitle = normalizedTitle.split('-')[0]?.trim()
+
+  const normalizedName = (repair.repairName || '').trim() || nameFromTitle || '未填写报修人'
+  const normalizedTel = (repair.tel || (repair as any).ownerTel || (repair as any).phone || '').trim() || '未填写电话'
+
+  return {
+    ...repair,
+    repairTypeName: repair.repairTypeName || typeItem?.label || typeFromTitle || '其他维修',
+    statusName: repair.statusName || statusItem?.label || '待派单',
+    repairName: normalizedName,
+    tel: normalizedTel,
+    repairObjName: repair.repairObjName || repair.address || '未填写位置',
+    appointmentTime: repair.appointmentTime || repair.createTime || '',
+    context: repair.context || normalizedTitle || '暂无报修内容',
+  }
+}
+
+/** 确保列表项字段补齐，避免前端显示空白 */
+function ensureNormalizedList(list: RepairOrder[]): RepairOrder[] {
+  return list.map(normalizeRepairOrder)
 }
 
 // ==================== 维修数据库对象 ====================
@@ -228,11 +262,16 @@ const mockRepairDatabase = {
       new Date(b.createTime).getTime() - new Date(a.createTime).getTime(),
     )
 
-    return createPaginationResponse(
+    const pagination = createPaginationResponse(
       filteredRepairs,
       params.page || 1,
       params.row || 10,
     )
+
+    return {
+      ...pagination,
+      list: ensureNormalizedList(pagination.list),
+    }
   },
 
   /** 添加工单 */
@@ -354,10 +393,12 @@ export default defineUniAppMock([
           assignedWorker: params.assignedWorker,
         })
 
-        mockLog('listOwnerRepairs', params, `→ ${result.list.length} items`)
+        const normalizedList = ensureNormalizedList(result.list)
+
+        mockLog('listOwnerRepairs', params, `→ ${normalizedList.length} items`)
         return successResponse(
           {
-            ownerRepairs: result.list,
+            ownerRepairs: normalizedList,
             total: result.total,
             page: result.page,
             row: result.pageSize,
@@ -390,11 +431,13 @@ export default defineUniAppMock([
           statusCd: params.statusCd || params.status,
         })
 
-        mockLog('listStaffRepairs', params, `→ ${result.list.length} items`)
+        const normalizedList = ensureNormalizedList(result.list)
+
+        mockLog('listStaffRepairs', params, `→ ${normalizedList.length} items`)
         return successResponse(
           {
-            ownerRepairs: result.list,
-            total: result.total,
+            ownerRepairs: normalizedList,
+            total: normalizedList.length,
             page: result.page,
             row: result.pageSize,
           },
@@ -425,10 +468,12 @@ export default defineUniAppMock([
           keyword: params.keyword,
         })
 
-        mockLog('listStaffFinishRepairs', params, `→ ${result.list.length} items`)
+        const normalizedList = ensureNormalizedList(result.list)
+
+        mockLog('listStaffFinishRepairs', params, `→ ${normalizedList.length} items`)
         return successResponse(
           {
-            ownerRepairs: result.list,
+            ownerRepairs: normalizedList,
             total: result.total,
             page: result.page,
             row: result.pageSize,
@@ -462,8 +507,10 @@ export default defineUniAppMock([
           return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
         }
 
-        mockLog('queryOwnerRepair', params.repairId, `→ ${repair.repairName || repair.repairId}`)
-        return successResponse({ ownerRepair: repair }, '查询成功')
+        const normalizedRepair = normalizeRepairOrder(repair)
+
+        mockLog('queryOwnerRepair', params.repairId, `→ ${normalizedRepair.repairName || normalizedRepair.repairId}`)
+        return successResponse({ ownerRepair: normalizedRepair }, '查询成功')
       }
       catch (error: any) {
         console.error('❌ Mock API Error: queryOwnerRepair', error)
