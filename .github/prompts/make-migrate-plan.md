@@ -689,3 +689,29 @@
 2. 阅读 `docs\reports\2025-12-05-z-paging-infinite-loop-bug-report.md` 事故报告。
 3. 告诉我这两份报告的差异点。我准备以 `z-paging-integration` 为核心，用 `2025-12-05-z-paging-infinite-loop-bug-report` 事故报告作为增量迭代的文件，更新，迭代，细化 `z-paging-integration` 技能文件在以后使用 `z-paging` 组件时的注意事项。
 4. 请你根据事故报告的说明，更新迭代 `z-paging-integration` 文档的内容。
+
+### 051 新建专用的常量文件，重构 mock 数据内使用的常量
+
+以 REPAIR_STATUSES 的重构为例子。
+
+1. 在 src\api\mock\repair.mock.ts 内，将 REPAIR_STATUSES 这个形如数据字典的变量，专门提取出来到 `src\constants\repair.ts` 文件内。
+2. 在 src\api\mock\repair.mock.ts 内使用来自 `src\constants\repair.ts` 数据字典常量的下拉列表数组。
+3. 在 src\pages-sub\repair\order-list.vue 内使用来自 `src\constants\repair.ts` 数据字典常量的下拉列表数组。
+
+我需要你分两个步骤来完成重构任务。
+
+步骤 1： 代码写法重构
+
+1. 阅读 src\api\mock 文件夹内全部的 `*.mock.ts` 文件，将这些文件内涉及到的数据字典式的常量，全部按照业务文件名，整理，提取，迁移到 `src\constants` 常量目录内。
+2. 确保 src\api\mock 文件夹内全部的 `*.mock.ts` 文件未来将从 `src\constants` 常量目录内，读取数据字典式的下拉列表数据。
+3. 数据字典式的数据，必须使用 `import type { ColumnItem } from 'wot-design-uni/components/wd-picker-view/types'` 所提供的 `ColumnItem` 类型来约束数据字典的格式取值。
+4. 对于全部的 `*.mock.ts` 而言，使用 `ColumnItem` 类型约束的数据字典数组，很可能出现约束失败，类型检查失效的情况。请你手动检查。
+   - 必须主动使用 value 字段。
+   - 必须主动使用 label 字段。
+   - value 字段的类型约束为 `string | number | boolean` ，这很宽泛，很容易导致类型不匹配。请你在 `*.mock.ts` 内
+
+步骤 2： 更新各类子代理和规范文件
+
+1. 在步骤 1 内，展现了很多不同于 `api-migration` 子代理文件的做法。这些做法属于新的迁移规范，对于全部的 `*.mock.ts` 而言，出现了新的规范，请及时更新其规范。
+2. 请你将数据字典常量的代码写法，以及注意事项，都写到 `code-migration` 子代理文件内，为`code-migration` 子代理增加新的代码编写规范。为旧项目代码做数据字典常量迁移时，提供明确的迁移规范标准。
+3. 步骤 1 说明了明确的类型报错解决方案与注意事项，请你更新 `code-migration` 子代理文件，说明清楚类型约束写法和注意事项。
