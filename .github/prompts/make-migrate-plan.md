@@ -751,4 +751,11 @@
 4. 访问地址统一使用 H5 默认端口 `http://localhost:9000/#/{route}` 。若个别页面有自定义示例参数，按现有注释延续。
 5. 旧代码行的格式固定为 `旧代码：gitee-example/...` 。放在业务注释块内靠后一行即可。
 
-### 053
+### 053 <!-- TODO: 等待编写完整 --> 制作独立的，美观的，专用的加载等待组件
+
+调研 uniapp 生态内，更加美观的，精彩的加载等待动效库。
+
+---
+
+1. src\pages-sub\selector\select-floor.vue
+2. `<template #loading>`
