@@ -25,7 +25,7 @@
     "pnpm": ">=10"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
+    "dev": "pnpm run dev:h5",
     "uvm": "npx @dcloudio/uvm@latest",
     "uvm-rm": "node ./scripts/postupgrade.js",
     "postuvm": "echo upgrade uni-app success!",
@@ -35,7 +35,7 @@
     "dev:app-android": "uni -p app-android",
     "dev:app-ios": "uni -p app-ios",
     "dev:custom": "uni -p",
-    "dev": "node --experimental-loader ./scripts/window-path-loader.js node_modules/@dcloudio/vite-plugin-uni/bin/uni.js",
+    "dev:fuzha": "node --experimental-loader ./scripts/window-path-loader.js node_modules/@dcloudio/vite-plugin-uni/bin/uni.js",
     "dev:test": "uni --mode test",
     "dev:prod": "uni --mode production",
     "dev:h5": "uni",
@@ -93,6 +93,7 @@
     "up-taze": "pnpm up @ruan-cat/taze-config -L && npx taze",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs --base=/001-Smart-Community/",
+    "preinstall": "npx only-allow pnpm",
     "ci": "turbo do-build"
   },
   "dependencies": {
