@@ -5,6 +5,7 @@
 
 import type { PriorityType } from '@/types/api'
 import type { RepairListParams, RepairOrder, RepairStatus, RepairType } from '@/types/repair'
+import { REPAIR_STATUSES } from '@/constants/repair'
 import {
   createPaginationResponse,
   defineUniAppMock,
@@ -31,15 +32,6 @@ const REPAIR_TYPES: Array<{ code: RepairType, name: string }> = [
   { code: '1005', name: '管道疏通' },
   { code: '1006', name: '墙面修补' },
   { code: '1007', name: '其他维修' },
-]
-
-/** 维修状态配置（旧版 statusCd/name） */
-export const REPAIR_STATUSES: Array<{ code: RepairStatus, name: string }> = [
-  { code: '10001', name: '待派单' },
-  { code: '10002', name: '已派单' },
-  { code: '10003', name: '处理中' },
-  { code: '10004', name: '已完成' },
-  { code: '10005', name: '已取消' },
 ]
 
 /** 生成维修描述 */
@@ -116,17 +108,17 @@ function createMockRepair(id: string): RepairOrder {
     repairName: generateChineseName(),
     tel: generatePhoneNumber(),
     address: generateAddress(),
-    statusCd: statusItem.code,
-    statusName: statusItem.name,
+    statusCd: statusItem.value as string,
+    statusName: statusItem.label,
     priority,
     createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
     updateTime: new Date().toISOString(),
-    assignedWorker: statusItem.code === '10001' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
+    assignedWorker: statusItem.value === '10001' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
     estimatedCost: generateAmount(50, 500),
-    actualCost: statusItem.code === '10004' ? generateAmount(40, 600) : null,
+    actualCost: statusItem.value === '10004' ? generateAmount(40, 600) : null,
     images: Math.random() > 0.5 ? [`https://picsum.photos/400/300?random=${id}`] : [],
     communityId: 'COMM_001',
-    evaluation: statusItem.code === '10004' && Math.random() > 0.3
+    evaluation: statusItem.value === '10004' && Math.random() > 0.3
       ? {
           rating: Math.floor(Math.random() * 2) + 4, // 4-5星
           comment: ['服务很好，维修及时', '师傅很专业，问题解决了', '效率很高，满意', '态度不错'][Math.floor(Math.random() * 4)],

@@ -14,8 +14,8 @@
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
 import { onMounted, ref } from 'vue'
-import { REPAIR_STATUSES } from '@/api/mock/repair.mock'
 import { getRepairOrderList, getRepairStates, robRepairOrder } from '@/api/repair'
+import { REPAIR_STATUSES } from '@/constants/repair'
 import { TypedRouter } from '@/router'
 import { getCurrentCommunity, getUserInfo } from '@/utils/user'
 
@@ -32,8 +32,8 @@ const selectedStateIndex = ref(0)
 const defaultStateOptions: Array<{ label: string, value: string }> = [
   { label: '全部状态', value: '' },
   ...REPAIR_STATUSES.map(item => ({
-    label: item.name,
-    value: item.code,
+    label: item.label,
+    value: item.value as string,
   })),
 ]
 const stateOptions = ref<Array<{ label: string, value: string }>>([...defaultStateOptions])
