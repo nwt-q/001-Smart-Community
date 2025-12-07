@@ -3,9 +3,9 @@
   功能：显示维修工单列表，支持搜索和筛选
 
   访问地址: http://localhost:9000/#/pages-sub/repair/order-list
-  建议携带参数: ?status=PENDING&page=1&row=10
+  建议携带参数: ?statusCd=10001&page=1&row=10
 
-  完整示例: http://localhost:9000/#/pages-sub/repair/order-list?status=PENDING&page=1&row=10
+  完整示例: http://localhost:9000/#/pages-sub/repair/order-list?statusCd=10001&page=1&row=10
 -->
 
 <script setup lang="ts">
@@ -66,7 +66,7 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
 
 /** 查询维修工单列表请求 */
 const { send: loadRepairOrderList } = useRequest(
-  (params: { page: number, row: number, state?: string }) => getRepairOrderList({
+  (params: { page: number, row: number, statusCd?: string }) => getRepairOrderList({
     ...params,
     storeId: userInfo.storeId || '',
     userId: userInfo.userId || '',
@@ -86,7 +86,7 @@ async function queryList(pageNo: number, pageRow: number) {
   const response = await loadRepairOrderList({
     page: pageNo,
     row: pageRow,
-    state: selectedState,
+    statusCd: selectedState,
   })
 
   return {
@@ -260,7 +260,7 @@ function formatAppointmentTime(timeStr?: string): string {
           <!-- 工单号和状态 -->
           <view class="flex items-center justify-between border-b border-gray-100 pb-2">
             <text class="text-sm">{{ item.repairId }}</text>
-            <text class="text-sm text-gray-500">{{ item.stateName }}</text>
+            <text class="text-sm text-gray-500">{{ item.statusName }}</text>
           </view>
 
           <!-- 工单信息 -->
@@ -303,9 +303,9 @@ function formatAppointmentTime(timeStr?: string): string {
               详情
             </wd-button>
 
-            <!-- 派单按钮 -->
+            <!-- 派单按钮：待派单 -->
             <wd-button
-              v-if="item.state === '1000' && checkAuth('502019101946430010')"
+              v-if="item.statusCd === '10001' && checkAuth('502019101946430010')"
               size="small"
               type="warning"
               @click="handleDispatch(item)"
@@ -313,9 +313,9 @@ function formatAppointmentTime(timeStr?: string): string {
               派单
             </wd-button>
 
-            <!-- 结束按钮 -->
+            <!-- 结束按钮：未完成未取消 -->
             <wd-button
-              v-if="item.state !== '1700' && item.state !== '1800' && item.state !== '1900' && checkAuth('502019101946430010')"
+              v-if="item.statusCd !== '10004' && item.statusCd !== '10005' && checkAuth('502019101946430010')"
               size="small"
               type="error"
               @click="handleEndRepair(item)"
@@ -323,9 +323,9 @@ function formatAppointmentTime(timeStr?: string): string {
               结束
             </wd-button>
 
-            <!-- 抢单按钮 -->
+            <!-- 抢单按钮：待派单 -->
             <wd-button
-              v-if="item.repairWay === '100' && item.state === '1000' && checkAuth('502021012099350016')"
+              v-if="item.repairWay === '100' && item.statusCd === '10001' && checkAuth('502021012099350016')"
               size="small"
               type="warning"
               @click="handleRobOrder(item)"

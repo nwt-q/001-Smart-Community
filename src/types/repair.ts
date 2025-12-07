@@ -7,23 +7,11 @@ import type { PaginationParams, PriorityType } from './api'
 
 // ==================== 枚举类型 ====================
 
-/** 维修状态枚举 */
-export type RepairStatus
-  = | 'PENDING' // 待派单
-    | 'ASSIGNED' // 已派单
-    | 'IN_PROGRESS' // 处理中
-    | 'COMPLETED' // 已完成
-    | 'CANCELLED' // 已取消
+/** 维修状态代码（旧版 statusCd） */
+export type RepairStatus = string
 
-/** 维修类型 */
-export type RepairType
-  = | '水电维修'
-    | '门窗维修'
-    | '空调维修'
-    | '电梯维修'
-    | '管道疏通'
-    | '墙面修补'
-    | '其他维修'
+/** 维修类型代码（旧版 repairType） */
+export type RepairType = string
 
 /** 维修对象类型 */
 export type RepairObjType
@@ -162,19 +150,13 @@ export interface RepairOrder {
   repairId: string
   /** 工单标题 */
   title?: string
-  /** 报修内容/描述 */
-  description?: string
-  /** 报修内容（与description同义，旧项目字段） */
+  /** 报修内容（旧版主字段） */
   context?: string
 
   // ========== 报修人信息 ==========
-  /** 业主姓名 */
-  ownerName?: string
-  /** 业主电话 */
-  ownerPhone?: string
-  /** 报修人姓名（与ownerName同义） */
+  /** 报修人姓名（旧版主字段） */
   repairName?: string
-  /** 联系电话（与ownerPhone同义） */
+  /** 联系电话（旧版主字段） */
   tel?: string
 
   // ========== 维修位置信息 ==========
@@ -190,16 +172,14 @@ export interface RepairOrder {
   storeId?: string
 
   // ========== 维修类型和状态 ==========
-  /** 维修类型 */
+  /** 维修类型代码 */
   repairType?: RepairType
-  /** 维修类型名称（中文显示） */
+  /** 维修类型名称（显示用） */
   repairTypeName?: string
-  /** 工单状态 */
-  status?: RepairStatus
-  /** 状态码 */
-  state?: string
+  /** 工单状态代码（旧版 statusCd） */
+  statusCd?: RepairStatus
   /** 状态名称 */
-  stateName?: string
+  statusName?: string
   /** 优先级 */
   priority?: PriorityType
   /** 维修方式（100=抢单方式） */
@@ -284,10 +264,8 @@ export interface RepairOrder {
 export interface RepairListParams extends PaginationParams {
   /** 小区ID */
   communityId?: string
-  /** 工单状态 */
-  status?: RepairStatus
-  /** 工单状态码（与后端实际字段对应） */
-  state?: string
+  /** 工单状态码（旧版 statusCd） */
+  statusCd?: RepairStatus
   /** 维修类型 */
   repairType?: RepairType
   /** 关键词搜索 */
@@ -327,15 +305,17 @@ export interface CreateRepairReq {
   /** 维修标题 */
   title: string
   /** 报修人姓名 */
-  ownerName: string
-  /** 报修类型 */
+  repairName: string
+  /** 报修类型代码 */
   repairType: string
+  /** 报修类型名称 */
+  repairTypeName?: string
   /** 预约时间 */
   appointmentTime: string
   /** 联系电话 */
-  ownerPhone: string
+  tel: string
   /** 报修内容 */
-  description: string
+  context: string
   /** 维修地址/对象名称 */
   address: string
   /** 小区ID */

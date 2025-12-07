@@ -22,29 +22,29 @@ import {
 
 // ==================== 维修数据生成器 ====================
 
-/** 维修类型配置 */
-const REPAIR_TYPES: RepairType[] = [
-  '水电维修',
-  '门窗维修',
-  '空调维修',
-  '电梯维修',
-  '管道疏通',
-  '墙面修补',
-  '其他维修',
+/** 维修类型配置（代码 + 名称） */
+const REPAIR_TYPES: Array<{ code: RepairType, name: string }> = [
+  { code: '1001', name: '水电维修' },
+  { code: '1002', name: '门窗维修' },
+  { code: '1003', name: '空调维修' },
+  { code: '1004', name: '电梯维修' },
+  { code: '1005', name: '管道疏通' },
+  { code: '1006', name: '墙面修补' },
+  { code: '1007', name: '其他维修' },
 ]
 
-/** 维修状态配置 */
-const REPAIR_STATUSES: RepairStatus[] = [
-  'PENDING',
-  'ASSIGNED',
-  'IN_PROGRESS',
-  'COMPLETED',
-  'CANCELLED',
+/** 维修状态配置（旧版 statusCd/name） */
+const REPAIR_STATUSES: Array<{ code: RepairStatus, name: string }> = [
+  { code: '10001', name: '待派单' },
+  { code: '10002', name: '已派单' },
+  { code: '10003', name: '处理中' },
+  { code: '10004', name: '已完成' },
+  { code: '10005', name: '已取消' },
 ]
 
 /** 生成维修描述 */
-function generateRepairDescription(repairType: RepairType): string {
-  const descriptions: Record<RepairType, string[]> = {
+function generateRepairDescription(repairTypeName: string): string {
+  const descriptions: Record<string, string[]> = {
     水电维修: [
       '卫生间水龙头漏水，需要更换密封圈',
       '客厅插座没电，怀疑是线路问题',
@@ -96,36 +96,37 @@ function generateRepairDescription(repairType: RepairType): string {
     ],
   }
 
-  const typeDescriptions = descriptions[repairType] || descriptions['其他维修']
+  const typeDescriptions = descriptions[repairTypeName] || descriptions['其他维修']
   return typeDescriptions[Math.floor(Math.random() * typeDescriptions.length)]
 }
 
 /** 核心维修数据生成器 */
 function createMockRepair(id: string): RepairOrder {
-  const repairType = REPAIR_TYPES[Math.floor(Math.random() * REPAIR_TYPES.length)]
-  const status = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
+  const typeItem = REPAIR_TYPES[Math.floor(Math.random() * REPAIR_TYPES.length)]
+  const statusItem = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
   const priority = (['HIGH', 'MEDIUM', 'LOW'] as PriorityType[])[Math.floor(Math.random() * 3)]
   const now = Date.now()
   const randomDays = Math.floor(Math.random() * 30)
 
   return {
     repairId: `REP_${id}`,
-    title: `${repairType} - ${generateChineseName()}的维修申请`,
-    description: generateRepairDescription(repairType),
-    ownerName: generateChineseName(),
-    ownerPhone: generatePhoneNumber(),
+    repairType: typeItem.code,
+    repairTypeName: typeItem.name,
+    context: generateRepairDescription(typeItem.name),
+    repairName: generateChineseName(),
+    tel: generatePhoneNumber(),
     address: generateAddress(),
-    repairType,
-    status,
+    statusCd: statusItem.code,
+    statusName: statusItem.name,
     priority,
     createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
     updateTime: new Date().toISOString(),
-    assignedWorker: status === 'PENDING' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
+    assignedWorker: statusItem.code === '10001' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
     estimatedCost: generateAmount(50, 500),
-    actualCost: status === 'COMPLETED' ? generateAmount(40, 600) : null,
+    actualCost: statusItem.code === '10004' ? generateAmount(40, 600) : null,
     images: Math.random() > 0.5 ? [`https://picsum.photos/400/300?random=${id}`] : [],
     communityId: 'COMM_001',
-    evaluation: status === 'COMPLETED' && Math.random() > 0.3
+    evaluation: statusItem.code === '10004' && Math.random() > 0.3
       ? {
           rating: Math.floor(Math.random() * 2) + 4, // 4-5星
           comment: ['服务很好，维修及时', '师傅很专业，问题解决了', '效率很高，满意', '态度不错'][Math.floor(Math.random() * 4)],
@@ -184,11 +185,11 @@ const mockRepairDatabase = {
 
   /** 维修状态字典 */
   repairStates: [
-    { statusCd: 'PENDING', name: '待派单' },
-    { statusCd: 'ASSIGNED', name: '已派单' },
-    { statusCd: 'IN_PROGRESS', name: '处理中' },
-    { statusCd: 'COMPLETED', name: '已完成' },
-    { statusCd: 'CANCELLED', name: '已取消' },
+    { statusCd: '10001', name: '待派单' },
+    { statusCd: '10002', name: '已派单' },
+    { statusCd: '10003', name: '处理中' },
+    { statusCd: '10004', name: '已完成' },
+    { statusCd: '10005', name: '已取消' },
   ],
 
   /** 支付方式字典 */
@@ -210,8 +211,8 @@ const mockRepairDatabase = {
     let filteredRepairs = [...this.repairs]
 
     // 状态筛选
-    if (params.status) {
-      filteredRepairs = filteredRepairs.filter(repair => repair.status === params.status)
+    if (params.statusCd) {
+      filteredRepairs = filteredRepairs.filter(repair => repair.statusCd === params.statusCd)
     }
 
     // 维修类型筛选
@@ -223,10 +224,10 @@ const mockRepairDatabase = {
     if (params.keyword) {
       const keyword = params.keyword.toLowerCase()
       filteredRepairs = filteredRepairs.filter(repair =>
-        repair.title.toLowerCase().includes(keyword)
-        || repair.description.toLowerCase().includes(keyword)
-        || repair.ownerName.toLowerCase().includes(keyword)
-        || repair.address.toLowerCase().includes(keyword),
+        (repair.context || '').toLowerCase().includes(keyword)
+        || (repair.repairName || '').toLowerCase().includes(keyword)
+        || (repair.tel || '').toLowerCase().includes(keyword)
+        || (repair.address || '').toLowerCase().includes(keyword),
       )
     }
 
@@ -294,13 +295,13 @@ const mockRepairDatabase = {
   getDispatchList(params: RepairListParams) {
     const dispatchParams = {
       ...params,
-      status: undefined, // 清除状态过滤，手动处理
+      statusCd: undefined, // 清除状态过滤，手动处理
     }
     const result = this.getRepairList(dispatchParams)
 
-    // 只返回 ASSIGNED 和 IN_PROGRESS 状态的工单
+    // 只返回 已派单/处理中 状态的工单
     result.list = result.list.filter(repair =>
-      repair.status === 'ASSIGNED' || repair.status === 'IN_PROGRESS',
+      repair.statusCd === '10002' || repair.statusCd === '10003',
     )
     result.total = result.list.length
 
@@ -311,7 +312,7 @@ const mockRepairDatabase = {
   getFinishList(params: RepairListParams) {
     return this.getRepairList({
       ...params,
-      status: 'COMPLETED',
+      statusCd: '10004',
     })
   },
 
@@ -373,7 +374,7 @@ export default defineUniAppMock([
           page: Number(params.page) || 1,
           row: Number(params.row) || 10,
           communityId: params.communityId,
-          status: params.status,
+          statusCd: params.statusCd || params.status,
           repairType: params.repairType,
           keyword: params.keyword,
           startDate: params.startDate,
@@ -488,7 +489,7 @@ export default defineUniAppMock([
           return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
         }
 
-        mockLog('queryOwnerRepair', params.repairId, `→ ${repair.title}`)
+        mockLog('queryOwnerRepair', params.repairId, `→ ${repair.repairName || repair.repairId}`)
         return successResponse({ ownerRepair: repair }, '查询成功')
       }
       catch (error: any) {
@@ -509,9 +510,9 @@ export default defineUniAppMock([
       try {
         // 前后端字段已统一
         const title = (body.title ?? '').trim()
-        const description = (body.description ?? '').trim()
-        const ownerName = (body.ownerName ?? '').trim()
-        const ownerPhone = (body.ownerPhone ?? '').trim()
+        const context = (body.context ?? '').trim()
+        const repairName = (body.repairName ?? '').trim()
+        const tel = (body.tel ?? '').trim()
         const address = (body.address ?? '').trim()
         const images = Array.isArray(body.photos) ? body.photos.filter(Boolean) : []
 
@@ -519,13 +520,13 @@ export default defineUniAppMock([
         if (!title) {
           return errorResponse('维修标题不能为空', ResultEnumMap.Error)
         }
-        if (!description) {
+        if (!context) {
           return errorResponse('维修描述不能为空', ResultEnumMap.Error)
         }
-        if (!ownerName) {
+        if (!repairName) {
           return errorResponse('业主姓名不能为空', ResultEnumMap.Error)
         }
-        if (!ownerPhone) {
+        if (!tel) {
           return errorResponse('联系电话不能为空', ResultEnumMap.Error)
         }
         if (!address) {
@@ -535,12 +536,14 @@ export default defineUniAppMock([
         const newRepair: RepairOrder = {
           repairId: generateId('REP'),
           title,
-          description,
-          ownerName,
-          ownerPhone,
+          context,
+          repairName,
+          tel,
           address,
-          repairType: body.repairType || '其他维修',
-          status: 'PENDING',
+          repairType: body.repairType || '1007',
+          repairTypeName: body.repairTypeName || '其他维修',
+          statusCd: '10001',
+          statusName: '待派单',
           priority: body.priority || 'MEDIUM',
           createTime: new Date().toISOString(),
           updateTime: new Date().toISOString(),
@@ -615,16 +618,14 @@ export default defineUniAppMock([
         }
 
         // 根据不同操作更新状态
-        if (body.action === 'DISPATCH') {
-          repair.status = 'ASSIGNED'
-          repair.assignedWorker = body.staffName
-        }
-        else if (body.action === 'TRANSFER') {
-          repair.status = 'ASSIGNED'
+        if (body.action === 'DISPATCH' || body.action === 'TRANSFER') {
+          repair.statusCd = '10002'
+          repair.statusName = '已派单'
           repair.assignedWorker = body.staffName
         }
         else if (body.action === 'RETURN') {
-          repair.status = 'PENDING'
+          repair.statusCd = '10001'
+          repair.statusName = '待派单'
           repair.assignedWorker = null
         }
 
@@ -665,7 +666,8 @@ export default defineUniAppMock([
         }
 
         // 更新工单状态为已完成
-        repair.status = 'COMPLETED'
+        repair.statusCd = '10004'
+        repair.statusName = '已完成'
         repair.actualCost = body.totalPrice || repair.estimatedCost
         repair.updateTime = new Date().toISOString()
 
@@ -698,7 +700,8 @@ export default defineUniAppMock([
         }
 
         // 更新工单状态为已取消
-        repair.status = 'CANCELLED'
+        repair.statusCd = '10005'
+        repair.statusName = '已取消'
         repair.updateTime = new Date().toISOString()
 
         mockLog('repairEnd', body.repairId, '→ 结束成功')
@@ -897,13 +900,11 @@ export default defineUniAppMock([
         const allRepairs = mockRepairDatabase.repairs
 
         // 按状态统计
-        const statusStats: Record<RepairStatus, number> = {
-          PENDING: allRepairs.filter(r => r.status === 'PENDING').length,
-          ASSIGNED: allRepairs.filter(r => r.status === 'ASSIGNED').length,
-          IN_PROGRESS: allRepairs.filter(r => r.status === 'IN_PROGRESS').length,
-          COMPLETED: allRepairs.filter(r => r.status === 'COMPLETED').length,
-          CANCELLED: allRepairs.filter(r => r.status === 'CANCELLED').length,
-        }
+        const statusStats: Record<RepairStatus, number> = allRepairs.reduce((acc, repair) => {
+          const code = repair.statusCd || 'UNKNOWN'
+          acc[code] = (acc[code] || 0) + 1
+          return acc
+        }, {} as Record<RepairStatus, number>)
 
         // 按类型统计
         const typeStats = allRepairs.reduce((acc, repair) => {
@@ -1072,7 +1073,8 @@ export default defineUniAppMock([
           return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
         }
 
-        repair.status = 'IN_PROGRESS'
+        repair.statusCd = '10003'
+        repair.statusName = '处理中'
         repair.updateTime = new Date().toISOString()
 
         mockLog('repairStart', body.repairId, '→ 开始维修')
@@ -1103,7 +1105,8 @@ export default defineUniAppMock([
           return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
         }
 
-        repair.status = 'ASSIGNED'
+        repair.statusCd = '10002'
+        repair.statusName = '已派单'
         repair.updateTime = new Date().toISOString()
 
         mockLog('repairStop', body.repairId, '→ 暂停维修')
@@ -1137,11 +1140,12 @@ export default defineUniAppMock([
           return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
         }
 
-        if (repair.status !== 'PENDING') {
+        if (repair.statusCd !== '10001') {
           return errorResponse('该工单已被抢单', ResultEnumMap.Error)
         }
 
-        repair.status = 'ASSIGNED'
+        repair.statusCd = '10002'
+        repair.statusName = '已派单'
         repair.assignedWorker = body.staffName
         repair.updateTime = new Date().toISOString()
 
@@ -1196,7 +1200,17 @@ export default defineUniAppMock([
         }
 
         // 模拟工单流转记录
-        const staffRecords = [
+        const staffRecords: Array<{
+          ruId: string
+          repairId: string
+          staffId: string
+          staffName: string
+          statusCd: string
+          statusName: string
+          startTime: string
+          endTime?: string
+          context?: string
+        }> = [
           {
             ruId: 'RU_001',
             repairId: params.repairId,
@@ -1205,12 +1219,12 @@ export default defineUniAppMock([
             state: '10001',
             stateName: '待派单',
             startTime: repair.createTime,
-            endTime: repair.status !== 'PENDING' ? new Date(new Date(repair.createTime).getTime() + 3600000).toISOString() : undefined,
+            endTime: repair.statusCd !== '10001' ? new Date(new Date(repair.createTime).getTime() + 3600000).toISOString() : undefined,
             context: '工单已创建',
           },
         ]
 
-        if (repair.status === 'ASSIGNED' || repair.status === 'IN_PROGRESS' || repair.status === 'COMPLETED') {
+        if (repair.statusCd === '10002' || repair.statusCd === '10003' || repair.statusCd === '10004') {
           staffRecords.push({
             ruId: 'RU_002',
             repairId: params.repairId,
@@ -1219,12 +1233,12 @@ export default defineUniAppMock([
             state: '10002',
             stateName: '已派单',
             startTime: new Date(new Date(repair.createTime).getTime() + 3600000).toISOString(),
-            endTime: repair.status !== 'ASSIGNED' ? new Date(new Date(repair.createTime).getTime() + 7200000).toISOString() : undefined,
+            endTime: repair.statusCd !== '10002' ? new Date(new Date(repair.createTime).getTime() + 7200000).toISOString() : undefined,
             context: '已派单给维修师傅',
           })
         }
 
-        if (repair.status === 'IN_PROGRESS' || repair.status === 'COMPLETED') {
+        if (repair.statusCd === '10003' || repair.statusCd === '10004') {
           staffRecords.push({
             ruId: 'RU_003',
             repairId: params.repairId,
@@ -1233,12 +1247,12 @@ export default defineUniAppMock([
             state: '10003',
             stateName: '处理中',
             startTime: new Date(new Date(repair.createTime).getTime() + 7200000).toISOString(),
-            endTime: repair.status === 'COMPLETED' ? new Date(new Date(repair.createTime).getTime() + 10800000).toISOString() : undefined,
+            endTime: repair.statusCd === '10004' ? new Date(new Date(repair.createTime).getTime() + 10800000).toISOString() : undefined,
             context: '正在处理维修问题',
           })
         }
 
-        if (repair.status === 'COMPLETED') {
+        if (repair.statusCd === '10004') {
           staffRecords.push({
             ruId: 'RU_004',
             repairId: params.repairId,

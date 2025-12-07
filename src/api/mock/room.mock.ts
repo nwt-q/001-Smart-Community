@@ -16,26 +16,33 @@ import {
 
 // ==================== 房屋数据生成器 ====================
 
+const COMMUNITIES = [
+  { communityId: 'COMM_001', communityName: '阳光花园小区' },
+  { communityId: 'COMM_002', communityName: '绿洲新城' },
+  { communityId: 'COMM_003', communityName: '滨江花园' },
+]
+
 /**
  * 生成单个房屋数据
- * @param id - 房屋序号ID
+ * @param communityId - 社区ID
+ * @param floorIndex - 楼栋序号
+ * @param unitIndex - 单元序号
+ * @param roomIndex - 房间序号
  * @returns 房屋对象
  */
-function createMockRoom(id: string): Room {
-  const floorIndex = Math.floor(Number.parseInt(id) / 36) + 1 // 每栋楼36个房间（6单元×6房间）
-  const unitIndex = Math.floor((Number.parseInt(id) % 36) / 6) + 1
-  const roomIndex = (Number.parseInt(id) % 6) + 1
-
-  const floorId = `F_COMM_001_${floorIndex.toString().padStart(3, '0')}`
-  const unitId = `U_${floorIndex.toString().padStart(3, '0')}_${unitIndex.toString().padStart(2, '0')}`
-  const floorNum = (roomIndex * 100).toString() // 101, 201, 301, 401, 501, 601
-  const roomNum = `${floorIndex}0${unitIndex}${(roomIndex * 100).toString().padStart(2, '0')}`
+function createMockRoom(communityId: string, floorIndex: number, unitIndex: number, roomIndex: number): Room {
+  const floorId = `F_${communityId}_${floorIndex.toString().padStart(3, '0')}`
+  const unitId = `U_${communityId}_${floorIndex.toString().padStart(3, '0')}_${unitIndex.toString().padStart(2, '0')}`
+  const roomNum = `${unitIndex}${roomIndex.toString().padStart(2, '0')}`
 
   return {
-    roomId: `R_${floorIndex.toString().padStart(3, '0')}_${unitIndex.toString().padStart(2, '0')}_${roomIndex.toString().padStart(2, '0')}`,
+    roomId: `R_${communityId}_${floorIndex.toString().padStart(3, '0')}_${unitIndex.toString().padStart(2, '0')}_${roomIndex
+      .toString()
+      .padStart(2, '0')}`,
     roomNum,
     unitId,
     floorId,
+    communityId,
   }
 }
 
@@ -43,8 +50,20 @@ function createMockRoom(id: string): Room {
 
 const mockRoomDatabase = {
   /** 初始化数据 - 内联数据存储 */
-  rooms: Array.from({ length: 720 }, (_, index) =>
-    createMockRoom(index.toString().padStart(3, '0'))) as Room[],
+  rooms: (() => {
+    const rooms: Room[] = []
+    // 每个社区 30 栋楼，每栋 8 单元，每单元 6 房间 => 30*8*6=1440/社区
+    COMMUNITIES.forEach((community) => {
+      for (let floorIndex = 1; floorIndex <= 30; floorIndex++) {
+        for (let unitIndex = 1; unitIndex <= 8; unitIndex++) {
+          for (let roomIndex = 1; roomIndex <= 6; roomIndex++) {
+            rooms.push(createMockRoom(community.communityId, floorIndex, unitIndex, roomIndex))
+          }
+        }
+      }
+    })
+    return rooms
+  })(),
 
   /**
    * 根据参数获取房屋列表
@@ -54,6 +73,9 @@ const mockRoomDatabase = {
   getRoomList(params: RoomQueryParams): PaginationResponse<Room> {
     let filteredRooms = [...this.rooms]
 
+    if (params.communityId) {
+      filteredRooms = filteredRooms.filter(room => room.communityId === params.communityId)
+    }
     // 筛选数据：按楼栋ID、单元ID和房间号模糊匹配
     if (params.floorId) {
       filteredRooms = filteredRooms.filter(room => room.floorId === params.floorId)

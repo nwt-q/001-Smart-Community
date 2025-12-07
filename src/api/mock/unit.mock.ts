@@ -28,8 +28,9 @@ function createMockUnit(communityId: string, floorIndex: number, unitIndex: numb
   const floorId = `F_${communityId}_${floorIndex.toString().padStart(3, '0')}`
   return {
     unitId: `U_${communityId}_${floorIndex.toString().padStart(3, '0')}_${unitIndex.toString().padStart(2, '0')}`,
-    unitNum: `${unitIndex}单元`,
+    unitNum: `${unitIndex}`,
     floorId,
+    communityId,
   }
 }
 
@@ -77,6 +78,11 @@ const mockUnitDatabase = {
    */
   getUnitList(params: UnitQueryParams): PaginationResponse<Unit> {
     let filteredUnits = [...this.units]
+
+    // 按社区筛选
+    if (params.communityId) {
+      filteredUnits = filteredUnits.filter(unit => unit.communityId === params.communityId)
+    }
 
     // 按楼栋ID筛选
     if (params.floorId) {

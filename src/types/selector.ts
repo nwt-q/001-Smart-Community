@@ -18,6 +18,8 @@ export interface Unit {
   unitNum: string
   /** 所属楼栋ID */
   floorId: string
+  /** 所属社区ID */
+  communityId: string
 }
 
 /** 房屋信息 */
@@ -30,6 +32,8 @@ export interface Room {
   unitId: string
   /** 所属楼栋ID */
   floorId: string
+  /** 所属社区ID */
+  communityId: string
 }
 
 /** 选择器通用查询参数 */

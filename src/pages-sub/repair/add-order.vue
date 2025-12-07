@@ -71,15 +71,15 @@ const model = reactive({
   /** 报修类型 */
   repairType: '',
   /** 报修人 */
-  ownerName: '',
+  repairName: '',
   /** 手机号 */
-  ownerPhone: '',
+  tel: '',
   /** 预约日期 */
   appointmentDate: '' as number | '',
   /** 预约时间 */
   appointmentTime: '',
   /** 报修内容 */
-  description: '',
+  context: '',
   /** 图片列表 */
   photos: [] as UploadFile[],
 })
@@ -127,10 +127,10 @@ const formRules: FormRules = {
   repairType: [
     { required: true, message: '请选择报修类型' },
   ],
-  ownerName: [
+  repairName: [
     { required: true, message: '请填写报修人' },
   ],
-  ownerPhone: [
+  tel: [
     { required: true, message: '请填写手机号' },
     { required: false, pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确' },
   ],
@@ -146,7 +146,7 @@ const formRules: FormRules = {
   appointmentTime: [
     { required: true, message: '请选择预约时间' },
   ],
-  description: [
+  context: [
     { required: true, message: '请填写报修内容' },
   ],
 }
@@ -390,11 +390,12 @@ async function handleSubmit() {
 
       const requestData: CreateRepairReq = {
         title: model.title,
-        ownerName: model.ownerName,
+        repairName: model.repairName,
         repairType: selectedRepairType.value!.repairType,
+        repairTypeName: selectedRepairType.value!.repairTypeName,
         appointmentTime: `${model.appointmentDate ? dayjs(model.appointmentDate).format('YYYY-MM-DD') : ''} ${model.appointmentTime}:00`,
-        ownerPhone: model.ownerPhone,
-        description: model.description,
+        tel: model.tel,
+        context: model.context,
         address: repairObjName,
         communityId: communityInfo.communityId,
         repairObjType: repairObjType.value,
@@ -516,25 +517,25 @@ async function handleSubmit() {
 
         <!-- 报修人 -->
         <wd-input
-          v-model="model.ownerName"
+          v-model="model.repairName"
           label="报修人"
           :label-width="LABEL_WIDTH"
-          prop="ownerName"
+          prop="repairName"
           placeholder="请输入报修人"
           clearable
-          :rules="formRules.ownerName"
+          :rules="formRules.repairName"
         />
 
         <!-- 手机号 -->
         <wd-input
-          v-model="model.ownerPhone"
+          v-model="model.tel"
           label="手机号"
           :label-width="LABEL_WIDTH"
-          prop="ownerPhone"
+          prop="tel"
           placeholder="请输入手机号"
           type="digit"
           clearable
-          :rules="formRules.ownerPhone"
+          :rules="formRules.tel"
         />
 
         <!-- 预约日期 -->
@@ -565,14 +566,14 @@ async function handleSubmit() {
       </view>
       <wd-cell-group border>
         <wd-textarea
-          v-model="model.description"
+          v-model="model.context"
           label="报修内容"
           :label-width="LABEL_WIDTH"
-          prop="description"
+          prop="context"
           placeholder="请输入报修内容"
           :maxlength="500"
           show-word-limit
-          :rules="formRules.description"
+          :rules="formRules.context"
         />
       </wd-cell-group>
 
