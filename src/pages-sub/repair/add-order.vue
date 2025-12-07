@@ -53,7 +53,7 @@ const model = reactive({
   /** 位置类型 */
   scopeId: '001' as string,
   /** 维修标题 */
-  repairTitle: '',
+  title: '',
   /** 楼栋ID */
   floorId: '',
   /** 楼栋名称 */
@@ -66,18 +66,20 @@ const model = reactive({
   roomId: '',
   /** 房屋名称 */
   roomNum: '',
+  /** 维修地址 */
+  address: '',
   /** 报修类型 */
   repairType: '',
   /** 报修人 */
-  repairName: '',
+  ownerName: '',
   /** 手机号 */
-  tel: '',
+  ownerPhone: '',
   /** 预约日期 */
   appointmentDate: '' as number | '',
   /** 预约时间 */
   appointmentTime: '',
   /** 报修内容 */
-  context: '',
+  description: '',
   /** 图片列表 */
   photos: [] as UploadFile[],
 })
@@ -119,16 +121,16 @@ const priceScope = computed(() => {
 
 /** 表单校验规则 */
 const formRules: FormRules = {
-  repairTitle: [
+  title: [
     { required: true, message: '请填写维修标题' },
   ],
   repairType: [
     { required: true, message: '请选择报修类型' },
   ],
-  repairName: [
+  ownerName: [
     { required: true, message: '请填写报修人' },
   ],
-  tel: [
+  ownerPhone: [
     { required: true, message: '请填写手机号' },
     { required: false, pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确' },
   ],
@@ -144,7 +146,7 @@ const formRules: FormRules = {
   appointmentTime: [
     { required: true, message: '请选择预约时间' },
   ],
-  context: [
+  description: [
     { required: true, message: '请填写报修内容' },
   ],
 }
@@ -387,18 +389,19 @@ async function handleSubmit() {
       }
 
       const requestData: CreateRepairReq = {
-        repairTitle: model.repairTitle,
-        repairName: model.repairName,
+        title: model.title,
+        ownerName: model.ownerName,
         repairType: selectedRepairType.value!.repairType,
         appointmentTime: `${model.appointmentDate ? dayjs(model.appointmentDate).format('YYYY-MM-DD') : ''} ${model.appointmentTime}:00`,
-        tel: model.tel,
-        context: model.context,
+        ownerPhone: model.ownerPhone,
+        description: model.description,
+        address: repairObjName,
         communityId: communityInfo.communityId,
         repairObjType: repairObjType.value,
         repairObjId,
-        repairObjName,
         repairChannel: 'STAFF',
         roomId: model.roomId || undefined,
+        photos: model.photos?.map(item => item.url).filter(Boolean),
       }
 
       await submitRepairOrder(requestData)
@@ -481,13 +484,13 @@ async function handleSubmit() {
       <wd-cell-group border>
         <!-- 维修标题 -->
         <wd-input
-          v-model="model.repairTitle"
+          v-model="model.title"
           label="维修标题"
           :label-width="LABEL_WIDTH"
-          prop="repairTitle"
+          prop="title"
           placeholder="请输入维修标题"
           clearable
-          :rules="formRules.repairTitle"
+          :rules="formRules.title"
         />
 
         <!-- 报修类型 -->
@@ -513,25 +516,25 @@ async function handleSubmit() {
 
         <!-- 报修人 -->
         <wd-input
-          v-model="model.repairName"
+          v-model="model.ownerName"
           label="报修人"
           :label-width="LABEL_WIDTH"
-          prop="repairName"
+          prop="ownerName"
           placeholder="请输入报修人"
           clearable
-          :rules="formRules.repairName"
+          :rules="formRules.ownerName"
         />
 
         <!-- 手机号 -->
         <wd-input
-          v-model="model.tel"
+          v-model="model.ownerPhone"
           label="手机号"
           :label-width="LABEL_WIDTH"
-          prop="tel"
+          prop="ownerPhone"
           placeholder="请输入手机号"
           type="digit"
           clearable
-          :rules="formRules.tel"
+          :rules="formRules.ownerPhone"
         />
 
         <!-- 预约日期 -->
@@ -562,14 +565,14 @@ async function handleSubmit() {
       </view>
       <wd-cell-group border>
         <wd-textarea
-          v-model="model.context"
+          v-model="model.description"
           label="报修内容"
           :label-width="LABEL_WIDTH"
-          prop="context"
+          prop="description"
           placeholder="请输入报修内容"
           :maxlength="500"
           show-word-limit
-          :rules="formRules.context"
+          :rules="formRules.description"
         />
       </wd-cell-group>
 

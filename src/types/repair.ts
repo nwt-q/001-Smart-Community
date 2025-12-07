@@ -325,25 +325,25 @@ export interface RepairListResponse {
 /** 创建维修工单请求 */
 export interface CreateRepairReq {
   /** 维修标题 */
-  repairTitle: string
+  title: string
   /** 报修人姓名 */
-  repairName: string
+  ownerName: string
   /** 报修类型 */
   repairType: string
   /** 预约时间 */
   appointmentTime: string
   /** 联系电话 */
-  tel: string
+  ownerPhone: string
   /** 报修内容 */
-  context: string
+  description: string
+  /** 维修地址/对象名称 */
+  address: string
   /** 小区ID */
   communityId: string
   /** 报修对象类型 */
   repairObjType: RepairObjType
   /** 报修对象ID */
   repairObjId: string
-  /** 报修对象名称 */
-  repairObjName: string
   /** 报修渠道 */
   repairChannel?: RepairChannel
   /** 房屋ID */

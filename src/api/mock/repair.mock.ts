@@ -507,13 +507,13 @@ export default defineUniAppMock([
       await randomDelay(500, 1200)
 
       try {
-        // 兼容前端字段命名（Vue3表单使用 repairTitle/repairName/tel/context/repairObjName/photos）
-        const title = (body.title ?? body.repairTitle ?? '').trim()
-        const description = (body.description ?? body.context ?? '').trim()
-        const ownerName = (body.ownerName ?? body.repairName ?? '').trim()
-        const ownerPhone = (body.ownerPhone ?? body.tel ?? '').trim()
-        const address = (body.address ?? body.repairObjName ?? '').trim()
-        const images = body.images ?? (Array.isArray(body.photos) ? body.photos.map((p: any) => p?.url).filter(Boolean) : [])
+        // 前后端字段已统一
+        const title = (body.title ?? '').trim()
+        const description = (body.description ?? '').trim()
+        const ownerName = (body.ownerName ?? '').trim()
+        const ownerPhone = (body.ownerPhone ?? '').trim()
+        const address = (body.address ?? '').trim()
+        const images = Array.isArray(body.photos) ? body.photos.filter(Boolean) : []
 
         // 数据验证
         if (!title) {
