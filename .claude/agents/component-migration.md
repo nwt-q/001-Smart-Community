@@ -239,6 +239,7 @@ color: blue
 1. **与 useRequest 集成**：必须使用 `useRequest` 管理请求状态，在 `onSuccess`/`onError` 回调中调用 `complete()`
 2. **禁止 try/catch**：遵循 `api-migration` 规范，不使用 try/catch 包装请求
 3. **immediate: false**：useRequest 必须设置 `immediate: false`，由 z-paging 控制请求时机
+4. **避免遮挡头部区域**：如页面顶部有搜索栏/筛选栏，需要显式设置 `:fixed="false"`，防止 z-paging 默认 fixed 定位把头部内容盖住。
 
 #### z-paging 危险模式警告
 
