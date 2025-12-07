@@ -222,7 +222,7 @@ src\pages-sub\repair\handle.vue
    - `component-migration`： 组件迁移子代理。位于 `.claude\agents` 目录内。
    - `style-migration`： 样式迁移子代理。位于 `.claude\agents` 目录内。
 
-## <!-- TODO: 先完成代码报错修改 再开始对接这些页面 --> 添加维修记录 页面，补全选择列表的入口页面
+## 026 添加维修记录 页面，补全选择列表的入口页面
 
 1. 阅读 `src\pages-sub\repair\add-order.vue` 出现的 TODO 部分。
 2. 阅读 `src\pages-sub\selector` 目录下的几个选择用途的页面。
