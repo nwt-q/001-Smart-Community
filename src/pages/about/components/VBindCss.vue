@@ -1,3 +1,12 @@
+<!--
+  关于-样式变量示例
+  功能：演示 v-bind CSS 变量
+
+  访问地址: http://localhost:9000/#/pages/about/components/VBindCss
+
+  旧代码：未找到（待补充）
+-->
+
 <script lang="ts" setup>
 /** root 插件更新到 1.3.4之后，都正常了。 */
 const testBindCssVariable = ref('red')

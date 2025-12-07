@@ -1,3 +1,12 @@
+<!--
+  员工通讯录
+  功能：搜索和查看员工联系方式
+
+  访问地址: http://localhost:9000/#/pages/address/list
+
+  旧代码：gitee-example/pages/addressList/addressList.vue
+-->
+
 <script setup lang="ts">
 import { useAddressList } from '@/hooks/useAddressList'
 

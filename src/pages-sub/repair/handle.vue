@@ -6,6 +6,8 @@
   建议携带参数: ?action=DISPATCH&repairId=REP_001&repairType=水电维修
 
   完整示例: http://localhost:9000/#/pages-sub/repair/handle?action=DISPATCH&repairId=REP_001&repairType=水电维修&repairObjType=001
+
+  旧代码：gitee-example/pages/repairHandle/repairHandle.vue
 -->
 
 <script setup lang="ts">

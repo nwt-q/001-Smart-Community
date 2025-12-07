@@ -6,6 +6,8 @@
   建议携带参数: ?page=1&row=10
 
   完整示例: http://localhost:9000/#/pages-sub/repair/dispatch?page=1&row=10
+
+  旧代码：gitee-example/pages/repairDispatch/repairDispatch.vue
 -->
 
 <script setup lang="ts">

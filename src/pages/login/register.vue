@@ -1,3 +1,12 @@
+<!--
+  注册页
+  功能：模拟注册后跳转登录
+
+  访问地址: http://localhost:9000/#/pages/login/register
+
+  旧代码：未找到（待补充）
+-->
+
 <script lang="ts" setup>
 import { LOGIN_PAGE } from '@/router/config'
 

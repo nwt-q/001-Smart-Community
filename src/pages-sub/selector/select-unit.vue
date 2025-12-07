@@ -7,6 +7,8 @@
   必须参数: floorId - 楼栋ID（从选择楼栋页面获取）
 
   完整示例: http://localhost:9000/#/pages-sub/selector/select-unit?floorId=F_COMM_001_001
+
+  旧代码：gitee-example/pages/selectUnit/selectUnit.vue
 -->
 
 <script setup lang="ts">

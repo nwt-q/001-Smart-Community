@@ -9,6 +9,8 @@
     - unitId - 单元ID（从选择单元页面获取）
 
   完整示例: http://localhost:9000/#/pages-sub/selector/select-room?floorId=F_COMM_001_001&unitId=U_001_01
+
+  旧代码：gitee-example/pages/selectRoom/selectRoom.vue
 -->
 
 <script setup lang="ts">

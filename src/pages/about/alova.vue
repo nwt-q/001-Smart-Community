@@ -1,3 +1,12 @@
+<!--
+  Alova 演示页
+  功能：演示使用 alova 发送请求
+
+  访问地址: http://localhost:9000/#/pages/about/alova
+
+  旧代码：未找到（待补充）
+-->
+
 <script lang="ts" setup>
 import { useRequest } from 'alova/client'
 import { foo } from '@/api/foo-alova'

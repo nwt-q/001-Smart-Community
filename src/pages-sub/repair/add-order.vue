@@ -6,6 +6,8 @@
   建议携带参数: ?communityId=COMM_001
 
   完整示例: http://localhost:9000/#/pages-sub/repair/add-order?communityId=COMM_001
+
+  旧代码：gitee-example/pages/repairAdd/repairAdd.vue
 -->
 
 <script setup lang="ts">

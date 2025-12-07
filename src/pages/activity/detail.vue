@@ -1,8 +1,11 @@
 <!--
   活动详情页
+  功能：展示单个活动详情，支持分享与统计
 
-  快速访问地址 请不要删除
-  /pages/activity/detail?activitiesId=ACT_018&currentCommunityId=COMM_001
+  访问地址: http://localhost:9000/#/pages/activity/detail
+  建议参数: ?activitiesId=ACT_018&currentCommunityId=COMM_001
+
+  旧代码：gitee-example/pages/activityDetail/activityDetail.vue
 -->
 
 <script setup lang="ts">

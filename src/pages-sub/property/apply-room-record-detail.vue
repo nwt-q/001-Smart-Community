@@ -4,6 +4,8 @@
 
   访问地址: http://localhost:9000/#/pages-sub/property/apply-room-record-detail
   建议携带参数: ?apply=JSON.stringify(recordInfo)
+
+  旧代码：gitee-example/pages/applyRoomRecordDetail/applyRoomRecordDetail.vue
 -->
 <script setup lang="ts">
 import type { ApplicationRecord, ApplicationRecordDetail } from '@/types/property-application'

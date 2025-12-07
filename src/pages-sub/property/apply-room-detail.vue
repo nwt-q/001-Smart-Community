@@ -7,6 +7,7 @@
 
   http://localhost:9000/#/pages-sub/property/apply-room-detail?ardId=ARD_002&communityId=COMM_001
 
+  旧代码：gitee-example/pages/applyRoomDetail/applyRoomDetail.vue
 -->
 <script setup lang="ts">
 import type { DiscountType, PropertyApplication } from '@/types/property-application'

@@ -1,3 +1,12 @@
+<!--
+  Vue Query 演示页
+  功能：演示 vue-query 数据请求
+
+  访问地址: http://localhost:9000/#/pages/about/vue-query
+
+  旧代码：未找到（待补充）
+-->
+
 <script lang="ts" setup>
 import { useQuery } from '@tanstack/vue-query'
 import { foo } from '@/api/foo'

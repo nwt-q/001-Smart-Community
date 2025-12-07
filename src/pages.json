@@ -192,11 +192,7 @@
         },
         {
           "path": "repair/end-order",
-          "type": "page",
-          "style": {
-            "navigationBarTitleText": "结束工单",
-            "enablePullDownRefresh": false
-          }
+          "type": "page"
         },
         {
           "path": "repair/finish",

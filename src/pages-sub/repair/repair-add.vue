@@ -1,3 +1,12 @@
+<!--
+  维修录单
+  功能：选择房屋并提交维修工单
+
+  访问地址: http://localhost:9000/#/pages-sub/repair/repair-add
+
+  旧代码：未找到（待补充）
+-->
+
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useGlobalToast } from '@/hooks/useGlobalToast'

@@ -12,6 +12,8 @@
     1. 选择楼栋 (当前页面) → 无参数
     2. 选择单元 → 需要 floorId
     3. 选择房屋 → 需要 floorId + unitId
+
+  旧代码：gitee-example/pages/selectFloor/selectFloor.vue
 -->
 
 <script setup lang="ts">

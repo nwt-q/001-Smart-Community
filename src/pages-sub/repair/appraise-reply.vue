@@ -6,6 +6,8 @@
   建议携带参数: ?ruId=RU_001&repairId=REP_001
 
   完整示例: http://localhost:9000/#/pages-sub/repair/appraise-reply?ruId=RU_001&repairId=REP_001
+
+  旧代码：gitee-example/pages/repairOrder/replyRepairAppraise.vue
 -->
 
 <script setup lang="ts">

@@ -1,3 +1,12 @@
+<!--
+  个人中心
+  功能：展示个人信息与登录入口
+
+  访问地址: http://localhost:9000/#/pages/me/me
+
+  旧代码：gitee-example/pages/my/my.vue
+-->
+
 <script lang="ts" setup>
 import type { IUploadSuccessInfo } from '@/api/types/login'
 import { storeToRefs } from 'pinia'
