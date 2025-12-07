@@ -34,7 +34,7 @@ const REPAIR_TYPES: Array<{ code: RepairType, name: string }> = [
 ]
 
 /** 维修状态配置（旧版 statusCd/name） */
-const REPAIR_STATUSES: Array<{ code: RepairStatus, name: string }> = [
+export const REPAIR_STATUSES: Array<{ code: RepairStatus, name: string }> = [
   { code: '10001', name: '待派单' },
   { code: '10002', name: '已派单' },
   { code: '10003', name: '处理中' },

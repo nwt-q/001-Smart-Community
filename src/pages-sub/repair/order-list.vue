@@ -14,6 +14,7 @@
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
 import { onMounted, ref } from 'vue'
+import { REPAIR_STATUSES } from '@/api/mock/repair.mock'
 import { getRepairOrderList, getRepairStates, robRepairOrder } from '@/api/repair'
 import { TypedRouter } from '@/router'
 import { getCurrentCommunity, getUserInfo } from '@/utils/user'
@@ -28,9 +29,14 @@ definePage({
 /** 搜索条件 */
 const searchName = ref('')
 const selectedStateIndex = ref(0)
-const stateOptions = ref<Array<{ label: string, value: string }>>([
-  { label: '请选择', value: '' },
-])
+const defaultStateOptions: Array<{ label: string, value: string }> = [
+  { label: '全部状态', value: '' },
+  ...REPAIR_STATUSES.map(item => ({
+    label: item.name,
+    value: item.code,
+  })),
+]
+const stateOptions = ref<Array<{ label: string, value: string }>>([...defaultStateOptions])
 
 /** 列表数据（由 z-paging 接管） */
 const repairList = ref<RepairOrder[]>([])
@@ -51,16 +57,20 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
     const result = event.data
     if (result && result.length > 0) {
       stateOptions.value = [
-        { label: '请选择', value: '' },
+        { label: '全部状态', value: '' },
         ...result.map(item => ({
           label: item.name || '',
           value: item.statusCd || '',
         })),
       ]
     }
+    else {
+      stateOptions.value = [...defaultStateOptions]
+    }
   })
   .onError((error) => {
     console.error('加载状态字典失败:', error)
+    stateOptions.value = [...defaultStateOptions]
   })
 
 /** 查询维修工单列表请求（z-paging 集成） */
@@ -120,6 +130,7 @@ function handleSearch() {
 /** 状态选择器改变 */
 function handleStateChange({ value }: { value: number }) {
   selectedStateIndex.value = value
+  pagingRef.value?.reload()
 }
 
 /** 查看详情 */
@@ -201,6 +212,21 @@ function formatAppointmentTime(timeStr?: string): string {
     return timeStr
   }
 }
+
+type TagType = 'primary' | 'success' | 'warning' | 'danger'
+
+/** 派单状态对应的标签颜色 */
+const statusTagTypeMap: Record<string, TagType> = {
+  10001: 'warning', // 待派单
+  10002: 'primary', // 已派单
+  10003: 'primary', // 处理中
+  10004: 'success', // 已完成
+  10005: 'danger', // 已关闭/已作废
+}
+
+function getStatusTagType(statusCd?: string): TagType {
+  return statusTagTypeMap[statusCd || ''] || 'primary'
+}
 </script>
 
 <template>
@@ -217,29 +243,40 @@ function formatAppointmentTime(timeStr?: string): string {
       <!-- 顶部吸顶工具栏 -->
       <template #top>
         <view class="toolbar">
-          <view class="toolbar-row">
+          <view class="toolbar-controls">
             <wd-search
               v-model="searchName"
               placeholder="输入报修人"
               :maxlength="20"
-              hide-cancel-button
+              hide-cancel
               clearable
-              class="flex-1"
-            />
-            <wd-picker
-              v-model="selectedStateIndex"
-              :columns="stateOptions"
-              label-key="label"
-              value-key="value"
-              @confirm="handleStateChange"
+              shape="round"
+              light
+              class="control-search"
+              @search="handleSearch"
+              @clear="handleSearch"
             >
-              <wd-button custom-class="!px-3" size="small" type="primary">
-                {{ stateOptions[selectedStateIndex]?.label || '状态' }}
+              <template #prefix>
+                <wd-picker
+                  v-model="selectedStateIndex"
+                  :columns="stateOptions"
+                  label-key="label"
+                  value-key="value"
+                  @confirm="handleStateChange"
+                >
+                  <view class="prefix-filter">
+                    <text class="prefix-text">{{ stateOptions[selectedStateIndex]?.label || '状态' }}</text>
+                    <wd-icon name="" custom-class="i-carbon-chevron-down text-28rpx text-gray-500 ml-2rpx" />
+                  </view>
+                </wd-picker>
+              </template>
+            </wd-search>
+
+            <view class="control-item">
+              <wd-button type="success" size="small" class="control-btn" @click="handleSearch">
+                搜索
               </wd-button>
-            </wd-picker>
-            <wd-button type="success" size="small" @click="handleSearch">
-              搜索
-            </wd-button>
+            </view>
           </view>
           <view v-if="total > 0" class="toolbar-total">
             共 {{ total }} 条记录
@@ -255,8 +292,13 @@ function formatAppointmentTime(timeStr?: string): string {
           class="repair-card"
         >
           <view class="card-header">
-            <text class="id-text">{{ item.repairId }}</text>
-            <text class="status-text">{{ item.statusName }}</text>
+            <view class="card-title">
+              <text class="title-text">{{ item.title || item.repairId }}</text>
+              <text class="id-text">工单号：{{ item.repairId }}</text>
+            </view>
+            <wd-tag :type="getStatusTagType(item.statusCd)" plain>
+              {{ item.statusName || '待处理' }}
+            </wd-tag>
           </view>
 
           <view class="card-body">
@@ -346,10 +388,41 @@ function formatAppointmentTime(timeStr?: string): string {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.toolbar-row {
+.toolbar-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+.control-btn {
+  width: 100%;
+  height: 38px;
+}
+
+.control-item {
+  flex: 0 0 90px;
+}
+
+.control-search {
+  flex: 1;
+}
+
+.control-search :deep(.wd-search) {
+  height: 38px;
+}
+
+.prefix-filter {
+  display: flex;
+  align-items: center;
+  padding: 0 10rpx 0 6rpx;
+  height: 36px;
+  border-right: 1px solid #e0e0e0;
+  gap: 4rpx;
+}
+
+.prefix-text {
+  font-size: 12px;
+  color: #303133;
 }
 
 .toolbar-total {
@@ -382,15 +455,21 @@ function formatAppointmentTime(timeStr?: string): string {
   margin-bottom: 10px;
 }
 
-.id-text {
-  font-size: 14px;
-  color: #263238;
-  font-weight: 600;
+.card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.status-text {
-  font-size: 13px;
-  color: #26a69a;
+.title-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #263238;
+}
+
+.id-text {
+  font-size: 12px;
+  color: #607d8b;
 }
 
 .card-body {
