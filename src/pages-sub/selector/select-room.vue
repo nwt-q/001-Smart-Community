@@ -402,6 +402,7 @@ onMounted(() => {
         :loading-more-enabled="true"
         :show-scrollbar="false"
         :loading-more-threshold="50"
+        :fixed="false"
         :safe-area-config="{ bottom: 0 }"
         class="flex-1"
         role="main"
