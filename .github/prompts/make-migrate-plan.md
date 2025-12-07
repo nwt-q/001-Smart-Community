@@ -726,6 +726,11 @@
 6. 代码引用方式：mock 文件内统一用相对路径引用常量。当前 mock 对 alias 支持有限，一律使用相对路径。
 7. 规范文档更新：更新 .claude/agents/code-migration.md 时，需要补充示例代码片段（包含 ColumnItem 声明、mock 文件引用、类型检查注意事项）。
 
+### 052 用 dayjs 重构 mock 接口对时间日期的处理
+
+1. 阅读 src\api\mock 文件夹内全部的 `*.mock.ts` 文件，将涉及到日期格式化的写法，全部用 dayjs 来重构代码。
+2. 重构完成后，请对 `api-migration` 子代理增加新的 mock 文件编写规范，要求其在格式化日期时，必须使用 dayjs 来完成格式化。
+
 ### 052 <!-- TODO: --> 为 vue 组件代码的文件注释，增加普遍的`旧代码`文件地址
 
 以文件 `src\pages-sub\repair\order-list.vue` 为例子。
