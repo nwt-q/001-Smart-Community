@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import type { RepairOrder } from '@/types/repair'
 import { useRequest } from 'alova/client'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { getRepairOrderList, getRepairStates, robRepairOrder } from '@/api/repair'
 import { TypedRouter } from '@/router'
 import { getCurrentCommunity, getUserInfo } from '@/utils/user'
@@ -105,6 +105,11 @@ function handleQuery(pageNo: number, pageSizeValue: number) {
     statusCd: selectedState,
   })
 }
+
+// 进入页面自动触发首次加载
+onMounted(() => {
+  pagingRef.value?.reload()
+})
 
 /** 搜索 */
 function handleSearch() {
@@ -204,7 +209,9 @@ function formatAppointmentTime(timeStr?: string): string {
       ref="pagingRef"
       v-model="repairList"
       :default-page-size="pageSize"
-      refresher-only
+      :refresher-enabled="true"
+      :loading-more-enabled="true"
+      :show-scrollbar="false"
       @query="handleQuery"
     >
       <!-- 顶部吸顶工具栏 -->
