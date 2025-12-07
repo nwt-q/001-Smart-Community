@@ -81,7 +81,7 @@ const { send: loadRepairStaffList } = useRequest(
     return getRepairStaffList({
       page: params.page,
       row: params.row,
-      state: selectedState,
+      statusCd: selectedState,
       userId: userInfo.userId || '',
       communityId: communityInfo.communityId || '',
       repairName: searchName.value,
@@ -382,12 +382,7 @@ function formatAppointmentTime(timeStr?: string): string {
             <!-- 状态 -->
             <view class="flex justify-between text-sm">
               <text class="text-gray-500">状态</text>
-              <text class="text-gray-700">
-                {{ item.stateName }}
-                <text v-if="item.state === '1800' && (item.returnVisitFlag === '001' || item.returnVisitFlag === '002')">
-                  (定时任务处理)
-                </text>
-              </text>
+              <text class="text-gray-700">{{ item.statusName }}</text>
             </view>
 
             <!-- 报修内容 -->
@@ -404,9 +399,9 @@ function formatAppointmentTime(timeStr?: string): string {
               详情
             </wd-button>
 
-            <!-- 启动按钮 -->
+            <!-- 启动按钮：已派单 -->
             <wd-button
-              v-if="item.state === '2001'"
+              v-if="item.statusCd === '10002'"
               size="small"
               type="success"
               @click="handleStartRepair(item)"
@@ -414,9 +409,9 @@ function formatAppointmentTime(timeStr?: string): string {
               启动
             </wd-button>
 
-            <!-- 转单按钮 -->
+            <!-- 转单按钮：已派单/处理中 -->
             <wd-button
-              v-if="item.state === '1100' || item.state === '1200' || item.state === '1300'"
+              v-if="item.statusCd === '10002' || item.statusCd === '10003'"
               size="small"
               type="warning"
               @click="handleTransfer(item)"
@@ -424,9 +419,9 @@ function formatAppointmentTime(timeStr?: string): string {
               转单
             </wd-button>
 
-            <!-- 暂停按钮 -->
+            <!-- 暂停按钮：已派单/处理中 -->
             <wd-button
-              v-if="item.state === '1100' || item.state === '1200' || item.state === '1300'"
+              v-if="item.statusCd === '10002' || item.statusCd === '10003'"
               size="small"
               type="warning"
               @click="handleStopRepair(item)"
@@ -444,9 +439,9 @@ function formatAppointmentTime(timeStr?: string): string {
               退单
             </wd-button>
 
-            <!-- 办结按钮 -->
+            <!-- 办结按钮：已派单/处理中 -->
             <wd-button
-              v-if="item.state === '1100' || item.state === '1200' || item.state === '1300'"
+              v-if="item.statusCd === '10002' || item.statusCd === '10003'"
               size="small"
               type="success"
               @click="handleFinish(item)"
@@ -454,9 +449,9 @@ function formatAppointmentTime(timeStr?: string): string {
               办结
             </wd-button>
 
-            <!-- 回访按钮 -->
+            <!-- 回访按钮：已完成且需回访 -->
             <wd-button
-              v-if="item.state === '1800' && item.returnVisitFlag === '003' && checkAuth('502021040151320003')"
+              v-if="item.statusCd === '10004' && item.returnVisitFlag === '003' && checkAuth('502021040151320003')"
               size="small"
               type="success"
               @click="handleAppraise(item)"

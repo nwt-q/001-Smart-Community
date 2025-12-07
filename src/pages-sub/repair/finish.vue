@@ -152,7 +152,7 @@ function formatAppointmentTime(timeStr?: string): string {
             <!-- 状态 -->
             <view class="flex justify-between text-sm">
               <text class="text-gray-500">状态</text>
-              <text class="text-gray-700">{{ item.stateName }}</text>
+              <text class="text-gray-700">{{ item.statusName }}</text>
             </view>
 
             <!-- 报修内容 -->

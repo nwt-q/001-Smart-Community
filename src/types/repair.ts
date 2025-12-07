@@ -132,9 +132,9 @@ export interface RepairStaffRecord {
   /** 结束时间 */
   endTime?: string
   /** 状态码 */
-  state: string
+  statusCd: string
   /** 状态名称 */
-  stateName: string
+  statusName: string
   /** 处理意见 */
   context?: string
   /** 支付方式名称 */

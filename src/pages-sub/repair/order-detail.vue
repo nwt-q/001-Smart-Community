@@ -75,8 +75,8 @@ const { loading: recordsLoading, send: loadRecords } = useRequest(
       staffName: record.staffName ?? '',
       startTime: record.startTime ?? '',
       endTime: record.endTime ?? '',
-      state: record.state ?? '',
-      stateName: record.stateName ?? '',
+      statusCd: record.statusCd ?? '',
+      statusName: record.statusName ?? '',
     })) ?? []
   })
   .onError((error) => {
@@ -138,7 +138,7 @@ function formatStaffRecords() {
           <wd-cell title="联系方式" :value="repairDetail.tel" />
           <wd-cell title="报修位置" :value="repairDetail.repairObjName" />
           <wd-cell title="预约时间" :value="repairDetail.appointmentTime" />
-          <wd-cell title="状态" :value="repairDetail.stateName" />
+          <wd-cell title="状态" :value="repairDetail.statusName" />
           <wd-cell title="报修内容" :value="repairDetail.context" />
         </wd-cell-group>
       </view>
@@ -226,12 +226,12 @@ function formatStaffRecords() {
             <view class="timeline-content flex-1">
               <!-- 标题 -->
               <view class="mb-1 text-sm font-medium">
-                <text>{{ record.startTime }} 到达 {{ record.staffName }} 工位 - {{ record.stateName }}</text>
+                <text>{{ record.startTime }} 到达 {{ record.staffName }} 工位 - {{ record.statusName }}</text>
               </view>
 
               <!-- 处理意见 -->
               <view
-                v-if="record.endTime || record.state === '10009'"
+                v-if="record.endTime || record.statusCd === '10004'"
                 class="mb-1 text-sm text-gray-600"
               >
                 <text>处理意见：{{ record.context }}</text>
@@ -241,7 +241,7 @@ function formatStaffRecords() {
               </view>
 
               <!-- 回复按钮 -->
-              <view v-if="record.state === '10007'" class="mt-2">
+              <view v-if="record.statusCd === '10007'" class="mt-2">
                 <wd-button size="small" type="success" @click="handleReplyAppraise(record)">
                   回复
                 </wd-button>

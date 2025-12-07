@@ -269,8 +269,8 @@ export function getRepairStaffRecords(params: { repairId: string, communityId?: 
     repairId: string
     staffId: string
     staffName?: string
-    state?: string
-    stateName?: string
+    statusCd?: string
+    statusName?: string
     startTime?: string
     endTime?: string
     context?: string

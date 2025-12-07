@@ -293,16 +293,15 @@ const mockRepairDatabase = {
 
   /** 获取待办单列表（ASSIGNED 和 IN_PROGRESS 状态） */
   getDispatchList(params: RepairListParams) {
-    const dispatchParams = {
-      ...params,
-      statusCd: undefined, // 清除状态过滤，手动处理
-    }
-    const result = this.getRepairList(dispatchParams)
+    const result = this.getRepairList(params)
 
-    // 只返回 已派单/处理中 状态的工单
-    result.list = result.list.filter(repair =>
-      repair.statusCd === '10002' || repair.statusCd === '10003',
-    )
+    // 只返回 已派单/处理中 状态的工单，支持按传入的 statusCd 精确过滤
+    const allowedStatus = ['10002', '10003']
+    result.list = result.list.filter((repair) => {
+      const isAllowed = allowedStatus.includes(repair.statusCd || '')
+      const matchFilter = params.statusCd ? repair.statusCd === params.statusCd : true
+      return isAllowed && matchFilter
+    })
     result.total = result.list.length
 
     return result
@@ -415,6 +414,7 @@ export default defineUniAppMock([
           row: Number(params.row) || 10,
           communityId: params.communityId,
           keyword: params.keyword,
+          statusCd: params.statusCd || params.status,
         })
 
         mockLog('listStaffRepairs', params, `→ ${result.list.length} items`)
@@ -1216,8 +1216,8 @@ export default defineUniAppMock([
             repairId: params.repairId,
             staffId: 'STAFF_001',
             staffName: '张师傅',
-            state: '10001',
-            stateName: '待派单',
+            statusCd: '10001',
+            statusName: '待派单',
             startTime: repair.createTime,
             endTime: repair.statusCd !== '10001' ? new Date(new Date(repair.createTime).getTime() + 3600000).toISOString() : undefined,
             context: '工单已创建',
@@ -1230,8 +1230,8 @@ export default defineUniAppMock([
             repairId: params.repairId,
             staffId: 'STAFF_002',
             staffName: repair.assignedWorker || '李师傅',
-            state: '10002',
-            stateName: '已派单',
+            statusCd: '10002',
+            statusName: '已派单',
             startTime: new Date(new Date(repair.createTime).getTime() + 3600000).toISOString(),
             endTime: repair.statusCd !== '10002' ? new Date(new Date(repair.createTime).getTime() + 7200000).toISOString() : undefined,
             context: '已派单给维修师傅',
@@ -1244,8 +1244,8 @@ export default defineUniAppMock([
             repairId: params.repairId,
             staffId: 'STAFF_002',
             staffName: repair.assignedWorker || '李师傅',
-            state: '10003',
-            stateName: '处理中',
+            statusCd: '10003',
+            statusName: '处理中',
             startTime: new Date(new Date(repair.createTime).getTime() + 7200000).toISOString(),
             endTime: repair.statusCd === '10004' ? new Date(new Date(repair.createTime).getTime() + 10800000).toISOString() : undefined,
             context: '正在处理维修问题',
@@ -1258,8 +1258,8 @@ export default defineUniAppMock([
             repairId: params.repairId,
             staffId: 'STAFF_002',
             staffName: repair.assignedWorker || '李师傅',
-            state: '10009',
-            stateName: '已完成',
+            statusCd: '10004',
+            statusName: '已完成',
             startTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
             endTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
             context: '维修已完成，问题已解决',
@@ -1271,8 +1271,8 @@ export default defineUniAppMock([
               repairId: params.repairId,
               staffId: 'STAFF_002',
               staffName: repair.assignedWorker || '李师傅',
-              state: '10007',
-              stateName: '业主评价',
+              statusCd: '10007',
+              statusName: '业主评价',
               startTime: repair.evaluation.evaluateTime,
               endTime: repair.evaluation.evaluateTime,
               context: repair.evaluation.comment,
