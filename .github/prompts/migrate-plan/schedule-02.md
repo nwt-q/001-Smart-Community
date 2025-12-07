@@ -250,3 +250,10 @@ src\pages-sub\repair\handle.vue
 3. 选择器接口响应形态：旧版返回字段是 apiFloorDataVoList / rooms 等，新版 API/Mock 统一返回 { list,total,... }，页面用 z-paging 直接吃 list。**保持新版分页形态**，只保证**列表元素字段**（floorId/floorNum/floorName 等）对齐旧版即可。
 4. 单元/房屋字段取值：旧版 unitNum/roomNum 是纯编号，新版 Mock 里 unitNum 带了“单元”后缀，roomNum 也有构造规则。需要改成纯编号（与旧版一致）。需要补充 communityId 返回到单元/房屋项里。并且去对应使用 `unitNum/roomNum` 字段的前端页面内，加上基于 computed 的字段格式化，加上“单元”后缀。
 5. 维修状态/字典：旧版状态/字典字段是 statusCd/name。当前 API/Mock 已用 statusCd/name，但 RepairStatus 类型枚举是英文单词。需要把列表里的 status/state 完全切换为 statusCd 代码（与旧版一致）。
+
+## 028 重写 `维修工单池` 的前端代码
+
+1. 针对 `src\pages-sub\repair\order-list.vue` 维修工单池 列表页的代码。
+2. 阅读其旧代码 `gitee-example/pages/repairOrder/repairOrder.vue` 。
+3. 维修工单池列表页，其 `z-paging` 组件的使用并没有按照 `z-paging 分页组件集成方案` 来做，请按照 `z-paging 分页组件集成方案` 的要求来修改。
+4. 维修工单池列表页，请按照 `组件迁移子代理` 的要求更改。

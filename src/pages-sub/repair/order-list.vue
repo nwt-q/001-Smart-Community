@@ -6,6 +6,8 @@
   建议携带参数: ?statusCd=10001&page=1&row=10
 
   完整示例: http://localhost:9000/#/pages-sub/repair/order-list?statusCd=10001&page=1&row=10
+
+  旧代码： gitee-example/pages/repairOrder/repairOrder.vue
 -->
 
 <script setup lang="ts">
@@ -30,14 +32,11 @@ const stateOptions = ref<Array<{ label: string, value: string }>>([
   { label: '请选择', value: '' },
 ])
 
-/** 列表数据 */
+/** 列表数据（由 z-paging 接管） */
 const repairList = ref<RepairOrder[]>([])
 const currentPage = ref(1)
 const pageSize = ref(15)
 const total = ref(0)
-const finished = ref(false)
-
-/** z-paging 组件引用 */
 const pagingRef = ref()
 
 /** 获取用户信息 */
@@ -64,55 +63,47 @@ const { send: loadStates } = useRequest(() => getRepairStates(), {
     console.error('加载状态字典失败:', error)
   })
 
-/** 查询维修工单列表请求 */
+/** 查询维修工单列表请求（z-paging 集成） */
 const { send: loadRepairOrderList } = useRequest(
-  (params: { page: number, row: number, statusCd?: string }) => getRepairOrderList({
-    ...params,
-    storeId: userInfo.storeId || '',
-    userId: userInfo.userId || '',
-    communityId: communityInfo.communityId || '',
-    repairName: searchName.value,
-    reqSource: 'mobile',
-  }),
+  (params: { page: number, row: number, statusCd?: string }) =>
+    getRepairOrderList({
+      ...params,
+      storeId: userInfo.storeId || '',
+      userId: userInfo.userId || '',
+      communityId: communityInfo.communityId || '',
+      repairName: searchName.value,
+      reqSource: 'mobile',
+    }),
   { immediate: false },
 )
-
-/** 查询维修工单列表 */
-async function queryList(pageNo: number, pageRow: number) {
-  const selectedState = selectedStateIndex.value === 0
-    ? ''
-    : stateOptions.value[selectedStateIndex.value]?.value || ''
-
-  const response = await loadRepairOrderList({
-    page: pageNo,
-    row: pageRow,
-    statusCd: selectedState,
+  .onSuccess((event) => {
+    const response = event.data
+    total.value = response?.total || 0
+    pagingRef.value?.complete(response?.ownerRepairs || [], response?.total || 0)
   })
-
-  return {
-    list: response.ownerRepairs || [],
-    total: response.total || 0,
-  }
-}
-
-/** z-paging 查询回调 */
-async function handleQuery(pageNo: number, pageSize: number) {
-  try {
-    const result = await queryList(pageNo, pageSize)
-    total.value = result.total
-
-    // 通知 z-paging 数据加载完成
-    pagingRef.value?.complete(result.list)
-  }
-  catch (error) {
+  .onError((error) => {
     console.error('加载列表失败:', error)
-    // 通知 z-paging 加载失败
     pagingRef.value?.complete(false)
     uni.showToast({
       title: '加载失败',
       icon: 'none',
     })
-  }
+  })
+
+/** z-paging 查询回调 */
+function handleQuery(pageNo: number, pageSizeValue: number) {
+  const selectedState = selectedStateIndex.value === 0
+    ? ''
+    : stateOptions.value[selectedStateIndex.value]?.value || ''
+
+  currentPage.value = pageNo
+  pageSize.value = pageSizeValue
+
+  loadRepairOrderList({
+    page: pageNo,
+    row: pageSizeValue,
+    statusCd: selectedState,
+  })
 }
 
 /** 搜索 */
