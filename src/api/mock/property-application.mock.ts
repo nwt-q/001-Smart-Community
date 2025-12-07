@@ -30,7 +30,7 @@ import {
   PROPERTY_RECORD_STATE_OPTIONS,
   PROPERTY_RELATION_TYPE_OPTIONS,
 } from '../../constants/property-application'
-import { defineUniAppMock, delay, errorResponse, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, ResultEnumMap, successResponse } from './shared/utils'
+import { defineUniAppMock, delay, errorResponse, formatDateTime, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 空置房申请模拟数据库
@@ -57,8 +57,8 @@ const mockApplyRoomDatabase = {
       state: '4' as ApplicationState,
       stateName: '审批通过',
       urls: ['https://picsum.photos/400/300?random=room1'],
-      createTime: '2024-01-10T10:30:00Z',
-      updateTime: '2024-01-20T14:20:00Z',
+      createTime: '2024-01-10 10:30:00',
+      updateTime: '2024-01-20 14:20:00',
     },
     {
       ardId: 'ARD_002',
@@ -78,8 +78,8 @@ const mockApplyRoomDatabase = {
       state: '1' as ApplicationState,
       stateName: '待验房',
       urls: ['https://picsum.photos/400/300?random=room2'],
-      createTime: '2024-01-25T09:15:00Z',
-      updateTime: '2024-01-25T09:15:00Z',
+      createTime: '2024-01-25 09:15:00',
+      updateTime: '2024-01-25 09:15:00',
     },
     {
       ardId: 'ARD_003',
@@ -99,8 +99,8 @@ const mockApplyRoomDatabase = {
       state: '3' as ApplicationState,
       stateName: '验房不通过',
       urls: ['https://picsum.photos/400/300?random=room3'],
-      createTime: '2024-01-15T16:45:00Z',
-      updateTime: '2024-01-18T11:30:00Z',
+      createTime: '2024-01-15 16:45:00',
+      updateTime: '2024-01-18 11:30:00',
     },
     {
       ardId: 'ARD_004',
@@ -120,8 +120,8 @@ const mockApplyRoomDatabase = {
       state: '2' as ApplicationState,
       stateName: '待审核',
       urls: ['https://picsum.photos/400/300?random=room4'],
-      createTime: '2024-02-05T14:20:00Z',
-      updateTime: '2024-02-08T10:15:00Z',
+      createTime: '2024-02-05 14:20:00',
+      updateTime: '2024-02-08 10:15:00',
     },
   ] as PropertyApplication[],
 
@@ -136,7 +136,7 @@ const mockApplyRoomDatabase = {
       stateName: '审批通过',
       remark: '完成最终审核，同意费用减免申请',
       createUserName: '管理员',
-      createTime: '2024-01-20T14:20:00Z',
+      createTime: '2024-01-20 14:20:00',
       communityId: 'COMM_001',
     },
     {
@@ -148,7 +148,7 @@ const mockApplyRoomDatabase = {
       stateName: '待验房',
       remark: '开始验房流程',
       createUserName: '验房员',
-      createTime: '2024-01-18T10:30:00Z',
+      createTime: '2024-01-18 10:30:00',
       communityId: 'COMM_001',
     },
   ] as ApplicationRecord[],
@@ -163,7 +163,7 @@ const mockApplyRoomDatabase = {
       relTypeCd: '19000' as RelationTypeCd,
       url: 'https://picsum.photos/400/300?random=record1',
       remark: '验房照片1',
-      createTime: '2024-01-18T10:30:00Z',
+      createTime: '2024-01-18 10:30:00',
     },
     {
       ardrId: 'ARDR_002',
@@ -173,7 +173,7 @@ const mockApplyRoomDatabase = {
       relTypeCd: '21000' as RelationTypeCd,
       url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
       remark: '验房视频1',
-      createTime: '2024-01-18T10:35:00Z',
+      createTime: '2024-01-18 10:35:00',
     },
   ] as ApplicationRecordDetail[],
 
@@ -208,7 +208,7 @@ const mockApplyRoomDatabase = {
       detailId: 'DETAIL_001',
       feeName: '物业管理费',
       receivedAmount: 300,
-      createTime: '2024-01-15T00:00:00Z',
+      createTime: '2024-01-15 00:00:00',
       checked: false,
       feeId: 'FEE_001',
       roomId: 'ROOM_001',
@@ -218,7 +218,7 @@ const mockApplyRoomDatabase = {
       detailId: 'DETAIL_002',
       feeName: '垃圾处理费',
       receivedAmount: 50,
-      createTime: '2024-01-15T00:00:00Z',
+      createTime: '2024-01-15 00:00:00',
       checked: false,
       feeId: 'FEE_001',
       roomId: 'ROOM_001',
@@ -228,7 +228,7 @@ const mockApplyRoomDatabase = {
       detailId: 'DETAIL_003',
       feeName: '公共区域维护费',
       receivedAmount: 100,
-      createTime: '2024-01-15T00:00:00Z',
+      createTime: '2024-01-15 00:00:00',
       checked: false,
       feeId: 'FEE_001',
       roomId: 'ROOM_001',
@@ -240,6 +240,8 @@ const mockApplyRoomDatabase = {
   createMockApplyRoom(id: string): PropertyApplication {
     const stateItem = PROPERTY_APPLICATION_STATE_OPTIONS[Math.floor(Math.random() * PROPERTY_APPLICATION_STATE_OPTIONS.length)]
     const applyType = PROPERTY_APPLY_TYPE_OPTIONS[0]
+    const startDate = generateTimeRange(-30, 0)
+    const endDate = generateTimeRange(0, 90)
 
     return {
       ardId: `ARD_${id}`,
@@ -253,8 +255,8 @@ const mockApplyRoomDatabase = {
       createRemark: '业主申请空置房，希望获得费用减免',
       checkRemark: stateItem.value === '3' ? '验房不通过，房屋存在损坏' : '验房通过，房屋状况良好',
       reviewRemark: stateItem.value === '4' ? '审批通过，同意给予费用减免' : '',
-      startTime: `${generateTimeRange(-30, 0).split('T')[0]} 00:00:00`,
-      endTime: `${generateTimeRange(0, 90).split('T')[0]} 23:59:59`,
+      startTime: `${startDate.slice(0, 10)} 00:00:00`,
+      endTime: `${endDate.slice(0, 10)} 23:59:59`,
       feeId: `FEE_${id}`,
       state: stateItem.value as ApplicationState,
       stateName: stateItem.label,
@@ -376,7 +378,7 @@ const mockApplyRoomDatabase = {
     applyRoom.checkRemark = data.checkRemark
     applyRoom.startTime = data.startTime
     applyRoom.endTime = data.endTime
-    applyRoom.updateTime = new Date().toISOString()
+    applyRoom.updateTime = formatDateTime()
 
     // 更新图片URLs
     if (data.photos && data.photos.length > 0) {
@@ -397,7 +399,7 @@ const mockApplyRoomDatabase = {
     applyRoom.reviewRemark = data.reviewRemark
     applyRoom.startTime = data.startTime
     applyRoom.endTime = data.endTime
-    applyRoom.updateTime = new Date().toISOString()
+    applyRoom.updateTime = formatDateTime()
 
     return true
   },
@@ -470,7 +472,7 @@ const mockApplyRoomDatabase = {
       stateName: data.stateName,
       remark: data.remark,
       createUserName: '当前用户',
-      createTime: new Date().toISOString(),
+      createTime: formatDateTime(),
       communityId: data.communityId,
     }
 
@@ -487,7 +489,7 @@ const mockApplyRoomDatabase = {
           relTypeCd: '19000',
           url: `https://picsum.photos/400/300?random=${photoId}`,
           remark: data.remark,
-          createTime: new Date().toISOString(),
+          createTime: formatDateTime(),
         }
         this.recordDetails.push(detail)
       })

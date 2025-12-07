@@ -1,6 +1,7 @@
 import type { Activity, ActivityListParams, ActivityListResponse, ActivityStatus, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
+import dayjs from 'dayjs'
 
-import { defineUniAppMock, errorResponse, generateId, mockLog, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
+import { defineUniAppMock, errorResponse, formatDateTime, generateId, mockLog, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 活动模块 Mock 接口 - 完全自包含架构
@@ -236,14 +237,14 @@ function createMockActivity(id: string): Activity {
     title: generateActivityTitle(activityType, numericId),
     userName: ORGANIZERS[Math.floor(Math.random() * ORGANIZERS.length)],
     avatar: AVATAR_URLS[Math.floor(Math.random() * AVATAR_URLS.length)],
-    startTime: new Date(now + startOffset).toISOString(),
-    endTime: new Date(now + startOffset + duration).toISOString(),
+    startTime: formatDateTime(now + startOffset),
+    endTime: formatDateTime(now + startOffset + duration),
     context: generateActivityContent(activityType, id),
     headerImg: `${activityType.category}_header_${id}.jpg`,
     src: `https://picsum.photos/800/400?random=${activityType.category}${id}`,
     communityId: 'COMM_001',
-    createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
-    updateTime: new Date().toISOString(),
+    createTime: formatDateTime(dayjs(now).subtract(randomDays, 'day')),
+    updateTime: formatDateTime(),
     status,
     viewCount: baseViewCount,
     likeCount: Math.floor(baseViewCount * 0.2 + Math.random() * 50),
@@ -298,7 +299,7 @@ const mockActivityDatabase = {
 
     // 按创建时间倒序排序
     filteredActivities.sort((a, b) =>
-      new Date(b.createTime).getTime() - new Date(a.createTime).getTime(),
+      dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf(),
     )
 
     // 分页处理
@@ -320,7 +321,7 @@ const mockActivityDatabase = {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
       activity.viewCount = (activity.viewCount || 0) + 1
-      activity.updateTime = new Date().toISOString()
+      activity.updateTime = formatDateTime()
       return true
     }
     return false
@@ -331,7 +332,7 @@ const mockActivityDatabase = {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
       activity.likeCount = (activity.likeCount || 0) + 1
-      activity.updateTime = new Date().toISOString()
+      activity.updateTime = formatDateTime()
       return true
     }
     return false
@@ -342,7 +343,7 @@ const mockActivityDatabase = {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
       activity.likeCount = likeCount
-      activity.updateTime = new Date().toISOString()
+      activity.updateTime = formatDateTime()
       return activity
     }
     return null
@@ -353,7 +354,7 @@ const mockActivityDatabase = {
     const activity = this.getActivityById(activitiesId)
     if (activity) {
       activity.collectCount = collectCount
-      activity.updateTime = new Date().toISOString()
+      activity.updateTime = formatDateTime()
       return activity
     }
     return null
@@ -471,11 +472,11 @@ export default defineUniAppMock([
           title: data.title,
           context: data.context,
           startTime: data.startTime,
-          endTime: data.endTime || new Date(new Date(data.startTime).getTime() + 2 * 60 * 60 * 1000).toISOString(),
+          endTime: data.endTime || formatDateTime(dayjs(data.startTime).add(2, 'hour')),
           userName: '物业管理处',
           communityId: data.communityId || 'COMM_001',
-          createTime: new Date().toISOString(),
-          updateTime: new Date().toISOString(),
+          createTime: formatDateTime(),
+          updateTime: formatDateTime(),
           viewCount: 0,
           likeCount: 0,
           readCount: 0,
@@ -521,7 +522,7 @@ export default defineUniAppMock([
         // 更新活动数据
         Object.assign(activity, {
           ...data,
-          updateTime: new Date().toISOString(),
+          updateTime: formatDateTime(),
         })
 
         mockLog('updateActivity result', activity.title)
@@ -661,7 +662,7 @@ export default defineUniAppMock([
         }
 
         activity.status = data.status
-        activity.updateTime = new Date().toISOString()
+        activity.updateTime = formatDateTime()
 
         mockLog('updateActivityStatus result', { title: activity.title, status: activity.status })
         return successResponse(activity, '活动状态更新成功')

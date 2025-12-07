@@ -4,11 +4,22 @@
  */
 
 import type { ApiResponse } from '@/types/api'
+import dayjs from 'dayjs'
 import { createDefineMock } from 'vite-plugin-mock-dev-server'
 // FIXME: 无法使用路径别名 出现路径识别错误 编译失败
 // import { ResultEnum } from '@/http/tools/enum'
 // 使用相对路径导入，避免别名路径问题
 import { ResultEnum } from '../../../http/tools/enum'
+
+export const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
+
+/**
+ * 统一的日期时间格式化
+ * @example formatDateTime() // 2024-01-01 00:00:00
+ */
+export function formatDateTime(value: dayjs.ConfigType = dayjs()): string {
+  return dayjs(value).format(DATE_TIME_FORMAT)
+}
 
 /**
  * 仅用于在 `*.mock.ts` 文件内使用。
@@ -83,9 +94,8 @@ export function generateId(prefix: string = 'ID') {
 
 /** 生成业务编号（按日期 + 序号格式） */
 export function generateBusinessId(prefix: string = 'BIZ') {
-  const date = new Date()
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '') /** YYYYMMDD */
-  const timeStr = date.toTimeString().slice(0, 8).replace(/:/g, '') /** HHMMSS */
+  const dateStr = dayjs().format('YYYYMMDD')
+  const timeStr = dayjs().format('HHmmss')
   const random = Math.floor(Math.random() * 999).toString().padStart(3, '0')
   return `${prefix}${dateStr}${timeStr}${random}`
 }
@@ -126,7 +136,7 @@ export function generateTimeRange(startDaysFromNow: number = -30, endDaysFromNow
   const startTime = now + (startDaysFromNow * 24 * 60 * 60 * 1000)
   const endTime = now + (endDaysFromNow * 24 * 60 * 60 * 1000)
   const randomTime = startTime + Math.random() * (endTime - startTime)
-  return new Date(randomTime).toISOString()
+  return formatDateTime(randomTime)
 }
 
 /** 生成随机金额 */

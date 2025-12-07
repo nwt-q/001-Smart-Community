@@ -56,6 +56,13 @@ skills:
   repair.statusName = statusItem.label
   ```
 
+### Mock 日期时间格式规范
+
+- **统一格式**：所有 Mock 日期时间字符串必须使用 dayjs，格式固定为 `YYYY-MM-DD HH:mm:ss`。
+- **禁止写法**：禁用 `new Date().toISOString()`、`toTimeString()` 等原生格式化输出。
+- **推荐写法**：使用 `shared/utils` 的 `formatDateTime(value?)`（内置 dayjs 与统一格式），或直接 `dayjs(value).format('YYYY-MM-DD HH:mm:ss')`。
+- **比较/排序**：使用 `dayjs(value).valueOf()` 做时间比较/排序，避免混用原生 `Date`。
+
 ### URL 前缀变更规则
 
 **重要说明**: 在创建新的 Mock 函数时，URL 地址前缀需要按照以下规则变更：

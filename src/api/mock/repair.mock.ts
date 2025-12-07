@@ -5,6 +5,7 @@
 
 import type { PriorityType } from '@/types/api'
 import type { RepairListParams, RepairOrder, RepairStatus, RepairType } from '@/types/repair'
+import dayjs from 'dayjs'
 import {
   REPAIR_PAY_TYPE_OPTIONS,
   REPAIR_RESOURCE_TYPE_OPTIONS,
@@ -15,6 +16,7 @@ import {
   createPaginationResponse,
   defineUniAppMock,
   errorResponse,
+  formatDateTime,
   generateAddress,
   generateAmount,
   generateChineseName,
@@ -94,7 +96,7 @@ function createMockRepair(id: string): RepairOrder {
   const now = Date.now()
   const randomDays = Math.floor(Math.random() * 30)
   const address = generateAddress()
-  const appointment = new Date(now + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000).toISOString()
+  const appointment = formatDateTime(dayjs(now).add(Math.floor(Math.random() * 7), 'day'))
 
   return {
     repairId: `REP_${id}`,
@@ -109,8 +111,8 @@ function createMockRepair(id: string): RepairOrder {
     statusCd: statusItem.value as string,
     statusName: statusItem.label,
     priority,
-    createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
-    updateTime: new Date().toISOString(),
+    createTime: formatDateTime(dayjs(now).subtract(randomDays, 'day')),
+    updateTime: formatDateTime(),
     assignedWorker: statusItem.value === '10001' ? null : `维修工${Math.floor(Math.random() * 10 + 1)}`,
     estimatedCost: generateAmount(50, 500),
     actualCost: statusItem.value === '10004' ? generateAmount(40, 600) : null,
@@ -120,7 +122,7 @@ function createMockRepair(id: string): RepairOrder {
       ? {
           rating: Math.floor(Math.random() * 2) + 4, // 4-5星
           comment: ['服务很好，维修及时', '师傅很专业，问题解决了', '效率很高，满意', '态度不错'][Math.floor(Math.random() * 4)],
-          evaluateTime: new Date().toISOString(),
+          evaluateTime: formatDateTime(),
         }
       : undefined,
   }
@@ -241,12 +243,12 @@ const mockRepairDatabase = {
     // 日期范围筛选
     if (params.startDate) {
       filteredRepairs = filteredRepairs.filter(repair =>
-        new Date(repair.createTime) >= new Date(params.startDate!),
+        dayjs(repair.createTime).valueOf() >= dayjs(params.startDate).valueOf(),
       )
     }
     if (params.endDate) {
       filteredRepairs = filteredRepairs.filter(repair =>
-        new Date(repair.createTime) <= new Date(params.endDate!),
+        dayjs(repair.createTime).valueOf() <= dayjs(params.endDate).valueOf(),
       )
     }
 
@@ -259,7 +261,7 @@ const mockRepairDatabase = {
 
     // 按创建时间倒序排序
     filteredRepairs.sort((a, b) =>
-      new Date(b.createTime).getTime() - new Date(a.createTime).getTime(),
+      dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf(),
     )
 
     const pagination = createPaginationResponse(
@@ -286,7 +288,7 @@ const mockRepairDatabase = {
     if (repair) {
       Object.assign(repair, {
         ...updateData,
-        updateTime: new Date().toISOString(),
+        updateTime: formatDateTime(),
       })
       return repair
     }
@@ -564,8 +566,8 @@ export default defineUniAppMock([
           statusCd: '10001',
           statusName: '待派单',
           priority: body.priority || 'MEDIUM',
-          createTime: new Date().toISOString(),
-          updateTime: new Date().toISOString(),
+          createTime: formatDateTime(),
+          updateTime: formatDateTime(),
           assignedWorker: null,
           estimatedCost: body.estimatedCost || 0,
           actualCost: null,
@@ -648,7 +650,7 @@ export default defineUniAppMock([
           repair.assignedWorker = null
         }
 
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('repairDispatch', body.action, `→ ${body.repairId}`)
         return successResponse({ success: true }, `${body.action === 'DISPATCH' ? '派单' : body.action === 'TRANSFER' ? '转单' : '退单'}成功`)
@@ -688,7 +690,7 @@ export default defineUniAppMock([
         repair.statusCd = '10004'
         repair.statusName = '已完成'
         repair.actualCost = body.totalPrice || repair.estimatedCost
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('repairFinish', body.repairId, '→ 办结成功')
         return successResponse({ success: true }, '办结工单成功')
@@ -721,7 +723,7 @@ export default defineUniAppMock([
         // 更新工单状态为已取消
         repair.statusCd = '10005'
         repair.statusName = '已取消'
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('repairEnd', body.repairId, '→ 结束成功')
         return successResponse({ success: true }, '结束订单成功')
@@ -758,9 +760,9 @@ export default defineUniAppMock([
         repair.evaluation = {
           rating: 5, // 默认5星
           comment: body.context,
-          evaluateTime: new Date().toISOString(),
+          evaluateTime: formatDateTime(),
         }
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('appraiseRepair', body.repairId, '→ 评价成功')
         return successResponse({ success: true }, '评价成功')
@@ -933,7 +935,7 @@ export default defineUniAppMock([
 
         // 月度统计
         const monthlyStats = allRepairs.reduce((acc, repair) => {
-          const month = new Date(repair.createTime).toISOString().slice(0, 7)
+          const month = dayjs(repair.createTime).format('YYYY-MM')
           acc[month] = (acc[month] || 0) + 1
           return acc
         }, {} as Record<string, number>)
@@ -1094,7 +1096,7 @@ export default defineUniAppMock([
 
         repair.statusCd = '10003'
         repair.statusName = '处理中'
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('repairStart', body.repairId, '→ 开始维修')
         return successResponse({ success: true }, '开始维修成功')
@@ -1126,7 +1128,7 @@ export default defineUniAppMock([
 
         repair.statusCd = '10002'
         repair.statusName = '已派单'
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('repairStop', body.repairId, '→ 暂停维修')
         return successResponse({ success: true }, '暂停维修成功')
@@ -1166,7 +1168,7 @@ export default defineUniAppMock([
         repair.statusCd = '10002'
         repair.statusName = '已派单'
         repair.assignedWorker = body.staffName
-        repair.updateTime = new Date().toISOString()
+        repair.updateTime = formatDateTime()
 
         mockLog('grabbingRepair', body.repairId, `→ ${body.staffName} 抢单成功`)
         return successResponse({ success: true }, '抢单成功')
@@ -1238,7 +1240,7 @@ export default defineUniAppMock([
             statusCd: '10001',
             statusName: '待派单',
             startTime: repair.createTime,
-            endTime: repair.statusCd !== '10001' ? new Date(new Date(repair.createTime).getTime() + 3600000).toISOString() : undefined,
+            endTime: repair.statusCd !== '10001' ? formatDateTime(dayjs(repair.createTime).add(1, 'hour')) : undefined,
             context: '工单已创建',
           },
         ]
@@ -1251,8 +1253,8 @@ export default defineUniAppMock([
             staffName: repair.assignedWorker || '李师傅',
             statusCd: '10002',
             statusName: '已派单',
-            startTime: new Date(new Date(repair.createTime).getTime() + 3600000).toISOString(),
-            endTime: repair.statusCd !== '10002' ? new Date(new Date(repair.createTime).getTime() + 7200000).toISOString() : undefined,
+            startTime: formatDateTime(dayjs(repair.createTime).add(1, 'hour')),
+            endTime: repair.statusCd !== '10002' ? formatDateTime(dayjs(repair.createTime).add(2, 'hour')) : undefined,
             context: '已派单给维修师傅',
           })
         }
@@ -1265,8 +1267,8 @@ export default defineUniAppMock([
             staffName: repair.assignedWorker || '李师傅',
             statusCd: '10003',
             statusName: '处理中',
-            startTime: new Date(new Date(repair.createTime).getTime() + 7200000).toISOString(),
-            endTime: repair.statusCd === '10004' ? new Date(new Date(repair.createTime).getTime() + 10800000).toISOString() : undefined,
+            startTime: formatDateTime(dayjs(repair.createTime).add(2, 'hour')),
+            endTime: repair.statusCd === '10004' ? formatDateTime(dayjs(repair.createTime).add(3, 'hour')) : undefined,
             context: '正在处理维修问题',
           })
         }
@@ -1279,8 +1281,8 @@ export default defineUniAppMock([
             staffName: repair.assignedWorker || '李师傅',
             statusCd: '10004',
             statusName: '已完成',
-            startTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
-            endTime: new Date(new Date(repair.createTime).getTime() + 10800000).toISOString(),
+            startTime: formatDateTime(dayjs(repair.createTime).add(3, 'hour')),
+            endTime: formatDateTime(dayjs(repair.createTime).add(3, 'hour')),
             context: '维修已完成，问题已解决',
           })
 

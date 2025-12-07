@@ -1,8 +1,9 @@
 import type { PriorityType } from '@/types/api'
 import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/complaint'
+import dayjs from 'dayjs'
 import { COMPLAINT_STATUS_OPTIONS, COMPLAINT_TYPE_OPTIONS } from '../../constants/complaint'
 
-import { createPaginationResponse, defineUniAppMock, errorResponse, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
+import { createPaginationResponse, defineUniAppMock, errorResponse, formatDateTime, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
 /**
  * 投诉模块 Mock 接口 - 完全自包含架构
@@ -181,14 +182,16 @@ const mockComplaintDatabase = {
 
     // 日期范围筛选
     if (params.startDate) {
-      filtered = filtered.filter(c => new Date(c.createTime) >= new Date(params.startDate!))
+      const start = dayjs(params.startDate)
+      filtered = filtered.filter(c => dayjs(c.createTime).valueOf() >= start.valueOf())
     }
     if (params.endDate) {
-      filtered = filtered.filter(c => new Date(c.createTime) <= new Date(params.endDate!))
+      const end = dayjs(params.endDate)
+      filtered = filtered.filter(c => dayjs(c.createTime).valueOf() <= end.valueOf())
     }
 
     // 按创建时间倒序
-    filtered.sort((a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime())
+    filtered.sort((a, b) => dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf())
 
     return createPaginationResponse(filtered, params.page, params.row)
   },
@@ -204,7 +207,7 @@ const mockComplaintDatabase = {
     const complaint = this.getComplaintById(complaintId)
     if (complaint) {
       complaint.status = status
-      complaint.updateTime = new Date().toISOString()
+      complaint.updateTime = formatDateTime()
       if (assignedHandler) {
         complaint.assignedHandler = assignedHandler
       }
@@ -219,7 +222,7 @@ const mockComplaintDatabase = {
     if (complaint) {
       Object.assign(complaint, {
         ...updateData,
-        updateTime: new Date().toISOString(),
+        updateTime: formatDateTime(),
       })
       return complaint
     }
@@ -344,8 +347,8 @@ export default defineUniAppMock([
           address: data.address,
           status: 'SUBMITTED',
           priority: data.priority || 'MEDIUM',
-          createTime: new Date().toISOString(),
-          updateTime: new Date().toISOString(),
+          createTime: formatDateTime(),
+          updateTime: formatDateTime(),
           images: data.images || [],
           communityId: data.communityId || 'COMM_001',
         }
@@ -384,7 +387,7 @@ export default defineUniAppMock([
         // 更新投诉状态和处理信息
         complaint.status = 'PROCESSING'
         complaint.assignedHandler = body.assignedHandler || '系统自动分配'
-        complaint.updateTime = new Date().toISOString()
+        complaint.updateTime = formatDateTime()
 
         console.log('🚀 Mock API: handleComplaint', body, '→', complaint)
         return successResponse({
@@ -423,10 +426,10 @@ export default defineUniAppMock([
         complaint.response = {
           content: body.responseContent,
           handlerName: body.handlerName || complaint.assignedHandler || '处理员',
-          responseTime: new Date().toISOString(),
+          responseTime: formatDateTime(),
         }
         complaint.status = 'RESOLVED'
-        complaint.updateTime = new Date().toISOString()
+        complaint.updateTime = formatDateTime()
 
         console.log('🚀 Mock API: replyComplaint', body, '→', complaint)
         return successResponse({
@@ -469,10 +472,10 @@ export default defineUniAppMock([
         complaint.satisfaction = {
           rating: body.rating,
           comment: body.comment || '',
-          evaluateTime: new Date().toISOString(),
+          evaluateTime: formatDateTime(),
         }
         complaint.status = 'CLOSED'
-        complaint.updateTime = new Date().toISOString()
+        complaint.updateTime = formatDateTime()
 
         console.log('🚀 Mock API: evaluateComplaint', body, '→', complaint)
         return successResponse({
@@ -529,14 +532,21 @@ export default defineUniAppMock([
           satisfactionRate: evaluatedComplaints.length > 0
             ? `${Math.round((evaluatedComplaints.filter(c => (c.satisfaction?.rating || 0) >= 4).length / evaluatedComplaints.length) * 100)}%`
             : '0%',
+          // 近 30/60 天趋势
+          // 使用 dayjs 统一格式与比较，避免原生 Date 差异
           monthlyTrend: {
-            current: allComplaints.filter(c => new Date(c.createTime) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length,
-            previous: allComplaints.filter((c) => {
-              const createTime = new Date(c.createTime)
-              const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-              const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
-              return createTime >= sixtyDaysAgo && createTime < thirtyDaysAgo
-            }).length,
+            current: (() => {
+              const thirtyDaysAgo = dayjs().subtract(30, 'day').valueOf()
+              return allComplaints.filter(c => dayjs(c.createTime).valueOf() >= thirtyDaysAgo).length
+            })(),
+            previous: (() => {
+              const thirtyDaysAgo = dayjs().subtract(30, 'day').valueOf()
+              const sixtyDaysAgo = dayjs().subtract(60, 'day').valueOf()
+              return allComplaints.filter((c) => {
+                const createTime = dayjs(c.createTime).valueOf()
+                return createTime >= sixtyDaysAgo && createTime < thirtyDaysAgo
+              }).length
+            })(),
           },
         }
 
