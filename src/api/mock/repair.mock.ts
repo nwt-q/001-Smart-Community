@@ -508,7 +508,6 @@ export default defineUniAppMock([
       await randomDelay(500, 1200)
 
       try {
-        // 前后端字段已统一
         const title = (body.title ?? '').trim()
         const context = (body.context ?? '').trim()
         const repairName = (body.repairName ?? '').trim()
