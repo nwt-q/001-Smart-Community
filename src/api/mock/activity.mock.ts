@@ -1,7 +1,23 @@
-import type { Activity, ActivityListParams, ActivityListResponse, ActivityStatus, CreateActivityReq, UpdateActivityReq } from '@/types/activity'
+import type {
+  Activity,
+  ActivityListParams,
+  ActivityListResponse,
+  ActivityStatus,
+  CreateActivityReq,
+  UpdateActivityReq,
+} from '@/types/activity'
 import dayjs from 'dayjs'
 
-import { defineUniAppMock, errorResponse, formatDateTime, generateId, mockLog, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
+import {
+  defineUniAppMock,
+  errorResponse,
+  formatDateTime,
+  generateId,
+  mockLog,
+  randomDelay,
+  ResultEnumMap,
+  successResponse,
+} from './shared/utils'
 
 /**
  * 活动模块 Mock 接口 - 完全自包含架构
@@ -75,7 +91,7 @@ const AVATAR_URLS = [
 ]
 
 /** 生成活动标题 */
-function generateActivityTitle(activityType: typeof ACTIVITY_TYPES[number], index: number): string {
+function generateActivityTitle(activityType: (typeof ACTIVITY_TYPES)[number], index: number): string {
   const titleTemplates = {
     health: ['春季健身操培训班', '社区太极拳晨练', '健康体检义诊活动', '亲子瑜伽体验课', '老年人健康讲座'],
     family: ['亲子手工制作坊', '家庭趣味运动会', '少儿绘画比赛', '母亲节感恩活动', '家庭才艺展示'],
@@ -97,46 +113,98 @@ function generateActivityTitle(activityType: typeof ACTIVITY_TYPES[number], inde
 }
 
 /** 生成活动内容 */
-function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id: string): string {
+function generateActivityContent(activityType: (typeof ACTIVITY_TYPES)[number], id: string): string {
   const detailedTemplates = {
     health: {
-      highlights: ['专业健身教练现场指导', '免费体能测试与健康评估', '多种运动项目体验', '健康饮食知识讲座', '运动装备免费试用'],
-      schedule: ['09:00-10:00 热身运动与体能测试', '10:00-11:00 有氧运动体验', '11:00-12:00 力量训练指导', '14:00-15:00 瑜伽放松课程', '15:00-16:00 健康咨询与答疑'],
+      highlights: [
+        '专业健身教练现场指导',
+        '免费体能测试与健康评估',
+        '多种运动项目体验',
+        '健康饮食知识讲座',
+        '运动装备免费试用',
+      ],
+      schedule: [
+        '09:00-10:00 热身运动与体能测试',
+        '10:00-11:00 有氧运动体验',
+        '11:00-12:00 力量训练指导',
+        '14:00-15:00 瑜伽放松课程',
+        '15:00-16:00 健康咨询与答疑',
+      ],
       benefits: '通过专业的健身指导，帮助业主建立正确的运动习惯，提升身体素质，增强免疫力。',
     },
     family: {
       highlights: ['亲子互动游戏大赛', '手工艺品制作坊', '家庭才艺展示舞台', '儿童安全知识课堂', '亲子摄影留念'],
-      schedule: ['09:30-10:30 亲子破冰游戏', '10:30-11:30 创意手工制作', '11:30-12:00 才艺展示时间', '14:00-15:00 安全知识互动', '15:00-16:00 合影留念'],
+      schedule: [
+        '09:30-10:30 亲子破冰游戏',
+        '10:30-11:30 创意手工制作',
+        '11:30-12:00 才艺展示时间',
+        '14:00-15:00 安全知识互动',
+        '15:00-16:00 合影留念',
+      ],
       benefits: '增进亲子关系，为家庭成员创造共同回忆，让孩子在游戏中学习成长。',
     },
     culture: {
       highlights: ['居民原创节目展演', '传统文化体验活动', '书法绘画现场教学', '文学作品朗诵会', '文化知识竞赛'],
-      schedule: ['19:00-19:30 开场表演', '19:30-20:30 居民才艺展示', '20:30-21:00 传统文化体验', '21:00-21:30 文艺互动环节'],
+      schedule: [
+        '19:00-19:30 开场表演',
+        '19:30-20:30 居民才艺展示',
+        '20:30-21:00 传统文化体验',
+        '21:00-21:30 文艺互动环节',
+      ],
       benefits: '传承优秀传统文化，丰富居民精神文化生活，促进文化交流与传承。',
     },
     environment: {
       highlights: ['垃圾分类实操训练', '环保手工艺品制作', '绿色生活方式分享', '环保知识有奖竞答', '环保承诺签名活动'],
-      schedule: ['09:00-10:00 环保知识讲座', '10:00-11:00 垃圾分类实操', '11:00-12:00 环保手工制作', '14:00-15:00 绿色生活分享', '15:00-16:00 环保承诺活动'],
+      schedule: [
+        '09:00-10:00 环保知识讲座',
+        '10:00-11:00 垃圾分类实操',
+        '11:00-12:00 环保手工制作',
+        '14:00-15:00 绿色生活分享',
+        '15:00-16:00 环保承诺活动',
+      ],
       benefits: '提高环保意识，推广绿色生活理念，共同建设美丽社区环境。',
     },
     safety: {
       highlights: ['消防逃生演练', '急救技能培训', '居家安全检查', '防诈骗知识宣传', '安全设备体验'],
-      schedule: ['09:00-10:00 消防安全讲座', '10:00-11:00 逃生演练实操', '11:00-12:00 急救技能培训', '14:00-15:00 防诈骗宣传', '15:00-16:00 安全设备展示'],
+      schedule: [
+        '09:00-10:00 消防安全讲座',
+        '10:00-11:00 逃生演练实操',
+        '11:00-12:00 急救技能培训',
+        '14:00-15:00 防诈骗宣传',
+        '15:00-16:00 安全设备展示',
+      ],
       benefits: '增强安全防范意识，提高应急处理能力，保障居民生命财产安全。',
     },
     social: {
       highlights: ['邻里见面交流会', '社区文化座谈', '居民建议征集', '联谊活动组织', '社区服务介绍'],
-      schedule: ['14:00-15:00 邻里自我介绍', '15:00-16:00 社区文化交流', '16:00-17:00 建议征集座谈', '17:00-18:00 联谊活动安排'],
+      schedule: [
+        '14:00-15:00 邻里自我介绍',
+        '15:00-16:00 社区文化交流',
+        '16:00-17:00 建议征集座谈',
+        '17:00-18:00 联谊活动安排',
+      ],
       benefits: '加强邻里沟通，营造和谐社区氛围，建立良好的邻里关系。',
     },
     festival: {
       highlights: ['传统节日庆典', '民俗文化展示', '节日美食品鉴', '传统游戏体验', '节日祝福传递'],
-      schedule: ['10:00-11:00 节日历史讲解', '11:00-12:00 民俗表演欣赏', '14:00-15:00 美食制作体验', '15:00-16:00 传统游戏互动', '16:00-17:00 祝福传递活动'],
+      schedule: [
+        '10:00-11:00 节日历史讲解',
+        '11:00-12:00 民俗表演欣赏',
+        '14:00-15:00 美食制作体验',
+        '15:00-16:00 传统游戏互动',
+        '16:00-17:00 祝福传递活动',
+      ],
       benefits: '传承节日文化，增进文化认同，让传统节日更有意义和温度。',
     },
     volunteer: {
       highlights: ['志愿服务项目介绍', '公益活动组织培训', '社区服务实践', '爱心物品募集', '志愿者表彰活动'],
-      schedule: ['09:00-10:00 志愿服务介绍', '10:00-11:00 服务技能培训', '11:00-12:00 实践活动安排', '14:00-15:00 爱心募集活动', '15:00-16:00 志愿者表彰'],
+      schedule: [
+        '09:00-10:00 志愿服务介绍',
+        '10:00-11:00 服务技能培训',
+        '11:00-12:00 实践活动安排',
+        '14:00-15:00 爱心募集活动',
+        '15:00-16:00 志愿者表彰',
+      ],
       benefits: '弘扬志愿服务精神，构建互帮互助的社区文化，传递正能量。',
     },
   }
@@ -164,12 +232,16 @@ function generateActivityContent(activityType: typeof ACTIVITY_TYPES[number], id
 
     <h3 style="color: #28a745; margin-top: 25px;">📅 活动安排</h3>
     <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
-      ${scheduleItems.map((item, index) => `
+      ${scheduleItems
+        .map(
+          (item, index) => `
         <p style="margin: 8px 0; display: flex; align-items: center;">
           <span style="background: #28a745; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 10px; flex-shrink: 0;">${index + 1}</span>
           <span>${item}</span>
         </p>
-      `).join('')}
+      `,
+        )
+        .join('')}
     </div>
 
     <h3 style="color: #6f42c1; margin-top: 25px;">🎟️ 参与方式</h3>
@@ -277,9 +349,7 @@ const mockActivityDatabase = {
 
     // 社区ID筛选
     if (params.communityId) {
-      filteredActivities = filteredActivities.filter(
-        activity => activity.communityId === params.communityId,
-      )
+      filteredActivities = filteredActivities.filter(activity => activity.communityId === params.communityId)
     }
 
     // 状态筛选
@@ -290,17 +360,16 @@ const mockActivityDatabase = {
     // 关键词筛选
     if (params.keyword) {
       const keyword = params.keyword.toLowerCase()
-      filteredActivities = filteredActivities.filter(activity =>
-        activity.title.toLowerCase().includes(keyword)
-        || activity.context.toLowerCase().includes(keyword)
-        || activity.userName.toLowerCase().includes(keyword),
+      filteredActivities = filteredActivities.filter(
+        activity =>
+          activity.title.toLowerCase().includes(keyword)
+          || activity.context.toLowerCase().includes(keyword)
+          || activity.userName.toLowerCase().includes(keyword),
       )
     }
 
     // 按创建时间倒序排序
-    filteredActivities.sort((a, b) =>
-      dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf(),
-    )
+    filteredActivities.sort((a, b) => dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf())
 
     // 分页处理
     const total = filteredActivities.length
@@ -373,9 +442,7 @@ const mockActivityDatabase = {
 
   /** 删除活动 */
   removeActivity(activitiesId: string): boolean {
-    const index = this.activities.findIndex(
-      activity => activity.activitiesId === activitiesId,
-    )
+    const index = this.activities.findIndex(activity => activity.activitiesId === activitiesId)
     if (index !== -1) {
       this.activities.splice(index, 1)
       return true
@@ -751,7 +818,11 @@ export default defineUniAppMock([
         }
 
         // 更新收藏状态
-        const updatedActivity = mockActivityDatabase.updateCollect(data.activitiesId, data.isCollected, data.collectCount)
+        const updatedActivity = mockActivityDatabase.updateCollect(
+          data.activitiesId,
+          data.isCollected,
+          data.collectCount,
+        )
 
         if (!updatedActivity) {
           return errorResponse('活动不存在', ResultEnumMap.NotFound)

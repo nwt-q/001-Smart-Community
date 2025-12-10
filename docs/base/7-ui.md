@@ -44,7 +44,7 @@ easycom: {
 },
 ```
 
-- 3. ` tsconfig.json` 文件 `compilerOptions.types` 删除相关配置：
+- 3. `tsconfig.json` 文件 `compilerOptions.types` 删除相关配置：
 
 ```diff
 "types": [
@@ -75,7 +75,7 @@ easycom: {
 },
 ```
 
-- 3. ` tsconfig.json` 文件 `compilerOptions.types` 添加相关配置：
+- 3. `tsconfig.json` 文件 `compilerOptions.types` 添加相关配置：
 
 ```diff
 "types": [
@@ -106,7 +106,7 @@ easycom: {
 },
 ```
 
-- 3. ` tsconfig.json` 文件 `compilerOptions.types` 添加相关配置：
+- 3. `tsconfig.json` 文件 `compilerOptions.types` 添加相关配置：
 
 ```diff
 "types": [

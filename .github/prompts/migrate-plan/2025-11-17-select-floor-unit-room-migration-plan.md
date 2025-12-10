@@ -111,9 +111,9 @@ selectRoom.vue
 
 ```javascript
 // 旧代码 - Vue2 特性
-let pages = getCurrentPages()
-let prevPage = pages[pages.length - 2]
-prevPage.floorName = item.name // 直接修改
+let pages = getCurrentPages();
+let prevPage = pages[pages.length - 2];
+prevPage.floorName = item.name; // 直接修改
 ```
 
 **新方案**：使用 Pinia Store 替代
@@ -122,7 +122,7 @@ prevPage.floorName = item.name // 直接修改
 
 ```javascript
 // 旧代码
-wx.navigateBack({ delta: 1 })
+wx.navigateBack({ delta: 1 });
 ```
 
 **新方案**：使用 `uni.navigateBack()` 替代
@@ -140,70 +140,70 @@ wx.navigateBack({ delta: 1 })
 ```typescript
 /** 楼栋信息 */
 export interface Floor {
-  /** 楼栋ID */
-  floorId: string
-  /** 楼栋编号 */
-  floorNum: string
-  /** 楼栋名称 */
-  floorName: string
-  /** 所属社区ID */
-  communityId: string
+	/** 楼栋ID */
+	floorId: string;
+	/** 楼栋编号 */
+	floorNum: string;
+	/** 楼栋名称 */
+	floorName: string;
+	/** 所属社区ID */
+	communityId: string;
 }
 
 /** 单元信息 */
 export interface Unit {
-  /** 单元ID */
-  unitId: string
-  /** 单元编号 */
-  unitNum: string
-  /** 所属楼栋ID */
-  floorId: string
+	/** 单元ID */
+	unitId: string;
+	/** 单元编号 */
+	unitNum: string;
+	/** 所属楼栋ID */
+	floorId: string;
 }
 
 /** 房屋信息 */
 export interface Room {
-  /** 房屋ID */
-  roomId: string
-  /** 房间号 */
-  roomNum: string
-  /** 所属单元ID */
-  unitId: string
-  /** 所属楼栋ID */
-  floorId: string
+	/** 房屋ID */
+	roomId: string;
+	/** 房间号 */
+	roomNum: string;
+	/** 所属单元ID */
+	unitId: string;
+	/** 所属楼栋ID */
+	floorId: string;
 }
 
 /** 选择器通用查询参数 */
 export interface SelectorQueryParams {
-  /** 社区ID */
-  communityId: string
-  /** 页码 */
-  page: number
-  /** 每页条数 */
-  row: number
+	/** 社区ID */
+	communityId: string;
+	/** 页码 */
+	page: number;
+	/** 每页条数 */
+	row: number;
 }
 
 /** 楼栋查询参数 */
 export interface FloorQueryParams extends SelectorQueryParams {
-  /** 楼栋编号（模糊搜索） */
-  floorNum?: string
+	/** 楼栋编号（模糊搜索） */
+	floorNum?: string;
 }
 
 /** 单元查询参数 */
 export interface UnitQueryParams extends SelectorQueryParams {
-  /** 楼栋ID */
-  floorId: string
-  /** 单元编号（模糊搜索） */
-  unitNum?: string
+	/** 楼栋ID */
+	floorId: string;
+	/** 单元编号（模糊搜索） */
+	unitNum?: string;
 }
 
 /** 房屋查询参数 */
 export interface RoomQueryParams extends SelectorQueryParams {
-  /** 楼栋ID */
-  floorId: string
-  /** 单元ID */
-  unitId: string
-  /** 房间号（模糊搜索） */
-  roomNum?: string
+	/** 楼栋ID */
+	floorId: string;
+	/** 单元ID */
+	unitId: string;
+	/** 房间号（模糊搜索） */
+	roomNum?: string;
 }
 ```
 
@@ -212,64 +212,64 @@ export interface RoomQueryParams extends SelectorQueryParams {
 **文件**：`src/stores/useSelectorStore.ts`
 
 ```typescript
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import type { Floor, Unit, Room } from '@/types/selector'
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import type { Floor, Unit, Room } from "@/types/selector";
 
 /** 选择器状态管理 */
-export const useSelectorStore = defineStore('selector', () => {
-  // 状态
-  const selectedFloor = ref<Floor | null>(null)
-  const selectedUnit = ref<Unit | null>(null)
-  const selectedRoom = ref<Room | null>(null)
+export const useSelectorStore = defineStore("selector", () => {
+	// 状态
+	const selectedFloor = ref<Floor | null>(null);
+	const selectedUnit = ref<Unit | null>(null);
+	const selectedRoom = ref<Room | null>(null);
 
-  // 计算属性 - 格式化显示文本
-  const floorText = computed(() => (selectedFloor.value ? `${selectedFloor.value.floorNum}栋` : '请选择'))
+	// 计算属性 - 格式化显示文本
+	const floorText = computed(() => (selectedFloor.value ? `${selectedFloor.value.floorNum}栋` : "请选择"));
 
-  const unitText = computed(() => (selectedUnit.value ? `${selectedUnit.value.unitNum}单元` : '请选择'))
+	const unitText = computed(() => (selectedUnit.value ? `${selectedUnit.value.unitNum}单元` : "请选择"));
 
-  const roomText = computed(() => (selectedRoom.value ? `${selectedRoom.value.roomNum}室` : '请选择'))
+	const roomText = computed(() => (selectedRoom.value ? `${selectedRoom.value.roomNum}室` : "请选择"));
 
-  // 方法
-  const selectFloor = (floor: Floor) => {
-    selectedFloor.value = floor
-    // 清空下级选择
-    selectedUnit.value = null
-    selectedRoom.value = null
-  }
+	// 方法
+	const selectFloor = (floor: Floor) => {
+		selectedFloor.value = floor;
+		// 清空下级选择
+		selectedUnit.value = null;
+		selectedRoom.value = null;
+	};
 
-  const selectUnit = (unit: Unit) => {
-    selectedUnit.value = unit
-    // 清空下级选择
-    selectedRoom.value = null
-  }
+	const selectUnit = (unit: Unit) => {
+		selectedUnit.value = unit;
+		// 清空下级选择
+		selectedRoom.value = null;
+	};
 
-  const selectRoom = (room: Room) => {
-    selectedRoom.value = room
-  }
+	const selectRoom = (room: Room) => {
+		selectedRoom.value = room;
+	};
 
-  const clearSelection = () => {
-    selectedFloor.value = null
-    selectedUnit.value = null
-    selectedRoom.value = null
-  }
+	const clearSelection = () => {
+		selectedFloor.value = null;
+		selectedUnit.value = null;
+		selectedRoom.value = null;
+	};
 
-  return {
-    // 状态
-    selectedFloor,
-    selectedUnit,
-    selectedRoom,
-    // 计算属性
-    floorText,
-    unitText,
-    roomText,
-    // 方法
-    selectFloor,
-    selectUnit,
-    selectRoom,
-    clearSelection,
-  }
-})
+	return {
+		// 状态
+		selectedFloor,
+		selectedUnit,
+		selectedRoom,
+		// 计算属性
+		floorText,
+		unitText,
+		roomText,
+		// 方法
+		selectFloor,
+		selectUnit,
+		selectRoom,
+		clearSelection,
+	};
+});
 ```
 
 #### 1.3 创建 API 接口定义
@@ -279,24 +279,24 @@ export const useSelectorStore = defineStore('selector', () => {
 **文件**：`src/api/floor.ts`
 
 ```typescript
-import type { Floor, FloorQueryParams } from '@/types/selector'
-import type { ApiResponse, PageResult } from '@/types/api'
+import type { Floor, FloorQueryParams } from "@/types/selector";
+import type { ApiResponse, PageResult } from "@/types/api";
 
 /**
  * 获取楼栋列表
  * @param params 查询参数
  */
 export function getFloorList(params: FloorQueryParams) {
-  return useRequest<ApiResponse<PageResult<Floor>>>(
-    (data) => ({
-      url: '/api/floor/list',
-      method: 'GET',
-      params: data,
-    }),
-    {
-      initialData: params,
-    },
-  )
+	return useRequest<ApiResponse<PageResult<Floor>>>(
+		(data) => ({
+			url: "/api/floor/list",
+			method: "GET",
+			params: data,
+		}),
+		{
+			initialData: params,
+		},
+	);
 }
 ```
 
@@ -305,24 +305,24 @@ export function getFloorList(params: FloorQueryParams) {
 **文件**：`src/api/unit.ts`
 
 ```typescript
-import type { Unit, UnitQueryParams } from '@/types/selector'
-import type { ApiResponse, PageResult } from '@/types/api'
+import type { Unit, UnitQueryParams } from "@/types/selector";
+import type { ApiResponse, PageResult } from "@/types/api";
 
 /**
  * 获取单元列表
  * @param params 查询参数
  */
 export function getUnitList(params: UnitQueryParams) {
-  return useRequest<ApiResponse<PageResult<Unit>>>(
-    (data) => ({
-      url: '/api/unit/list',
-      method: 'GET',
-      params: data,
-    }),
-    {
-      initialData: params,
-    },
-  )
+	return useRequest<ApiResponse<PageResult<Unit>>>(
+		(data) => ({
+			url: "/api/unit/list",
+			method: "GET",
+			params: data,
+		}),
+		{
+			initialData: params,
+		},
+	);
 }
 ```
 
@@ -331,24 +331,24 @@ export function getUnitList(params: UnitQueryParams) {
 **文件**：`src/api/room.ts`
 
 ```typescript
-import type { Room, RoomQueryParams } from '@/types/selector'
-import type { ApiResponse, PageResult } from '@/types/api'
+import type { Room, RoomQueryParams } from "@/types/selector";
+import type { ApiResponse, PageResult } from "@/types/api";
 
 /**
  * 获取房屋列表
  * @param params 查询参数
  */
 export function getRoomList(params: RoomQueryParams) {
-  return useRequest<ApiResponse<PageResult<Room>>>(
-    (data) => ({
-      url: '/api/room/list',
-      method: 'GET',
-      params: data,
-    }),
-    {
-      initialData: params,
-    },
-  )
+	return useRequest<ApiResponse<PageResult<Room>>>(
+		(data) => ({
+			url: "/api/room/list",
+			method: "GET",
+			params: data,
+		}),
+		{
+			initialData: params,
+		},
+	);
 }
 ```
 
@@ -395,21 +395,21 @@ export function getRoomList(params: RoomQueryParams) {
 
 ```typescript
 export type PageRoute =
-  | '/pages/index/index'
-  // ... 现有路径
-  | '/pages-sub/selector/select-floor'
-  | '/pages-sub/selector/select-unit'
-  | '/pages-sub/selector/select-room'
+	| "/pages/index/index"
+	// ... 现有路径
+	| "/pages-sub/selector/select-floor"
+	| "/pages-sub/selector/select-unit"
+	| "/pages-sub/selector/select-room";
 
 export interface PageParams {
-  '/pages-sub/selector/select-floor': {}
-  '/pages-sub/selector/select-unit': {
-    floorId: string
-  }
-  '/pages-sub/selector/select-room': {
-    floorId: string
-    unitId: string
-  }
+	"/pages-sub/selector/select-floor": {};
+	"/pages-sub/selector/select-unit": {
+		floorId: string;
+	};
+	"/pages-sub/selector/select-room": {
+		floorId: string;
+		unitId: string;
+	};
 }
 ```
 
@@ -419,20 +419,20 @@ export interface PageParams {
 
 ```typescript
 export class TypedRouter {
-  /** 跳转到选择楼栋页面 */
-  static toSelectFloor() {
-    return navigateToTyped('/pages-sub/selector/select-floor', {})
-  }
+	/** 跳转到选择楼栋页面 */
+	static toSelectFloor() {
+		return navigateToTyped("/pages-sub/selector/select-floor", {});
+	}
 
-  /** 跳转到选择单元页面 */
-  static toSelectUnit(floorId: string) {
-    return navigateToTyped('/pages-sub/selector/select-unit', { floorId })
-  }
+	/** 跳转到选择单元页面 */
+	static toSelectUnit(floorId: string) {
+		return navigateToTyped("/pages-sub/selector/select-unit", { floorId });
+	}
 
-  /** 跳转到选择房屋页面 */
-  static toSelectRoom(floorId: string, unitId: string) {
-    return navigateToTyped('/pages-sub/selector/select-room', { floorId, unitId })
-  }
+	/** 跳转到选择房屋页面 */
+	static toSelectRoom(floorId: string, unitId: string) {
+		return navigateToTyped("/pages-sub/selector/select-room", { floorId, unitId });
+	}
 }
 ```
 
@@ -460,51 +460,51 @@ export class TypedRouter {
 
 ```vue
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useSelectorStore } from '@/stores/useSelectorStore'
-import { TypedRouter } from '@/router/helpers'
-import { useGlobalToast } from '@/hooks/useGlobal'
+import { computed } from "vue";
+import { useSelectorStore } from "@/stores/useSelectorStore";
+import { TypedRouter } from "@/router/helpers";
+import { useGlobalToast } from "@/hooks/useGlobal";
 
-const selectorStore = useSelectorStore()
-const toast = useGlobalToast()
+const selectorStore = useSelectorStore();
+const toast = useGlobalToast();
 
 // 选择楼栋
 function handleSelectFloor() {
-  TypedRouter.toSelectFloor()
+	TypedRouter.toSelectFloor();
 }
 
 // 选择单元
 function handleSelectUnit() {
-  if (!selectorStore.selectedFloor) {
-    toast.show({ message: '请先选择楼栋' })
-    return
-  }
-  TypedRouter.toSelectUnit(selectorStore.selectedFloor.floorId)
+	if (!selectorStore.selectedFloor) {
+		toast.show({ message: "请先选择楼栋" });
+		return;
+	}
+	TypedRouter.toSelectUnit(selectorStore.selectedFloor.floorId);
 }
 
 // 选择房屋
 function handleSelectRoom() {
-  if (!selectorStore.selectedUnit) {
-    toast.show({ message: '请先选择单元' })
-    return
-  }
-  TypedRouter.toSelectRoom(selectorStore.selectedFloor!.floorId, selectorStore.selectedUnit.unitId)
+	if (!selectorStore.selectedUnit) {
+		toast.show({ message: "请先选择单元" });
+		return;
+	}
+	TypedRouter.toSelectRoom(selectorStore.selectedFloor!.floorId, selectorStore.selectedUnit.unitId);
 }
 
 // 显示文本
-const floorText = computed(() => selectorStore.floorText)
-const unitText = computed(() => selectorStore.unitText)
-const roomText = computed(() => selectorStore.roomText)
+const floorText = computed(() => selectorStore.floorText);
+const unitText = computed(() => selectorStore.unitText);
+const roomText = computed(() => selectorStore.roomText);
 </script>
 
 <template>
-  <view class="p-4">
-    <wd-cell-group>
-      <wd-cell title="楼栋" :value="floorText" is-link @click="handleSelectFloor" />
-      <wd-cell title="单元" :value="unitText" is-link @click="handleSelectUnit" />
-      <wd-cell title="房屋" :value="roomText" is-link @click="handleSelectRoom" />
-    </wd-cell-group>
-  </view>
+	<view class="p-4">
+		<wd-cell-group>
+			<wd-cell title="楼栋" :value="floorText" is-link @click="handleSelectFloor" />
+			<wd-cell title="单元" :value="unitText" is-link @click="handleSelectUnit" />
+			<wd-cell title="房屋" :value="roomText" is-link @click="handleSelectRoom" />
+		</wd-cell-group>
+	</view>
 </template>
 ```
 
@@ -529,128 +529,128 @@ const roomText = computed(() => selectorStore.roomText)
 
 ```vue
 <script setup lang="ts">
-import { ref } from 'vue'
-import { getFloorList } from '@/api/floor'
-import { useSelectorStore } from '@/stores/useSelectorStore'
-import type { Floor } from '@/types/selector'
+import { ref } from "vue";
+import { getFloorList } from "@/api/floor";
+import { useSelectorStore } from "@/stores/useSelectorStore";
+import type { Floor } from "@/types/selector";
 
 definePage({
-  name: 'select-floor',
-  style: {
-    navigationBarTitleText: '选择楼栋',
-  },
-})
+	name: "select-floor",
+	style: {
+		navigationBarTitleText: "选择楼栋",
+	},
+});
 
-const selectorStore = useSelectorStore()
+const selectorStore = useSelectorStore();
 
 // 搜索关键词
-const searchValue = ref('')
+const searchValue = ref("");
 
 // 当前页码
-const currentPage = ref(1)
+const currentPage = ref(1);
 
 // 每页条数
-const pageSize = ref(50)
+const pageSize = ref(50);
 
 // 楼栋列表
-const floorList = ref<Floor[]>([])
+const floorList = ref<Floor[]>([]);
 
 // 加载状态
-const loading = ref(false)
+const loading = ref(false);
 
 // 是否还有更多数据
-const hasMore = ref(true)
+const hasMore = ref(true);
 
 // 搜索
 function handleSearch() {
-  currentPage.value = 1
-  floorList.value = []
-  loadFloorList()
+	currentPage.value = 1;
+	floorList.value = [];
+	loadFloorList();
 }
 
 // 加载楼栋列表
 async function loadFloorList() {
-  if (loading.value || !hasMore.value) return
+	if (loading.value || !hasMore.value) return;
 
-  loading.value = true
-  try {
-    const { data } = await getFloorList({
-      communityId: 'COMM_001', // 实际应从登录信息获取
-      page: currentPage.value,
-      row: pageSize.value,
-      floorNum: searchValue.value || undefined,
-    })
+	loading.value = true;
+	try {
+		const { data } = await getFloorList({
+			communityId: "COMM_001", // 实际应从登录信息获取
+			page: currentPage.value,
+			row: pageSize.value,
+			floorNum: searchValue.value || undefined,
+		});
 
-    if (data?.records) {
-      if (currentPage.value === 1) {
-        floorList.value = data.records
-      } else {
-        floorList.value = [...floorList.value, ...data.records]
-      }
+		if (data?.records) {
+			if (currentPage.value === 1) {
+				floorList.value = data.records;
+			} else {
+				floorList.value = [...floorList.value, ...data.records];
+			}
 
-      hasMore.value = floorList.value.length < data.total
-    }
-  } finally {
-    loading.value = false
-  }
+			hasMore.value = floorList.value.length < data.total;
+		}
+	} finally {
+		loading.value = false;
+	}
 }
 
 // 选择楼栋
 function handleSelectFloor(floor: Floor) {
-  selectorStore.selectFloor(floor)
-  uni.navigateBack()
+	selectorStore.selectFloor(floor);
+	uni.navigateBack();
 }
 
 // 上拉加载更多
 function handleLoadMore() {
-  if (!hasMore.value) return
-  currentPage.value++
-  loadFloorList()
+	if (!hasMore.value) return;
+	currentPage.value++;
+	loadFloorList();
 }
 </script>
 
 <template>
-  <!--
+	<!--
     选择楼栋页面
     功能：选择楼栋，支持搜索和分页加载
 
     访问地址: http://localhost:9000/#/pages-sub/selector/select-floor
   -->
-  <view class="h-screen flex flex-col bg-gray-50">
-    <!-- 搜索栏 -->
-    <view class="p-4 bg-white">
-      <wd-search v-model="searchValue" placeholder="搜索楼栋编号" @search="handleSearch" />
-    </view>
+	<view class="h-screen flex flex-col bg-gray-50">
+		<!-- 搜索栏 -->
+		<view class="p-4 bg-white">
+			<wd-search v-model="searchValue" placeholder="搜索楼栋编号" @search="handleSearch" />
+		</view>
 
-    <!-- 列表 -->
-    <z-paging
-      v-model="floorList"
-      class="flex-1"
-      :loading="loading"
-      @query="loadFloorList"
-      @scrollToLower="handleLoadMore"
-    >
-      <wd-cell-group>
-        <wd-cell
-          v-for="floor in floorList"
-          :key="floor.floorId"
-          :title="`${floor.floorNum}栋`"
-          :label="floor.floorName"
-          is-link
-          @click="handleSelectFloor(floor)"
-        >
-          <template #icon>
-            <wd-icon name="" custom-class="i-carbon-building mr-2" />
-          </template>
-        </wd-cell>
-      </wd-cell-group>
+		<!-- 列表 -->
+		<z-paging
+			v-model="floorList"
+			class="flex-1"
+			:loading="loading"
+			@query="loadFloorList"
+			@scrollToLower="handleLoadMore"
+		>
+			<wd-cell-group>
+				<wd-cell
+					v-for="floor in floorList"
+					:key="floor.floorId"
+					:title="`${floor.floorNum}栋`"
+					:label="floor.floorName"
+					is-link
+					@click="handleSelectFloor(floor)"
+				>
+					<template #icon>
+						<wd-icon name="" custom-class="i-carbon-building mr-2" />
+					</template>
+				</wd-cell>
+			</wd-cell-group>
 
-      <!-- 空状态 -->
-      <template #empty>
-        <wd-status-tip image="search" tip="暂无楼栋数据" />
-      </template>
-    </z-paging>
-  </view>
+			<!-- 空状态 -->
+			<template #empty>
+				<wd-status-tip image="search" tip="暂无楼栋数据" />
+			</template>
+		</z-paging>
+	</view>
 </template>
 ```
 

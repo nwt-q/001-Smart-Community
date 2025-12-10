@@ -1,9 +1,28 @@
 import type { PriorityType } from '@/types/api'
-import type { Complaint, ComplaintListParams, ComplaintStatus, ComplaintType, CreateComplaintReq } from '@/types/complaint'
+import type {
+  Complaint,
+  ComplaintListParams,
+  ComplaintStatus,
+  ComplaintType,
+  CreateComplaintReq,
+} from '@/types/complaint'
 import dayjs from 'dayjs'
 import { COMPLAINT_STATUS_OPTIONS, COMPLAINT_TYPE_OPTIONS } from '../../constants/complaint'
 
-import { createPaginationResponse, defineUniAppMock, errorResponse, formatDateTime, generateAddress, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
+import {
+  createPaginationResponse,
+  defineUniAppMock,
+  errorResponse,
+  formatDateTime,
+  generateAddress,
+  generateChineseName,
+  generateId,
+  generatePhoneNumber,
+  generateTimeRange,
+  randomDelay,
+  ResultEnumMap,
+  successResponse,
+} from './shared/utils'
 
 /**
  * 投诉模块 Mock 接口 - 完全自包含架构
@@ -124,16 +143,24 @@ function createMockComplaint(id: string): Complaint {
     assignedHandler: statusItem.value === 'SUBMITTED' ? undefined : `处理员${Math.floor(Math.random() * 5 + 1)}`,
     images: Math.random() > 0.5 ? [`https://picsum.photos/400/300?random=${id}`] : [],
     communityId: 'COMM_001',
-    response: statusItem.value === 'RESOLVED' || statusItem.value === 'CLOSED' ? {
-      content: generateResponseContent(typeItem.value as ComplaintType),
-      handlerName: `处理员${Math.floor(Math.random() * 5 + 1)}`,
-      responseTime: generateTimeRange(-10, 0),
-    } : undefined,
-    satisfaction: statusItem.value === 'CLOSED' && Math.random() > 0.3 ? {
-      rating: Math.floor(Math.random() * 2) + 4, // 4-5星
-      comment: ['服务很好，处理及时', '态度不错，问题解决了', '效率很高，感谢', '处理得当'][Math.floor(Math.random() * 4)],
-      evaluateTime: generateTimeRange(-5, 0),
-    } : undefined,
+    response:
+			statusItem.value === 'RESOLVED' || statusItem.value === 'CLOSED'
+			  ? {
+			      content: generateResponseContent(typeItem.value as ComplaintType),
+			      handlerName: `处理员${Math.floor(Math.random() * 5 + 1)}`,
+			      responseTime: generateTimeRange(-10, 0),
+			    }
+			  : undefined,
+    satisfaction:
+			statusItem.value === 'CLOSED' && Math.random() > 0.3
+			  ? {
+			      rating: Math.floor(Math.random() * 2) + 4, // 4-5星
+			      comment: ['服务很好，处理及时', '态度不错，问题解决了', '效率很高，感谢', '处理得当'][
+			        Math.floor(Math.random() * 4)
+			      ],
+			      evaluateTime: generateTimeRange(-5, 0),
+			    }
+			  : undefined,
   }
 }
 
@@ -150,13 +177,15 @@ const mockComplaintDatabase = {
   },
 
   /** 获取投诉列表（支持筛选和分页） */
-  getComplaintList(params: ComplaintListParams & {
-    status?: ComplaintStatus
-    complaintType?: ComplaintType
-    keyword?: string
-    startDate?: string
-    endDate?: string
-  }) {
+  getComplaintList(
+    params: ComplaintListParams & {
+      status?: ComplaintStatus
+      complaintType?: ComplaintType
+      keyword?: string
+      startDate?: string
+      endDate?: string
+    },
+  ) {
     let filtered = [...this.complaints]
 
     // 状态筛选
@@ -172,11 +201,12 @@ const mockComplaintDatabase = {
     // 关键词筛选
     if (params.keyword) {
       const keyword = params.keyword.toLowerCase()
-      filtered = filtered.filter(c =>
-        c.title.toLowerCase().includes(keyword)
-        || c.description.toLowerCase().includes(keyword)
-        || c.ownerName.toLowerCase().includes(keyword)
-        || c.address?.toLowerCase().includes(keyword),
+      filtered = filtered.filter(
+        c =>
+          c.title.toLowerCase().includes(keyword)
+          || c.description.toLowerCase().includes(keyword)
+          || c.ownerName.toLowerCase().includes(keyword)
+          || c.address?.toLowerCase().includes(keyword),
       )
     }
 
@@ -266,12 +296,15 @@ export default defineUniAppMock([
         })
 
         console.log('🚀 Mock API: listComplaints', params, '→', `${result.list.length} items`)
-        return successResponse({
-          complaints: result.list,
-          total: result.total,
-          page: result.page,
-          row: result.pageSize,
-        }, '获取投诉列表成功')
+        return successResponse(
+          {
+            complaints: result.list,
+            total: result.total,
+            page: result.page,
+            row: result.pageSize,
+          },
+          '获取投诉列表成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: listComplaints', error)
@@ -301,9 +334,12 @@ export default defineUniAppMock([
         }
 
         console.log('🚀 Mock API: getComplaintDetail', params, '→', complaint)
-        return successResponse({
-          complaint,
-        }, '获取投诉详情成功')
+        return successResponse(
+          {
+            complaint,
+          },
+          '获取投诉详情成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getComplaintDetail', error)
@@ -355,9 +391,12 @@ export default defineUniAppMock([
 
         mockComplaintDatabase.addComplaint(newComplaint)
         console.log('🚀 Mock API: submitComplaint', data, '→', newComplaint)
-        return successResponse({
-          complaint: newComplaint,
-        }, '投诉提交成功，我们会尽快处理')
+        return successResponse(
+          {
+            complaint: newComplaint,
+          },
+          '投诉提交成功，我们会尽快处理',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: submitComplaint', error)
@@ -390,9 +429,12 @@ export default defineUniAppMock([
         complaint.updateTime = formatDateTime()
 
         console.log('🚀 Mock API: handleComplaint', body, '→', complaint)
-        return successResponse({
-          complaint,
-        }, '投诉已分配处理')
+        return successResponse(
+          {
+            complaint,
+          },
+          '投诉已分配处理',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: handleComplaint', error)
@@ -432,9 +474,12 @@ export default defineUniAppMock([
         complaint.updateTime = formatDateTime()
 
         console.log('🚀 Mock API: replyComplaint', body, '→', complaint)
-        return successResponse({
-          complaint,
-        }, '投诉回复成功')
+        return successResponse(
+          {
+            complaint,
+          },
+          '投诉回复成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: replyComplaint', error)
@@ -478,9 +523,12 @@ export default defineUniAppMock([
         complaint.updateTime = formatDateTime()
 
         console.log('🚀 Mock API: evaluateComplaint', body, '→', complaint)
-        return successResponse({
-          complaint,
-        }, '评价提交成功，感谢您的反馈')
+        return successResponse(
+          {
+            complaint,
+          },
+          '评价提交成功，感谢您的反馈',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: evaluateComplaint', error)
@@ -502,22 +550,32 @@ export default defineUniAppMock([
         const allComplaints = mockComplaintDatabase.complaints
 
         // 按状态统计
-        const statusStats = COMPLAINT_STATUSES.reduce((acc, status) => {
-          acc[status] = allComplaints.filter(c => c.status === status).length
-          return acc
-        }, {} as Record<ComplaintStatus, number>)
+        const statusStats = COMPLAINT_STATUSES.reduce(
+          (acc, status) => {
+            acc[status] = allComplaints.filter(c => c.status === status).length
+            return acc
+          },
+          {} as Record<ComplaintStatus, number>,
+        )
 
         // 按类型统计
-        const typeStats = COMPLAINT_TYPES.reduce((acc, type) => {
-          acc[type] = allComplaints.filter(c => c.complaintType === type).length
-          return acc
-        }, {} as Record<ComplaintType, number>)
+        const typeStats = COMPLAINT_TYPES.reduce(
+          (acc, type) => {
+            acc[type] = allComplaints.filter(c => c.complaintType === type).length
+            return acc
+          },
+          {} as Record<ComplaintType, number>,
+        )
 
         // 满意度统计
         const evaluatedComplaints = allComplaints.filter(c => c.satisfaction)
-        const avgRating = evaluatedComplaints.length > 0
-          ? (evaluatedComplaints.reduce((sum, c) => sum + (c.satisfaction?.rating || 0), 0) / evaluatedComplaints.length).toFixed(1)
-          : '0'
+        const avgRating
+          = evaluatedComplaints.length > 0
+            ? (
+                evaluatedComplaints.reduce((sum, c) => sum + (c.satisfaction?.rating || 0), 0)
+                / evaluatedComplaints.length
+              ).toFixed(1)
+            : '0'
 
         // 处理时效统计
         const resolvedComplaints = allComplaints.filter(c => c.status === 'RESOLVED' || c.status === 'CLOSED')
@@ -529,9 +587,10 @@ export default defineUniAppMock([
           typeStats,
           avgRating: `${avgRating}分`,
           avgResponseTime,
-          satisfactionRate: evaluatedComplaints.length > 0
-            ? `${Math.round((evaluatedComplaints.filter(c => (c.satisfaction?.rating || 0) >= 4).length / evaluatedComplaints.length) * 100)}%`
-            : '0%',
+          satisfactionRate:
+						evaluatedComplaints.length > 0
+						  ? `${Math.round((evaluatedComplaints.filter(c => (c.satisfaction?.rating || 0) >= 4).length / evaluatedComplaints.length) * 100)}%`
+						  : '0%',
           // 近 30/60 天趋势
           // 使用 dayjs 统一格式与比较，避免原生 Date 差异
           monthlyTrend: {
@@ -579,9 +638,12 @@ export default defineUniAppMock([
         }
 
         console.log('🚀 Mock API: updateComplaint', body, '→', updatedComplaint)
-        return successResponse({
-          complaint: updatedComplaint,
-        }, '更新投诉信息成功')
+        return successResponse(
+          {
+            complaint: updatedComplaint,
+          },
+          '更新投诉信息成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: updateComplaint', error)

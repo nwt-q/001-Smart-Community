@@ -1,33 +1,33 @@
-import url from '../../constant/url.js'
+import url from "../../constant/url.js";
 /**
  * 查询工作流
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function queryOaWorkflow(_that,_data){
-	return new Promise(function(reslove,reject){
+export function queryOaWorkflow(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryOaWorkflow,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -36,30 +36,30 @@ export function queryOaWorkflow(_that,_data){
  * @param {Object} _that
  * @param {Object} _data
  */
-export function queryOaWorkflowForm(_that,_data){
-	return new Promise(function(reslove,reject){
+export function queryOaWorkflowForm(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryOaWorkflowForm,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -68,47 +68,46 @@ export function queryOaWorkflowForm(_that,_data){
  * @param {Object} _that
  * @param {Object} _data
  */
-export function saveOaWorkflowFormData(_that,_data){
-	return new Promise(function(reslove,reject){
+export function saveOaWorkflowFormData(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.saveOaWorkflowFormData,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
-
 
 /**
  * 编辑申请
  * @param {Object} _that
  * @param {Object} _data
  */
-export function updateOaWorkflowFormData(_that,_data){
-	return new Promise(function(reslove,reject){
+export function updateOaWorkflowFormData(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.updateOaWorkflowFormData,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -117,22 +116,22 @@ export function updateOaWorkflowFormData(_that,_data){
  * @param {Object} _that
  * @param {Object} _data
  */
-export function auditOaWorkflow(_that,_data){
-	return new Promise(function(reslove,reject){
+export function auditOaWorkflow(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.auditOaWorkflow,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -141,22 +140,22 @@ export function auditOaWorkflow(_that,_data){
  * @param {Object} _that
  * @param {Object} _data
  */
-export function auditUndo(_that,_url,_data){
-	return new Promise(function(reslove,reject){
+export function auditUndo(_that, _url, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: _url,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -166,30 +165,30 @@ export function auditUndo(_that,_url,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function queryOaWorkflowUserTaskFormData(_that,_data){
-	return new Promise(function(reslove,reject){
+export function queryOaWorkflowUserTaskFormData(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryOaWorkflowUserTaskFormData,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -199,33 +198,32 @@ export function queryOaWorkflowUserTaskFormData(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function queryOaWorkflowUserHisTaskFormData(_that,_data){
-	return new Promise(function(reslove,reject){
+export function queryOaWorkflowUserHisTaskFormData(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryOaWorkflowUserHisTaskFormData,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
-
 
 /**
  * 查询单子
@@ -233,30 +231,30 @@ export function queryOaWorkflowUserHisTaskFormData(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function queryOaWorkflowFormData(_that,_data){
-	return new Promise(function(reslove,reject){
+export function queryOaWorkflowFormData(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryOaWorkflowFormData,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -266,30 +264,30 @@ export function queryOaWorkflowFormData(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function queryOaWorkflowUser(_that,_data){
-	return new Promise(function(reslove,reject){
+export function queryOaWorkflowUser(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryOaWorkflowUser,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -299,30 +297,30 @@ export function queryOaWorkflowUser(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function listRunWorkflowImage(_that,_data){
-	return new Promise(function(reslove,reject){
+export function listRunWorkflowImage(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listRunWorkflowImage,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -332,52 +330,50 @@ export function listRunWorkflowImage(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function getNextTask(_that,_data){
-	return new Promise(function(reslove,reject){
+export function getNextTask(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.getNextTask,
-			data:_data,
-			success: function(res) {
-				if(res.data.code == 0){
+			data: _data,
+			success: function (res) {
+				if (res.data.code == 0) {
 					reslove(res.data);
-				}else{
+				} else {
 					wx.showToast({
 						title: "服务器异常了",
-						icon: 'none',
-						duration: 2000
-					})
+						icon: "none",
+						duration: 2000,
+					});
 				}
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
- export function queryNextDealUser(_that,dataObj) {
- 	return new Promise(
- 		(resolve, reject) => {
- 			_that.context.get({
- 				url: url.queryNextDealUser,
- 				data: dataObj,
- 				//动态数据
- 				success: function(res) {
- 					if (res.data.code == 0) {
- 						let _data = res.data.data;
- 						resolve(_data);
- 						return ;
- 					}
- 					reject('未包含数据');
- 				},
- 				fail: function(e) {
- 					reject(e);
- 				}
- 			});
- 		})
- }
-
+export function queryNextDealUser(_that, dataObj) {
+	return new Promise((resolve, reject) => {
+		_that.context.get({
+			url: url.queryNextDealUser,
+			data: dataObj,
+			//动态数据
+			success: function (res) {
+				if (res.data.code == 0) {
+					let _data = res.data.data;
+					resolve(_data);
+					return;
+				}
+				reject("未包含数据");
+			},
+			fail: function (e) {
+				reject(e);
+			},
+		});
+	});
+}

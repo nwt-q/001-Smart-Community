@@ -1,29 +1,28 @@
-import url from '../../constant/url.js'
+import url from "../../constant/url.js";
 
-import dateObj from '../../lib/java110/utils/date.js'
-
+import dateObj from "../../lib/java110/utils/date.js";
 
 /**
  * 查询设备
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function listMachines(_that,_data){
-	return new Promise(function(reslove,reject){
+export function listMachines(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listMachines,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 /**
@@ -31,22 +30,22 @@ export function listMachines(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function listMachineRecords(_that,_data){
-	return new Promise(function(reslove,reject){
+export function listMachineRecords(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listMachineRecords,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -55,22 +54,22 @@ export function listMachineRecords(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function listChargeMachine(_that,_data){
-	return new Promise(function(reslove,reject){
+export function listChargeMachine(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listChargeMachine,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 /**
@@ -78,22 +77,22 @@ export function listChargeMachine(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function listChargeMachineOrder(_that,_data){
-	return new Promise(function(reslove,reject){
+export function listChargeMachineOrder(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listChargeMachineOrder,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -102,47 +101,45 @@ export function listChargeMachineOrder(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function getIotOpenApi(_that,_data){
-	return new Promise(function(reslove,reject){
+export function getIotOpenApi(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.getIotOpenApi,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
- /**
-  * 审核
-  * @param {Object} _that
-  * @param {Object} _data
-  */
- export function postIotOpenApi(_that,_data){
- 	return new Promise(function(reslove,reject){
- 		_that.context.post({
- 			url: url.postIotOpenApi,
- 			data:_data,
- 			success: function(res) {
- 				reslove(res.data);
- 			},
- 			fail: function(e) {
- 				wx.showToast({
- 					title: "服务器异常了",
- 					icon: 'none',
- 					duration: 2000
- 				})
- 			}
- 		})
- 	});
- }
-
-
+/**
+ * 审核
+ * @param {Object} _that
+ * @param {Object} _data
+ */
+export function postIotOpenApi(_that, _data) {
+	return new Promise(function (reslove, reject) {
+		_that.context.post({
+			url: url.postIotOpenApi,
+			data: _data,
+			success: function (res) {
+				reslove(res.data);
+			},
+			fail: function (e) {
+				wx.showToast({
+					title: "服务器异常了",
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
+	});
+}

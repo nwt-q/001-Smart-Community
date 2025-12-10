@@ -1,9 +1,7 @@
 import type { ColumnItem } from 'wot-design-uni/components/wd-picker-view/types'
 
 /** 空置房申请类型 */
-export const PROPERTY_APPLY_TYPE_OPTIONS: ColumnItem[] = [
-  { value: '1001', label: '空置房申请' },
-]
+export const PROPERTY_APPLY_TYPE_OPTIONS: ColumnItem[] = [{ value: '1001', label: '空置房申请' }]
 
 /** 空置房申请状态 */
 export const PROPERTY_APPLICATION_STATE_OPTIONS: ColumnItem[] = [
@@ -33,6 +31,4 @@ export const PROPERTY_RELATION_TYPE_OPTIONS: ColumnItem[] = [
 ]
 
 /** 费用折扣类型 */
-export const PROPERTY_DISCOUNT_TYPE_OPTIONS: ColumnItem[] = [
-  { value: '3003', label: '空置房优惠' },
-]
+export const PROPERTY_DISCOUNT_TYPE_OPTIONS: ColumnItem[] = [{ value: '3003', label: '空置房优惠' }]

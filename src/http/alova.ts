@@ -17,8 +17,8 @@ export const API_DOMAINS = {
  * 创建请求实例
  */
 const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthentication<
-  typeof VueHook,
-  typeof uniappRequestAdapter
+	typeof VueHook,
+	typeof uniappRequestAdapter
 >({
   refreshTokenOnError: {
     isExpired: (error) => {
@@ -77,11 +77,7 @@ const alovaInstance = createAlova({
     const { config } = method
     const { requestType } = config
     // console.log('??? response ====>', response)
-    const {
-      statusCode,
-      data: rawData,
-      errMsg,
-    } = response as UniNamespace.RequestSuccessCallbackResult
+    const { statusCode, data: rawData, errMsg } = response as UniNamespace.RequestSuccessCallbackResult
 
     // 处理特殊请求类型（上传/下载）
     if (requestType === 'upload' || requestType === 'download') {

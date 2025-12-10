@@ -50,10 +50,10 @@ skills:
 - 在生成器/数据库对象中，先取 `ColumnItem` 再落地字段：`value` 写业务字段、`label` 写显示名称。
 - 示例：
   ```ts
-  import { REPAIR_STATUSES } from '../../constants/repair'
-  const statusItem = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)]
-  repair.statusCd = statusItem.value as string
-  repair.statusName = statusItem.label
+  import { REPAIR_STATUSES } from "../../constants/repair";
+  const statusItem = REPAIR_STATUSES[Math.floor(Math.random() * REPAIR_STATUSES.length)];
+  repair.statusCd = statusItem.value as string;
+  repair.statusName = statusItem.label;
   ```
 
 ### Mock 日期时间格式规范
@@ -71,16 +71,16 @@ skills:
 
 ```typescript
 // 错误：包含多余的 /api 前缀
-url: '/api/app/activities.updateStatus'
-url: '/api/app/ownerRepair.listOwnerRepairs'
+url: "/api/app/activities.updateStatus";
+url: "/api/app/ownerRepair.listOwnerRepairs";
 ```
 
 **✅ 正确示例**:
 
 ```typescript
 // 正确：直接使用业务路径，无需 /api 前缀
-url: '/app/activities.updateStatus'
-url: '/app/ownerRepair.listOwnerRepairs'
+url: "/app/activities.updateStatus";
+url: "/app/ownerRepair.listOwnerRepairs";
 ```
 
 **规则说明**:
@@ -114,22 +114,22 @@ url: '/app/ownerRepair.listOwnerRepairs'
 
 ```typescript
 // ✅ 正确：使用相对路径导入 ResultEnumMap
-import { successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+import { successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
 
 // ❌ 错误：使用路径别名导入 ResultEnum
-import { ResultEnum } from '@/http/tools/enum'
+import { ResultEnum } from "@/http/tools/enum";
 ```
 
 **正确的使用方式**:
 
 ```typescript
 // ✅ 正确：使用 ResultEnumMap 提供的字面量字符串
-return errorResponse('资源不存在', ResultEnumMap.NotFound)
-return errorResponse('参数错误', ResultEnumMap.Error)
-return errorResponse('服务器错误', ResultEnumMap.InternalServerError)
+return errorResponse("资源不存在", ResultEnumMap.NotFound);
+return errorResponse("参数错误", ResultEnumMap.Error);
+return errorResponse("服务器错误", ResultEnumMap.InternalServerError);
 
 // ❌ 错误：直接使用 ResultEnum 枚举
-return errorResponse('资源不存在', ResultEnum.NotFound)
+return errorResponse("资源不存在", ResultEnum.NotFound);
 ```
 
 #### 响应格式函数说明
@@ -137,7 +137,7 @@ return errorResponse('资源不存在', ResultEnum.NotFound)
 从 `./shared/utils` 导入核心函数和 ResultEnumMap：
 
 ```typescript
-import { successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+import { successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
 ```
 
 **1. successResponse - 成功响应函数**
@@ -226,43 +226,43 @@ mockLog(apiName: string, data?: any)
 **✅ 正确的返回值写法**:
 
 ```typescript
-import { successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+import { successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
 
 // 1. 接口开始时记录请求参数
-mockLog('getActivityList', params)
+mockLog("getActivityList", params);
 
 // 2. 成功情况 - 返回列表数据
 const result = {
-  list: activities,
-  total: 100,
-  page: 1,
-  pageSize: 10,
-}
-mockLog('getActivityList result', `${result.list.length} items`)
-return successResponse(result, '查询成功')
+	list: activities,
+	total: 100,
+	page: 1,
+	pageSize: 10,
+};
+mockLog("getActivityList result", `${result.list.length} items`);
+return successResponse(result, "查询成功");
 
 // 3. 成功情况 - 返回单个对象
-mockLog('getActivityDetail', activityId)
-const activity = getActivityById(activityId)
-mockLog('getActivityDetail result', activity ? activity.title : 'not found')
-return successResponse(activity, '获取活动详情成功')
+mockLog("getActivityDetail", activityId);
+const activity = getActivityById(activityId);
+mockLog("getActivityDetail result", activity ? activity.title : "not found");
+return successResponse(activity, "获取活动详情成功");
 
 // 4. 失败情况 - 资源不存在
-mockLog('deleteActivity', params)
+mockLog("deleteActivity", params);
 if (!activity) {
-  return errorResponse('活动不存在', ResultEnumMap.NotFound)
+	return errorResponse("活动不存在", ResultEnumMap.NotFound);
 }
 
 // 5. 失败情况 - 参数错误
-mockLog('createActivity', params)
+mockLog("createActivity", params);
 if (!params.activityId) {
-  return errorResponse('活动ID不能为空', ResultEnumMap.Error)
+	return errorResponse("活动ID不能为空", ResultEnumMap.Error);
 }
 
 // 6. 失败情况 - 业务逻辑错误
-mockLog('updateActivity', { activityId, status })
-if (activity.status === 'CLOSED') {
-  return errorResponse('活动已关闭，无法修改', ResultEnumMap.Forbidden)
+mockLog("updateActivity", { activityId, status });
+if (activity.status === "CLOSED") {
+	return errorResponse("活动已关闭，无法修改", ResultEnumMap.Forbidden);
 }
 ```
 
@@ -271,36 +271,36 @@ if (activity.status === 'CLOSED') {
 ```typescript
 // ❌ 错误：手动构造返回对象（不使用 successResponse）
 return {
-  success: true,
-  code: '0', // 硬编码字符串而非 ResultEnum
-  message: '成功',
-  data: activity,
-  timestamp: Date.now(),
-}
+	success: true,
+	code: "0", // 硬编码字符串而非 ResultEnum
+	message: "成功",
+	data: activity,
+	timestamp: Date.now(),
+};
 
 // ❌ 错误：直接返回数据（缺少统一响应格式）
-return activity
+return activity;
 
 // ❌ 错误：使用不一致的字段名
 return {
-  status: 'success',
-  result: activity,
-}
+	status: "success",
+	result: activity,
+};
 
 // ❌ 错误：硬编码错误码字符串
-return errorResponse('活动不存在', '404') // 应使用 ResultEnumMap.NotFound
+return errorResponse("活动不存在", "404"); // 应使用 ResultEnumMap.NotFound
 
 // ❌ 错误：使用 ResultEnum 枚举（会导致编译失败）
-import { ResultEnum } from '@/http/tools/enum'
-return errorResponse('活动不存在', ResultEnum.NotFound) // 应使用 ResultEnumMap
+import { ResultEnum } from "@/http/tools/enum";
+return errorResponse("活动不存在", ResultEnum.NotFound); // 应使用 ResultEnumMap
 
 // ❌ 错误：使用手动的 console.log
-console.log('🚀 Mock API: getActivityList', params)
-console.log('📋 Mock Response:', result)
+console.log("🚀 Mock API: getActivityList", params);
+console.log("📋 Mock Response:", result);
 
 // ❌ 错误：使用其他格式的日志
-console.info('API called:', params)
-console.debug('Result:', result)
+console.info("API called:", params);
+console.debug("Result:", result);
 ```
 
 #### 强制规范说明
@@ -382,65 +382,65 @@ Java110Context 生态系统
 ```javascript
 // lib/java110/request.js
 export default {
-  request: function (_reqObj) {
-    // 复杂的会话管理和认证逻辑 (在新项目中移除)
-    hasSession().then((_data) => {
-      _reqObj.header.cookie = '_java110_token_=' + uni.getStorageSync('token')
+	request: function (_reqObj) {
+		// 复杂的会话管理和认证逻辑 (在新项目中移除)
+		hasSession().then((_data) => {
+			_reqObj.header.cookie = "_java110_token_=" + uni.getStorageSync("token");
 
-      let _success = _reqObj.success
-      _reqObj.success = function (_res) {
-        if (_res.statusCode == 401) {
-          uni.reLaunch({ url: '/pages/login/login' })
-          return
-        }
-        _success(_res)
-      }
+			let _success = _reqObj.success;
+			_reqObj.success = function (_res) {
+				if (_res.statusCode == 401) {
+					uni.reLaunch({ url: "/pages/login/login" });
+					return;
+				}
+				_success(_res);
+			};
 
-      uni.request(_reqObj)
-    })
-  },
-}
+			uni.request(_reqObj);
+		});
+	},
+};
 ```
 
 **Vue3 项目 (无认证 Alova - 严格移除登录逻辑)**:
 
 ```typescript
 // src/http/alova.ts
-import { createAlova } from 'alova'
-import AdapterUniapp from '@alova/adapter-uniapp'
-import VueHook from 'alova/vue'
+import { createAlova } from "alova";
+import AdapterUniapp from "@alova/adapter-uniapp";
+import VueHook from "alova/vue";
 
 // ⚠️ 重要: 完全移除登录和认证逻辑的请求实例
 const alovaInstance = createAlova({
-  baseURL: '/api', // 简化的基础路径
-  ...AdapterUniapp(),
-  timeout: 5000,
-  statesHook: VueHook,
+	baseURL: "/api", // 简化的基础路径
+	...AdapterUniapp(),
+	timeout: 5000,
+	statesHook: VueHook,
 
-  beforeRequest(method) {
-    // ⚠️ 无认证版本: 不包含任何 token 处理逻辑
-    method.config.headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      ...method.config.headers,
-      // 严格移除: 不添加任何认证头 (token, cookie 等)
-    }
-  },
+	beforeRequest(method) {
+		// ⚠️ 无认证版本: 不包含任何 token 处理逻辑
+		method.config.headers = {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			...method.config.headers,
+			// 严格移除: 不添加任何认证头 (token, cookie 等)
+		};
+	},
 
-  responded(response) {
-    const { statusCode, data } = response
+	responded(response) {
+		const { statusCode, data } = response;
 
-    // ⚠️ 无鉴权版本: 移除 401 登录跳转逻辑
-    if (statusCode !== 200) {
-      throw new Error(`请求失败[${statusCode}]`)
-      // 严格移除: 不做任何登录相关的错误处理
-    }
+		// ⚠️ 无鉴权版本: 移除 401 登录跳转逻辑
+		if (statusCode !== 200) {
+			throw new Error(`请求失败[${statusCode}]`);
+			// 严格移除: 不做任何登录相关的错误处理
+		}
 
-    return data
-  },
-})
+		return data;
+	},
+});
 
-export const http = alovaInstance
+export const http = alovaInstance;
 ```
 
 #### 1.2 useRequest 组合式 API 使用规范
@@ -492,26 +492,26 @@ export const http = alovaInstance
 ```typescript
 // src/types/api.ts - 基础 API 类型
 export interface ApiResponse<T = any> {
-  success: boolean // 请求是否成功
-  code: string // 业务状态码
-  message: string // 响应消息
-  data: T // 业务数据
-  timestamp: number // 时间戳
+	success: boolean; // 请求是否成功
+	code: string; // 业务状态码
+	message: string; // 响应消息
+	data: T; // 业务数据
+	timestamp: number; // 时间戳
 }
 
 /** 分页请求参数 */
 export interface PaginationParams {
-  page: number // 当前页码
-  row: number // 每页条数
+	page: number; // 当前页码
+	row: number; // 每页条数
 }
 
 /** 分页响应结构 */
 export interface PaginationResponse<T> {
-  list: T[] // 当前页数据列表
-  total: number // 总记录数
-  page: number // 当前页码
-  pageSize: number // 每页条数
-  hasMore: boolean // 是否有更多数据
+	list: T[]; // 当前页数据列表
+	total: number; // 总记录数
+	page: number; // 当前页码
+	pageSize: number; // 每页条数
+	hasMore: boolean; // 是否有更多数据
 }
 ```
 
@@ -554,39 +554,39 @@ export interface [Entity]QueryParams extends PaginationParams {
 ```typescript
 // src/types/repair.ts - 维修模块类型定义
 export interface RepairOrder {
-  repairId: string
-  title: string
-  description: string
-  ownerName: string
-  ownerPhone: string
-  address: string
-  repairType: RepairType
-  status: RepairStatus
-  priority: PriorityType
-  createTime: string
-  updateTime: string
-  [otherFields]: any
+	repairId: string;
+	title: string;
+	description: string;
+	ownerName: string;
+	ownerPhone: string;
+	address: string;
+	repairType: RepairType;
+	status: RepairStatus;
+	priority: PriorityType;
+	createTime: string;
+	updateTime: string;
+	[otherFields]: any;
 }
 
 export interface CreateRepairReq {
-  title: string
-  description: string
-  repairType: RepairType
-  [otherFields]: any
+	title: string;
+	description: string;
+	repairType: RepairType;
+	[otherFields]: any;
 }
 
 export interface UpdateRepairReq {
-  repairId: string
-  status?: RepairStatus
-  remark?: string
-  [otherFields]: any
+	repairId: string;
+	status?: RepairStatus;
+	remark?: string;
+	[otherFields]: any;
 }
 
 export interface RepairListParams extends PaginationParams {
-  status?: RepairStatus
-  repairType?: RepairType
-  communityId?: string
-  [otherFilter]?: string
+	status?: RepairStatus;
+	repairType?: RepairType;
+	communityId?: string;
+	[otherFilter]?: string;
 }
 ```
 
@@ -679,41 +679,41 @@ export function update[Entity](data: Update[Entity]Req) {
  * 对应业务：维修工单流程管理
  */
 
-import type { ApiResponse, PaginationResponse } from '@/types/api'
-import type { RepairOrder, RepairListParams, CreateRepairReq, UpdateRepairReq, RepairStatistics } from '@/types/repair'
-import { http } from '@/http/alova'
+import type { ApiResponse, PaginationResponse } from "@/types/api";
+import type { RepairOrder, RepairListParams, CreateRepairReq, UpdateRepairReq, RepairStatistics } from "@/types/repair";
+import { http } from "@/http/alova";
 
 /** ==================== 查询接口 ==================== */
 
 /** 1. 查询维修工单列表 */
 export function getRepairOrderList(params: RepairListParams) {
-  return http.Get<PaginationResponse<RepairOrder>>('/app/ownerRepair.listOwnerRepairs', { params })
+	return http.Get<PaginationResponse<RepairOrder>>("/app/ownerRepair.listOwnerRepairs", { params });
 }
 
 /** 2. 获取维修工单详情 */
 export function getRepairDetail(params: { repairId: string }) {
-  return http.Get<ApiResponse<{ ownerRepair: RepairOrder }>>('/app/ownerRepair.queryOwnerRepair', {
-    params,
-  })
+	return http.Get<ApiResponse<{ ownerRepair: RepairOrder }>>("/app/ownerRepair.queryOwnerRepair", {
+		params,
+	});
 }
 
 /** 3. 获取维修统计数据 */
 export function getRepairStatistics(communityId?: string) {
-  return http.Get<ApiResponse<RepairStatistics>>('/app/ownerRepair.getRepairStatistics', {
-    params: { communityId },
-  })
+	return http.Get<ApiResponse<RepairStatistics>>("/app/ownerRepair.getRepairStatistics", {
+		params: { communityId },
+	});
 }
 
 /** ==================== 创建和更新接口 ==================== */
 
 /** 4. 创建维修工单 */
 export function createRepairOrder(data: CreateRepairReq) {
-  return http.Post<ApiResponse<{ ownerRepair: RepairOrder }>>('/app/ownerRepair.saveOwnerRepair', data)
+	return http.Post<ApiResponse<{ ownerRepair: RepairOrder }>>("/app/ownerRepair.saveOwnerRepair", data);
 }
 
 /** 5. 更新维修工单 */
 export function updateRepairOrder(data: UpdateRepairReq) {
-  return http.Post<ApiResponse<{ ownerRepair: RepairOrder }>>('/app/ownerRepair.updateOwnerRepair', data)
+	return http.Post<ApiResponse<{ ownerRepair: RepairOrder }>>("/app/ownerRepair.updateOwnerRepair", data);
 }
 ```
 
@@ -775,23 +775,23 @@ export function updateRepairOrder(data: UpdateRepairReq) {
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite'
-import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
+import { defineConfig } from "vite";
+import { mockDevServerPlugin } from "vite-plugin-mock-dev-server";
 
 export default defineConfig({
-  plugins: [
-    // 其他插件...
-    mockDevServerPlugin({
-      dir: 'src/api/mock', // 指定 Mock 文件目录
-    }),
-  ],
-  server: {
-    proxy: {
-      // 配置代理路径，插件会自动拦截这些路径
-      '^/api': 'http://localhost:3000', // 实际后端地址
-    },
-  },
-})
+	plugins: [
+		// 其他插件...
+		mockDevServerPlugin({
+			dir: "src/api/mock", // 指定 Mock 文件目录
+		}),
+	],
+	server: {
+		proxy: {
+			// 配置代理路径，插件会自动拦截这些路径
+			"^/api": "http://localhost:3000", // 实际后端地址
+		},
+	},
+});
 ```
 
 #### 2.3 工具函数（可选）
@@ -800,32 +800,32 @@ export default defineConfig({
 
 ```typescript
 // src/api/mock/shared/utils.ts - 仅用于工具函数，不存储数据
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { defineMock } from "vite-plugin-mock-dev-server";
 
 // 自定义的 Mock 定义函数，自动处理 URL 前缀
 export function defineUniAppMock(mockConfig: any) {
-  return defineMock(mockConfig)
+	return defineMock(mockConfig);
 }
 
 // 其他工具函数，如延迟、响应格式化等
-export const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms))
+export const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export function formatResponse<T>(data: T, message: string = 'success') {
-  return {
-    code: '0000',
-    message,
-    data,
-    timestamp: Date.now(),
-  }
+export function formatResponse<T>(data: T, message: string = "success") {
+	return {
+		code: "0000",
+		message,
+		data,
+		timestamp: Date.now(),
+	};
 }
 
-export function formatErrorResponse(message: string, code: string = '9999') {
-  return {
-    code,
-    message,
-    data: null,
-    timestamp: Date.now(),
-  }
+export function formatErrorResponse(message: string, code: string = "9999") {
+	return {
+		code,
+		message,
+		data: null,
+		timestamp: Date.now(),
+	};
 }
 ```
 
@@ -837,287 +837,287 @@ export function formatErrorResponse(message: string, code: string = '9999') {
 
 ```typescript
 // src/api/mock/maintainance.mock.ts
-import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
 // 1. 🔴 必须：导入拆分后的业务类型
-import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from '@/types/repair'
-import type { PaginationResponse } from '@/types/api'
+import type { RepairOrder, RepairListParams, RepairStatus, CreateRepairReq, UpdateRepairReq } from "@/types/repair";
+import type { PaginationResponse } from "@/types/api";
 
 // 2. 🔴 必须：Mock 数据库对象定义（每个 .mock.ts 文件都要有，包含内联数据）
 const mockRepairDatabase = {
-  // 直接在此文件内定义模拟数据，避免外部依赖
-  repairs: [
-    {
-      repairId: 'REP_001',
-      title: '水电维修',
-      description: '业主报修：水电出现问题，需要及时处理。',
-      ownerName: '业主001',
-      ownerPhone: '13812345678',
-      address: '1栋101A室',
-      repairType: '水电维修',
-      status: 'PENDING' as RepairStatus,
-      priority: 'HIGH' as const,
-      createTime: '2024-01-15T10:30:00Z',
-      updateTime: '2024-01-20T14:20:00Z',
-      assignedWorker: null,
-      estimatedCost: 200,
-      actualCost: null,
-      images: ['https://picsum.photos/400/300?random=1'],
-      communityId: 'COMM_001',
-    },
-    {
-      repairId: 'REP_002',
-      title: '门窗维修',
-      description: '业主报修：门窗出现问题，需要及时处理。',
-      ownerName: '业主002',
-      ownerPhone: '13823456789',
-      address: '2栋202B室',
-      repairType: '门窗维修',
-      status: 'IN_PROGRESS' as RepairStatus,
-      priority: 'MEDIUM' as const,
-      createTime: '2024-01-16T09:15:00Z',
-      updateTime: '2024-01-22T16:30:00Z',
-      assignedWorker: '维修工张师傅',
-      estimatedCost: 150,
-      actualCost: 120,
-      images: ['https://picsum.photos/400/300?random=2'],
-      communityId: 'COMM_001',
-    },
-    // 可以继续添加更多模拟数据...
-  ] as RepairOrder[], // 强制类型注解
+	// 直接在此文件内定义模拟数据，避免外部依赖
+	repairs: [
+		{
+			repairId: "REP_001",
+			title: "水电维修",
+			description: "业主报修：水电出现问题，需要及时处理。",
+			ownerName: "业主001",
+			ownerPhone: "13812345678",
+			address: "1栋101A室",
+			repairType: "水电维修",
+			status: "PENDING" as RepairStatus,
+			priority: "HIGH" as const,
+			createTime: "2024-01-15T10:30:00Z",
+			updateTime: "2024-01-20T14:20:00Z",
+			assignedWorker: null,
+			estimatedCost: 200,
+			actualCost: null,
+			images: ["https://picsum.photos/400/300?random=1"],
+			communityId: "COMM_001",
+		},
+		{
+			repairId: "REP_002",
+			title: "门窗维修",
+			description: "业主报修：门窗出现问题，需要及时处理。",
+			ownerName: "业主002",
+			ownerPhone: "13823456789",
+			address: "2栋202B室",
+			repairType: "门窗维修",
+			status: "IN_PROGRESS" as RepairStatus,
+			priority: "MEDIUM" as const,
+			createTime: "2024-01-16T09:15:00Z",
+			updateTime: "2024-01-22T16:30:00Z",
+			assignedWorker: "维修工张师傅",
+			estimatedCost: 150,
+			actualCost: 120,
+			images: ["https://picsum.photos/400/300?random=2"],
+			communityId: "COMM_001",
+		},
+		// 可以继续添加更多模拟数据...
+	] as RepairOrder[], // 强制类型注解
 
-  // 数据生成工具方法，直接在此对象内定义
-  createMockRepair(id: string): RepairOrder {
-    const repairTypes = ['水电维修', '门窗维修', '空调维修', '电梯维修', '管道疏通', '墙面修补', '其他维修']
-    const statuses: RepairStatus[] = ['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
-    const priorities = ['HIGH', 'MEDIUM', 'LOW'] as const
-    const now = Date.now()
-    const randomDays = Math.floor(Math.random() * 30)
+	// 数据生成工具方法，直接在此对象内定义
+	createMockRepair(id: string): RepairOrder {
+		const repairTypes = ["水电维修", "门窗维修", "空调维修", "电梯维修", "管道疏通", "墙面修补", "其他维修"];
+		const statuses: RepairStatus[] = ["PENDING", "ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
+		const priorities = ["HIGH", "MEDIUM", "LOW"] as const;
+		const now = Date.now();
+		const randomDays = Math.floor(Math.random() * 30);
 
-    return {
-      repairId: `REP_${id}`,
-      title: `${repairTypes[Math.floor(Math.random() * repairTypes.length)]}`,
-      description: `业主报修：${repairTypes[Math.floor(Math.random() * repairTypes.length)]}出现问题，需要及时处理。`,
-      ownerName: `业主${Math.floor(Math.random() * 100 + 1)}`,
-      ownerPhone: `138${Math.floor(Math.random() * 100000000)
-        .toString()
-        .padStart(8, '0')}`,
-      address: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
-      repairType: repairTypes[Math.floor(Math.random() * repairTypes.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      priority: priorities[Math.floor(Math.random() * 3)],
-      createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
-      updateTime: new Date().toISOString(),
-      assignedWorker: Math.random() > 0.5 ? `维修工${Math.floor(Math.random() * 10 + 1)}` : null,
-      estimatedCost: Math.floor(Math.random() * 500 + 50),
-      actualCost: Math.random() > 0.5 ? Math.floor(Math.random() * 500 + 50) : null,
-      images: [`https://picsum.photos/400/300?random=${id}`],
-      communityId: 'COMM_001',
-    }
-  },
+		return {
+			repairId: `REP_${id}`,
+			title: `${repairTypes[Math.floor(Math.random() * repairTypes.length)]}`,
+			description: `业主报修：${repairTypes[Math.floor(Math.random() * repairTypes.length)]}出现问题，需要及时处理。`,
+			ownerName: `业主${Math.floor(Math.random() * 100 + 1)}`,
+			ownerPhone: `138${Math.floor(Math.random() * 100000000)
+				.toString()
+				.padStart(8, "0")}`,
+			address: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
+			repairType: repairTypes[Math.floor(Math.random() * repairTypes.length)],
+			status: statuses[Math.floor(Math.random() * statuses.length)],
+			priority: priorities[Math.floor(Math.random() * 3)],
+			createTime: new Date(now - randomDays * 24 * 60 * 60 * 1000).toISOString(),
+			updateTime: new Date().toISOString(),
+			assignedWorker: Math.random() > 0.5 ? `维修工${Math.floor(Math.random() * 10 + 1)}` : null,
+			estimatedCost: Math.floor(Math.random() * 500 + 50),
+			actualCost: Math.random() > 0.5 ? Math.floor(Math.random() * 500 + 50) : null,
+			images: [`https://picsum.photos/400/300?random=${id}`],
+			communityId: "COMM_001",
+		};
+	},
 
-  // 初始化更多数据的方法
-  initMoreData() {
-    if (this.repairs.length < 50) {
-      const additionalData = Array.from({ length: 48 }, (_, index) =>
-        this.createMockRepair((index + 3).toString().padStart(3, '0')),
-      )
-      this.repairs.push(...additionalData)
-    }
-  },
+	// 初始化更多数据的方法
+	initMoreData() {
+		if (this.repairs.length < 50) {
+			const additionalData = Array.from({ length: 48 }, (_, index) =>
+				this.createMockRepair((index + 3).toString().padStart(3, "0")),
+			);
+			this.repairs.push(...additionalData);
+		}
+	},
 
-  // 获取工单详情 - 返回类型必须明确
-  getRepairById(repairId: string): RepairOrder | undefined {
-    return this.repairs.find((repair) => repair.repairId === repairId)
-  },
+	// 获取工单详情 - 返回类型必须明确
+	getRepairById(repairId: string): RepairOrder | undefined {
+		return this.repairs.find((repair) => repair.repairId === repairId);
+	},
 
-  // 获取工单列表 - 支持筛选和分页
-  getRepairList(params: RepairListParams): PaginationResponse<RepairOrder> {
-    let filteredRepairs = [...this.repairs]
+	// 获取工单列表 - 支持筛选和分页
+	getRepairList(params: RepairListParams): PaginationResponse<RepairOrder> {
+		let filteredRepairs = [...this.repairs];
 
-    // 状态筛选
-    if (params.status) {
-      filteredRepairs = filteredRepairs.filter((repair) => repair.status === params.status)
-    }
+		// 状态筛选
+		if (params.status) {
+			filteredRepairs = filteredRepairs.filter((repair) => repair.status === params.status);
+		}
 
-    // 分页处理
-    const total = filteredRepairs.length
-    const start = (params.page - 1) * params.row
-    const end = start + params.row
-    const list = filteredRepairs.slice(start, end)
+		// 分页处理
+		const total = filteredRepairs.length;
+		const start = (params.page - 1) * params.row;
+		const end = start + params.row;
+		const list = filteredRepairs.slice(start, end);
 
-    return {
-      list,
-      total,
-      page: params.page,
-      pageSize: params.row,
-      hasMore: end < total,
-    }
-  },
+		return {
+			list,
+			total,
+			page: params.page,
+			pageSize: params.row,
+			hasMore: end < total,
+		};
+	},
 
-  // 添加工单 - 参数和返回值类型明确
-  addRepair(repair: RepairOrder): RepairOrder {
-    this.repairs.unshift(repair)
-    return repair
-  },
+	// 添加工单 - 参数和返回值类型明确
+	addRepair(repair: RepairOrder): RepairOrder {
+		this.repairs.unshift(repair);
+		return repair;
+	},
 
-  // 更新工单状态
-  updateRepairStatus(repairId: string, status: RepairStatus, assignedWorker?: string): RepairOrder | null {
-    const repair = this.getRepairById(repairId)
-    if (repair) {
-      repair.status = status
-      repair.updateTime = new Date().toISOString()
-      if (assignedWorker) {
-        repair.assignedWorker = assignedWorker
-      }
-      return repair
-    }
-    return null
-  },
-}
+	// 更新工单状态
+	updateRepairStatus(repairId: string, status: RepairStatus, assignedWorker?: string): RepairOrder | null {
+		const repair = this.getRepairById(repairId);
+		if (repair) {
+			repair.status = status;
+			repair.updateTime = new Date().toISOString();
+			if (assignedWorker) {
+				repair.assignedWorker = assignedWorker;
+			}
+			return repair;
+		}
+		return null;
+	},
+};
 
 // 模拟请求延迟
-const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms))
+const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // 4. 🔴 必须：使用 defineUniAppMock 定义接口路由
 export default defineUniAppMock([
-  // 获取维修工单列表
-  {
-    url: '/app/ownerRepair.listOwnerRepairs',
-    method: ['GET', 'POST'],
-    delay: [300, 800],
-    body: async ({ query, body }) => {
-      await delay()
+	// 获取维修工单列表
+	{
+		url: "/app/ownerRepair.listOwnerRepairs",
+		method: ["GET", "POST"],
+		delay: [300, 800],
+		body: async ({ query, body }) => {
+			await delay();
 
-      const params = { ...query, ...body } as RepairListParams
-      // 使用内部数据库对象，确保类型安全
-      const result = mockRepairDatabase.getRepairList({
-        page: Number(params.page) || 1,
-        row: Number(params.row) || 10,
-        status: params.status,
-        repairType: params.repairType,
-        keyword: params.keyword,
-        startDate: params.startDate,
-        endDate: params.endDate,
-      })
+			const params = { ...query, ...body } as RepairListParams;
+			// 使用内部数据库对象，确保类型安全
+			const result = mockRepairDatabase.getRepairList({
+				page: Number(params.page) || 1,
+				row: Number(params.row) || 10,
+				status: params.status,
+				repairType: params.repairType,
+				keyword: params.keyword,
+				startDate: params.startDate,
+				endDate: params.endDate,
+			});
 
-      // 🔴 必须：使用 mockLog 函数输出日志
-      mockLog('listOwnerRepairs', params)
-      mockLog('listOwnerRepairs result', `${result.list.length} items`)
+			// 🔴 必须：使用 mockLog 函数输出日志
+			mockLog("listOwnerRepairs", params);
+			mockLog("listOwnerRepairs result", `${result.list.length} items`);
 
-      // 🔴 必须：使用 successResponse 函数包装返回值
-      return successResponse(
-        {
-          ownerRepairs: result.list,
-          total: result.total,
-          page: result.page,
-          row: result.pageSize,
-        },
-        '查询成功',
-      )
-    },
-  },
+			// 🔴 必须：使用 successResponse 函数包装返回值
+			return successResponse(
+				{
+					ownerRepairs: result.list,
+					total: result.total,
+					page: result.page,
+					row: result.pageSize,
+				},
+				"查询成功",
+			);
+		},
+	},
 
-  // 2. 获取维修任务详情
-  {
-    url: '/app/ownerRepair.getOwnerRepair',
-    method: ['GET', 'POST'],
-    delay: 200,
-    body: async ({ query, body }) => {
-      const params = { ...query, ...body }
-      mockLog('getOwnerRepair', params)
+	// 2. 获取维修任务详情
+	{
+		url: "/app/ownerRepair.getOwnerRepair",
+		method: ["GET", "POST"],
+		delay: 200,
+		body: async ({ query, body }) => {
+			const params = { ...query, ...body };
+			mockLog("getOwnerRepair", params);
 
-      const task = mockRepairDatabase.getRepairById(params.repairId)
+			const task = mockRepairDatabase.getRepairById(params.repairId);
 
-      // 🔴 必须：失败情况使用 errorResponse 函数
-      if (!task) {
-        return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
-      }
+			// 🔴 必须：失败情况使用 errorResponse 函数
+			if (!task) {
+				return errorResponse("维修工单不存在", ResultEnumMap.NotFound);
+			}
 
-      mockLog('getOwnerRepair result', task.title)
-      // 🔴 必须：成功情况使用 successResponse 函数
-      return successResponse(task, '查询成功')
-    },
-  },
+			mockLog("getOwnerRepair result", task.title);
+			// 🔴 必须：成功情况使用 successResponse 函数
+			return successResponse(task, "查询成功");
+		},
+	},
 
-  // 3. 更新维修任务
-  {
-    url: '/app/ownerRepair.updateOwnerRepair',
-    method: 'POST',
-    delay: 600,
-    body: async ({ body }) => {
-      const data = body as UpdateRepairReq
-      mockLog('updateOwnerRepair', data)
+	// 3. 更新维修任务
+	{
+		url: "/app/ownerRepair.updateOwnerRepair",
+		method: "POST",
+		delay: 600,
+		body: async ({ body }) => {
+			const data = body as UpdateRepairReq;
+			mockLog("updateOwnerRepair", data);
 
-      const updatedTask = mockRepairDatabase.updateRepairStatus(data.repairId, data.status, data.assignedWorker)
+			const updatedTask = mockRepairDatabase.updateRepairStatus(data.repairId, data.status, data.assignedWorker);
 
-      // 🔴 必须：失败情况使用 errorResponse 函数
-      if (!updatedTask) {
-        return errorResponse('更新失败，维修工单不存在', ResultEnumMap.Error)
-      }
+			// 🔴 必须：失败情况使用 errorResponse 函数
+			if (!updatedTask) {
+				return errorResponse("更新失败，维修工单不存在", ResultEnumMap.Error);
+			}
 
-      mockLog('updateOwnerRepair result', updatedTask.title)
-      // 🔴 必须：成功情况使用 successResponse 函数
-      return successResponse(updatedTask, '更新成功')
-    },
-  },
+			mockLog("updateOwnerRepair result", updatedTask.title);
+			// 🔴 必须：成功情况使用 successResponse 函数
+			return successResponse(updatedTask, "更新成功");
+		},
+	},
 
-  // 4. 创建维修任务
-  {
-    url: '/app/ownerRepair.saveOwnerRepair',
-    method: 'POST',
-    delay: 800,
-    body: async ({ body }) => {
-      mockLog('saveOwnerRepair', { title: body.title })
+	// 4. 创建维修任务
+	{
+		url: "/app/ownerRepair.saveOwnerRepair",
+		method: "POST",
+		delay: 800,
+		body: async ({ body }) => {
+			mockLog("saveOwnerRepair", { title: body.title });
 
-      const newTask = mockRepairDatabase.createRepair(body as CreateRepairReq)
+			const newTask = mockRepairDatabase.createRepair(body as CreateRepairReq);
 
-      mockLog('saveOwnerRepair result', newTask.repairId)
-      // 🔴 必须：使用 successResponse 函数包装返回值
-      return successResponse(newTask, '创建成功')
-    },
-  },
+			mockLog("saveOwnerRepair result", newTask.repairId);
+			// 🔴 必须：使用 successResponse 函数包装返回值
+			return successResponse(newTask, "创建成功");
+		},
+	},
 
-  // 5. 删除维修任务
-  {
-    url: '/app/ownerRepair.deleteOwnerRepair',
-    method: ['DELETE', 'POST'],
-    delay: 400,
-    body: async ({ query, body }) => {
-      const params = { ...query, ...body }
-      mockLog('deleteOwnerRepair', params.repairId)
+	// 5. 删除维修任务
+	{
+		url: "/app/ownerRepair.deleteOwnerRepair",
+		method: ["DELETE", "POST"],
+		delay: 400,
+		body: async ({ query, body }) => {
+			const params = { ...query, ...body };
+			mockLog("deleteOwnerRepair", params.repairId);
 
-      const success = mockRepairDatabase.deleteRepair(params.repairId)
+			const success = mockRepairDatabase.deleteRepair(params.repairId);
 
-      // 🔴 必须：根据结果使用对应的响应函数
-      mockLog('deleteOwnerRepair result', success ? 'success' : 'failed')
+			// 🔴 必须：根据结果使用对应的响应函数
+			mockLog("deleteOwnerRepair result", success ? "success" : "failed");
 
-      if (success) {
-        return successResponse({ success: true }, '删除成功')
-      } else {
-        return errorResponse('删除失败，维修工单不存在', ResultEnumMap.Error)
-      }
-    },
-  },
+			if (success) {
+				return successResponse({ success: true }, "删除成功");
+			} else {
+				return errorResponse("删除失败，维修工单不存在", ResultEnumMap.Error);
+			}
+		},
+	},
 
-  // 6. 动态路由示例 - 根据 ID 获取任务
-  {
-    url: '/app/ownerRepair/task/:taskId',
-    method: 'GET',
-    delay: 300,
-    body: async ({ params }) => {
-      mockLog('getTaskById', params.taskId)
+	// 6. 动态路由示例 - 根据 ID 获取任务
+	{
+		url: "/app/ownerRepair/task/:taskId",
+		method: "GET",
+		delay: 300,
+		body: async ({ params }) => {
+			mockLog("getTaskById", params.taskId);
 
-      const task = mockDb.getTaskById(params.taskId)
+			const task = mockDb.getTaskById(params.taskId);
 
-      if (!task) {
-        return errorResponse('任务不存在', ResultEnumMap.NotFound)
-      }
+			if (!task) {
+				return errorResponse("任务不存在", ResultEnumMap.NotFound);
+			}
 
-      mockLog('getTaskById result', task.title)
-      return successResponse(task, '查询成功')
-    },
-  },
-])
+			mockLog("getTaskById result", task.title);
+			return successResponse(task, "查询成功");
+		},
+	},
+]);
 ```
 
 #### 2.5 高级 Mock 特性示例
@@ -1126,78 +1126,78 @@ export default defineUniAppMock([
 
 ```typescript
 // src/api/mock/advanced.mock.ts
-import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
 
 export default defineUniAppMock([
-  // 条件响应示例
-  {
-    url: '/app/task/conditional',
-    method: 'POST',
-    // 使用 validator 根据不同条件返回不同数据
-    validator: { body: { type: 'urgent' } },
-    body: ({ body }) => {
-      mockLog('conditional task', { type: body.type })
-      return successResponse(
-        {
-          message: '紧急任务处理',
-          priority: 'HIGH',
-        },
-        '紧急任务创建成功',
-      )
-    },
-  },
-  {
-    url: '/app/task/conditional',
-    method: 'POST',
-    validator: { body: { type: 'normal' } },
-    body: ({ body }) => {
-      mockLog('conditional task', { type: body.type })
-      return successResponse(
-        {
-          message: '普通任务处理',
-          priority: 'MEDIUM',
-        },
-        '普通任务创建成功',
-      )
-    },
-  },
+	// 条件响应示例
+	{
+		url: "/app/task/conditional",
+		method: "POST",
+		// 使用 validator 根据不同条件返回不同数据
+		validator: { body: { type: "urgent" } },
+		body: ({ body }) => {
+			mockLog("conditional task", { type: body.type });
+			return successResponse(
+				{
+					message: "紧急任务处理",
+					priority: "HIGH",
+				},
+				"紧急任务创建成功",
+			);
+		},
+	},
+	{
+		url: "/app/task/conditional",
+		method: "POST",
+		validator: { body: { type: "normal" } },
+		body: ({ body }) => {
+			mockLog("conditional task", { type: body.type });
+			return successResponse(
+				{
+					message: "普通任务处理",
+					priority: "MEDIUM",
+				},
+				"普通任务创建成功",
+			);
+		},
+	},
 
-  // 文件上传模拟
-  {
-    url: '/api/upload/image',
-    method: 'POST',
-    delay: 1000,
-    body: ({ body }) => {
-      mockLog('uploadImage', { name: body.name })
+	// 文件上传模拟
+	{
+		url: "/api/upload/image",
+		method: "POST",
+		delay: 1000,
+		body: ({ body }) => {
+			mockLog("uploadImage", { name: body.name });
 
-      const fileId = `FILE_${Date.now()}`
-      const result = {
-        fileId,
-        url: `https://picsum.photos/400/300?random=${Date.now()}`,
-        size: Math.floor(Math.random() * 1000000) + 50000,
-        originalName: body.name || 'uploaded_file.jpg',
-      }
+			const fileId = `FILE_${Date.now()}`;
+			const result = {
+				fileId,
+				url: `https://picsum.photos/400/300?random=${Date.now()}`,
+				size: Math.floor(Math.random() * 1000000) + 50000,
+				originalName: body.name || "uploaded_file.jpg",
+			};
 
-      mockLog('uploadImage result', fileId)
-      return successResponse(result, '文件上传成功')
-    },
-  },
+			mockLog("uploadImage result", fileId);
+			return successResponse(result, "文件上传成功");
+		},
+	},
 
-  // 错误处理示例
-  {
-    url: '/app/error/demo',
-    method: 'GET',
-    body: ({ query }) => {
-      mockLog('errorDemo', query)
+	// 错误处理示例
+	{
+		url: "/app/error/demo",
+		method: "GET",
+		body: ({ query }) => {
+			mockLog("errorDemo", query);
 
-      if (query.trigger === 'error') {
-        return errorResponse('模拟服务器错误', ResultEnumMap.InternalServerError)
-      }
+			if (query.trigger === "error") {
+				return errorResponse("模拟服务器错误", ResultEnumMap.InternalServerError);
+			}
 
-      return successResponse({ message: '正常响应' }, '请求成功')
-    },
-  },
-])
+			return successResponse({ message: "正常响应" }, "请求成功");
+		},
+	},
+]);
 ```
 
 #### 2.6 活动模块 Mock 示例
@@ -1206,177 +1206,177 @@ export default defineUniAppMock([
 
 ```typescript
 // src/api/mock/activity.mock.ts
-import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
+import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
 
 // 活动模拟数据
 const mockActivities = [
-  {
-    activitiesId: 'ACT_001',
-    title: '社区春节联欢会',
-    userName: '物业管理处',
-    startTime: '2024-02-10 19:00:00',
-    endTime: '2024-02-10 21:30:00',
-    context: `
+	{
+		activitiesId: "ACT_001",
+		title: "社区春节联欢会",
+		userName: "物业管理处",
+		startTime: "2024-02-10 19:00:00",
+		endTime: "2024-02-10 21:30:00",
+		context: `
       <h2>🎊 社区春节联欢会 🎊</h2>
       <p>新春佳节即将到来，为了增进邻里感情...</p>
     `,
-    headerImg: 'spring_festival_header.jpg',
-    src: 'https://picsum.photos/800/500?random=festival',
-    communityId: 'COMM_001',
-    createTime: '2024-01-15 10:30:00',
-    updateTime: '2024-01-20 14:20:00',
-    status: 'ACTIVE',
-    viewCount: 245,
-    likeCount: 38,
-  },
-  // ... 更多模拟数据
-]
+		headerImg: "spring_festival_header.jpg",
+		src: "https://picsum.photos/800/500?random=festival",
+		communityId: "COMM_001",
+		createTime: "2024-01-15 10:30:00",
+		updateTime: "2024-01-20 14:20:00",
+		status: "ACTIVE",
+		viewCount: 245,
+		likeCount: 38,
+	},
+	// ... 更多模拟数据
+];
 
 export default defineUniAppMock([
-  // 获取活动列表/详情
-  {
-    url: '/app/activities.listActivitiess',
-    method: ['GET', 'POST'],
-    delay: [300, 600],
-    body: ({ query, body }) => {
-      const params = { ...query, ...body }
+	// 获取活动列表/详情
+	{
+		url: "/app/activities.listActivitiess",
+		method: ["GET", "POST"],
+		delay: [300, 600],
+		body: ({ query, body }) => {
+			const params = { ...query, ...body };
 
-      // 如果有 activitiesId，返回单个活动详情
-      if (params.activitiesId) {
-        mockLog('getActivityDetail', params)
+			// 如果有 activitiesId，返回单个活动详情
+			if (params.activitiesId) {
+				mockLog("getActivityDetail", params);
 
-        const activity = mockActivities.find((a) => a.activitiesId === params.activitiesId)
-        const result = {
-          activitiess: activity ? [activity] : [],
-        }
+				const activity = mockActivities.find((a) => a.activitiesId === params.activitiesId);
+				const result = {
+					activitiess: activity ? [activity] : [],
+				};
 
-        mockLog('getActivityDetail result', activity ? activity.title : 'not found')
-        return successResponse(result, '获取活动详情成功')
-      }
+				mockLog("getActivityDetail result", activity ? activity.title : "not found");
+				return successResponse(result, "获取活动详情成功");
+			}
 
-      // 否则返回活动列表（支持分页和筛选）
-      mockLog('getActivityList', params)
+			// 否则返回活动列表（支持分页和筛选）
+			mockLog("getActivityList", params);
 
-      let filteredActivities = [...mockActivities]
+			let filteredActivities = [...mockActivities];
 
-      if (params.status) {
-        filteredActivities = filteredActivities.filter((a) => a.status === params.status)
-      }
+			if (params.status) {
+				filteredActivities = filteredActivities.filter((a) => a.status === params.status);
+			}
 
-      if (params.keyword) {
-        filteredActivities = filteredActivities.filter(
-          (a) => a.title.includes(params.keyword) || a.context.includes(params.keyword),
-        )
-      }
+			if (params.keyword) {
+				filteredActivities = filteredActivities.filter(
+					(a) => a.title.includes(params.keyword) || a.context.includes(params.keyword),
+				);
+			}
 
-      const page = Number(params.page) || 1
-      const row = Number(params.row) || 10
-      const start = (page - 1) * row
-      const activitiess = filteredActivities.slice(start, start + row)
+			const page = Number(params.page) || 1;
+			const row = Number(params.row) || 10;
+			const start = (page - 1) * row;
+			const activitiess = filteredActivities.slice(start, start + row);
 
-      const result = {
-        activitiess,
-        total: filteredActivities.length,
-        page,
-        row,
-      }
+			const result = {
+				activitiess,
+				total: filteredActivities.length,
+				page,
+				row,
+			};
 
-      mockLog('getActivityList result', `${result.activitiess.length} items`)
-      return successResponse(result, '获取活动列表成功')
-    },
-  },
+			mockLog("getActivityList result", `${result.activitiess.length} items`);
+			return successResponse(result, "获取活动列表成功");
+		},
+	},
 
-  // 创建活动
-  {
-    url: '/app/activities.saveActivities',
-    method: 'POST',
-    delay: 800,
-    body: ({ body }) => {
-      mockLog('createActivity', { title: body.title })
+	// 创建活动
+	{
+		url: "/app/activities.saveActivities",
+		method: "POST",
+		delay: 800,
+		body: ({ body }) => {
+			mockLog("createActivity", { title: body.title });
 
-      const newId = `ACT_${Date.now()}`
-      const newActivity = {
-        activitiesId: newId,
-        ...body,
-        createTime: new Date().toISOString(),
-        updateTime: new Date().toISOString(),
-        viewCount: 0,
-        likeCount: 0,
-        src: body.headerImg ? `/api/file?fileId=${body.headerImg}` : undefined,
-      }
+			const newId = `ACT_${Date.now()}`;
+			const newActivity = {
+				activitiesId: newId,
+				...body,
+				createTime: new Date().toISOString(),
+				updateTime: new Date().toISOString(),
+				viewCount: 0,
+				likeCount: 0,
+				src: body.headerImg ? `/api/file?fileId=${body.headerImg}` : undefined,
+			};
 
-      mockActivities.unshift(newActivity)
-      mockLog('createActivity result', newId)
-      return successResponse(newActivity, '创建活动成功')
-    },
-  },
+			mockActivities.unshift(newActivity);
+			mockLog("createActivity result", newId);
+			return successResponse(newActivity, "创建活动成功");
+		},
+	},
 
-  // 更新活动
-  {
-    url: '/app/activities.updateActivities',
-    method: 'POST',
-    delay: 600,
-    body: ({ body }) => {
-      mockLog('updateActivity', { activitiesId: body.activitiesId })
+	// 更新活动
+	{
+		url: "/app/activities.updateActivities",
+		method: "POST",
+		delay: 600,
+		body: ({ body }) => {
+			mockLog("updateActivity", { activitiesId: body.activitiesId });
 
-      const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId)
-      if (!activity) {
-        return errorResponse('活动不存在', ResultEnumMap.NotFound)
-      }
+			const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId);
+			if (!activity) {
+				return errorResponse("活动不存在", ResultEnumMap.NotFound);
+			}
 
-      Object.assign(activity, {
-        ...body,
-        updateTime: new Date().toISOString(),
-      })
+			Object.assign(activity, {
+				...body,
+				updateTime: new Date().toISOString(),
+			});
 
-      mockLog('updateActivity result', activity.title)
-      return successResponse(activity, '更新活动成功')
-    },
-  },
+			mockLog("updateActivity result", activity.title);
+			return successResponse(activity, "更新活动成功");
+		},
+	},
 
-  // 删除活动
-  {
-    url: '/app/activities.deleteActivities',
-    method: ['DELETE', 'POST'],
-    delay: 400,
-    body: ({ query, body }) => {
-      const params = { ...query, ...body }
-      mockLog('deleteActivity', params)
+	// 删除活动
+	{
+		url: "/app/activities.deleteActivities",
+		method: ["DELETE", "POST"],
+		delay: 400,
+		body: ({ query, body }) => {
+			const params = { ...query, ...body };
+			mockLog("deleteActivity", params);
 
-      const index = mockActivities.findIndex((a) => a.activitiesId === params.activitiesId)
+			const index = mockActivities.findIndex((a) => a.activitiesId === params.activitiesId);
 
-      const success = index !== -1
-      if (success) {
-        mockActivities.splice(index, 1)
-      }
+			const success = index !== -1;
+			if (success) {
+				mockActivities.splice(index, 1);
+			}
 
-      const result = { success }
-      mockLog('deleteActivity result', success ? 'success' : 'failed')
-      return successResponse(result, success ? '删除活动成功' : '活动不存在')
-    },
-  },
+			const result = { success };
+			mockLog("deleteActivity result", success ? "success" : "failed");
+			return successResponse(result, success ? "删除活动成功" : "活动不存在");
+		},
+	},
 
-  // 增加浏览量
-  {
-    url: '/app/activities.increaseView',
-    method: 'POST',
-    delay: 200,
-    body: ({ body }) => {
-      mockLog('increaseView', body)
+	// 增加浏览量
+	{
+		url: "/app/activities.increaseView",
+		method: "POST",
+		delay: 200,
+		body: ({ body }) => {
+			mockLog("increaseView", body);
 
-      const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId)
-      const success = !!activity
+			const activity = mockActivities.find((a) => a.activitiesId === body.activitiesId);
+			const success = !!activity;
 
-      if (activity) {
-        activity.viewCount = (activity.viewCount || 0) + 1
-      }
+			if (activity) {
+				activity.viewCount = (activity.viewCount || 0) + 1;
+			}
 
-      const result = { success }
-      mockLog('increaseView result', success ? 'success' : 'failed')
-      return successResponse(result, success ? '浏览量增加成功' : '活动不存在')
-    },
-  },
-])
+			const result = { success };
+			mockLog("increaseView result", success ? "success" : "failed");
+			return successResponse(result, success ? "浏览量增加成功" : "活动不存在");
+		},
+	},
+]);
 ```
 
 ### 3. Mock 开发最佳实践
@@ -1418,32 +1418,32 @@ export default defineUniAppMock([
 ```typescript
 /** Mock 文件修改后的自动重启流程 */
 async function handleMockFileChange(filePath: string) {
-  // 1. 检测是否有运行中的 pnpm dev 进程
-  const hasDevServer = await checkRunningDevServer()
+	// 1. 检测是否有运行中的 pnpm dev 进程
+	const hasDevServer = await checkRunningDevServer();
 
-  if (!hasDevServer) {
-    console.log('⚠️ 未检测到运行中的开发服务器')
-    return
-  }
+	if (!hasDevServer) {
+		console.log("⚠️ 未检测到运行中的开发服务器");
+		return;
+	}
 
-  console.log('🔄 检测到 Mock 文件变更，准备重启开发环境...')
+	console.log("🔄 检测到 Mock 文件变更，准备重启开发环境...");
 
-  // 2. 停止当前的 pnpm dev 进程
-  await stopDevServer()
+	// 2. 停止当前的 pnpm dev 进程
+	await stopDevServer();
 
-  // 3. 等待进程完全停止
-  await delay(2000)
+	// 3. 等待进程完全停止
+	await delay(2000);
 
-  // 4. 重新启动 pnpm dev
-  await startDevServer()
+	// 4. 重新启动 pnpm dev
+	await startDevServer();
 
-  // 5. 等待开发服务器启动完成
-  await waitForServerReady()
+	// 5. 等待开发服务器启动完成
+	await waitForServerReady();
 
-  // 6. 如果浏览器 MCP 已打开页面，刷新页面
-  await refreshBrowserPage()
+	// 6. 如果浏览器 MCP 已打开页面，刷新页面
+	await refreshBrowserPage();
 
-  console.log('✅ 开发环境重启完成，Mock 接口已更新')
+	console.log("✅ 开发环境重启完成，Mock 接口已更新");
 }
 ```
 
@@ -1541,48 +1541,48 @@ Mock 接口更新需要重启开发环境才能生效。
 
 ```typescript
 export default defineUniAppMock([
-  {
-    url: '/api/slow-endpoint',
-    delay: [500, 2000], // 随机延迟 500-2000ms
-    body: { message: '模拟慢接口' },
-  },
-])
+	{
+		url: "/api/slow-endpoint",
+		delay: [500, 2000], // 随机延迟 500-2000ms
+		body: { message: "模拟慢接口" },
+	},
+]);
 ```
 
 **2. 条件响应**:
 
 ```typescript
 export default defineUniAppMock([
-  {
-    url: '/api/conditional',
-    validator: { query: { type: 'admin' } },
-    body: { data: 'admin data' },
-  },
-  {
-    url: '/api/conditional',
-    body: { data: 'normal data' },
-  },
-])
+	{
+		url: "/api/conditional",
+		validator: { query: { type: "admin" } },
+		body: { data: "admin data" },
+	},
+	{
+		url: "/api/conditional",
+		body: { data: "normal data" },
+	},
+]);
 ```
 
 **3. 错误模拟**:
 
 ```typescript
 export default defineUniAppMock([
-  {
-    url: '/api/error-demo',
-    body: ({ query }) => {
-      if (query.error === 'true') {
-        return {
-          status: 500,
-          statusText: 'Internal Server Error',
-          body: { error: '服务器内部错误' },
-        }
-      }
-      return { success: true }
-    },
-  },
-])
+	{
+		url: "/api/error-demo",
+		body: ({ query }) => {
+			if (query.error === "true") {
+				return {
+					status: 500,
+					statusText: "Internal Server Error",
+					body: { error: "服务器内部错误" },
+				};
+			}
+			return { success: true };
+		},
+	},
+]);
 ```
 
 #### 3.5 性能优化建议
@@ -1609,22 +1609,22 @@ export default defineUniAppMock([
 
 ```typescript
 // 定义 useRequest（必须 immediate: false）
-const { send: loadList, onSuccess, onError } = useRequest((params) => getDataList(params), { immediate: false })
+const { send: loadList, onSuccess, onError } = useRequest((params) => getDataList(params), { immediate: false });
 
 // onSuccess 中调用 complete
 onSuccess((event) => {
-  pagingRef.value?.complete(event.data.list || [])
-})
+	pagingRef.value?.complete(event.data.list || []);
+});
 
 // onError 中调用 complete(false)
 onError((error) => {
-  console.error('加载失败:', error)
-  pagingRef.value?.complete(false)
-})
+	console.error("加载失败:", error);
+	pagingRef.value?.complete(false);
+});
 
 // @query 回调中触发请求（不使用 await/try-catch）
 function handleQuery(pageNo: number, pageSize: number) {
-  loadList({ page: pageNo, row: pageSize })
+	loadList({ page: pageNo, row: pageSize });
 }
 ```
 
@@ -1640,23 +1640,23 @@ function handleQuery(pageNo: number, pageSize: number) {
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite'
-import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server'
+import { defineConfig } from "vite";
+import { mockDevServerPlugin } from "vite-plugin-mock-dev-server";
 
 export default defineConfig({
-  plugins: [
-    // 其他插件...
-    mockDevServerPlugin({
-      dir: 'src/api/mock', // 指定 Mock 文件目录
-    }),
-  ],
-  server: {
-    proxy: {
-      // 配置代理路径，插件会自动拦截这些路径
-      '^/api': 'http://localhost:3000', // 实际后端地址
-    },
-  },
-})
+	plugins: [
+		// 其他插件...
+		mockDevServerPlugin({
+			dir: "src/api/mock", // 指定 Mock 文件目录
+		}),
+	],
+	server: {
+		proxy: {
+			// 配置代理路径，插件会自动拦截这些路径
+			"^/api": "http://localhost:3000", // 实际后端地址
+		},
+	},
+});
 ```
 
 ### 实施标准

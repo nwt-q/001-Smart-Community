@@ -1,7 +1,16 @@
 import type { Contact, DepartmentType } from '@/types/contact'
 import { CONTACT_DEPARTMENT_OPTIONS, CONTACT_POSITION_OPTIONS } from '../../constants/contact'
 
-import { createPaginationResponse, defineUniAppMock, errorResponse, generateChineseName, generatePhoneNumber, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
+import {
+  createPaginationResponse,
+  defineUniAppMock,
+  errorResponse,
+  generateChineseName,
+  generatePhoneNumber,
+  randomDelay,
+  ResultEnumMap,
+  successResponse,
+} from './shared/utils'
 
 /**
  * 通讯录模块 Mock 接口 - 完全自包含架构
@@ -63,12 +72,13 @@ const mockContactDatabase = {
     // 关键词筛选
     if (params.keyword) {
       const keyword = params.keyword.toLowerCase()
-      filteredContacts = filteredContacts.filter(contact =>
-        contact.name.toLowerCase().includes(keyword)
-        || contact.position.toLowerCase().includes(keyword)
-        || contact.department.toLowerCase().includes(keyword)
-        || contact.phone.includes(keyword)
-        || contact.email.toLowerCase().includes(keyword),
+      filteredContacts = filteredContacts.filter(
+        contact =>
+          contact.name.toLowerCase().includes(keyword)
+          || contact.position.toLowerCase().includes(keyword)
+          || contact.department.toLowerCase().includes(keyword)
+          || contact.phone.includes(keyword)
+          || contact.email.toLowerCase().includes(keyword),
       )
     }
 
@@ -85,13 +95,16 @@ const mockContactDatabase = {
 
   /** 按部门分组获取联系人 */
   getContactsByDepartment() {
-    const grouped = this.contacts.reduce((acc, contact) => {
-      if (!acc[contact.department]) {
-        acc[contact.department] = []
-      }
-      acc[contact.department].push(contact)
-      return acc
-    }, {} as Record<DepartmentType, Contact[]>)
+    const grouped = this.contacts.reduce(
+      (acc, contact) => {
+        if (!acc[contact.department]) {
+          acc[contact.department] = []
+        }
+        acc[contact.department].push(contact)
+        return acc
+      },
+      {} as Record<DepartmentType, Contact[]>,
+    )
 
     // 排序每个部门内的联系人
     Object.keys(grouped).forEach((dept) => {
@@ -133,12 +146,15 @@ export default defineUniAppMock([
         })
 
         console.log('🚀 Mock API: listContacts', params, '→', `${result.list.length} items`)
-        return successResponse({
-          contacts: result.list,
-          total: result.total,
-          page: result.page,
-          row: result.pageSize,
-        }, '获取通讯录列表成功')
+        return successResponse(
+          {
+            contacts: result.list,
+            total: result.total,
+            page: result.page,
+            row: result.pageSize,
+          },
+          '获取通讯录列表成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: listContacts', error)
@@ -168,9 +184,12 @@ export default defineUniAppMock([
         }
 
         console.log('🚀 Mock API: getContactDetail', params, '→', contact)
-        return successResponse({
-          contact,
-        }, '获取联系人详情成功')
+        return successResponse(
+          {
+            contact,
+          },
+          '获取联系人详情成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getContactDetail', error)
@@ -202,11 +221,14 @@ export default defineUniAppMock([
         departments.sort((a, b) => a.departmentName.localeCompare(b.departmentName))
 
         console.log('🚀 Mock API: getContactsByDepartment', '→', `${departments.length} departments`)
-        return successResponse({
-          departments,
-          totalContacts: mockContactDatabase.contacts.length,
-          onlineContacts: mockContactDatabase.contacts.filter(c => c.isOnline).length,
-        }, '获取部门通讯录成功')
+        return successResponse(
+          {
+            departments,
+            totalContacts: mockContactDatabase.contacts.length,
+            onlineContacts: mockContactDatabase.contacts.filter(c => c.isOnline).length,
+          },
+          '获取部门通讯录成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getContactsByDepartment', error)
@@ -240,25 +262,26 @@ export default defineUniAppMock([
         // 按匹配相关性排序
         const keyword = params.keyword.toLowerCase()
         result.list.sort((a, b) => {
-          const aScore = (
-            (a.name.toLowerCase().includes(keyword) ? 3 : 0)
-            + (a.position.toLowerCase().includes(keyword) ? 2 : 0)
-            + (a.department.toLowerCase().includes(keyword) ? 1 : 0)
-          )
-          const bScore = (
-            (b.name.toLowerCase().includes(keyword) ? 3 : 0)
-            + (b.position.toLowerCase().includes(keyword) ? 2 : 0)
-            + (b.department.toLowerCase().includes(keyword) ? 1 : 0)
-          )
+          const aScore
+            = (a.name.toLowerCase().includes(keyword) ? 3 : 0)
+              + (a.position.toLowerCase().includes(keyword) ? 2 : 0)
+              + (a.department.toLowerCase().includes(keyword) ? 1 : 0)
+          const bScore
+            = (b.name.toLowerCase().includes(keyword) ? 3 : 0)
+              + (b.position.toLowerCase().includes(keyword) ? 2 : 0)
+              + (b.department.toLowerCase().includes(keyword) ? 1 : 0)
           return bScore - aScore
         })
 
         console.log('🚀 Mock API: searchContacts', params, '→', `${result.list.length} results`)
-        return successResponse({
-          contacts: result.list,
-          total: result.total,
-          keyword: params.keyword,
-        }, '搜索联系人成功')
+        return successResponse(
+          {
+            contacts: result.list,
+            total: result.total,
+            keyword: params.keyword,
+          },
+          '搜索联系人成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: searchContacts', error)
@@ -286,9 +309,12 @@ export default defineUniAppMock([
         })
 
         console.log('🚀 Mock API: getDepartments', '→', departments)
-        return successResponse({
-          departments,
-        }, '获取部门列表成功')
+        return successResponse(
+          {
+            departments,
+          },
+          '获取部门列表成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getDepartments', error)
@@ -310,19 +336,19 @@ export default defineUniAppMock([
           return errorResponse('联系人ID不能为空', ResultEnumMap.Error)
         }
 
-        const contact = mockContactDatabase.updateOnlineStatus(
-          body.contactId,
-          Boolean(body.isOnline),
-        )
+        const contact = mockContactDatabase.updateOnlineStatus(body.contactId, Boolean(body.isOnline))
 
         if (!contact) {
           return errorResponse('联系人不存在', ResultEnumMap.NotFound)
         }
 
         console.log('🚀 Mock API: updateOnlineStatus', body, '→', contact)
-        return successResponse({
-          contact,
-        }, '更新在线状态成功')
+        return successResponse(
+          {
+            contact,
+          },
+          '更新在线状态成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: updateOnlineStatus', error)
@@ -346,9 +372,12 @@ export default defineUniAppMock([
           .filter(contact => contact.isOnline || Math.random() > 0.3)
 
         console.log('🚀 Mock API: getFavoriteContacts', '→', favoriteContacts)
-        return successResponse({
-          contacts: favoriteContacts,
-        }, '获取常用联系人成功')
+        return successResponse(
+          {
+            contacts: favoriteContacts,
+          },
+          '获取常用联系人成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getFavoriteContacts', error)
@@ -430,9 +459,12 @@ export default defineUniAppMock([
         ]
 
         console.log('🚀 Mock API: getEmergencyContacts', '→', emergencyContacts)
-        return successResponse({
-          contacts: emergencyContacts,
-        }, '获取紧急联系人成功')
+        return successResponse(
+          {
+            contacts: emergencyContacts,
+          },
+          '获取紧急联系人成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getEmergencyContacts', error)

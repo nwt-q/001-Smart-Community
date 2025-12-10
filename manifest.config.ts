@@ -12,13 +12,7 @@ function getMode() {
 }
 // 获取环境变量的范例
 const env = loadEnv(getMode(), path.resolve(process.cwd(), 'env'))
-const {
-  VITE_APP_TITLE,
-  VITE_UNI_APPID,
-  VITE_WX_APPID,
-  VITE_APP_PUBLIC_BASE,
-  VITE_FALLBACK_LOCALE,
-} = env
+const { VITE_APP_TITLE, VITE_UNI_APPID, VITE_WX_APPID, VITE_APP_PUBLIC_BASE, VITE_FALLBACK_LOCALE } = env
 // console.log('manifest.config.ts env:', env)
 
 export default defineManifestConfig({

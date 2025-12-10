@@ -22,11 +22,11 @@ src/hooks/property/
 
 ```typescript
 // 方式一：导入单个函数
-import { extractApplyRecordParams, buildApplyFromParams } from '@/hooks/property/use-property-apply-room'
+import { extractApplyRecordParams, buildApplyFromParams } from "@/hooks/property/use-property-apply-room";
 
 // 方式二：导入 Hook 函数
-import { usePropertyApplyRoom } from '@/hooks/property/use-property-apply-room'
-const { extractApplyRecordParams, buildApplyFromParams } = usePropertyApplyRoom()
+import { usePropertyApplyRoom } from "@/hooks/property/use-property-apply-room";
+const { extractApplyRecordParams, buildApplyFromParams } = usePropertyApplyRoom();
 ```
 
 ### API 说明
@@ -39,13 +39,13 @@ const { extractApplyRecordParams, buildApplyFromParams } = usePropertyApplyRoom(
 
 ```typescript
 function extractApplyRecordParams(apply: PropertyApplication): {
-  ardId: string
-  communityId: string
-  roomId: string
-  roomName: string
-  state: string
-  stateName: string
-}
+	ardId: string;
+	communityId: string;
+	roomId: string;
+	roomName: string;
+	state: string;
+	stateName: string;
+};
 ```
 
 **使用场景**
@@ -56,27 +56,27 @@ function extractApplyRecordParams(apply: PropertyApplication): {
 
 ```typescript
 // 在 apply-room-detail.vue 中
-import type { PropertyApplication } from '@/types/property-application'
-import { TypedRouter } from '@/router'
-import { extractApplyRecordParams } from '@/hooks/property/use-property-apply-room'
-import { ref } from 'vue'
+import type { PropertyApplication } from "@/types/property-application";
+import { TypedRouter } from "@/router";
+import { extractApplyRecordParams } from "@/hooks/property/use-property-apply-room";
+import { ref } from "vue";
 
 const applyRoomInfo = ref<PropertyApplication>({
-  ardId: 'ARD001',
-  communityId: 'COM001',
-  roomId: 'ROOM001',
-  roomName: '1号楼101',
-  state: '1',
-  stateName: '待验房',
-  // ... 其他字段
-})
+	ardId: "ARD001",
+	communityId: "COM001",
+	roomId: "ROOM001",
+	roomName: "1号楼101",
+	state: "1",
+	stateName: "待验房",
+	// ... 其他字段
+});
 
 /** 显示房屋申请跟踪记录 */
 function showApplyRoomRecord() {
-  // 提取必要参数
-  const params = extractApplyRecordParams(applyRoomInfo.value)
-  // 类型安全的路由跳转
-  TypedRouter.toApplyRoomRecord(params)
+	// 提取必要参数
+	const params = extractApplyRecordParams(applyRoomInfo.value);
+	// 类型安全的路由跳转
+	TypedRouter.toApplyRoomRecord(params);
 }
 ```
 
@@ -90,17 +90,17 @@ function showApplyRoomRecord() {
 
 ```typescript
 function extractRecordDetailParams(
-  record: ApplicationRecord,
-  communityId: string,
+	record: ApplicationRecord,
+	communityId: string,
 ): {
-  ardrId: string
-  applicationId: string
-  roomId: string
-  roomName: string
-  communityId: string
-  state: string
-  stateName: string
-}
+	ardrId: string;
+	applicationId: string;
+	roomId: string;
+	roomName: string;
+	communityId: string;
+	state: string;
+	stateName: string;
+};
 ```
 
 **使用场景**
@@ -111,21 +111,21 @@ function extractRecordDetailParams(
 
 ```typescript
 // 在 apply-room-record.vue 中
-import type { ApplicationRecord, PropertyApplication } from '@/types/property-application'
-import { TypedRouter } from '@/router'
-import { extractRecordDetailParams } from '@/hooks/property/use-property-apply-room'
-import { ref } from 'vue'
+import type { ApplicationRecord, PropertyApplication } from "@/types/property-application";
+import { TypedRouter } from "@/router";
+import { extractRecordDetailParams } from "@/hooks/property/use-property-apply-room";
+import { ref } from "vue";
 
 const applyRoomInfo = ref<PropertyApplication>({
-  /* ... */
-})
+	/* ... */
+});
 
 /** 显示记录详情 */
 function showDetail(record: ApplicationRecord) {
-  // 提取记录详情参数，附加 communityId
-  const params = extractRecordDetailParams(record, applyRoomInfo.value.communityId)
-  // 类型安全的路由跳转
-  TypedRouter.toApplyRoomRecordDetail(params)
+	// 提取记录详情参数，附加 communityId
+	const params = extractRecordDetailParams(record, applyRoomInfo.value.communityId);
+	// 类型安全的路由跳转
+	TypedRouter.toApplyRoomRecordDetail(params);
 }
 ```
 
@@ -139,13 +139,13 @@ function showDetail(record: ApplicationRecord) {
 
 ```typescript
 function buildApplyFromParams(params: {
-  ardId: string
-  communityId: string
-  roomId: string
-  roomName: string
-  state: string
-  stateName: string
-}): Partial<PropertyApplication>
+	ardId: string;
+	communityId: string;
+	roomId: string;
+	roomName: string;
+	state: string;
+	stateName: string;
+}): Partial<PropertyApplication>;
 ```
 
 **使用场景**
@@ -156,46 +156,46 @@ function buildApplyFromParams(params: {
 
 ```typescript
 // 在 apply-room-record.vue 中
-import type { PropertyApplication } from '@/types/property-application'
-import { buildApplyFromParams } from '@/hooks/property/use-property-apply-room'
-import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import type { PropertyApplication } from "@/types/property-application";
+import { buildApplyFromParams } from "@/hooks/property/use-property-apply-room";
+import { onLoad } from "@dcloudio/uni-app";
+import { ref } from "vue";
 
-const applyRoomInfo = ref<PropertyApplication>({} as PropertyApplication)
+const applyRoomInfo = ref<PropertyApplication>({} as PropertyApplication);
 
 onLoad(
-  (options: {
-    ardId?: string
-    communityId?: string
-    roomId?: string
-    roomName?: string
-    state?: string
-    stateName?: string
-  }) => {
-    // 检查所有必需参数是否存在
-    if (
-      options.ardId &&
-      options.communityId &&
-      options.roomId &&
-      options.roomName &&
-      options.state &&
-      options.stateName
-    ) {
-      // 从 URL 参数重建申请对象
-      applyRoomInfo.value = buildApplyFromParams({
-        ardId: options.ardId,
-        communityId: options.communityId,
-        roomId: options.roomId,
-        roomName: options.roomName,
-        state: options.state,
-        stateName: options.stateName,
-      }) as PropertyApplication
+	(options: {
+		ardId?: string;
+		communityId?: string;
+		roomId?: string;
+		roomName?: string;
+		state?: string;
+		stateName?: string;
+	}) => {
+		// 检查所有必需参数是否存在
+		if (
+			options.ardId &&
+			options.communityId &&
+			options.roomId &&
+			options.roomName &&
+			options.state &&
+			options.stateName
+		) {
+			// 从 URL 参数重建申请对象
+			applyRoomInfo.value = buildApplyFromParams({
+				ardId: options.ardId,
+				communityId: options.communityId,
+				roomId: options.roomId,
+				roomName: options.roomName,
+				state: options.state,
+				stateName: options.stateName,
+			}) as PropertyApplication;
 
-      // 现在可以安全使用 applyRoomInfo
-      console.log('房屋申请信息:', applyRoomInfo.value)
-    }
-  },
-)
+			// 现在可以安全使用 applyRoomInfo
+			console.log("房屋申请信息:", applyRoomInfo.value);
+		}
+	},
+);
 ```
 
 ---
@@ -208,14 +208,14 @@ onLoad(
 
 ```typescript
 function buildRecordFromParams(params: {
-  ardrId: string
-  applicationId: string
-  roomId: string
-  roomName: string
-  communityId: string
-  state: string
-  stateName: string
-}): Partial<ApplicationRecord & { communityId: string }>
+	ardrId: string;
+	applicationId: string;
+	roomId: string;
+	roomName: string;
+	communityId: string;
+	state: string;
+	stateName: string;
+}): Partial<ApplicationRecord & { communityId: string }>;
 ```
 
 **使用场景**
@@ -226,49 +226,49 @@ function buildRecordFromParams(params: {
 
 ```typescript
 // 在 apply-room-record-detail.vue 中
-import type { ApplicationRecord } from '@/types/property-application'
-import { buildRecordFromParams } from '@/hooks/property/use-property-apply-room'
-import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import type { ApplicationRecord } from "@/types/property-application";
+import { buildRecordFromParams } from "@/hooks/property/use-property-apply-room";
+import { onLoad } from "@dcloudio/uni-app";
+import { ref } from "vue";
 
-const recordInfo = ref<ApplicationRecord & { communityId?: string }>({} as ApplicationRecord)
+const recordInfo = ref<ApplicationRecord & { communityId?: string }>({} as ApplicationRecord);
 
 onLoad(
-  (options: {
-    ardrId?: string
-    applicationId?: string
-    roomId?: string
-    roomName?: string
-    communityId?: string
-    state?: string
-    stateName?: string
-  }) => {
-    // 检查所有必需参数是否存在
-    if (
-      options.ardrId &&
-      options.applicationId &&
-      options.roomId &&
-      options.roomName &&
-      options.communityId &&
-      options.state &&
-      options.stateName
-    ) {
-      // 从 URL 参数重建记录对象
-      recordInfo.value = buildRecordFromParams({
-        ardrId: options.ardrId,
-        applicationId: options.applicationId,
-        roomId: options.roomId,
-        roomName: options.roomName,
-        communityId: options.communityId,
-        state: options.state,
-        stateName: options.stateName,
-      }) as ApplicationRecord & { communityId: string }
+	(options: {
+		ardrId?: string;
+		applicationId?: string;
+		roomId?: string;
+		roomName?: string;
+		communityId?: string;
+		state?: string;
+		stateName?: string;
+	}) => {
+		// 检查所有必需参数是否存在
+		if (
+			options.ardrId &&
+			options.applicationId &&
+			options.roomId &&
+			options.roomName &&
+			options.communityId &&
+			options.state &&
+			options.stateName
+		) {
+			// 从 URL 参数重建记录对象
+			recordInfo.value = buildRecordFromParams({
+				ardrId: options.ardrId,
+				applicationId: options.applicationId,
+				roomId: options.roomId,
+				roomName: options.roomName,
+				communityId: options.communityId,
+				state: options.state,
+				stateName: options.stateName,
+			}) as ApplicationRecord & { communityId: string };
 
-      // 现在可以安全使用 recordInfo
-      console.log('记录详情:', recordInfo.value)
-    }
-  },
-)
+			// 现在可以安全使用 recordInfo
+			console.log("记录详情:", recordInfo.value);
+		}
+	},
+);
 ```
 
 ---
@@ -281,21 +281,21 @@ onLoad(
 
 ```typescript
 // 1. apply-room.vue - 房屋申请列表
-import { TypedRouter } from '@/router'
+import { TypedRouter } from "@/router";
 
 function toApplyRoomDetail(item: PropertyApplication) {
-  TypedRouter.toApplyRoomDetail(item.ardId, item.communityId)
+	TypedRouter.toApplyRoomDetail(item.ardId, item.communityId);
 }
 ```
 
 ```typescript
 // 2. apply-room-detail.vue - 房屋申请详情
-import { TypedRouter } from '@/router'
-import { extractApplyRecordParams } from '@/hooks/property/use-property-apply-room'
+import { TypedRouter } from "@/router";
+import { extractApplyRecordParams } from "@/hooks/property/use-property-apply-room";
 
 function showApplyRoomRecord() {
-  const params = extractApplyRecordParams(applyRoomInfo.value)
-  TypedRouter.toApplyRoomRecord(params)
+	const params = extractApplyRecordParams(applyRoomInfo.value);
+	TypedRouter.toApplyRoomRecord(params);
 }
 ```
 
@@ -314,18 +314,18 @@ onLoad((options) => {
 
 ```typescript
 // apply-room-record.vue
-import { TypedRouter } from '@/router'
+import { TypedRouter } from "@/router";
 
 function addRecord() {
-  const params = {
-    ardId: applyRoomInfo.value.ardId,
-    communityId: applyRoomInfo.value.communityId,
-    roomId: applyRoomInfo.value.roomId,
-    roomName: applyRoomInfo.value.roomName,
-    state: applyRoomInfo.value.state,
-    stateName: applyRoomInfo.value.stateName,
-  }
-  TypedRouter.toApplyRoomRecordHandle(params)
+	const params = {
+		ardId: applyRoomInfo.value.ardId,
+		communityId: applyRoomInfo.value.communityId,
+		roomId: applyRoomInfo.value.roomId,
+		roomName: applyRoomInfo.value.roomName,
+		state: applyRoomInfo.value.state,
+		stateName: applyRoomInfo.value.stateName,
+	};
+	TypedRouter.toApplyRoomRecordHandle(params);
 }
 ```
 
@@ -344,12 +344,12 @@ onLoad((options) => {
 
 ```typescript
 // apply-room-record.vue
-import { TypedRouter } from '@/router'
-import { extractRecordDetailParams } from '@/hooks/property/use-property-apply-room'
+import { TypedRouter } from "@/router";
+import { extractRecordDetailParams } from "@/hooks/property/use-property-apply-room";
 
 function showDetail(record: ApplicationRecord) {
-  const params = extractRecordDetailParams(record, applyRoomInfo.value.communityId)
-  TypedRouter.toApplyRoomRecordDetail(params)
+	const params = extractRecordDetailParams(record, applyRoomInfo.value.communityId);
+	TypedRouter.toApplyRoomRecordDetail(params);
 }
 ```
 
@@ -374,26 +374,26 @@ onLoad((options) => {
 
 ```typescript
 onLoad((options) => {
-  // ✅ 正确：检查所有参数
-  if (
-    options.ardId &&
-    options.communityId &&
-    options.roomId &&
-    options.roomName &&
-    options.state &&
-    options.stateName
-  ) {
-    applyRoomInfo.value = buildApplyFromParams(options) as PropertyApplication
-  } else {
-    // 处理参数缺失的情况
-    uni.showToast({ title: '参数缺失', icon: 'none' })
-  }
-})
+	// ✅ 正确：检查所有参数
+	if (
+		options.ardId &&
+		options.communityId &&
+		options.roomId &&
+		options.roomName &&
+		options.state &&
+		options.stateName
+	) {
+		applyRoomInfo.value = buildApplyFromParams(options) as PropertyApplication;
+	} else {
+		// 处理参数缺失的情况
+		uni.showToast({ title: "参数缺失", icon: "none" });
+	}
+});
 
 // ❌ 错误：不检查参数直接使用
 onLoad((options) => {
-  applyRoomInfo.value = buildApplyFromParams(options) as PropertyApplication
-})
+	applyRoomInfo.value = buildApplyFromParams(options) as PropertyApplication;
+});
 ```
 
 ### 2. 类型断言
@@ -402,10 +402,10 @@ onLoad((options) => {
 
 ```typescript
 // ✅ 正确：使用类型断言
-const apply = buildApplyFromParams(options) as PropertyApplication
+const apply = buildApplyFromParams(options) as PropertyApplication;
 
 // ❌ 错误：缺少类型断言
-const apply = buildApplyFromParams(options) // 类型为 Partial<PropertyApplication>
+const apply = buildApplyFromParams(options); // 类型为 Partial<PropertyApplication>
 ```
 
 ### 3. 避免 JSON 传参
@@ -415,12 +415,12 @@ const apply = buildApplyFromParams(options) // 类型为 Partial<PropertyApplica
 ```typescript
 // ❌ 错误：使用 JSON.stringify
 uni.navigateTo({
-  url: `/pages-sub/property/apply-room-record?apply=${JSON.stringify(applyRoomInfo.value)}`,
-})
+	url: `/pages-sub/property/apply-room-record?apply=${JSON.stringify(applyRoomInfo.value)}`,
+});
 
 // ✅ 正确：使用参数提取函数
-const params = extractApplyRecordParams(applyRoomInfo.value)
-TypedRouter.toApplyRoomRecord(params)
+const params = extractApplyRecordParams(applyRoomInfo.value);
+TypedRouter.toApplyRoomRecord(params);
 ```
 
 ### 4. 只传递必要字段
@@ -429,11 +429,11 @@ TypedRouter.toApplyRoomRecord(params)
 
 ```typescript
 // ✅ 正确：只传递必要字段
-const params = extractApplyRecordParams(applyRoomInfo.value)
+const params = extractApplyRecordParams(applyRoomInfo.value);
 // params = { ardId, communityId, roomId, roomName, state, stateName }
 
 // ❌ 错误：传递完整对象（不推荐）
-TypedRouter.toApplyRoomRecord(applyRoomInfo.value) // 参数过多
+TypedRouter.toApplyRoomRecord(applyRoomInfo.value); // 参数过多
 ```
 
 ---

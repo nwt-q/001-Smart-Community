@@ -98,33 +98,33 @@ Read: .github\prompts\route-migration-map.yml
 ```json
 // pages.json
 {
-  "pages": [
-    {
-      "path": "pages/index/index",
-      "style": {
-        "navigationBarTitleText": "首页"
-      }
-    },
-    {
-      "path": "pages/login/login",
-      "style": {
-        "navigationBarTitleText": "登录",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/repairOrder/repairOrder",
-      "style": {
-        "navigationBarTitleText": "维修工单池"
-      }
-    },
-    {
-      "path": "pages/complaintList/complaintList",
-      "style": {
-        "navigationBarTitleText": "投诉受理单"
-      }
-    }
-  ]
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/repairOrder/repairOrder",
+			"style": {
+				"navigationBarTitleText": "维修工单池"
+			}
+		},
+		{
+			"path": "pages/complaintList/complaintList",
+			"style": {
+				"navigationBarTitleText": "投诉受理单"
+			}
+		}
+	]
 }
 ```
 
@@ -135,14 +135,14 @@ Read: .github\prompts\route-migration-map.yml
 <script setup lang="ts">
 // 使用 definePage API
 definePage({
-  style: {
-    navigationBarTitleText: '首页',
-  },
-})
+	style: {
+		navigationBarTitleText: "首页",
+	},
+});
 </script>
 
 <template>
-  <view>首页内容</view>
+	<view>首页内容</view>
 </template>
 ```
 
@@ -153,25 +153,25 @@ definePage({
 ```json
 // pages.json
 {
-  "subPackages": [
-    {
-      "root": "pages-sub/maintenance",
-      "pages": [
-        {
-          "path": "maintainance",
-          "style": {
-            "navigationBarTitleText": "设备保养"
-          }
-        },
-        {
-          "path": "excuteMaintainance",
-          "style": {
-            "navigationBarTitleText": "保养"
-          }
-        }
-      ]
-    }
-  ]
+	"subPackages": [
+		{
+			"root": "pages-sub/maintenance",
+			"pages": [
+				{
+					"path": "maintainance",
+					"style": {
+						"navigationBarTitleText": "设备保养"
+					}
+				},
+				{
+					"path": "excuteMaintainance",
+					"style": {
+						"navigationBarTitleText": "保养"
+					}
+				}
+			]
+		}
+	]
 }
 ```
 
@@ -193,24 +193,24 @@ src/pages-sub/                    # 自动识别为分包目录
 
 ```json
 {
-  "globalStyle": {
-    "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "物业版",
-    "navigationBarBackgroundColor": "#368CFE",
-    "backgroundColor": "#00AA00"
-  },
-  "tabBar": {
-    "color": "#272636",
-    "selectedColor": "#00AA00",
-    "list": [
-      {
-        "pagePath": "pages/index/index",
-        "iconPath": "static/image/home.png",
-        "selectedIconPath": "static/image/home-selected.png",
-        "text": "首页"
-      }
-    ]
-  }
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "物业版",
+		"navigationBarBackgroundColor": "#368CFE",
+		"backgroundColor": "#00AA00"
+	},
+	"tabBar": {
+		"color": "#272636",
+		"selectedColor": "#00AA00",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/image/home.png",
+				"selectedIconPath": "static/image/home-selected.png",
+				"text": "首页"
+			}
+		]
+	}
 }
 ```
 
@@ -218,47 +218,47 @@ src/pages-sub/                    # 自动识别为分包目录
 
 ```typescript
 // pages.config.ts - 全局配置
-import { defineUniPages } from '@uni-helper/vite-plugin-uni-pages'
-import { tabBar } from './src/tabbar/config'
+import { defineUniPages } from "@uni-helper/vite-plugin-uni-pages";
+import { tabBar } from "./src/tabbar/config";
 
 export default defineUniPages({
-  globalStyle: {
-    navigationStyle: 'default',
-    navigationBarTitleText: 'unibest',
-    navigationBarBackgroundColor: '#f8f8f8',
-    navigationBarTextStyle: 'black',
-    backgroundColor: '#FFFFFF',
-  },
-  tabBar: tabBar as any,
-})
+	globalStyle: {
+		navigationStyle: "default",
+		navigationBarTitleText: "unibest",
+		navigationBarBackgroundColor: "#f8f8f8",
+		navigationBarTextStyle: "black",
+		backgroundColor: "#FFFFFF",
+	},
+	tabBar: tabBar as any,
+});
 ```
 
 ```typescript
 // src/tabbar/config.ts - TabBar 单独配置
 export const tabBar = {
-  color: '#999999',
-  selectedColor: '#018d71',
-  backgroundColor: '#ffffff',
-  borderStyle: 'black',
-  height: '50px',
-  fontSize: '10px',
-  iconWidth: '24px',
-  spacing: '3px',
-  list: [
-    {
-      pagePath: 'pages/index/index',
-      iconPath: '/static/tabbar/home_default.png',
-      selectedIconPath: '/static/tabbar/home_selected.png',
-      text: '首页',
-    },
-    {
-      pagePath: 'pages/me/me',
-      iconPath: '/static/tabbar/mine_default.png',
-      selectedIconPath: '/static/tabbar/mine_selected.png',
-      text: '我的',
-    },
-  ],
-}
+	color: "#999999",
+	selectedColor: "#018d71",
+	backgroundColor: "#ffffff",
+	borderStyle: "black",
+	height: "50px",
+	fontSize: "10px",
+	iconWidth: "24px",
+	spacing: "3px",
+	list: [
+		{
+			pagePath: "pages/index/index",
+			iconPath: "/static/tabbar/home_default.png",
+			selectedIconPath: "/static/tabbar/home_selected.png",
+			text: "首页",
+		},
+		{
+			pagePath: "pages/me/me",
+			iconPath: "/static/tabbar/mine_default.png",
+			selectedIconPath: "/static/tabbar/mine_selected.png",
+			text: "我的",
+		},
+	],
+};
 ```
 
 ## 业务路由迁移分析
@@ -330,31 +330,31 @@ repair_modules:
 ```typescript
 // 1. 安装和配置路由插件
 // pages.config.ts
-import { defineUniPages } from '@uni-helper/vite-plugin-uni-pages'
-import { tabBar } from './src/tabbar/config'
+import { defineUniPages } from "@uni-helper/vite-plugin-uni-pages";
+import { tabBar } from "./src/tabbar/config";
 
 export default defineUniPages({
-  // 全局样式配置
-  globalStyle: {
-    navigationStyle: 'default',
-    navigationBarTitleText: '智慧社区物业管理',
-    navigationBarBackgroundColor: '#368CFE',
-    navigationBarTextStyle: 'white',
-    backgroundColor: '#f8f8f8',
-  },
+	// 全局样式配置
+	globalStyle: {
+		navigationStyle: "default",
+		navigationBarTitleText: "智慧社区物业管理",
+		navigationBarBackgroundColor: "#368CFE",
+		navigationBarTextStyle: "white",
+		backgroundColor: "#f8f8f8",
+	},
 
-  // 自动导入组件配置
-  easycom: {
-    autoscan: true,
-    custom: {
-      '^wd-(.*)': 'wot-design-uni/components/wd-$1/wd-$1.vue',
-      '^fg-(.*)': '@/components/fg-$1/fg-$1.vue',
-    },
-  },
+	// 自动导入组件配置
+	easycom: {
+		autoscan: true,
+		custom: {
+			"^wd-(.*)": "wot-design-uni/components/wd-$1/wd-$1.vue",
+			"^fg-(.*)": "@/components/fg-$1/fg-$1.vue",
+		},
+	},
 
-  // TabBar 配置
-  tabBar: tabBar as any,
-})
+	// TabBar 配置
+	tabBar: tabBar as any,
+});
 ```
 
 #### 1.2 创建新的目录结构
@@ -386,41 +386,41 @@ src/pages-sub/               # 分包页面
 ```typescript
 // src/tabbar/config.ts
 export const tabBar = {
-  color: '#272636',
-  selectedColor: '#368CFE',
-  backgroundColor: '#ffffff',
-  borderStyle: 'black',
-  height: '50px',
-  fontSize: '10px',
-  iconWidth: '24px',
-  spacing: '3px',
-  list: [
-    {
-      pagePath: 'pages/index/index',
-      iconPath: '/static/tabbar/home.png',
-      selectedIconPath: '/static/tabbar/home-selected.png',
-      text: '首页',
-    },
-    {
-      pagePath: 'pages/index/work', // 工作台 (新增)
-      iconPath: '/static/tabbar/work.png',
-      selectedIconPath: '/static/tabbar/work-selected.png',
-      text: '工作台',
-    },
-    {
-      pagePath: 'pages/address/index',
-      iconPath: '/static/tabbar/address.png',
-      selectedIconPath: '/static/tabbar/address-selected.png',
-      text: '通讯录',
-    },
-    {
-      pagePath: 'pages/me/me',
-      iconPath: '/static/tabbar/me.png',
-      selectedIconPath: '/static/tabbar/me-selected.png',
-      text: '我的',
-    },
-  ],
-}
+	color: "#272636",
+	selectedColor: "#368CFE",
+	backgroundColor: "#ffffff",
+	borderStyle: "black",
+	height: "50px",
+	fontSize: "10px",
+	iconWidth: "24px",
+	spacing: "3px",
+	list: [
+		{
+			pagePath: "pages/index/index",
+			iconPath: "/static/tabbar/home.png",
+			selectedIconPath: "/static/tabbar/home-selected.png",
+			text: "首页",
+		},
+		{
+			pagePath: "pages/index/work", // 工作台 (新增)
+			iconPath: "/static/tabbar/work.png",
+			selectedIconPath: "/static/tabbar/work-selected.png",
+			text: "工作台",
+		},
+		{
+			pagePath: "pages/address/index",
+			iconPath: "/static/tabbar/address.png",
+			selectedIconPath: "/static/tabbar/address-selected.png",
+			text: "通讯录",
+		},
+		{
+			pagePath: "pages/me/me",
+			iconPath: "/static/tabbar/me.png",
+			selectedIconPath: "/static/tabbar/me-selected.png",
+			text: "我的",
+		},
+	],
+};
 ```
 
 ### 第二阶段：基于映射表的模块化迁移（3-5 天）
@@ -469,17 +469,17 @@ Read: .github\prompts\route-migration-map.yml
 
 <script setup lang="ts">
 definePage({
-  style: {
-    navigationBarTitleText: '维修工单池', // 保持原有标题
-    enablePullDownRefresh: true,
-  },
-})
+	style: {
+		navigationBarTitleText: "维修工单池", // 保持原有标题
+		enablePullDownRefresh: true,
+	},
+});
 </script>
 
 <template>
-  <view class="repair-order-page">
-    <!-- 迁移原有页面内容 -->
-  </view>
+	<view class="repair-order-page">
+		<!-- 迁移原有页面内容 -->
+	</view>
 </template>
 ```
 
@@ -546,56 +546,56 @@ src/router/index.ts (导出层)
 ```typescript
 /** 1. PageRoute - 所有页面路由的联合类型 */
 export type PageRoute =
-  /** 主包页面 */
-  | '/pages/index/index'
-  | '/pages/about/about'
-  | '/pages/me/me'
-  | '/pages/login/login'
-  | '/pages/address/list'
-  | '/pages/activity/index'
-  | '/pages/activity/detail'
-  /** 分包页面 */
-  | '/pages-sub/repair/order-list'
-  | '/pages-sub/repair/add-order'
-  | '/pages-sub/repair/order-detail'
-  | '/pages-sub/complaint/list'
-  | '/pages-sub/complaint/detail'
-  | '/pages-sub/complaint/handle'
-  | '/pages-sub/inspection/list'
-  | '/pages-sub/inspection/execute'
+	/** 主包页面 */
+	| "/pages/index/index"
+	| "/pages/about/about"
+	| "/pages/me/me"
+	| "/pages/login/login"
+	| "/pages/address/list"
+	| "/pages/activity/index"
+	| "/pages/activity/detail"
+	/** 分包页面 */
+	| "/pages-sub/repair/order-list"
+	| "/pages-sub/repair/add-order"
+	| "/pages-sub/repair/order-detail"
+	| "/pages-sub/complaint/list"
+	| "/pages-sub/complaint/detail"
+	| "/pages-sub/complaint/handle"
+	| "/pages-sub/inspection/list"
+	| "/pages-sub/inspection/execute";
 
 /** 2. TabRoute - Tab页面路由的联合类型 */
-export type TabRoute = '/pages/index/index' | '/pages/address/list' | '/pages/me/me'
+export type TabRoute = "/pages/index/index" | "/pages/address/list" | "/pages/me/me";
 
 /** 3. PageParams - 页面参数的类型映射接口 */
 export interface PageParams {
-  '/pages/index/index': {}
-  '/pages/login/login': {
-    redirect?: string
-  }
-  '/pages/activity/detail': {
-    activitiesId: string
-    currentCommunityId: string
-  }
-  /** 维修模块参数 */
-  '/pages-sub/repair/order-list': {
-    status?: 'pending' | 'processing' | 'completed'
-    type?: string
-  }
-  '/pages-sub/repair/order-detail': {
-    repairId: string
-    status?: string
-  }
-  /** 投诉模块参数 */
-  '/pages-sub/complaint/detail': {
-    complaintId: string
-  }
-  /** 巡检模块参数 */
-  '/pages-sub/inspection/execute': {
-    taskId: string
-    type?: 'normal' | 'reexamine'
-  }
-  // ... 更多路径参数定义
+	"/pages/index/index": {};
+	"/pages/login/login": {
+		redirect?: string;
+	};
+	"/pages/activity/detail": {
+		activitiesId: string;
+		currentCommunityId: string;
+	};
+	/** 维修模块参数 */
+	"/pages-sub/repair/order-list": {
+		status?: "pending" | "processing" | "completed";
+		type?: string;
+	};
+	"/pages-sub/repair/order-detail": {
+		repairId: string;
+		status?: string;
+	};
+	/** 投诉模块参数 */
+	"/pages-sub/complaint/detail": {
+		complaintId: string;
+	};
+	/** 巡检模块参数 */
+	"/pages-sub/inspection/execute": {
+		taskId: string;
+		type?: "normal" | "reexamine";
+	};
+	// ... 更多路径参数定义
 }
 ```
 
@@ -608,35 +608,35 @@ export interface PageParams {
 ```typescript
 /** 类型安全的路由跳转函数 */
 export function navigateToTyped<T extends keyof PageParams>(
-  url: T,
-  params?: PageParams[T],
-  options?: UniApp.NavigateToOptions,
+	url: T,
+	params?: PageParams[T],
+	options?: UniApp.NavigateToOptions,
 ) {
-  let fullUrl: string = url
-  if (params && Object.keys(params).length > 0) {
-    const query = new URLSearchParams(params as any).toString()
-    fullUrl = `${url}?${query}`
-  }
+	let fullUrl: string = url;
+	if (params && Object.keys(params).length > 0) {
+		const query = new URLSearchParams(params as any).toString();
+		fullUrl = `${url}?${query}`;
+	}
 
-  return uni.navigateTo({
-    url: fullUrl,
-    ...options,
-  })
+	return uni.navigateTo({
+		url: fullUrl,
+		...options,
+	});
 }
 
 /** 类型安全的重定向函数 */
 export function redirectToTyped<T extends keyof PageParams>(url: T, params?: PageParams[T]) {
-  // 实现逻辑...
+	// 实现逻辑...
 }
 
 /** 类型安全的Tab切换函数 */
 export function switchTabTyped(url: TabRoute) {
-  return uni.switchTab({ url })
+	return uni.switchTab({ url });
 }
 
 /** 返回上一页或指定页面 */
 export function goBack(delta: number = 1) {
-  // 实现逻辑...
+	// 实现逻辑...
 }
 ```
 
@@ -645,62 +645,62 @@ export function goBack(delta: number = 1) {
 ```typescript
 /** 路由工具类 - 提供业务级别的路由跳转方法 */
 export class TypedRouter {
-  /** 维修模块导航 */
-  static toRepairList(params?: PageParams['/pages-sub/repair/order-list']) {
-    return navigateToTyped('/pages-sub/repair/order-list', params)
-  }
+	/** 维修模块导航 */
+	static toRepairList(params?: PageParams["/pages-sub/repair/order-list"]) {
+		return navigateToTyped("/pages-sub/repair/order-list", params);
+	}
 
-  static toRepairDetail(repairId: string, status?: string) {
-    return navigateToTyped('/pages-sub/repair/order-detail', { repairId, status })
-  }
+	static toRepairDetail(repairId: string, status?: string) {
+		return navigateToTyped("/pages-sub/repair/order-detail", { repairId, status });
+	}
 
-  static toAddRepair(communityId?: string) {
-    return navigateToTyped('/pages-sub/repair/add-order', { communityId })
-  }
+	static toAddRepair(communityId?: string) {
+		return navigateToTyped("/pages-sub/repair/add-order", { communityId });
+	}
 
-  /** 投诉模块导航 */
-  static toComplaintList(params?: PageParams['/pages-sub/complaint/list']) {
-    return navigateToTyped('/pages-sub/complaint/list', params)
-  }
+	/** 投诉模块导航 */
+	static toComplaintList(params?: PageParams["/pages-sub/complaint/list"]) {
+		return navigateToTyped("/pages-sub/complaint/list", params);
+	}
 
-  static toComplaintDetail(complaintId: string) {
-    return navigateToTyped('/pages-sub/complaint/detail', { complaintId })
-  }
+	static toComplaintDetail(complaintId: string) {
+		return navigateToTyped("/pages-sub/complaint/detail", { complaintId });
+	}
 
-  static toComplaintHandle(complaintId: string) {
-    return navigateToTyped('/pages-sub/complaint/handle', { complaintId })
-  }
+	static toComplaintHandle(complaintId: string) {
+		return navigateToTyped("/pages-sub/complaint/handle", { complaintId });
+	}
 
-  /** 巡检模块导航 */
-  static toInspectionList(params?: PageParams['/pages-sub/inspection/list']) {
-    return navigateToTyped('/pages-sub/inspection/list', params)
-  }
+	/** 巡检模块导航 */
+	static toInspectionList(params?: PageParams["/pages-sub/inspection/list"]) {
+		return navigateToTyped("/pages-sub/inspection/list", params);
+	}
 
-  static toInspectionExecute(taskId: string, type?: 'normal' | 'reexamine') {
-    return navigateToTyped('/pages-sub/inspection/execute', { taskId, type })
-  }
+	static toInspectionExecute(taskId: string, type?: "normal" | "reexamine") {
+		return navigateToTyped("/pages-sub/inspection/execute", { taskId, type });
+	}
 
-  /** 基础页面导航 */
-  static toLogin(redirect?: string) {
-    return navigateToTyped('/pages/login/login', { redirect })
-  }
+	/** 基础页面导航 */
+	static toLogin(redirect?: string) {
+		return navigateToTyped("/pages/login/login", { redirect });
+	}
 
-  static toActivityDetail(activitiesId: string, currentCommunityId: string) {
-    return navigateToTyped('/pages/activity/detail', { activitiesId, currentCommunityId })
-  }
+	static toActivityDetail(activitiesId: string, currentCommunityId: string) {
+		return navigateToTyped("/pages/activity/detail", { activitiesId, currentCommunityId });
+	}
 
-  /** Tab页面切换 */
-  static toHome() {
-    return switchTabTyped('/pages/index/index')
-  }
+	/** Tab页面切换 */
+	static toHome() {
+		return switchTabTyped("/pages/index/index");
+	}
 
-  static toAddressList() {
-    return switchTabTyped('/pages/address/list')
-  }
+	static toAddressList() {
+		return switchTabTyped("/pages/address/list");
+	}
 
-  static toMe() {
-    return switchTabTyped('/pages/me/me')
-  }
+	static toMe() {
+		return switchTabTyped("/pages/me/me");
+	}
 }
 ```
 
@@ -709,39 +709,39 @@ export class TypedRouter {
 ```typescript
 /** 通用导航工具类 */
 export class NavigationUtils {
-  /** 预加载页面 */
-  static preloadPage<T extends keyof PageParams>(url: T, params?: PageParams[T]) {
-    const query = params ? `?${new URLSearchParams(params as any).toString()}` : ''
-    return uni.preloadPage({ url: url + query })
-  }
+	/** 预加载页面 */
+	static preloadPage<T extends keyof PageParams>(url: T, params?: PageParams[T]) {
+		const query = params ? `?${new URLSearchParams(params as any).toString()}` : "";
+		return uni.preloadPage({ url: url + query });
+	}
 
-  /** 获取当前页面路径 */
-  static getCurrentPagePath(): string {
-    const pages = getCurrentPages()
-    if (pages.length > 0) {
-      return `/${(pages[pages.length - 1] as any).route}`
-    }
-    return ''
-  }
+	/** 获取当前页面路径 */
+	static getCurrentPagePath(): string {
+		const pages = getCurrentPages();
+		if (pages.length > 0) {
+			return `/${(pages[pages.length - 1] as any).route}`;
+		}
+		return "";
+	}
 
-  /** 检查是否可以返回 */
-  static canGoBack(): boolean {
-    return getCurrentPages().length > 1
-  }
+	/** 检查是否可以返回 */
+	static canGoBack(): boolean {
+		return getCurrentPages().length > 1;
+	}
 
-  /** 安全返回（如果无法返回则跳转到首页） */
-  static safeGoBack() {
-    if (this.canGoBack()) {
-      goBack()
-    } else {
-      switchTabTyped('/pages/index/index')
-    }
-  }
+	/** 安全返回（如果无法返回则跳转到首页） */
+	static safeGoBack() {
+		if (this.canGoBack()) {
+			goBack();
+		} else {
+			switchTabTyped("/pages/index/index");
+		}
+	}
 
-  /** 重新加载当前页面 */
-  static reloadCurrentPage() {
-    // 实现逻辑...
-  }
+	/** 重新加载当前页面 */
+	static reloadCurrentPage() {
+		// 实现逻辑...
+	}
 }
 ```
 
@@ -795,38 +795,38 @@ export class NavigationUtils {
 
 // 1.1 添加到 PageRoute 联合类型
 export type PageRoute =
-  | '/pages/index/index'
-  // ... 现有路径
-  | '/pages-sub/notice/list' // 新增: 公告列表
-  | '/pages-sub/notice/detail' // 新增: 公告详情
-  | '/pages-sub/notice/publish' // 新增: 发布公告
+	| "/pages/index/index"
+	// ... 现有路径
+	| "/pages-sub/notice/list" // 新增: 公告列表
+	| "/pages-sub/notice/detail" // 新增: 公告详情
+	| "/pages-sub/notice/publish"; // 新增: 发布公告
 
 // 1.2 如果是 Tab 页面，添加到 TabRoute
 export type TabRoute =
-  | '/pages/index/index'
-  // ... 现有路径
-  | '/pages/notice/index' // 新增: 公告Tab页
+	| "/pages/index/index"
+	// ... 现有路径
+	| "/pages/notice/index"; // 新增: 公告Tab页
 
 // ============================================
 // 步骤2: 在 PageParams 接口中定义参数类型
 // ============================================
 
 export interface PageParams {
-  // ... 现有参数定义
+	// ... 现有参数定义
 
-  /** 公告模块参数 */
-  '/pages-sub/notice/list': {
-    type?: 'system' | 'community' | 'activity'
-    communityId?: string
-  }
-  '/pages-sub/notice/detail': {
-    noticeId: string // 必填参数
-    from?: 'list' | 'home' // 可选参数
-  }
-  '/pages-sub/notice/publish': {
-    communityId: string
-    type: 'system' | 'community' | 'activity'
-  }
+	/** 公告模块参数 */
+	"/pages-sub/notice/list": {
+		type?: "system" | "community" | "activity";
+		communityId?: string;
+	};
+	"/pages-sub/notice/detail": {
+		noticeId: string; // 必填参数
+		from?: "list" | "home"; // 可选参数
+	};
+	"/pages-sub/notice/publish": {
+		communityId: string;
+		type: "system" | "community" | "activity";
+	};
 }
 
 // ============================================
@@ -834,20 +834,20 @@ export interface PageParams {
 // ============================================
 
 export class TypedRouter {
-  // ... 现有方法
+	// ... 现有方法
 
-  /** 公告模块导航 */
-  static toNoticeList(params?: PageParams['/pages-sub/notice/list']) {
-    return navigateToTyped('/pages-sub/notice/list', params)
-  }
+	/** 公告模块导航 */
+	static toNoticeList(params?: PageParams["/pages-sub/notice/list"]) {
+		return navigateToTyped("/pages-sub/notice/list", params);
+	}
 
-  static toNoticeDetail(noticeId: string, from?: 'list' | 'home') {
-    return navigateToTyped('/pages-sub/notice/detail', { noticeId, from })
-  }
+	static toNoticeDetail(noticeId: string, from?: "list" | "home") {
+		return navigateToTyped("/pages-sub/notice/detail", { noticeId, from });
+	}
 
-  static toPublishNotice(communityId: string, type: 'system' | 'community' | 'activity') {
-    return navigateToTyped('/pages-sub/notice/publish', { communityId, type })
-  }
+	static toPublishNotice(communityId: string, type: "system" | "community" | "activity") {
+		return navigateToTyped("/pages-sub/notice/publish", { communityId, type });
+	}
 }
 
 // ============================================
@@ -855,24 +855,24 @@ export class TypedRouter {
 // ============================================
 
 export const {
-  // ... 现有导出
-  toNoticeList,
-  toNoticeDetail,
-  toPublishNotice,
-} = TypedRouter
+	// ... 现有导出
+	toNoticeList,
+	toNoticeDetail,
+	toPublishNotice,
+} = TypedRouter;
 
 // ============================================
 // 步骤5: 更新 isValidRoute 函数（如需运行时验证）
 // ============================================
 
 export function isValidRoute(path: string): path is PageRoute {
-  const validRoutes: PageRoute[] = [
-    // ... 现有路径
-    '/pages-sub/notice/list',
-    '/pages-sub/notice/detail',
-    '/pages-sub/notice/publish',
-  ]
-  return validRoutes.includes(path as PageRoute)
+	const validRoutes: PageRoute[] = [
+		// ... 现有路径
+		"/pages-sub/notice/list",
+		"/pages-sub/notice/detail",
+		"/pages-sub/notice/publish",
+	];
+	return validRoutes.includes(path as PageRoute);
 }
 ```
 
@@ -909,86 +909,86 @@ export function isValidRoute(path: string): path is PageRoute {
 ```typescript
 // ===== 场景1: 带多个参数的跳转 =====
 // Vue2 写法:
-const url = `/pages-sub/repair/order-detail?repairId=${id}&status=${status}&from=list`
-uni.navigateTo({ url })
+const url = `/pages-sub/repair/order-detail?repairId=${id}&status=${status}&from=list`;
+uni.navigateTo({ url });
 
 // Vue3 类型化写法:
-TypedRouter.toRepairDetail(id, status)
+TypedRouter.toRepairDetail(id, status);
 // 注意: 'from' 参数如果需要，应该在 PageParams 中定义
 
 // ===== 场景2: 条件跳转 =====
 // Vue2 写法:
 if (hasPermission) {
-  uni.navigateTo({ url: '/pages-sub/complaint/handle?complaintId=' + id })
+	uni.navigateTo({ url: "/pages-sub/complaint/handle?complaintId=" + id });
 } else {
-  uni.navigateTo({ url: '/pages-sub/complaint/detail?complaintId=' + id })
+	uni.navigateTo({ url: "/pages-sub/complaint/detail?complaintId=" + id });
 }
 
 // Vue3 类型化写法:
 if (hasPermission) {
-  TypedRouter.toComplaintHandle(id)
+	TypedRouter.toComplaintHandle(id);
 } else {
-  TypedRouter.toComplaintDetail(id)
+	TypedRouter.toComplaintDetail(id);
 }
 
 // ===== 场景3: 列表跳转详情 =====
 // Vue2 写法:
 function handleItemClick(item) {
-  uni.navigateTo({
-    url: `/pages-sub/repair/order-detail?repairId=${item.id}&status=${item.status}`,
-  })
+	uni.navigateTo({
+		url: `/pages-sub/repair/order-detail?repairId=${item.id}&status=${item.status}`,
+	});
 }
 
 // Vue3 类型化写法:
 function handleItemClick(item: { id: string; status: string }) {
-  TypedRouter.toRepairDetail(item.id, item.status)
+	TypedRouter.toRepairDetail(item.id, item.status);
 }
 
 // ===== 场景4: 带状态筛选的列表页 =====
 // Vue2 写法:
 uni.navigateTo({
-  url: '/pages-sub/repair/order-list?status=pending&type=emergency',
-})
+	url: "/pages-sub/repair/order-list?status=pending&type=emergency",
+});
 
 // Vue3 类型化写法:
 TypedRouter.toRepairList({
-  status: 'pending',
-  type: 'emergency',
-})
+	status: "pending",
+	type: "emergency",
+});
 
 // ===== 场景5: 返回逻辑 =====
 // Vue2 写法:
 function goBackOrHome() {
-  const pages = getCurrentPages()
-  if (pages.length > 1) {
-    uni.navigateBack()
-  } else {
-    uni.switchTab({ url: '/pages/index/index' })
-  }
+	const pages = getCurrentPages();
+	if (pages.length > 1) {
+		uni.navigateBack();
+	} else {
+		uni.switchTab({ url: "/pages/index/index" });
+	}
 }
 
 // Vue3 类型化写法:
 function goBackOrHome() {
-  NavigationUtils.safeGoBack()
+	NavigationUtils.safeGoBack();
 }
 
 // ===== 场景6: 需要自定义动画的跳转 =====
 // Vue2 写法:
 uni.navigateTo({
-  url: '/pages-sub/repair/order-detail?repairId=' + id,
-  animationType: 'slide-in-bottom',
-  animationDuration: 300,
-})
+	url: "/pages-sub/repair/order-detail?repairId=" + id,
+	animationType: "slide-in-bottom",
+	animationDuration: 300,
+});
 
 // Vue3 类型化写法:
 navigateToTyped(
-  '/pages-sub/repair/order-detail',
-  { repairId: id },
-  {
-    animationType: 'slide-in-bottom',
-    animationDuration: 300,
-  },
-)
+	"/pages-sub/repair/order-detail",
+	{ repairId: id },
+	{
+		animationType: "slide-in-bottom",
+		animationDuration: 300,
+	},
+);
 ```
 
 **特殊注意事项**:
@@ -1050,28 +1050,28 @@ src/pages-sub/notice/publish.vue
 
 ```typescript
 export type PageRoute =
-  | '/pages/index/index'
-  // ... 现有路径
-  | '/pages-sub/notice/list' // ✅ 新增
-  | '/pages-sub/notice/detail' // ✅ 新增
-  | '/pages-sub/notice/publish' // ✅ 新增
+	| "/pages/index/index"
+	// ... 现有路径
+	| "/pages-sub/notice/list" // ✅ 新增
+	| "/pages-sub/notice/detail" // ✅ 新增
+	| "/pages-sub/notice/publish"; // ✅ 新增
 
 export interface PageParams {
-  // ... 现有参数定义
+	// ... 现有参数定义
 
-  /** 公告模块参数 */
-  '/pages-sub/notice/list': {
-    type?: 'system' | 'community' | 'activity'
-    communityId?: string
-  }
-  '/pages-sub/notice/detail': {
-    noticeId: string
-    from?: 'list' | 'home'
-  }
-  '/pages-sub/notice/publish': {
-    communityId: string
-    type: 'system' | 'community' | 'activity'
-  }
+	/** 公告模块参数 */
+	"/pages-sub/notice/list": {
+		type?: "system" | "community" | "activity";
+		communityId?: string;
+	};
+	"/pages-sub/notice/detail": {
+		noticeId: string;
+		from?: "list" | "home";
+	};
+	"/pages-sub/notice/publish": {
+		communityId: string;
+		type: "system" | "community" | "activity";
+	};
 }
 ```
 
@@ -1079,20 +1079,20 @@ export interface PageParams {
 
 ```typescript
 export class TypedRouter {
-  // ... 现有方法
+	// ... 现有方法
 
-  /** 公告模块导航 */
-  static toNoticeList(params?: PageParams['/pages-sub/notice/list']) {
-    return navigateToTyped('/pages-sub/notice/list', params)
-  }
+	/** 公告模块导航 */
+	static toNoticeList(params?: PageParams["/pages-sub/notice/list"]) {
+		return navigateToTyped("/pages-sub/notice/list", params);
+	}
 
-  static toNoticeDetail(noticeId: string, from?: 'list' | 'home') {
-    return navigateToTyped('/pages-sub/notice/detail', { noticeId, from })
-  }
+	static toNoticeDetail(noticeId: string, from?: "list" | "home") {
+		return navigateToTyped("/pages-sub/notice/detail", { noticeId, from });
+	}
 
-  static toPublishNotice(communityId: string, type: 'system' | 'community' | 'activity') {
-    return navigateToTyped('/pages-sub/notice/publish', { communityId, type })
-  }
+	static toPublishNotice(communityId: string, type: "system" | "community" | "activity") {
+		return navigateToTyped("/pages-sub/notice/publish", { communityId, type });
+	}
 }
 ```
 
@@ -1100,24 +1100,24 @@ export class TypedRouter {
 
 ```typescript
 export const {
-  // ... 现有导出
-  toNoticeList,
-  toNoticeDetail,
-  toPublishNotice,
-} = TypedRouter
+	// ... 现有导出
+	toNoticeList,
+	toNoticeDetail,
+	toPublishNotice,
+} = TypedRouter;
 ```
 
 **3.4 更新 `isValidRoute` 函数**:
 
 ```typescript
 export function isValidRoute(path: string): path is PageRoute {
-  const validRoutes: PageRoute[] = [
-    // ... 现有路径
-    '/pages-sub/notice/list',
-    '/pages-sub/notice/detail',
-    '/pages-sub/notice/publish',
-  ]
-  return validRoutes.includes(path as PageRoute)
+	const validRoutes: PageRoute[] = [
+		// ... 现有路径
+		"/pages-sub/notice/list",
+		"/pages-sub/notice/detail",
+		"/pages-sub/notice/publish",
+	];
+	return validRoutes.includes(path as PageRoute);
 }
 ```
 
@@ -1127,26 +1127,26 @@ export function isValidRoute(path: string): path is PageRoute {
 
 ```vue
 <script setup lang="ts">
-import { TypedRouter } from '@/router'
+import { TypedRouter } from "@/router";
 
 /** 跳转到公告详情 */
 function handleNoticeClick(noticeId: string) {
-  // ❌ Vue2 写法 (禁止使用):
-  // uni.navigateTo({ url: '/pages/notice/noticeDetail?noticeId=' + noticeId })
+	// ❌ Vue2 写法 (禁止使用):
+	// uni.navigateTo({ url: '/pages/notice/noticeDetail?noticeId=' + noticeId })
 
-  // ✅ Vue3 类型化写法:
-  TypedRouter.toNoticeDetail(noticeId, 'list')
+	// ✅ Vue3 类型化写法:
+	TypedRouter.toNoticeDetail(noticeId, "list");
 }
 
 /** 跳转到发布公告 */
 function handlePublish() {
-  const communityId = 'community123'
+	const communityId = "community123";
 
-  // ❌ Vue2 写法 (禁止使用):
-  // uni.navigateTo({ url: '/pages/notice/publishNotice?communityId=' + communityId })
+	// ❌ Vue2 写法 (禁止使用):
+	// uni.navigateTo({ url: '/pages/notice/publishNotice?communityId=' + communityId })
 
-  // ✅ Vue3 类型化写法:
-  TypedRouter.toPublishNotice(communityId, 'community')
+	// ✅ Vue3 类型化写法:
+	TypedRouter.toPublishNotice(communityId, "community");
 }
 </script>
 ```
@@ -1155,20 +1155,20 @@ function handlePublish() {
 
 ```vue
 <script setup lang="ts">
-import { NavigationUtils } from '@/router'
+import { NavigationUtils } from "@/router";
 
 /** 返回列表或首页 */
 function handleBack() {
-  // ❌ Vue2 写法 (禁止使用):
-  // const pages = getCurrentPages()
-  // if (pages.length > 1) {
-  //   uni.navigateBack()
-  // } else {
-  //   uni.switchTab({ url: '/pages/index/index' })
-  // }
+	// ❌ Vue2 写法 (禁止使用):
+	// const pages = getCurrentPages()
+	// if (pages.length > 1) {
+	//   uni.navigateBack()
+	// } else {
+	//   uni.switchTab({ url: '/pages/index/index' })
+	// }
 
-  // ✅ Vue3 类型化写法:
-  NavigationUtils.safeGoBack()
+	// ✅ Vue3 类型化写法:
+	NavigationUtils.safeGoBack();
 }
 </script>
 ```
@@ -1188,16 +1188,16 @@ notice_modules: ✅  # 标记整个模块已完成
 
 ```typescript
 // 可以在浏览器控制台或页面中测试
-import { TypedRouter } from '@/router'
+import { TypedRouter } from "@/router";
 
 // 测试1: 跳转到公告列表
-TypedRouter.toNoticeList({ type: 'system' })
+TypedRouter.toNoticeList({ type: "system" });
 
 // 测试2: 跳转到公告详情
-TypedRouter.toNoticeDetail('notice123', 'list')
+TypedRouter.toNoticeDetail("notice123", "list");
 
 // 测试3: 跳转到发布公告
-TypedRouter.toPublishNotice('community456', 'community')
+TypedRouter.toPublishNotice("community456", "community");
 ```
 
 ### 类型化路由系统的优势
@@ -1206,17 +1206,17 @@ TypedRouter.toPublishNotice('community456', 'community')
 
 ```typescript
 // ✅ 正确 - TypeScript 会检查参数类型
-TypedRouter.toNoticeDetail('notice123', 'list')
+TypedRouter.toNoticeDetail("notice123", "list");
 
 // ❌ 错误 - TypeScript 会报错：类型 "invalid" 不可分配给类型 "list" | "home"
-TypedRouter.toNoticeDetail('notice123', 'invalid')
+TypedRouter.toNoticeDetail("notice123", "invalid");
 ```
 
 **2. IDE 智能提示**:
 
 ```typescript
 // 输入 TypedRouter. 后会自动提示所有可用方法
-TypedRouter.to // IDE会提示: toNoticeList, toNoticeDetail, toRepairList...
+TypedRouter.to; // IDE会提示: toNoticeList, toNoticeDetail, toRepairList...
 ```
 
 **3. 重构安全**:
@@ -1230,10 +1230,10 @@ TypedRouter.to // IDE会提示: toNoticeList, toNoticeDetail, toRepairList...
 
 ```typescript
 // ✅ 正确 - 必填参数已提供
-TypedRouter.toNoticeDetail('notice123')
+TypedRouter.toNoticeDetail("notice123");
 
 // ❌ 错误 - TypeScript 会报错：应有 1-2 个参数，但获得 0 个
-TypedRouter.toNoticeDetail()
+TypedRouter.toNoticeDetail();
 ```
 
 ### 映射表驱动的迁移总结
@@ -1303,24 +1303,24 @@ TypedRouter.toNoticeDetail()
 ```typescript
 // 预加载关键页面
 export function preloadCriticalPages() {
-  // 预加载工作台页面
-  uni.preloadPage({
-    url: '/pages/index/work',
-  })
+	// 预加载工作台页面
+	uni.preloadPage({
+		url: "/pages/index/work",
+	});
 
-  // 预加载常用功能页面
-  uni.preloadPage({
-    url: '/pages/repair/order',
-  })
+	// 预加载常用功能页面
+	uni.preloadPage({
+		url: "/pages/repair/order",
+	});
 }
 
 // 路由缓存优化
 export function setupRouteCache() {
-  // 缓存列表页面状态
-  const listPageCache = new Map()
+	// 缓存列表页面状态
+	const listPageCache = new Map();
 
-  // 在列表页面离开时缓存状态
-  // 在返回时恢复状态
+	// 在列表页面离开时缓存状态
+	// 在返回时恢复状态
 }
 ```
 
@@ -1328,19 +1328,19 @@ export function setupRouteCache() {
 
 ```typescript
 // 开发环境路由调试
-if (process.env.NODE_ENV === 'development') {
-  // 路由跳转日志
-  uni.addInterceptor('navigateTo', {
-    invoke(args) {
-      console.log('🚀 Navigate to:', args.url)
-    },
-  })
+if (process.env.NODE_ENV === "development") {
+	// 路由跳转日志
+	uni.addInterceptor("navigateTo", {
+		invoke(args) {
+			console.log("🚀 Navigate to:", args.url);
+		},
+	});
 
-  // 页面性能监控
-  uni.addInterceptor('navigateTo', {
-    complete() {
-      console.log('⏱️ Page load time:', performance.now())
-    },
-  })
+	// 页面性能监控
+	uni.addInterceptor("navigateTo", {
+		complete() {
+			console.log("⏱️ Page load time:", performance.now());
+		},
+	});
 }
 ```

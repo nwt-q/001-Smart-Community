@@ -24,11 +24,7 @@ const AUTH_REQUIRED_PAGES: PageRoute[] = [
 ]
 
 /** 游客可访问的页面列表 */
-const GUEST_ALLOWED_PAGES = [
-  '/pages/index/index',
-  '/pages/login/login',
-  '/pages/about/about',
-]
+const GUEST_ALLOWED_PAGES = ['/pages/index/index', '/pages/login/login', '/pages/about/about']
 
 /**
  * 检查用户是否已登录
@@ -120,9 +116,7 @@ export function setupRouteGuards() {
     invoke(args) {
       const { url } = args
       const currentPages = getCurrentPages()
-      const from = currentPages.length > 0
-        ? `/${(currentPages[currentPages.length - 1] as any).route}`
-        : ''
+      const from = currentPages.length > 0 ? `/${(currentPages[currentPages.length - 1] as any).route}` : ''
 
       // 执行守卫检查
       if (!authGuard(url, from))
@@ -147,9 +141,7 @@ export function setupRouteGuards() {
     invoke(args) {
       const { url } = args
       const currentPages = getCurrentPages()
-      const from = currentPages.length > 0
-        ? `/${(currentPages[currentPages.length - 1] as any).route}`
-        : ''
+      const from = currentPages.length > 0 ? `/${(currentPages[currentPages.length - 1] as any).route}` : ''
 
       // 对于 redirectTo，通常不需要登录检查，因为可能本身就是去登录页
       if (!permissionGuard(url, from))
@@ -166,9 +158,7 @@ export function setupRouteGuards() {
     invoke(args) {
       const { url } = args
       const currentPages = getCurrentPages()
-      const from = currentPages.length > 0
-        ? `/${(currentPages[currentPages.length - 1] as any).route}`
-        : ''
+      const from = currentPages.length > 0 ? `/${(currentPages[currentPages.length - 1] as any).route}` : ''
 
       // Tab页面的权限检查
       if (!authGuard(url, from))

@@ -152,7 +152,7 @@ catch (error) {
  * if (error) showToast(error)
  */
 function validateForm(): string {
-  // ...
+	// ...
 }
 ```
 

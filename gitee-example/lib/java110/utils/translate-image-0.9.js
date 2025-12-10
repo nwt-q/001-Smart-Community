@@ -9,60 +9,56 @@
 */
 
 export function translate(imgSrc, callback) {
+	var img = new Image();
 
-    var img = new Image();
+	img.src = imgSrc;
 
-    img.src = imgSrc;
+	img.onload = function () {
+		var that = this;
 
-    img.onload = function () {
+		var h = that.height;
 
-        var that = this;
+		// 默认按比例压缩
 
-        var h = that.height;
+		var w = that.width;
 
-        // 默认按比例压缩
+		var canvas = document.createElement("canvas");
 
-        var w = that.width;
+		var ctx = canvas.getContext("2d");
 
-        var canvas = document.createElement('canvas');
+		var anw = document.createAttribute("width");
 
-        var ctx = canvas.getContext('2d');
+		anw.nodeValue = w;
 
-        var anw = document.createAttribute("width");
+		var anh = document.createAttribute("height");
 
-        anw.nodeValue = w;
+		anh.nodeValue = h;
 
-        var anh = document.createAttribute("height");
+		canvas.setAttributeNode(anw);
 
-        anh.nodeValue = h;
+		canvas.setAttributeNode(anh);
 
-        canvas.setAttributeNode(anw);
+		ctx.drawImage(that, 0, 0, w, h);
 
-        canvas.setAttributeNode(anh);
+		//压缩比例
 
-        ctx.drawImage(that, 0, 0, w, h);
+		var quality = 0.3;
 
-        //压缩比例
+		var base64 = canvas.toDataURL("image/jpeg", quality);
 
-        var quality = 0.3;
+		canvas = null;
 
-        var base64 = canvas.toDataURL('image/jpeg', quality);
+		// var blob = base64ToBlob(base64);
 
-        canvas = null;
+		//                 console.log(333);
+		// console.log(base64)
 
-        // var blob = base64ToBlob(base64);
+		//Blob对象转blob地址
 
-        //                 console.log(333);
-        // console.log(base64)
+		// var blobUrl = window.URL.createObjectURL(blob);
 
-        //Blob对象转blob地址
-
-        // var blobUrl = window.URL.createObjectURL(blob);
-
-        callback(base64);
-
-    }
-
+		callback(base64);
+	};
 }
 
 /**
@@ -74,27 +70,17 @@ export function translate(imgSrc, callback) {
 */
 
 export function base64ToBlob(base64) {
+	var arr = base64.split(","),
+		mime = arr[0].match(/:(.*?);/)[1],
+		bstr = atob(arr[1]),
+		n = bstr.length,
+		u8arr = new Uint8Array(n);
 
-    var arr = base64.split(','),
+	while (n--) {
+		u8arr[n] = bstr.charCodeAt(n);
+	}
 
-        mime = arr[0].match(/:(.*?);/)[1],
-
-        bstr = atob(arr[1]),
-
-        n = bstr.length,
-
-        u8arr = new Uint8Array(n);
-
-    while (n--) {
-
-        u8arr[n] = bstr.charCodeAt(n);
-
-    }
-
-    return new Blob([u8arr], {
-
-        type: mime
-
-    });
-
+	return new Blob([u8arr], {
+		type: mime,
+	});
 }

@@ -17,7 +17,6 @@
 # ====================================================================
 
 route_mappings:
-
   # ===== 1. 基础模块 (8个页面) =====
   basic_modules:
     gitee-example/pages/index/index.vue: src/pages/index/index.vue

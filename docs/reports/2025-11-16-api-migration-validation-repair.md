@@ -136,12 +136,12 @@
 
 ```typescript
 // ✅ 正确用法
-return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
-return errorResponse('参数错误', ResultEnumMap.Error)
+return errorResponse("维修工单不存在", ResultEnumMap.NotFound);
+return errorResponse("参数错误", ResultEnumMap.Error);
 
 // ❌ 错误用法 (未出现)
-return errorResponse('资源不存在', '404') // 硬编码
-return errorResponse('资源不存在', ResultEnum.NotFound) // 路径别名
+return errorResponse("资源不存在", "404"); // 硬编码
+return errorResponse("资源不存在", ResultEnum.NotFound); // 路径别名
 ```
 
 ### 4.4 类型安全规范
@@ -159,8 +159,8 @@ return errorResponse('资源不存在', ResultEnum.NotFound) // 路径别名
 
 ```typescript
 // 标准格式
-mockLog('listOwnerRepairs', params, `→ ${result.list.length} items`)
-mockLog('queryOwnerRepair', params.repairId, `→ ${repair.title}`)
+mockLog("listOwnerRepairs", params, `→ ${result.list.length} items`);
+mockLog("queryOwnerRepair", params.repairId, `→ ${repair.title}`);
 ```
 
 ## 5. 专项验证结果
@@ -184,14 +184,14 @@ mockLog('queryOwnerRepair', params.repairId, `→ ${repair.title}`)
 
 ```typescript
 repairSettings: [
-  { repairType: '1001', repairTypeName: '水电维修', payFeeFlag: 'T', priceScope: '50-300元', publicArea: 'T' },
-  { repairType: '1002', repairTypeName: '门窗维修', payFeeFlag: 'T', priceScope: '80-400元', publicArea: 'T' },
-  { repairType: '1003', repairTypeName: '空调维修', payFeeFlag: 'T', priceScope: '100-500元', publicArea: 'T' },
-  { repairType: '1004', repairTypeName: '电梯维修', payFeeFlag: 'F', priceScope: undefined, publicArea: 'T' },
-  { repairType: '1005', repairTypeName: '管道疏通', payFeeFlag: 'T', priceScope: '60-200元', publicArea: 'F' },
-  { repairType: '1006', repairTypeName: '墙面修补', payFeeFlag: 'T', priceScope: '40-250元', publicArea: 'F' },
-  { repairType: '1007', repairTypeName: '其他维修', payFeeFlag: 'T', priceScope: '30-500元', publicArea: 'F' },
-]
+	{ repairType: "1001", repairTypeName: "水电维修", payFeeFlag: "T", priceScope: "50-300元", publicArea: "T" },
+	{ repairType: "1002", repairTypeName: "门窗维修", payFeeFlag: "T", priceScope: "80-400元", publicArea: "T" },
+	{ repairType: "1003", repairTypeName: "空调维修", payFeeFlag: "T", priceScope: "100-500元", publicArea: "T" },
+	{ repairType: "1004", repairTypeName: "电梯维修", payFeeFlag: "F", priceScope: undefined, publicArea: "T" },
+	{ repairType: "1005", repairTypeName: "管道疏通", payFeeFlag: "T", priceScope: "60-200元", publicArea: "F" },
+	{ repairType: "1006", repairTypeName: "墙面修补", payFeeFlag: "T", priceScope: "40-250元", publicArea: "F" },
+	{ repairType: "1007", repairTypeName: "其他维修", payFeeFlag: "T", priceScope: "30-500元", publicArea: "F" },
+];
 ```
 
 ### 5.2 queryRepairInfo & getRepairResourceTypes 接口增强验证
@@ -211,7 +211,7 @@ repairSettings: [
 ```typescript
 // 如果提供了 parentId，筛选子类型（树形结构查询）
 if (params.parentId) {
-  resourceStoreTypes = resourceStoreTypes.filter((type) => type.parentRstId === params.parentId)
+	resourceStoreTypes = resourceStoreTypes.filter((type) => type.parentRstId === params.parentId);
 }
 ```
 

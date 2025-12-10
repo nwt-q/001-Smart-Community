@@ -42,8 +42,8 @@
 
 ```typescript
 function handleRefresh() {
-  currentPage.value = 1
-  pagingRef.value?.refresh() // ❌ 这里触发了 z-paging 重新加载
+	currentPage.value = 1;
+	pagingRef.value?.refresh(); // ❌ 这里触发了 z-paging 重新加载
 }
 ```
 
@@ -98,28 +98,28 @@ flowchart TD
 ```typescript
 /** z-paging 查询回调 */
 async function handleQuery(pageNo: number, pageSizeValue: number) {
-  currentPage.value = pageNo
-  pageSize.value = pageSizeValue
+	currentPage.value = pageNo;
+	pageSize.value = pageSizeValue;
 
-  try {
-    const response = await loadFloorData()
+	try {
+		const response = await loadFloorData();
 
-    if (response) {
-      // ✅ z-paging complete 接收数组
-      pagingRef.value?.complete(response.list || [])
-    } else {
-      pagingRef.value?.complete([])
-    }
-  } catch (error) {
-    console.error('获取楼栋列表失败:', error)
-    // ✅ 通知 z-paging 加载失败
-    pagingRef.value?.complete(false)
+		if (response) {
+			// ✅ z-paging complete 接收数组
+			pagingRef.value?.complete(response.list || []);
+		} else {
+			pagingRef.value?.complete([]);
+		}
+	} catch (error) {
+		console.error("获取楼栋列表失败:", error);
+		// ✅ 通知 z-paging 加载失败
+		pagingRef.value?.complete(false);
 
-    uni.showToast({
-      title: '加载楼栋列表失败',
-      icon: 'none',
-    })
-  }
+		uni.showToast({
+			title: "加载楼栋列表失败",
+			icon: "none",
+		});
+	}
 }
 ```
 

@@ -30,7 +30,19 @@ import {
   PROPERTY_RECORD_STATE_OPTIONS,
   PROPERTY_RELATION_TYPE_OPTIONS,
 } from '../../constants/property-application'
-import { defineUniAppMock, delay, errorResponse, formatDateTime, generateChineseName, generateId, generatePhoneNumber, generateTimeRange, mockLog, ResultEnumMap, successResponse } from './shared/utils'
+import {
+  defineUniAppMock,
+  delay,
+  errorResponse,
+  formatDateTime,
+  generateChineseName,
+  generateId,
+  generatePhoneNumber,
+  generateTimeRange,
+  mockLog,
+  ResultEnumMap,
+  successResponse,
+} from './shared/utils'
 
 /**
  * 空置房申请模拟数据库
@@ -238,7 +250,8 @@ const mockApplyRoomDatabase = {
 
   /** 生成模拟申请数据 */
   createMockApplyRoom(id: string): PropertyApplication {
-    const stateItem = PROPERTY_APPLICATION_STATE_OPTIONS[Math.floor(Math.random() * PROPERTY_APPLICATION_STATE_OPTIONS.length)]
+    const stateItem
+      = PROPERTY_APPLICATION_STATE_OPTIONS[Math.floor(Math.random() * PROPERTY_APPLICATION_STATE_OPTIONS.length)]
     const applyType = PROPERTY_APPLY_TYPE_OPTIONS[0]
     const startDate = generateTimeRange(-30, 0)
     const endDate = generateTimeRange(0, 90)
@@ -286,7 +299,8 @@ const mockApplyRoomDatabase = {
 
   /** 生成模拟记录详情 */
   createMockRecordDetail(id: string, ardrId: string): ApplicationRecordDetail {
-    const relationItem = PROPERTY_RELATION_TYPE_OPTIONS[Math.floor(Math.random() * PROPERTY_RELATION_TYPE_OPTIONS.length)]
+    const relationItem
+      = PROPERTY_RELATION_TYPE_OPTIONS[Math.floor(Math.random() * PROPERTY_RELATION_TYPE_OPTIONS.length)]
 
     return {
       ardrId,
@@ -294,9 +308,10 @@ const mockApplyRoomDatabase = {
       roomId: `ROOM_${id}`,
       roomName: `${Math.floor(Math.random() * 20 + 1)}栋${Math.floor(Math.random() * 30 + 1)}${String.fromCharCode(65 + Math.floor(Math.random() * 8))}室`,
       relTypeCd: relationItem.value as RelationTypeCd,
-      url: relationItem.value === '19000'
-        ? `https://picsum.photos/400/300?random=detail${id}`
-        : 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+      url:
+				relationItem.value === '19000'
+				  ? `https://picsum.photos/400/300?random=detail${id}`
+				  : 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
       remark: relationItem.value === '19000' ? '相关图片' : '相关视频',
       createTime: generateTimeRange(-30, 0),
     }

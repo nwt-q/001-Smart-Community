@@ -1,4 +1,11 @@
-import type { IAuthLoginRes, ICaptcha, IDoubleTokenRes, IUpdateInfo, IUpdatePassword, IUserInfoRes } from './types/login'
+import type {
+  IAuthLoginRes,
+  ICaptcha,
+  IDoubleTokenRes,
+  IUpdateInfo,
+  IUpdatePassword,
+  IUserInfoRes,
+} from './types/login'
 import { http } from '@/http/http'
 
 /**

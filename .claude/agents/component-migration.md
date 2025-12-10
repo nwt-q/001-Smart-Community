@@ -331,7 +331,7 @@ color: blue
 
 ```vue
 <template>
-  <button class="cu-btn bg-blue margin-tb-sm lg" @tap="doLogin()">登录</button>
+	<button class="cu-btn bg-blue margin-tb-sm lg" @tap="doLogin()">登录</button>
 </template>
 ```
 
@@ -339,7 +339,7 @@ color: blue
 
 ```vue
 <template>
-  <wd-button type="primary" size="large" class="mt-2 mb-2" @click="doLogin"> 登录 </wd-button>
+	<wd-button type="primary" size="large" class="mt-2 mb-2" @click="doLogin"> 登录 </wd-button>
 </template>
 ```
 
@@ -349,17 +349,17 @@ color: blue
 
 ```vue
 <template>
-  <view class="cu-list menu">
-    <view class="cu-item arrow" @click="gotoDetail(notice)">
-      <view class="content padding-tb-sm">
-        <view>
-          <text class="cuIcon-notification text-green margin-right-xs"></text>
-          <view class="text-cut">{{ notice.title }}</view>
-        </view>
-        <view class="text-gray text-sm"> <text>发布时间：</text> {{ notice.timeStr }} </view>
-      </view>
-    </view>
-  </view>
+	<view class="cu-list menu">
+		<view class="cu-item arrow" @click="gotoDetail(notice)">
+			<view class="content padding-tb-sm">
+				<view>
+					<text class="cuIcon-notification text-green margin-right-xs"></text>
+					<view class="text-cut">{{ notice.title }}</view>
+				</view>
+				<view class="text-gray text-sm"> <text>发布时间：</text> {{ notice.timeStr }} </view>
+			</view>
+		</view>
+	</view>
 </template>
 ```
 
@@ -367,19 +367,19 @@ color: blue
 
 ```vue
 <template>
-  <wd-cell-group>
-    <wd-cell is-link @click="gotoDetail(notice)" class="py-3">
-      <template #icon>
-        <wd-icon name="bell" class="text-green-500 mr-2" />
-      </template>
-      <template #title>
-        <view class="truncate">{{ notice.title }}</view>
-      </template>
-      <template #label>
-        <text class="text-gray-400 text-sm"> 发布时间：{{ notice.timeStr }} </text>
-      </template>
-    </wd-cell>
-  </wd-cell-group>
+	<wd-cell-group>
+		<wd-cell is-link @click="gotoDetail(notice)" class="py-3">
+			<template #icon>
+				<wd-icon name="bell" class="text-green-500 mr-2" />
+			</template>
+			<template #title>
+				<view class="truncate">{{ notice.title }}</view>
+			</template>
+			<template #label>
+				<text class="text-gray-400 text-sm"> 发布时间：{{ notice.timeStr }} </text>
+			</template>
+		</wd-cell>
+	</wd-cell-group>
 </template>
 ```
 
@@ -389,10 +389,10 @@ color: blue
 
 ```vue
 <template>
-  <view class="cu-form-group margin-top">
-    <view class="title">用户名</view>
-    <input placeholder="请输入用户名" v-model="username" />
-  </view>
+	<view class="cu-form-group margin-top">
+		<view class="title">用户名</view>
+		<input placeholder="请输入用户名" v-model="username" />
+	</view>
 </template>
 ```
 
@@ -400,7 +400,7 @@ color: blue
 
 ```vue
 <template>
-  <wd-input v-model="username" label="用户名" placeholder="请输入用户名" class="mt-4" />
+	<wd-input v-model="username" label="用户名" placeholder="请输入用户名" class="mt-4" />
 </template>
 ```
 
@@ -410,15 +410,15 @@ color: blue
 
 ```vue
 <template>
-  <!-- 基础图片显示 -->
-  <image :src="userAvatar" mode="aspectFill" style="width: 100px; height: 100px;" @error="handleImageError" />
+	<!-- 基础图片显示 -->
+	<image :src="userAvatar" mode="aspectFill" style="width: 100px; height: 100px;" @error="handleImageError" />
 
-  <!-- 带加载状态的图片 -->
-  <view class="image-container">
-    <image :src="productImage" mode="scaleToFill" @load="onImageLoad" @error="onImageError" />
-    <view v-if="imageLoading" class="loading">加载中...</view>
-    <view v-if="imageError" class="error">加载失败</view>
-  </view>
+	<!-- 带加载状态的图片 -->
+	<view class="image-container">
+		<image :src="productImage" mode="scaleToFill" @load="onImageLoad" @error="onImageError" />
+		<view v-if="imageLoading" class="loading">加载中...</view>
+		<view v-if="imageError" class="error">加载失败</view>
+	</view>
 </template>
 ```
 
@@ -426,23 +426,23 @@ color: blue
 
 ```vue
 <template>
-  <!-- 基础图片显示 -->
-  <wd-img :src="userAvatar" mode="aspectFill" class="w-100rpx h-100rpx" round />
+	<!-- 基础图片显示 -->
+	<wd-img :src="userAvatar" mode="aspectFill" class="w-100rpx h-100rpx" round />
 
-  <!-- 带加载状态和错误处理的图片 -->
-  <wd-img :src="productImage" mode="scaleToFill" class="w-200rpx h-200rpx" @load="onImageLoad" @error="onImageError">
-    <template #loading>
-      <view class="flex items-center justify-center w-full h-full">
-        <wd-loading />
-      </view>
-    </template>
-    <template #error>
-      <view class="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400"> 加载失败 </view>
-    </template>
-  </wd-img>
+	<!-- 带加载状态和错误处理的图片 -->
+	<wd-img :src="productImage" mode="scaleToFill" class="w-200rpx h-200rpx" @load="onImageLoad" @error="onImageError">
+		<template #loading>
+			<view class="flex items-center justify-center w-full h-full">
+				<wd-loading />
+			</view>
+		</template>
+		<template #error>
+			<view class="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400"> 加载失败 </view>
+		</template>
+	</wd-img>
 
-  <!-- 可预览的图片 -->
-  <wd-img :src="galleryImage" :enable-preview="true" class="w-150rpx h-150rpx" />
+	<!-- 可预览的图片 -->
+	<wd-img :src="galleryImage" :enable-preview="true" class="w-150rpx h-150rpx" />
 </template>
 ```
 
@@ -452,13 +452,13 @@ color: blue
 
 ```vue
 <template>
-  <view class="cu-modal" :class="showModal ? 'show' : ''">
-    <view class="cu-dialog">
-      <view class="cu-list menu">
-        <!-- 内容 -->
-      </view>
-    </view>
-  </view>
+	<view class="cu-modal" :class="showModal ? 'show' : ''">
+		<view class="cu-dialog">
+			<view class="cu-list menu">
+				<!-- 内容 -->
+			</view>
+		</view>
+	</view>
 </template>
 ```
 
@@ -466,11 +466,11 @@ color: blue
 
 ```vue
 <template>
-  <wd-popup v-model="showModal">
-    <wd-cell-group>
-      <!-- 内容 -->
-    </wd-cell-group>
-  </wd-popup>
+	<wd-popup v-model="showModal">
+		<wd-cell-group>
+			<!-- 内容 -->
+		</wd-cell-group>
+	</wd-popup>
 </template>
 ```
 
@@ -480,27 +480,27 @@ color: blue
 
 ```vue
 <template>
-  <!-- 原来的 no-data-page 组件用法 -->
-  <view v-if="dataList.length > 0">
-    <view v-for="(item, index) in dataList" :key="index">
-      <!-- 数据列表内容 -->
-    </view>
-  </view>
-  <view v-else>
-    <no-data-page></no-data-page>
-  </view>
+	<!-- 原来的 no-data-page 组件用法 -->
+	<view v-if="dataList.length > 0">
+		<view v-for="(item, index) in dataList" :key="index">
+			<!-- 数据列表内容 -->
+		</view>
+	</view>
+	<view v-else>
+		<no-data-page></no-data-page>
+	</view>
 </template>
 
 <!-- 或者内联空状态处理 -->
 <template>
-  <view class="cu-list menu" v-if="notices.length === 0">
-    <view class="cu-item">
-      <view class="content">
-        <text class="cuIcon-notification text-grey"></text>
-        <text class="text-grey">暂无公告信息</text>
-      </view>
-    </view>
-  </view>
+	<view class="cu-list menu" v-if="notices.length === 0">
+		<view class="cu-item">
+			<view class="content">
+				<text class="cuIcon-notification text-grey"></text>
+				<text class="text-grey">暂无公告信息</text>
+			</view>
+		</view>
+	</view>
 </template>
 ```
 
@@ -508,37 +508,37 @@ color: blue
 
 ```vue
 <template>
-  <!-- 基础空状态用法 -->
-  <view v-if="dataList.length > 0">
-    <view v-for="(item, index) in dataList" :key="index">
-      <!-- 数据列表内容 -->
-    </view>
-  </view>
-  <view v-else>
-    <wd-status-tip image="search" tip="当前没有数据" />
-  </view>
+	<!-- 基础空状态用法 -->
+	<view v-if="dataList.length > 0">
+		<view v-for="(item, index) in dataList" :key="index">
+			<!-- 数据列表内容 -->
+		</view>
+	</view>
+	<view v-else>
+		<wd-status-tip image="search" tip="当前没有数据" />
+	</view>
 </template>
 
 <!-- 不同状态的空状态 -->
 <template>
-  <!-- 搜索无结果 -->
-  <wd-status-tip image="search" tip="搜索无结果" />
+	<!-- 搜索无结果 -->
+	<wd-status-tip image="search" tip="搜索无结果" />
 
-  <!-- 网络错误 -->
-  <wd-status-tip image="network" tip="网络连接失败" />
+	<!-- 网络错误 -->
+	<wd-status-tip image="network" tip="网络连接失败" />
 
-  <!-- 内容为空 -->
-  <wd-status-tip image="content" tip="暂无内容" />
+	<!-- 内容为空 -->
+	<wd-status-tip image="content" tip="暂无内容" />
 
-  <!-- 自定义图片大小 -->
-  <wd-status-tip image="search" tip="当前没有数据" :image-size="{ height: 200, width: 200 }" />
+	<!-- 自定义图片大小 -->
+	<wd-status-tip image="search" tip="当前没有数据" :image-size="{ height: 200, width: 200 }" />
 
-  <!-- 自定义图片内容 -->
-  <wd-status-tip tip="当前没有数据">
-    <template #image>
-      <wd-icon name="warn-outline" size="100px"></wd-icon>
-    </template>
-  </wd-status-tip>
+	<!-- 自定义图片内容 -->
+	<wd-status-tip tip="当前没有数据">
+		<template #image>
+			<wd-icon name="warn-outline" size="100px"></wd-icon>
+		</template>
+	</wd-status-tip>
 </template>
 ```
 
@@ -649,18 +649,18 @@ color: blue
 
 ```vue
 <script setup lang="ts">
-import { useToast } from 'wot-design-uni'
+import { useToast } from "wot-design-uni";
 
-const toast = useToast('globalToast')
+const toast = useToast("globalToast");
 
 function showSuccess() {
-  toast.success('操作成功')
+	toast.success("操作成功");
 }
 </script>
 
 <template>
-  <wd-toast id="globalToast" />
-  <wd-button @click="showSuccess">显示提示</wd-button>
+	<wd-toast id="globalToast" />
+	<wd-button @click="showSuccess">显示提示</wd-button>
 </template>
 ```
 
@@ -668,18 +668,18 @@ function showSuccess() {
 
 ```vue
 <script setup lang="ts">
-import { useGlobalToast } from '@/hooks/useGlobalToast'
+import { useGlobalToast } from "@/hooks/useGlobalToast";
 
-const toast = useGlobalToast()
+const toast = useGlobalToast();
 
 function showSuccess() {
-  toast.success('操作成功')
+	toast.success("操作成功");
 }
 </script>
 
 <template>
-  <!-- 无需在子组件内挂载 Toast 组件 -->
-  <wd-button @click="showSuccess">显示提示</wd-button>
+	<!-- 无需在子组件内挂载 Toast 组件 -->
+	<wd-button @click="showSuccess">显示提示</wd-button>
 </template>
 ```
 

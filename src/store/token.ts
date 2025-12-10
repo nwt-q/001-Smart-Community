@@ -95,12 +95,7 @@ export const useTokenStore = defineStore(
      * @param credentials 登录参数
      * @returns 登录结果
      */
-    const login = async (credentials: {
-      username: string
-      password: string
-      code: string
-      uuid: string
-    }) => {
+    const login = async (credentials: { username: string, password: string, code: string, uuid: string }) => {
       try {
         const res = await _login(credentials)
         console.log('普通登录-res: ', res)

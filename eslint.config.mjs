@@ -27,6 +27,8 @@ export default uniHelper(
       'docs/.vitepress/**',
     ],
     rules: {
+      'style/no-tabs': 'off',
+      'style/no-mixed-spaces-and-tabs': 'off',
       'no-useless-return': 'off',
       'no-console': 'off',
       'no-unused-vars': 'off',

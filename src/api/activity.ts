@@ -62,19 +62,11 @@ export interface UpdateActivityCollectResponse {
 }
 
 /** 更新活动点赞状态 */
-export function updateActivityLike(params: {
-  activitiesId: string
-  isLiked: boolean
-  likeCount: number
-}) {
+export function updateActivityLike(params: { activitiesId: string, isLiked: boolean, likeCount: number }) {
   return http.Post<UpdateActivityLikeResponse>('/app/activities.updateLike', params)
 }
 
 /** 更新活动收藏状态 */
-export function updateActivityCollect(params: {
-  activitiesId: string
-  isCollected: boolean
-  collectCount: number
-}) {
+export function updateActivityCollect(params: { activitiesId: string, isCollected: boolean, collectCount: number }) {
   return http.Post<UpdateActivityCollectResponse>('/app/activities.updateCollect', params)
 }

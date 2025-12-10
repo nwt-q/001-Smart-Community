@@ -31,10 +31,7 @@ export function navigateToTyped<T extends keyof PageParams>(
 }
 
 /** 类型安全的重定向函数 */
-export function redirectToTyped<T extends keyof PageParams>(
-  url: T,
-  params?: PageParams[T],
-) {
+export function redirectToTyped<T extends keyof PageParams>(url: T, params?: PageParams[T]) {
   let fullUrl: string = url
   if (params && Object.keys(params).length > 0) {
     const query = new URLSearchParams(params as any).toString()
@@ -240,9 +237,7 @@ export class TypedRouter {
 }
 
 /** 路由参数解析工具 */
-export function parseRouteParams<T extends keyof PageParams>(
-  url: string,
-): { path: T, params: PageParams[T] } | null {
+export function parseRouteParams<T extends keyof PageParams>(url: string): { path: T, params: PageParams[T] } | null {
   try {
     const [path, queryString] = url.split('?')
     const params: any = {}
@@ -364,9 +359,7 @@ export class NavigationUtils {
       const options = (currentPage as any).options || {}
 
       // 构建参数字符串
-      const query = Object.keys(options).length > 0
-        ? `?${new URLSearchParams(options).toString()}`
-        : ''
+      const query = Object.keys(options).length > 0 ? `?${new URLSearchParams(options).toString()}` : ''
 
       // 先返回再跳转实现重新加载
       if (pages.length > 1) {

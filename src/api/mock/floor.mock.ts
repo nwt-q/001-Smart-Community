@@ -7,14 +7,7 @@
 import type { Floor } from '@/types/selector'
 import { COMMUNITY_OPTIONS } from '../../constants/common'
 import { BUILDING_NAME_OPTIONS } from '../../constants/floor'
-import {
-  defineUniAppMock,
-  errorResponse,
-  mockLog,
-  randomDelay,
-  ResultEnumMap,
-  successResponse,
-} from './shared/utils'
+import { defineUniAppMock, errorResponse, mockLog, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
 // ==================== 楼栋数据生成器 ====================
 
@@ -63,17 +56,12 @@ const mockFloorDatabase = {
    * @param params.keyword - 搜索关键词
    * @returns 筛选后的楼栋数组
    */
-  filterFloors(params: {
-    communityId?: string
-    floorNum?: string
-    keyword?: string
-  }): Floor[] {
+  filterFloors(params: { communityId?: string, floorNum?: string, keyword?: string }): Floor[] {
     return this.floors.filter((floor) => {
       const matchCommunity = !params.communityId || floor.communityId === params.communityId
       const matchFloorNum = !params.floorNum || floor.floorNum.includes(params.floorNum)
-      const matchKeyword = !params.keyword
-        || floor.floorName.includes(params.keyword)
-        || floor.floorNum.includes(params.keyword)
+      const matchKeyword
+        = !params.keyword || floor.floorName.includes(params.keyword) || floor.floorNum.includes(params.keyword)
 
       return matchCommunity && matchFloorNum && matchKeyword
     })
@@ -98,13 +86,10 @@ const mockFloorDatabase = {
    * @param params.row - 每页数量
    * @returns 分页后的楼栋列表和总数
    */
-  getFloorList(params: {
-    communityId?: string
-    floorNum?: string
-    keyword?: string
-    page?: number
-    row?: number
-  }): { list: Floor[], total: number } {
+  getFloorList(params: { communityId?: string, floorNum?: string, keyword?: string, page?: number, row?: number }): {
+    list: Floor[]
+    total: number
+  } {
     const filteredFloors = this.filterFloors(params)
     const page = params.page || 1
     const row = params.row || 50
@@ -136,13 +121,7 @@ export default defineUniAppMock([
       const params = { ...query, ...body }
       mockLog('queryFloors', params)
 
-      const {
-        communityId = 'COMM_001',
-        page = 1,
-        row = 50,
-        floorNum,
-        keyword,
-      } = params
+      const { communityId = 'COMM_001', page = 1, row = 50, floorNum, keyword } = params
 
       const result = mockFloorDatabase.getFloorList({
         communityId,

@@ -6,14 +6,7 @@
 import type { PaginationResponse } from '@/types/api'
 import type { Room, RoomQueryParams } from '@/types/selector'
 import { COMMUNITY_OPTIONS } from '../../constants/common'
-import {
-  defineUniAppMock,
-  errorResponse,
-  mockLog,
-  randomDelay,
-  ResultEnumMap,
-  successResponse,
-} from './shared/utils'
+import { defineUniAppMock, errorResponse, mockLog, randomDelay, ResultEnumMap, successResponse } from './shared/utils'
 
 // ==================== 房屋数据生成器 ====================
 
@@ -79,9 +72,7 @@ const mockRoomDatabase = {
       filteredRooms = filteredRooms.filter(room => room.unitId === params.unitId)
     }
     if (params.roomNum) {
-      filteredRooms = filteredRooms.filter(room =>
-        room.roomNum.includes(params.roomNum as string),
-      )
+      filteredRooms = filteredRooms.filter(room => room.roomNum.includes(params.roomNum as string))
     }
 
     // 计算分页

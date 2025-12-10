@@ -29,11 +29,11 @@
 
 ```html
 <script lang="ts" setup>
-  import iconUrl from './demo.svg'
+	import iconUrl from "./demo.svg";
 </script>
 
 <template>
-  <image :src="iconUrl" mode="scaleToFill" class="h-20 w-20" />
+	<image :src="iconUrl" mode="scaleToFill" class="h-20 w-20" />
 </template>
 ```
 
@@ -43,7 +43,7 @@
 
 ```html
 <template>
-  <image src="https://xxx.com/demo.svg" mode="scaleToFill" class="h-20 w-20" />
+	<image src="https://xxx.com/demo.svg" mode="scaleToFill" class="h-20 w-20" />
 </template>
 ```
 
@@ -63,7 +63,7 @@
 SVGs can be imported as URLs using the `?url` suffix:
 
 ```js
-import iconUrl from './my-icon.svg?url'
+import iconUrl from "./my-icon.svg?url";
 // 'data:image/svg+xml...'
 ```
 
@@ -71,7 +71,7 @@ Used in template:
 
 ```html
 <template>
-  <image :src="iconUrl" mode="scaleToFill" class="h-20 w-20" />
+	<image :src="iconUrl" mode="scaleToFill" class="h-20 w-20" />
 </template>
 ```
 
@@ -80,7 +80,7 @@ Used in template:
 SVGs can be imported as strings using the `?raw` suffix:
 
 ```js
-import iconRaw from './my-icon.svg?raw'
+import iconRaw from "./my-icon.svg?raw";
 // '<?xml version="1.0"?>...'
 ```
 
@@ -95,7 +95,7 @@ Used in template:
 SVGs can be explicitly imported as Vue components using the `?component` suffix:
 
 ```js
-import IconComponent from './my-icon.svg?component'
+import IconComponent from "./my-icon.svg?component";
 // <IconComponent />
 ```
 
@@ -103,7 +103,7 @@ Used in template:
 
 ```html
 <template>
-  <IconComponent />
+	<IconComponent />
 </template>
 ```
 
@@ -115,7 +115,7 @@ Used in template:
 
 `vite` 配置如下：
 
-```
+```plain
 createSvgIconsPlugin({
   // 指定要缓存的文件夹
   iconDirs: [path.resolve(process.cwd(), 'src/assets')],
@@ -130,25 +130,25 @@ createSvgIconsPlugin({
 
 ```html
 <template>
-  <svg aria-hidden="true">
-    <use :href="symbolId" :fill="color" />
-  </svg>
+	<svg aria-hidden="true">
+		<use :href="symbolId" :fill="color" />
+	</svg>
 </template>
 
 <script lang="ts" setup name="SvgIcon">
-  const props = withDefaults(
-    defineProps<{
-      prefix?: string
-      name: string
-      color?: string
-    }>(),
-    {
-      prefix: 'icon',
-      name: '',
-      color: '#333',
-    },
-  )
-  const symbolId = computed(() => `#${props.prefix}-${props.name}`)
+	const props = withDefaults(
+		defineProps<{
+			prefix?: string;
+			name: string;
+			color?: string;
+		}>(),
+		{
+			prefix: "icon",
+			name: "",
+			color: "#333",
+		},
+	);
+	const symbolId = computed(() => `#${props.prefix}-${props.name}`);
 </script>
 ```
 

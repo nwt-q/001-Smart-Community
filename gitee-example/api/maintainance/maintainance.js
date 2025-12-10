@@ -1,4 +1,4 @@
-import url from '../../constant/url.js'
+import url from "../../constant/url.js";
 
 /**
  * 流转
@@ -6,21 +6,21 @@ import url from '../../constant/url.js'
  * @param {Object} _data 请求报文
  */
 export function UpdateMaintainanceTask(_that, _data) {
-	return new Promise(function(reslove, reject) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.UpdateMaintainanceTask,
 			data: _data,
-			success: function(res) {
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -30,21 +30,21 @@ export function UpdateMaintainanceTask(_that, _data) {
  * @param {Object} _data 请求报文
  */
 export function queryDictInfo(_that, _data) {
-	return new Promise(function(reslove, reject) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.queryDictInfo,
 			data: _data,
-			success: function(res) {
+			success: function (res) {
 				reslove(res.data);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -58,7 +58,7 @@ export function queryMaintainanceItemTitle(_that, _data) {
 		_that.context.get({
 			url: url.listMaintainanceItem,
 			data: _data, //动态数据
-			success: function(res) {
+			success: function (res) {
 				let _data = res.data;
 				if (_data.code == 0) {
 					resolve(_data.data);
@@ -66,13 +66,12 @@ export function queryMaintainanceItemTitle(_that, _data) {
 				}
 				reject(_data.msg);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				reject(e);
-			}
+			},
 		});
-	})
+	});
 }
-
 
 /**
  * 查询保养任务
@@ -84,24 +83,23 @@ export function queryMaintainanceTask(_that, _data) {
 		_that.context.get({
 			url: url.listMaintainanceTask,
 			data: _data, //动态数据
-			success: function(res) {
+			success: function (res) {
 				let _data = res.data;
 				if (_data.code == 0) {
-					res.data.data.forEach(function(item, index) {
-						item.timeStr = item.planInsTime.replace(/:\d{1,2}$/, ' ');
+					res.data.data.forEach(function (item, index) {
+						item.timeStr = item.planInsTime.replace(/:\d{1,2}$/, " ");
 					});
 					resolve(res.data.data);
 					return;
 				}
 				reject(_data.msg);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				reject(e);
-			}
+			},
 		});
-	})
+	});
 }
-
 
 /**
  * 流转
@@ -109,7 +107,6 @@ export function queryMaintainanceTask(_that, _data) {
  * @param {Object} _data 请求报文
  */
 export function updateMaintainanceTaskDetail(_that, _data) {
-
 	let msg = "";
 	if (_data.taskId == "") {
 		msg = "数据异常，保养任务为空";
@@ -131,35 +128,34 @@ export function updateMaintainanceTaskDetail(_that, _data) {
 	if (msg != "") {
 		wx.showToast({
 			title: msg,
-			icon: 'none',
-			duration: 2000
+			icon: "none",
+			duration: 2000,
 		});
 		return;
 	}
 	uni.showLoading({
-		title: '请稍后...'
+		title: "请稍后...",
 	});
 
-	return new Promise(function(reslove, reject) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.updateMaintainanceTaskDetail,
 			data: _data,
-			success: function(res) {
+			success: function (res) {
 				reslove(res.data);
 				uni.hideLoading();
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
+					icon: "none",
+					duration: 2000,
+				});
 				uni.hideLoading();
-			}
-		})
+			},
+		});
 	});
 }
-
 
 /**
  * 查询保养任务明细
@@ -171,24 +167,24 @@ export function queryMaintainanceTaskDetail(_that, _data) {
 		_that.context.get({
 			url: url.listMaintainanceTaskDetail,
 			data: _data, //动态数据
-			success: function(res) {
+			success: function (res) {
 				let _data = res.data;
 				if (_data.code == 0) {
-					_data.data.forEach(function(_item) {
+					_data.data.forEach(function (_item) {
 						// if (_item.state == '20200407') {
 						// 	_item.photos.forEach(function(_photoTmp) {
 						// 		_photoTmp.url = url.hcBaseUrl + _photoTmp.url;
 						// 	});
 						// }
-					})
+					});
 					resolve(_data.data);
 					return;
 				}
 				reject(_data.msg);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				reject(e);
-			}
+			},
 		});
-	})
+	});
 }

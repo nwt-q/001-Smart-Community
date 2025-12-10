@@ -1,26 +1,26 @@
-import url from '../../constant/url.js';
+import url from "../../constant/url.js";
 
 /**
  * 查询投诉待办
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function loadTodoCompaint(_that,_data){
-	return new Promise(function(reslove,reject){
+export function loadTodoCompaint(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listAuditComplaints,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
@@ -29,71 +29,70 @@ export function loadTodoCompaint(_that,_data){
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function auditComplaint(_that,_data){
-	return new Promise(function(reslove,reject){
+export function auditComplaint(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.auditComplaint,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
-
 
 /**
  * 查询投诉待办
  * @param {Object} _that 上下文对象
  * @param {Object} _data 请求报文
  */
-export function loadCompaintFinish(_that,_data){
-	return new Promise(function(reslove,reject){
+export function loadCompaintFinish(_that, _data) {
+	return new Promise(function (reslove, reject) {
 		_that.context.get({
 			url: url.listAuditHistoryComplaints,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }
 
-export function getComplaintEvent(_obj,_that){
+export function getComplaintEvent(_obj, _that) {
 	return new Promise((resolve, reject) => {
 		_that.context.get({
 			url: url.listComplaintEvent,
-		
+
 			data: _obj,
-			success: function(res) {
+			success: function (res) {
 				let data = res.data;
 				if (data.code == 0) {
 					resolve(data);
 				} else {
 					uni.showToast({
-						title: data.msg
-					})
+						title: data.msg,
+					});
 				}
 			},
-			fail: function(res) {
+			fail: function (res) {
 				reject(res);
-			}
+			},
 		});
-	})
+	});
 }
 
 /**
@@ -101,44 +100,43 @@ export function getComplaintEvent(_obj,_that){
  * @param {Object} _obj
  * @param {Object} _that上下文
  */
-export function getComplaintAppraise(_obj,_that){
+export function getComplaintAppraise(_obj, _that) {
 	return new Promise((resolve, reject) => {
 		_that.context.get({
 			url: url.listComplaintAppraise,
 			data: _obj,
-			success: function(res) {
+			success: function (res) {
 				let data = res.data;
 				if (data.code == 0) {
 					resolve(data);
 				} else {
 					uni.showToast({
-						title: data.msg
-					})
+						title: data.msg,
+					});
 				}
 			},
-			fail: function(res) {
+			fail: function (res) {
 				reject(res);
-			}
+			},
 		});
-	})
+	});
 }
 
-
-export function replyComplaintAppraise(_data,_that){
-	return new Promise(function(reslove,reject){
+export function replyComplaintAppraise(_data, _that) {
+	return new Promise(function (reslove, reject) {
 		_that.context.post({
 			url: url.replyComplaintAppraise,
-			data:_data,
-			success: function(res) {
+			data: _data,
+			success: function (res) {
 				reslove(res);
 			},
-			fail: function(e) {
+			fail: function (e) {
 				wx.showToast({
 					title: "服务器异常了",
-					icon: 'none',
-					duration: 2000
-				})
-			}
-		})
+					icon: "none",
+					duration: 2000,
+				});
+			},
+		});
 	});
 }

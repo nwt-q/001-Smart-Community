@@ -67,12 +67,13 @@ export function useAddressList(options: UseAddressListOptions = {}) {
     send: loadStaffInfo,
     error: staffError,
   } = useRequest(
-    () => queryStaffList({
-      page: 1,
-      row: 1000,
-      storeId: userInfo.value.storeId,
-      name: searchKeyword.value,
-    }),
+    () =>
+      queryStaffList({
+        page: 1,
+        row: 1000,
+        storeId: userInfo.value.storeId,
+        name: searchKeyword.value,
+      }),
     {
       immediate: false,
     },
@@ -262,17 +263,23 @@ export function useAddressList(options: UseAddressListOptions = {}) {
   const initIndexBarPosition = () => {
     const query = uni.createSelectorQuery()
 
-    query.select('.indexBar-box').boundingClientRect((res) => {
-      if (res && !Array.isArray(res)) {
-        indexBarPosition.value.boxTop = res.top || 0
-      }
-    }).exec()
+    query
+      .select('.indexBar-box')
+      .boundingClientRect((res) => {
+        if (res && !Array.isArray(res)) {
+          indexBarPosition.value.boxTop = res.top || 0
+        }
+      })
+      .exec()
 
-    query.select('.indexes').boundingClientRect((res) => {
-      if (res && !Array.isArray(res)) {
-        indexBarPosition.value.barTop = res.top || 0
-      }
-    }).exec()
+    query
+      .select('.indexes')
+      .boundingClientRect((res) => {
+        if (res && !Array.isArray(res)) {
+          indexBarPosition.value.barTop = res.top || 0
+        }
+      })
+      .exec()
   }
 
   const onPullDownRefreshHandler = async () => {
@@ -283,15 +290,19 @@ export function useAddressList(options: UseAddressListOptions = {}) {
   // ==================== 数据监听 ====================
 
   // 监听员工数据变化
-  watch([staffData, staffError], ([newData], [oldData]) => {
-    if (newData !== oldData) {
-      handleStaffDataLoaded()
-    }
+  watch(
+    [staffData, staffError],
+    ([newData], [oldData]) => {
+      if (newData !== oldData) {
+        handleStaffDataLoaded()
+      }
 
-    if (staffError.value) {
-      handleError(staffError.value)
-    }
-  }, { immediate: true })
+      if (staffError.value) {
+        handleError(staffError.value)
+      }
+    },
+    { immediate: true },
+  )
 
   // ==================== 自动初始化 ====================
 

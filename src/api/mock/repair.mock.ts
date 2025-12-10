@@ -118,13 +118,16 @@ function createMockRepair(id: string): RepairOrder {
     actualCost: statusItem.value === '10004' ? generateAmount(40, 600) : null,
     images: Math.random() > 0.5 ? [`https://picsum.photos/400/300?random=${id}`] : [],
     communityId: 'COMM_001',
-    evaluation: statusItem.value === '10004' && Math.random() > 0.3
-      ? {
-          rating: Math.floor(Math.random() * 2) + 4, // 4-5星
-          comment: ['服务很好，维修及时', '师傅很专业，问题解决了', '效率很高，满意', '态度不错'][Math.floor(Math.random() * 4)],
-          evaluateTime: formatDateTime(),
-        }
-      : undefined,
+    evaluation:
+			statusItem.value === '10004' && Math.random() > 0.3
+			  ? {
+			      rating: Math.floor(Math.random() * 2) + 4, // 4-5星
+			      comment: ['服务很好，维修及时', '师傅很专业，问题解决了', '效率很高，满意', '态度不错'][
+			        Math.floor(Math.random() * 4)
+			      ],
+			      evaluateTime: formatDateTime(),
+			    }
+			  : undefined,
   }
 }
 
@@ -134,7 +137,10 @@ function normalizeRepairOrder(repair: RepairOrder): RepairOrder {
   const statusItem = REPAIR_STATUSES.find(item => item.value === repair.statusCd)
   const normalizedTitle = (repair.title || '').trim()
   const nameFromTitle = normalizedTitle.includes('维修申请')
-    ? normalizedTitle.replace(/^.*-\s*/, '').replace(/的维修申请.*$/, '').trim()
+    ? normalizedTitle
+        .replace(/^.*-\s*/, '')
+        .replace(/的维修申请.*$/, '')
+        .trim()
     : ''
   const typeFromTitle = normalizedTitle.split('-')[0]?.trim()
 
@@ -176,14 +182,94 @@ const mockRepairDatabase = {
 
   /** 维修物品/资源数据 */
   resources: [
-    { resId: 'RES_001', resName: '水龙头', resTypeName: '水电材料', specName: '普通型', price: 50, outLowPrice: 40, outHighPrice: 60, unit: '个', stock: 20 },
-    { resId: 'RES_002', resName: '插座', resTypeName: '水电材料', specName: '五孔', price: 15, outLowPrice: 12, outHighPrice: 18, unit: '个', stock: 50 },
-    { resId: 'RES_003', resName: '门锁', resTypeName: '五金材料', specName: '防盗型', price: 120, outLowPrice: 100, outHighPrice: 150, unit: '把', stock: 10 },
-    { resId: 'RES_004', resName: '窗户密封条', resTypeName: '五金材料', specName: '隔音型', price: 30, outLowPrice: 25, outHighPrice: 35, unit: '米', stock: 100 },
-    { resId: 'RES_005', resName: '空调氟利昂', resTypeName: '空调材料', specName: 'R410A', price: 200, outLowPrice: 180, outHighPrice: 220, unit: '瓶', stock: 5 },
-    { resId: 'RES_006', resName: '瓷砖', resTypeName: '装修材料', specName: '釉面砖', price: 25, outLowPrice: 20, outHighPrice: 30, unit: '片', stock: 200 },
-    { resId: 'RES_007', resName: '电线', resTypeName: '水电材料', specName: '2.5平方', price: 8, outLowPrice: 7, outHighPrice: 10, unit: '米', stock: 500 },
-    { resId: 'RES_008', resName: '管道胶', resTypeName: '水电材料', specName: '防水型', price: 35, outLowPrice: 30, outHighPrice: 40, unit: '瓶', stock: 15 },
+    {
+      resId: 'RES_001',
+      resName: '水龙头',
+      resTypeName: '水电材料',
+      specName: '普通型',
+      price: 50,
+      outLowPrice: 40,
+      outHighPrice: 60,
+      unit: '个',
+      stock: 20,
+    },
+    {
+      resId: 'RES_002',
+      resName: '插座',
+      resTypeName: '水电材料',
+      specName: '五孔',
+      price: 15,
+      outLowPrice: 12,
+      outHighPrice: 18,
+      unit: '个',
+      stock: 50,
+    },
+    {
+      resId: 'RES_003',
+      resName: '门锁',
+      resTypeName: '五金材料',
+      specName: '防盗型',
+      price: 120,
+      outLowPrice: 100,
+      outHighPrice: 150,
+      unit: '把',
+      stock: 10,
+    },
+    {
+      resId: 'RES_004',
+      resName: '窗户密封条',
+      resTypeName: '五金材料',
+      specName: '隔音型',
+      price: 30,
+      outLowPrice: 25,
+      outHighPrice: 35,
+      unit: '米',
+      stock: 100,
+    },
+    {
+      resId: 'RES_005',
+      resName: '空调氟利昂',
+      resTypeName: '空调材料',
+      specName: 'R410A',
+      price: 200,
+      outLowPrice: 180,
+      outHighPrice: 220,
+      unit: '瓶',
+      stock: 5,
+    },
+    {
+      resId: 'RES_006',
+      resName: '瓷砖',
+      resTypeName: '装修材料',
+      specName: '釉面砖',
+      price: 25,
+      outLowPrice: 20,
+      outHighPrice: 30,
+      unit: '片',
+      stock: 200,
+    },
+    {
+      resId: 'RES_007',
+      resName: '电线',
+      resTypeName: '水电材料',
+      specName: '2.5平方',
+      price: 8,
+      outLowPrice: 7,
+      outHighPrice: 10,
+      unit: '米',
+      stock: 500,
+    },
+    {
+      resId: 'RES_008',
+      resName: '管道胶',
+      resTypeName: '水电材料',
+      specName: '防水型',
+      price: 35,
+      outLowPrice: 30,
+      outHighPrice: 40,
+      unit: '瓶',
+      stock: 15,
+    },
   ],
 
   /** 物资类型数据 */
@@ -195,13 +281,55 @@ const mockRepairDatabase = {
 
   /** 维修设置配置（维修类型配置） */
   repairSettings: [
-    { repairType: '1001', repairTypeName: '水电维修', payFeeFlag: 'T' as const, priceScope: '50-300元', publicArea: 'T' as const },
-    { repairType: '1002', repairTypeName: '门窗维修', payFeeFlag: 'T' as const, priceScope: '80-400元', publicArea: 'T' as const },
-    { repairType: '1003', repairTypeName: '空调维修', payFeeFlag: 'T' as const, priceScope: '100-500元', publicArea: 'T' as const },
-    { repairType: '1004', repairTypeName: '电梯维修', payFeeFlag: 'F' as const, priceScope: undefined, publicArea: 'T' as const },
-    { repairType: '1005', repairTypeName: '管道疏通', payFeeFlag: 'T' as const, priceScope: '60-200元', publicArea: 'F' as const },
-    { repairType: '1006', repairTypeName: '墙面修补', payFeeFlag: 'T' as const, priceScope: '40-250元', publicArea: 'F' as const },
-    { repairType: '1007', repairTypeName: '其他维修', payFeeFlag: 'T' as const, priceScope: '30-500元', publicArea: 'F' as const },
+    {
+      repairType: '1001',
+      repairTypeName: '水电维修',
+      payFeeFlag: 'T' as const,
+      priceScope: '50-300元',
+      publicArea: 'T' as const,
+    },
+    {
+      repairType: '1002',
+      repairTypeName: '门窗维修',
+      payFeeFlag: 'T' as const,
+      priceScope: '80-400元',
+      publicArea: 'T' as const,
+    },
+    {
+      repairType: '1003',
+      repairTypeName: '空调维修',
+      payFeeFlag: 'T' as const,
+      priceScope: '100-500元',
+      publicArea: 'T' as const,
+    },
+    {
+      repairType: '1004',
+      repairTypeName: '电梯维修',
+      payFeeFlag: 'F' as const,
+      priceScope: undefined,
+      publicArea: 'T' as const,
+    },
+    {
+      repairType: '1005',
+      repairTypeName: '管道疏通',
+      payFeeFlag: 'T' as const,
+      priceScope: '60-200元',
+      publicArea: 'F' as const,
+    },
+    {
+      repairType: '1006',
+      repairTypeName: '墙面修补',
+      payFeeFlag: 'T' as const,
+      priceScope: '40-250元',
+      publicArea: 'F' as const,
+    },
+    {
+      repairType: '1007',
+      repairTypeName: '其他维修',
+      payFeeFlag: 'T' as const,
+      priceScope: '30-500元',
+      publicArea: 'F' as const,
+    },
   ],
 
   /** 维修状态字典 */
@@ -232,43 +360,36 @@ const mockRepairDatabase = {
     // 关键词筛选
     if (params.keyword) {
       const keyword = params.keyword.toLowerCase()
-      filteredRepairs = filteredRepairs.filter(repair =>
-        (repair.context || '').toLowerCase().includes(keyword)
-        || (repair.repairName || '').toLowerCase().includes(keyword)
-        || (repair.tel || '').toLowerCase().includes(keyword)
-        || (repair.address || '').toLowerCase().includes(keyword),
+      filteredRepairs = filteredRepairs.filter(
+        repair =>
+          (repair.context || '').toLowerCase().includes(keyword)
+          || (repair.repairName || '').toLowerCase().includes(keyword)
+          || (repair.tel || '').toLowerCase().includes(keyword)
+          || (repair.address || '').toLowerCase().includes(keyword),
       )
     }
 
     // 日期范围筛选
     if (params.startDate) {
-      filteredRepairs = filteredRepairs.filter(repair =>
-        dayjs(repair.createTime).valueOf() >= dayjs(params.startDate).valueOf(),
+      filteredRepairs = filteredRepairs.filter(
+        repair => dayjs(repair.createTime).valueOf() >= dayjs(params.startDate).valueOf(),
       )
     }
     if (params.endDate) {
-      filteredRepairs = filteredRepairs.filter(repair =>
-        dayjs(repair.createTime).valueOf() <= dayjs(params.endDate).valueOf(),
+      filteredRepairs = filteredRepairs.filter(
+        repair => dayjs(repair.createTime).valueOf() <= dayjs(params.endDate).valueOf(),
       )
     }
 
     // 指派维修工筛选
     if (params.assignedWorker) {
-      filteredRepairs = filteredRepairs.filter(repair =>
-        repair.assignedWorker === params.assignedWorker,
-      )
+      filteredRepairs = filteredRepairs.filter(repair => repair.assignedWorker === params.assignedWorker)
     }
 
     // 按创建时间倒序排序
-    filteredRepairs.sort((a, b) =>
-      dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf(),
-    )
+    filteredRepairs.sort((a, b) => dayjs(b.createTime).valueOf() - dayjs(a.createTime).valueOf())
 
-    const pagination = createPaginationResponse(
-      filteredRepairs,
-      params.page || 1,
-      params.row || 10,
-    )
+    const pagination = createPaginationResponse(filteredRepairs, params.page || 1, params.row || 10)
 
     return {
       ...pagination,
@@ -653,7 +774,10 @@ export default defineUniAppMock([
         repair.updateTime = formatDateTime()
 
         mockLog('repairDispatch', body.action, `→ ${body.repairId}`)
-        return successResponse({ success: true }, `${body.action === 'DISPATCH' ? '派单' : body.action === 'TRANSFER' ? '转单' : '退单'}成功`)
+        return successResponse(
+          { success: true },
+          `${body.action === 'DISPATCH' ? '派单' : body.action === 'TRANSFER' ? '转单' : '退单'}成功`,
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: repairDispatch', error)
@@ -819,9 +943,7 @@ export default defineUniAppMock([
 
         // 按维修类型筛选
         if (params.repairType) {
-          staffs = staffs.filter(staff =>
-            staff.repairTypes.includes(params.repairType),
-          )
+          staffs = staffs.filter(staff => staff.repairTypes.includes(params.repairType))
         }
 
         mockLog('listRepairStaffs', params, `→ ${staffs.length} items`)
@@ -847,9 +969,7 @@ export default defineUniAppMock([
         let staffs = [...mockRepairDatabase.staffs]
 
         if (params.repairType) {
-          staffs = staffs.filter(staff =>
-            staff.repairTypes.includes(params.repairType),
-          )
+          staffs = staffs.filter(staff => staff.repairTypes.includes(params.repairType))
         }
 
         const users = staffs.map(staff => ({
@@ -882,9 +1002,8 @@ export default defineUniAppMock([
         // 关键词筛选
         if (params.keyword) {
           const keyword = params.keyword.toLowerCase()
-          resources = resources.filter(res =>
-            res.resName.toLowerCase().includes(keyword)
-            || res.resTypeName.toLowerCase().includes(keyword),
+          resources = resources.filter(
+            res => res.resName.toLowerCase().includes(keyword) || res.resTypeName.toLowerCase().includes(keyword),
           )
         }
 
@@ -921,30 +1040,40 @@ export default defineUniAppMock([
         const allRepairs = mockRepairDatabase.repairs
 
         // 按状态统计
-        const statusStats: Record<RepairStatus, number> = allRepairs.reduce((acc, repair) => {
-          const code = repair.statusCd || 'UNKNOWN'
-          acc[code] = (acc[code] || 0) + 1
-          return acc
-        }, {} as Record<RepairStatus, number>)
+        const statusStats: Record<RepairStatus, number> = allRepairs.reduce(
+          (acc, repair) => {
+            const code = repair.statusCd || 'UNKNOWN'
+            acc[code] = (acc[code] || 0) + 1
+            return acc
+          },
+          {} as Record<RepairStatus, number>,
+        )
 
         // 按类型统计
-        const typeStats = allRepairs.reduce((acc, repair) => {
-          acc[repair.repairType] = (acc[repair.repairType] || 0) + 1
-          return acc
-        }, {} as Record<string, number>)
+        const typeStats = allRepairs.reduce(
+          (acc, repair) => {
+            acc[repair.repairType] = (acc[repair.repairType] || 0) + 1
+            return acc
+          },
+          {} as Record<string, number>,
+        )
 
         // 月度统计
-        const monthlyStats = allRepairs.reduce((acc, repair) => {
-          const month = dayjs(repair.createTime).format('YYYY-MM')
-          acc[month] = (acc[month] || 0) + 1
-          return acc
-        }, {} as Record<string, number>)
+        const monthlyStats = allRepairs.reduce(
+          (acc, repair) => {
+            const month = dayjs(repair.createTime).format('YYYY-MM')
+            acc[month] = (acc[month] || 0) + 1
+            return acc
+          },
+          {} as Record<string, number>,
+        )
 
         // 满意度统计
         const evaluatedRepairs = allRepairs.filter(r => r.evaluation)
-        const satisfactionRate = evaluatedRepairs.length > 0
-          ? `${Math.round((evaluatedRepairs.filter(r => (r.evaluation?.rating || 0) >= 4).length / evaluatedRepairs.length) * 100)}%`
-          : '0%'
+        const satisfactionRate
+          = evaluatedRepairs.length > 0
+            ? `${Math.round((evaluatedRepairs.filter(r => (r.evaluation?.rating || 0) >= 4).length / evaluatedRepairs.length) * 100)}%`
+            : '0%'
 
         const statistics = {
           total: allRepairs.length,
@@ -979,9 +1108,7 @@ export default defineUniAppMock([
 
         // 如果提供了 parentId，筛选子类型（树形结构查询）
         if (params.parentId) {
-          resourceStoreTypes = resourceStoreTypes.filter(
-            type => type.parentRstId === params.parentId,
-          )
+          resourceStoreTypes = resourceStoreTypes.filter(type => type.parentRstId === params.parentId)
         }
 
         mockLog('listResourceStoreTypes', params, `→ ${resourceStoreTypes.length} items`)

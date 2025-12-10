@@ -28,10 +28,10 @@
 
 ```typescript
 // ❌ 错误: 使用了不存在的方法 `TypedRouter.toRepairOrderList()`
-if (action.value === 'DISPATCH') {
-  TypedRouter.toRepairOrderList() // 此方法不存在！
+if (action.value === "DISPATCH") {
+	TypedRouter.toRepairOrderList(); // 此方法不存在！
 } else {
-  TypedRouter.toRepairDispatch()
+	TypedRouter.toRepairDispatch();
 }
 ```
 
@@ -39,10 +39,10 @@ if (action.value === 'DISPATCH') {
 
 ```typescript
 // ✅ 正确: 应使用 TypedRouter.toRepairList()
-if (action.value === 'DISPATCH') {
-  TypedRouter.toRepairList() // 维修工单池
+if (action.value === "DISPATCH") {
+	TypedRouter.toRepairList(); // 维修工单池
 } else {
-  TypedRouter.toRepairDispatch() // 维修待办单
+	TypedRouter.toRepairDispatch(); // 维修待办单
 }
 ```
 
@@ -62,12 +62,12 @@ if (action.value === 'DISPATCH') {
 ```typescript
 // src/pages-sub/repair/handle.vue 第 261-266 行
 setTimeout(() => {
-  if (action.value === 'DISPATCH') {
-    TypedRouter.toRepairList() // 修改此行
-  } else {
-    TypedRouter.toRepairDispatch()
-  }
-}, 1500)
+	if (action.value === "DISPATCH") {
+		TypedRouter.toRepairList(); // 修改此行
+	} else {
+		TypedRouter.toRepairDispatch();
+	}
+}, 1500);
 ```
 
 ### 【中优先级】路由参数传递问题（类型安全）
@@ -81,11 +81,11 @@ setTimeout(() => {
 ```typescript
 // ⚠️ 问题: action 参数应该是 'BACK'，但使用了 'RETURN'
 function handleReturn(item: RepairOrder) {
-  TypedRouter.toRepairHandle({
-    action: 'RETURN', // 应该是 'BACK'
-    repairId: item.repairId!,
-    // ...其他参数
-  })
+	TypedRouter.toRepairHandle({
+		action: "RETURN", // 应该是 'BACK'
+		repairId: item.repairId!,
+		// ...其他参数
+	});
 }
 ```
 
@@ -94,7 +94,7 @@ function handleReturn(item: RepairOrder) {
 
 ```typescript
 /** 操作类型: DISPATCH-派单, TRANSFER-转单, BACK-退单, FINISH-办结 */
-action: 'DISPATCH' | 'TRANSFER' | 'BACK' | 'FINISH'
+action: "DISPATCH" | "TRANSFER" | "BACK" | "FINISH";
 ```
 
 注释说明中明确写着 **BACK-退单**，而不是 `RETURN`。
@@ -105,16 +105,16 @@ action: 'DISPATCH' | 'TRANSFER' | 'BACK' | 'FINISH'
 // src/pages-sub/repair/dispatch.vue 第 222-233 行
 /** 退单 */
 function handleReturn(item: RepairOrder) {
-  TypedRouter.toRepairHandle({
-    action: 'BACK', // 修改为 'BACK'
-    repairId: item.repairId!,
-    repairType: item.repairType || '',
-    preStaffId: item.preStaffId,
-    preStaffName: item.preStaffName,
-    repairObjType: item.repairObjType,
-    publicArea: item.publicArea,
-    repairChannel: item.repairChannel,
-  })
+	TypedRouter.toRepairHandle({
+		action: "BACK", // 修改为 'BACK'
+		repairId: item.repairId!,
+		repairType: item.repairType || "",
+		preStaffId: item.preStaffId,
+		preStaffName: item.preStaffName,
+		repairObjType: item.repairObjType,
+		publicArea: item.publicArea,
+		repairChannel: item.repairChannel,
+	});
 }
 ```
 
@@ -130,16 +130,16 @@ function handleReturn(item: RepairOrder) {
 ```typescript
 // ⚠️ 问题: 参数结构不完全匹配类型定义
 function handleAppraise(item: RepairOrder) {
-  TypedRouter.toAppraiseRepair({
-    repairId: item.repairId!,
-    repairType: item.repairType || '',
-    preStaffId: item.preStaffId, // ❌ 类型定义中没有此参数
-    preStaffName: item.preStaffName, // ❌ 类型定义中没有此参数
-    repairObjType: item.repairObjType, // ❌ 类型定义中没有此参数
-    repairChannel: item.repairChannel,
-    publicArea: item.publicArea,
-    communityId: item.communityId!,
-  })
+	TypedRouter.toAppraiseRepair({
+		repairId: item.repairId!,
+		repairType: item.repairType || "",
+		preStaffId: item.preStaffId, // ❌ 类型定义中没有此参数
+		preStaffName: item.preStaffName, // ❌ 类型定义中没有此参数
+		repairObjType: item.repairObjType, // ❌ 类型定义中没有此参数
+		repairChannel: item.repairChannel,
+		publicArea: item.publicArea,
+		communityId: item.communityId!,
+	});
 }
 ```
 
@@ -160,13 +160,13 @@ function handleAppraise(item: RepairOrder) {
 ```typescript
 /** 回访 */
 function handleAppraise(item: RepairOrder) {
-  TypedRouter.toAppraiseRepair({
-    repairId: item.repairId!,
-    repairType: item.repairType || '',
-    repairChannel: item.repairChannel,
-    publicArea: item.publicArea,
-    communityId: item.communityId!,
-  })
+	TypedRouter.toAppraiseRepair({
+		repairId: item.repairId!,
+		repairType: item.repairType || "",
+		repairChannel: item.repairChannel,
+		publicArea: item.publicArea,
+		communityId: item.communityId!,
+	});
 }
 ```
 
@@ -181,31 +181,31 @@ function handleAppraise(item: RepairOrder) {
 
 ```typescript
 // 当前实现
-const rating = ref(5) // 有定义评分
+const rating = ref(5); // 有定义评分
 
 await appraiseRepair({
-  repairId: repairId.value,
-  repairType: repairType.value,
-  repairChannel: repairChannel.value,
-  publicArea: publicArea.value,
-  communityId: communityId.value,
-  context: content.value,
-  // ❌ 缺少 rating 参数
-})
+	repairId: repairId.value,
+	repairType: repairType.value,
+	repairChannel: repairChannel.value,
+	publicArea: publicArea.value,
+	communityId: communityId.value,
+	context: content.value,
+	// ❌ 缺少 rating 参数
+});
 ```
 
 **修复建议**:
 
 ```typescript
 await appraiseRepair({
-  repairId: repairId.value,
-  repairType: repairType.value,
-  repairChannel: repairChannel.value,
-  publicArea: publicArea.value,
-  communityId: communityId.value,
-  context: content.value,
-  rating: rating.value, // 添加评分参数
-})
+	repairId: repairId.value,
+	repairType: repairType.value,
+	repairChannel: repairChannel.value,
+	publicArea: publicArea.value,
+	communityId: communityId.value,
+	context: content.value,
+	rating: rating.value, // 添加评分参数
+});
 ```
 
 **注意**: 需要同步更新 API 接口类型定义。
@@ -219,8 +219,8 @@ await appraiseRepair({
 
 ```typescript
 // ⚠️ 不推荐: 使用事件总线传递数据
-uni.$emit('getResourceInfo', JSON.stringify(chooseResource))
-uni.navigateBack({ delta: 1 })
+uni.$emit("getResourceInfo", JSON.stringify(chooseResource));
+uni.navigateBack({ delta: 1 });
 ```
 
 **分析**:
@@ -248,7 +248,7 @@ uni.navigateBack({ delta: 1 })
 
 ```typescript
 /** 操作类型: DISPATCH-派单, TRANSFER-转单, BACK-退单, FINISH-办结 */
-action: 'DISPATCH' | 'TRANSFER' | 'BACK' | 'FINISH'
+action: "DISPATCH" | "TRANSFER" | "BACK" | "FINISH";
 ```
 
 但在 `dispatch.vue:222-233` 中，函数名叫 `handleReturn`，说明实际业务中使用 "退单" 的概念。
@@ -407,18 +407,18 @@ action: 'DISPATCH' | 'TRANSFER' | 'BACK' | 'FINISH'
 
 ```typescript
 export class TypedRouter {
-  /** 维修模块导航 (10个页面) */
+	/** 维修模块导航 (10个页面) */
 
-  static toRepairList(params?) // ✅ 维修工单池
-  static toRepairDispatch(params?) // ✅ 维修待办单
-  static toRepairFinish(params?) // ✅ 维修已办单
-  static toRepairDetail(repairId, storeId) // ✅ 维修详情
-  static toAddRepair(communityId?) // ✅ 添加维修记录
-  static toRepairHandle(params) // ✅ 订单处理
-  static toSelectResource(feeFlag) // ✅ 选择物品
-  static toEndRepair(repairId, communityId) // ✅ 结束订单
-  static toAppraiseRepair(params) // ✅ 回访工单
-  static toReplyAppraise(ruId, repairId) // ✅ 回复评价
+	static toRepairList(params?); // ✅ 维修工单池
+	static toRepairDispatch(params?); // ✅ 维修待办单
+	static toRepairFinish(params?); // ✅ 维修已办单
+	static toRepairDetail(repairId, storeId); // ✅ 维修详情
+	static toAddRepair(communityId?); // ✅ 添加维修记录
+	static toRepairHandle(params); // ✅ 订单处理
+	static toSelectResource(feeFlag); // ✅ 选择物品
+	static toEndRepair(repairId, communityId); // ✅ 结束订单
+	static toAppraiseRepair(params); // ✅ 回访工单
+	static toReplyAppraise(ruId, repairId); // ✅ 回复评价
 }
 ```
 
@@ -435,10 +435,10 @@ export class TypedRouter {
 // 行号: 261
 
 // 修改前:
-TypedRouter.toRepairOrderList()
+TypedRouter.toRepairOrderList();
 
 // 修改后:
-TypedRouter.toRepairList()
+TypedRouter.toRepairList();
 ```
 
 ### 建议尽快修复（中优先级）
@@ -464,27 +464,27 @@ action: 'BACK',
 
 // 修改前:
 function handleAppraise(item: RepairOrder) {
-  TypedRouter.toAppraiseRepair({
-    repairId: item.repairId!,
-    repairType: item.repairType || '',
-    preStaffId: item.preStaffId, // 删除
-    preStaffName: item.preStaffName, // 删除
-    repairObjType: item.repairObjType, // 删除
-    repairChannel: item.repairChannel,
-    publicArea: item.publicArea,
-    communityId: item.communityId!,
-  })
+	TypedRouter.toAppraiseRepair({
+		repairId: item.repairId!,
+		repairType: item.repairType || "",
+		preStaffId: item.preStaffId, // 删除
+		preStaffName: item.preStaffName, // 删除
+		repairObjType: item.repairObjType, // 删除
+		repairChannel: item.repairChannel,
+		publicArea: item.publicArea,
+		communityId: item.communityId!,
+	});
 }
 
 // 修改后:
 function handleAppraise(item: RepairOrder) {
-  TypedRouter.toAppraiseRepair({
-    repairId: item.repairId!,
-    repairType: item.repairType || '',
-    repairChannel: item.repairChannel,
-    publicArea: item.publicArea,
-    communityId: item.communityId!,
-  })
+	TypedRouter.toAppraiseRepair({
+		repairId: item.repairId!,
+		repairType: item.repairType || "",
+		repairChannel: item.repairChannel,
+		publicArea: item.publicArea,
+		communityId: item.communityId!,
+	});
 }
 ```
 
@@ -503,15 +503,15 @@ function handleAppraise(item: RepairOrder) {
 
 ```typescript
 // src/store/modules/repair.ts
-export const useRepairStore = defineStore('repair', () => {
-  const selectedResources = ref<RepairResource[]>([])
+export const useRepairStore = defineStore("repair", () => {
+	const selectedResources = ref<RepairResource[]>([]);
 
-  function addResource(resource: RepairResource) {
-    selectedResources.value.push(resource)
-  }
+	function addResource(resource: RepairResource) {
+		selectedResources.value.push(resource);
+	}
 
-  return { selectedResources, addResource }
-})
+	return { selectedResources, addResource };
+});
 ```
 
 ## 十、总结与建议

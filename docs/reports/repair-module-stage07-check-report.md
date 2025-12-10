@@ -111,10 +111,10 @@
 
 ```typescript
 // ❌ 错误（位置：handle.vue:261）
-TypedRouter.toRepairOrderList()
+TypedRouter.toRepairOrderList();
 
 // ✅ 正确
-TypedRouter.toRepairList()
+TypedRouter.toRepairList();
 ```
 
 **影响**: 派单后页面跳转会报错
@@ -123,10 +123,10 @@ TypedRouter.toRepairList()
 
 ```typescript
 // ⚠️ 问题
-action: 'RETURN'
+action: "RETURN";
 
 // ✅ 建议
-action: 'BACK' // 根据类型定义
+action: "BACK"; // 根据类型定义
 ```
 
 **【中优先级】问题 3: dispatch.vue:249-261 - 参数不匹配**
@@ -512,30 +512,30 @@ action: 'BACK' // 根据类型定义
 ```typescript
 /** 22. 查询维修状态字典 */
 export const getRepairStates = () =>
-  http.Get<Array<{ statusCd: string; name: string }>>('/app/dict.queryRepairStates', {})
+	http.Get<Array<{ statusCd: string; name: string }>>("/app/dict.queryRepairStates", {});
 
 /** 23. 查询维修师傅待办列表 */
 export const getRepairStaffList = (params: RepairListParams) =>
-  http.Get<RepairListResponse>('/app/ownerRepair.listStaffRepairs', { params })
+	http.Get<RepairListResponse>("/app/ownerRepair.listStaffRepairs", { params });
 
 /** 24. 查询工单流转记录 */
 export const getRepairStaffRecords = (params: { repairId: string; communityId?: string }) =>
-  http.Get<{ staffRecords: RepairStaffRecord[] }>('/app/ownerRepair.listRepairStaffRecords', { params })
+	http.Get<{ staffRecords: RepairStaffRecord[] }>("/app/ownerRepair.listRepairStaffRecords", { params });
 
 /** 25. 查询支付方式字典 */
 export const getRepairPayTypes = () =>
-  http.Get<Array<{ statusCd: string; name: string }>>('/app/dict.queryPayTypes', {})
+	http.Get<Array<{ statusCd: string; name: string }>>("/app/dict.queryPayTypes", {});
 
 /** 26. 查询维修物资 */
 export const getRepairResources = (params: { rstId: string; communityId?: string }) =>
-  http.Get<{ resources: RepairResource[]; total: number }>('/app/resourceStore.listResources', { params })
+	http.Get<{ resources: RepairResource[]; total: number }>("/app/resourceStore.listResources", { params });
 
 /** 27. 查询物资类型 */
 export const getRepairResourceTypes = (params: { communityId?: string; parentId?: string }) =>
-  http.Get<Array<{ rstId: string; name: string; parentRstId?: string }>>(
-    '/app/resourceStoreType.listResourceStoreTypes',
-    { params },
-  )
+	http.Get<Array<{ rstId: string; name: string; parentRstId?: string }>>(
+		"/app/resourceStoreType.listResourceStoreTypes",
+		{ params },
+	);
 ```
 
 #### 任务 2: 修复路由方法错误（5 分钟）
@@ -544,10 +544,10 @@ export const getRepairResourceTypes = (params: { communityId?: string; parentId?
 
 ```typescript
 // ❌ 错误
-TypedRouter.toRepairOrderList()
+TypedRouter.toRepairOrderList();
 
 // ✅ 正确
-TypedRouter.toRepairList()
+TypedRouter.toRepairList();
 ```
 
 **验证方式**:

@@ -6,14 +6,14 @@
 
 ```ts
 // 错误写法
-const userStore = useUserStore()
+const userStore = useUserStore();
 function foo() {
-  userStore.xxx
+	userStore.xxx;
 }
 // 正确写法
 function foo() {
-  const userStore = useUserStore()
-  userStore.xxx
+	const userStore = useUserStore();
+	userStore.xxx;
 }
 ```
 
@@ -23,7 +23,7 @@ function foo() {
 
 我们默认的的 `manifest.config.ts` 只包含了比较基础的 `uniapp` 配置，有的时候我们需要在打包 `app` 时在 `hbuilderx` 里面额外设置一些配置，那么就需要配置好后把 `manifest.json` 中的内容拷贝到 `manifest.config.ts` 中，后面运行就不会丢失了。
 
-举例子，我在 `manifest.json` 里面配置了 2个模块配置，如下：
+举例子，我在 `manifest.json` 里面配置了 2 个模块配置，如下：
 ![alt text](image-18.png)
 
 点击左侧下面的 `源码视图` 就可以看到增加了如下内容：
@@ -38,7 +38,7 @@ function foo() {
 - `pnpm dev:app`
 - 把 `dist/dev/app` 文件夹导入到 `hbx编辑器` 里面，然后运行。这样在编码的时候是可以热更新的。
 
-> 但是上面的方法，在android 模拟器里面不生效。
+> 但是上面的方法，在 android 模拟器里面不生效。
 
 ### 3.2 `android` 热更新
 

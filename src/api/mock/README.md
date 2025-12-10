@@ -26,19 +26,19 @@ src/api/mock/
 所有 Mock 文件必须使用 `*.mock.ts` 格式，并使用 `defineUniAppMock()` 函数：
 
 ```typescript
-import { defineUniAppMock } from './shared/utils'
+import { defineUniAppMock } from "./shared/utils";
 
 export default defineUniAppMock([
-  {
-    url: '/api/your-endpoint',
-    method: ['GET', 'POST'],
-    delay: 300,
-    body: {
-      success: true,
-      data: {},
-    },
-  },
-])
+	{
+		url: "/api/your-endpoint",
+		method: ["GET", "POST"],
+		delay: 300,
+		body: {
+			success: true,
+			data: {},
+		},
+	},
+]);
 ```
 
 ## 🚀 使用说明

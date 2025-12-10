@@ -29,7 +29,12 @@ export const uploadFileUrl = {
  * @param formData 额外表单数据
  * @param options 上传选项
  */
-export function useFileUpload<T = string>(url: string, filePath: string, formData: Record<string, any> = {}, options: Omit<UploadOptions, 'sourceType' | 'sizeType' | 'count'> = {}) {
+export function useFileUpload<T = string>(
+  url: string,
+  filePath: string,
+  formData: Record<string, any> = {},
+  options: Omit<UploadOptions, 'sourceType' | 'sizeType' | 'count'> = {},
+) {
   return useUpload<T>(
     url,
     formData,
@@ -69,9 +74,13 @@ export interface UploadOptions {
  * @param options 上传选项
  * @returns 上传状态和控制对象
  */
-export function useUpload<T = string>(url: string, formData: Record<string, any> = {}, options: UploadOptions = {},
+export function useUpload<T = string>(
+  url: string,
+  formData: Record<string, any> = {},
+  options: UploadOptions = {},
   /** 直接传入文件路径，跳过选择器 */
-  directFilePath?: string) {
+  directFilePath?: string,
+) {
   /** 上传中状态 */
   const loading = ref(false)
   /** 上传错误状态 */

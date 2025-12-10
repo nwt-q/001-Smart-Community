@@ -8,7 +8,7 @@
 | 支付宝小程序 | mp-alipay   |
 | 抖音小程序   | mp-toutiao  |
 | 飞书小程序   | mp-lark     |
-| QQ小程序     | mp-qq       |
+| QQ 小程序    | mp-qq       |
 | 京东小程序   | mp-jd       |
 | 小红书小程序 | mp-xhs      |
 | 百度小程序   | mp-baidu    |

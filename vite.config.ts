@@ -112,17 +112,20 @@ export default ({ command, mode }) => {
       }),
 
       // Mock 开发服务器插件，仅在开发环境启用
-      command === 'serve' && mockDevServerPlugin({
+      command === 'serve'
+      && mockDevServerPlugin({
         dir: 'src/api/mock', // 指定 Mock 文件目录,
       }),
       // Mock 开发服务器插件，仅在生产环境启用
-      command === 'build' && mockDevServerPlugin({
+      command === 'build'
+      && mockDevServerPlugin({
         dir: 'src/api/mock', // 指定 Mock 文件目录,
-        build: mode === 'production'
-          ? {
-              dist: 'mock',
-            }
-          : false,
+        build:
+						mode === 'production'
+						  ? {
+						      dist: 'mock',
+						    }
+						  : false,
       }),
 
       // h5环境增加 BUILD_TIME 和 BUILD_BRANCH

@@ -11,11 +11,14 @@ export default defineUniAppMock([
     delay: 300,
     body: () => {
       mockLog('test', 'Mock 插件测试')
-      return successResponse({
-        timestamp: Date.now(),
-        version: '1.0.0',
-        plugin: 'vite-plugin-mock-dev-server',
-      }, 'Mock 插件工作正常！')
+      return successResponse(
+        {
+          timestamp: Date.now(),
+          version: '1.0.0',
+          plugin: 'vite-plugin-mock-dev-server',
+        },
+        'Mock 插件工作正常！',
+      )
     },
   },
 
@@ -26,10 +29,13 @@ export default defineUniAppMock([
     delay: [200, 500],
     body: ({ query, body }) => {
       mockLog('test/params', { query, body })
-      return successResponse({
-        receivedQuery: query,
-        receivedBody: body,
-      }, '参数测试成功')
+      return successResponse(
+        {
+          receivedQuery: query,
+          receivedBody: body,
+        },
+        '参数测试成功',
+      )
     },
   },
 

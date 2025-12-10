@@ -41,17 +41,17 @@
 ```typescript
 /** 2. 查询楼栋详情 */
 export function getFloorDetail(params: { floorId: string }) {
-  return http.Get<ApiResponse<Floor>>('/app/floor.queryFloorDetail', { params })
+	return http.Get<ApiResponse<Floor>>("/app/floor.queryFloorDetail", { params });
 }
 
 /** 2. 查询单元详情 */
 export function getUnitDetail(params: { unitId: string }) {
-  return http.Get<ApiResponse<Unit>>('/app/unit.queryUnitDetail', { params })
+	return http.Get<ApiResponse<Unit>>("/app/unit.queryUnitDetail", { params });
 }
 
 /** 2. 查询房屋详情 */
 export function getRoomDetail(params: { roomId: string }) {
-  return http.Get<ApiResponse<Room>>('/app/room.queryRoomDetail', { params })
+	return http.Get<ApiResponse<Room>>("/app/room.queryRoomDetail", { params });
 }
 ```
 
@@ -155,8 +155,8 @@ export default defineUniAppMock([
 #### ✅ 3. 统一的请求参数处理
 
 ```typescript
-const params = { ...query, ...body }
-await randomDelay(300, 600)
+const params = { ...query, ...body };
+await randomDelay(300, 600);
 ```
 
 同时处理 query 和 body 参数，支持 GET 和 POST 请求。
@@ -182,7 +182,7 @@ catch (error: any) {
 #### ✅ 5. 日志记录
 
 ```typescript
-mockLog('queryFloors', params, `→ ${result.records.length} items`)
+mockLog("queryFloors", params, `→ ${result.records.length} items`);
 ```
 
 所有接口都使用 `mockLog` 记录请求参数和结果数量，便于调试。
@@ -191,12 +191,12 @@ mockLog('queryFloors', params, `→ ${result.records.length} items`)
 
 ```typescript
 if (!params.floorId) {
-  return errorResponse('楼栋ID不能为空', ResultEnumMap.Error)
+	return errorResponse("楼栋ID不能为空", ResultEnumMap.Error);
 }
 
-const floor = mockFloorDatabase.getFloorById(params.floorId)
+const floor = mockFloorDatabase.getFloorById(params.floorId);
 if (!floor) {
-  return errorResponse('楼栋不存在', ResultEnumMap.NotFound)
+	return errorResponse("楼栋不存在", ResultEnumMap.NotFound);
 }
 ```
 
@@ -209,15 +209,15 @@ if (!floor) {
 ```typescript
 // 列表查询
 return successResponse(
-  {
-    records: result.list,
-    total: result.total,
-  },
-  '查询成功',
-)
+	{
+		records: result.list,
+		total: result.total,
+	},
+	"查询成功",
+);
 
 // 详情查询
-return successResponse({ ownerRepair: repair }, '查询成功')
+return successResponse({ ownerRepair: repair }, "查询成功");
 ```
 
 - 列表接口返回 `{ records, total }` 格式
@@ -272,15 +272,15 @@ const mockFloorDatabase = {
 
 ```typescript
 // API 文件
-import type { ApiResponse, PaginationResponse } from '@/types/api'
-import type { Floor, FloorQueryParams } from '@/types/selector'
-import type { Unit, UnitQueryParams } from '@/types/selector'
-import type { Room, RoomQueryParams } from '@/types/selector'
+import type { ApiResponse, PaginationResponse } from "@/types/api";
+import type { Floor, FloorQueryParams } from "@/types/selector";
+import type { Unit, UnitQueryParams } from "@/types/selector";
+import type { Room, RoomQueryParams } from "@/types/selector";
 
 // Mock 文件
-import type { Floor } from '@/types/selector'
-import type { Unit } from '@/types/selector'
-import type { Room } from '@/types/selector'
+import type { Floor } from "@/types/selector";
+import type { Unit } from "@/types/selector";
+import type { Room } from "@/types/selector";
 ```
 
 ### 4.2 类型覆盖率
@@ -364,11 +364,11 @@ export function getFloorList(params: FloorQueryParams) { ... }
 
 ```typescript
 // 1. 类型导入（优先）
-import type { ApiResponse, PaginationResponse } from '@/types/api'
-import type { Floor, FloorQueryParams } from '@/types/selector'
+import type { ApiResponse, PaginationResponse } from "@/types/api";
+import type { Floor, FloorQueryParams } from "@/types/selector";
 
 // 2. 工具导入
-import { http } from '@/http/alova'
+import { http } from "@/http/alova";
 ```
 
 ### 5.4 错误处理
@@ -377,19 +377,19 @@ import { http } from '@/http/alova'
 
 ```typescript
 try {
-  // 参数验证
-  if (!params.floorId) {
-    return errorResponse('楼栋ID不能为空', ResultEnumMap.Error)
-  }
+	// 参数验证
+	if (!params.floorId) {
+		return errorResponse("楼栋ID不能为空", ResultEnumMap.Error);
+	}
 
-  // 业务逻辑
-  const result = mockFloorDatabase.getFloorList(params)
+	// 业务逻辑
+	const result = mockFloorDatabase.getFloorList(params);
 
-  // 返回成功
-  return successResponse({ records, total }, '查询成功')
+	// 返回成功
+	return successResponse({ records, total }, "查询成功");
 } catch (error: any) {
-  console.error('❌ Mock API Error: queryFloors', error)
-  return errorResponse(error.message || '查询失败')
+	console.error("❌ Mock API Error: queryFloors", error);
+	return errorResponse(error.message || "查询失败");
 }
 ```
 

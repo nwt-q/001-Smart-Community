@@ -20,10 +20,10 @@
 
 ```html
 <template>
-  <button @click="run">请求</button>
-  <view v-if="loading" class="text-blue h-10">请求中...</view>
-  <view v-if="error" class="text-red h-10">请求错误</view>
-  <view v-else class="text-green h-10">{{ JSON.stringify(data) }}</view>
+	<button @click="run">请求</button>
+	<view v-if="loading" class="text-blue h-10">请求中...</view>
+	<view v-if="error" class="text-red h-10">请求错误</view>
+	<view v-else class="text-green h-10">{{ JSON.stringify(data) }}</view>
 </template>
 ```
 
@@ -52,25 +52,25 @@ const { loading, error, data, run } = useRequest<IFooItem>(() => getFooAPI('菲�
 对应的 `src/service/index/foo.ts` 文件如下：
 
 ```ts
-import { http, httpGet } from '@/utils/http'
+import { http, httpGet } from "@/utils/http";
 export interface IFooItem {
-  id: string
-  name: string
+	id: string;
+	name: string;
 }
 
 /** GET 请求 */
 export const getFooAPI = (name: string) => {
-  return http<IFooItem>({
-    url: `/foo`,
-    method: 'GET',
-    query: { name },
-  })
-}
+	return http<IFooItem>({
+		url: `/foo`,
+		method: "GET",
+		query: { name },
+	});
+};
 
 /** GET 请求 - 再次简化，看大家是否喜欢这种简化 */
 export const getFooAPI2 = (name: string) => {
-  return httpGet<IFooItem>('/foo', { name })
-}
+	return httpGet<IFooItem>("/foo", { name });
+};
 ```
 
 依然非常简洁，深受妹子喜爱。
@@ -80,25 +80,25 @@ export const getFooAPI2 = (name: string) => {
 ```ts
 /** GET 请求 */
 export const getFooAPI = (name: string) => {
-  return http.get<IFooItem>('/foo', { name })
-}
+	return http.get<IFooItem>("/foo", { name });
+};
 /** GET 请求；支持 传递 header 的范例 */
 export const getFooAPI2 = (name: string) => {
-  return http.get<IFooItem>('/foo', { name }, { 'Content-Type-100': '100' })
-}
+	return http.get<IFooItem>("/foo", { name }, { "Content-Type-100": "100" });
+};
 
 /** POST 请求 */
 export const postFooAPI = (name: string) => {
-  return http.post<IFooItem>('/foo', { name })
-}
+	return http.post<IFooItem>("/foo", { name });
+};
 /** POST 请求；需要传递 query 参数的范例；微信小程序经常有同时需要query参数和body参数的场景 */
 export const postFooAPI2 = (name: string) => {
-  return http.post<IFooItem>('/foo', { name })
-}
+	return http.post<IFooItem>("/foo", { name });
+};
 /** POST 请求；支持 传递 header 的范例 */
 export const postFooAPI3 = (name: string) => {
-  return http.post<IFooItem>('/foo', { name }, { name }, { 'Content-Type-100': '100' })
-}
+	return http.post<IFooItem>("/foo", { name }, { name }, { "Content-Type-100": "100" });
+};
 ```
 
 ## 图片上传
@@ -107,17 +107,17 @@ export const postFooAPI3 = (name: string) => {
 
 ```html
 <template>
-  <view class="p-4 text-center">
-    <wd-button @click="run">选择图片并上传</wd-button>
-    <view v-if="loading" class="text-blue h-10">上传...</view>
-    <template v-else>
-      <view class="m-2">上传后返回的图片地址：</view>
-      <view class="m-2">{{ data }}</view>
-      <view class="h-80 w-full">
-        <image v-if="data" :src="data" mode="scaleToFill" />
-      </view>
-    </template>
-  </view>
+	<view class="p-4 text-center">
+		<wd-button @click="run">选择图片并上传</wd-button>
+		<view v-if="loading" class="text-blue h-10">上传...</view>
+		<template v-else>
+			<view class="m-2">上传后返回的图片地址：</view>
+			<view class="m-2">{{ data }}</view>
+			<view class="h-80 w-full">
+				<image v-if="data" :src="data" mode="scaleToFill" />
+			</view>
+		</template>
+	</view>
 </template>
 ```
 
@@ -172,23 +172,23 @@ export const getFooAPI = (name: string) => {
 }
 ```
 
-## 支持header传递
+## 支持 header 传递
 
 目前（v2.6.2）已经支持 `header` 了，具体使用方法如下：(最后一个参数就是 `header`，不需要不用传，需要才传。)
 
 ```ts
 /** GET 请求 */
 export const getFooAPI = (name: string) => {
-  return http.get<IFooItem>('/foo', { name }, { 'Content-Type': 'multipart/form-data' })
-}
+	return http.get<IFooItem>("/foo", { name }, { "Content-Type": "multipart/form-data" });
+};
 
 /** POST 请求 */
 export const postFooAPI = (name: string) => {
-  return http.post<IFooItem>('/foo', { name }, { name }, { 'Content-Type': 'multipart/form-data' })
-}
+	return http.post<IFooItem>("/foo", { name }, { name }, { "Content-Type": "multipart/form-data" });
+};
 ```
 
-低于v2.6.2版本，需要手动设置header，具体使用方法如下：(`utils/http.ts`)
+低于 v2.6.2 版本，需要手动设置 header，具体使用方法如下：(`utils/http.ts`)
 
 ```diff
 /**

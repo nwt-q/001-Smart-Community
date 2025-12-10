@@ -51,7 +51,7 @@ npm create unibest@latest my-project
 
 ::: details `tabbar 模板` 和 `spa 模板` 的区别
 
-- `tabbar` 模板里面的tabbar 路由是属于 `tabbar` 级别的，需要使用 `switchTabbar` 切换，`tabbar` 页面会有缓存，渲染性能较好。
+- `tabbar` 模板里面的 tabbar 路由是属于 `tabbar` 级别的，需要使用 `switchTabbar` 切换，`tabbar` 页面会有缓存，渲染性能较好。
 - `spa` 模板类似于前端的 `SPA 应用`，`tabbar` 完全是一个组件实现的。页面之间切换是通过前端状态控制，简单灵活，不受 `tabbar` 的配置限制，但性能不如 `tabbar` 模板。
 - 两者各有优点，按需选用。
 
@@ -72,7 +72,7 @@ pnpm create unibest my-project -t hbx-base # hbx的base模板
 pnpm create unibest my-project -t hbx-demo # hbx的demo模板，包含所有的demo
 ```
 
-> 2024-12-29<周日> 发表了一篇文章：[【unibest】可以去掉hbx模版了，base模板一统天下](https://mp.weixin.qq.com/s/ybunFNkjKfV5yVLOMvqscg?token=1696234630&lang=zh_CN)
+> 2024-12-29<周日> 发表了一篇文章：[【unibest】可以去掉 hbx 模版了，base 模板一统天下](https://mp.weixin.qq.com/s/ybunFNkjKfV5yVLOMvqscg?token=1696234630&lang=zh_CN)
 >
 > 就是说 hbx 模板可以退出历史舞台了。
 
@@ -80,7 +80,7 @@ pnpm create unibest my-project -t hbx-demo # hbx的demo模板，包含所有的d
 
 `github` 和 `gitee` 实时同步，代码一致。
 
-### 普通模板：
+### 普通模板
 
 - https://github.com/feige996/unibest
 - https://gitee.com/feige996/unibest

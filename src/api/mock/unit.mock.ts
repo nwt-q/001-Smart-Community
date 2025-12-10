@@ -86,16 +86,10 @@ const mockUnitDatabase = {
     // 按单元编号模糊搜索
     if (params.unitNum) {
       const keyword = params.unitNum.toLowerCase()
-      filteredUnits = filteredUnits.filter(unit =>
-        unit.unitNum.toLowerCase().includes(keyword),
-      )
+      filteredUnits = filteredUnits.filter(unit => unit.unitNum.toLowerCase().includes(keyword))
     }
 
-    return createPaginationResponse(
-      filteredUnits,
-      params.page || 1,
-      params.row || 10,
-    )
+    return createPaginationResponse(filteredUnits, params.page || 1, params.row || 10)
   },
 
   /**

@@ -10,8 +10,8 @@ const desUtil = require("./DesUtil.js");
 const stringUtil = require("./StringUtil.js");
 
 module.exports = {
-  core: coreUtil,
-  date: dateUtil,
-  des:desUtil,
-  string:stringUtil
+	core: coreUtil,
+	date: dateUtil,
+	des: desUtil,
+	string: stringUtil,
 };

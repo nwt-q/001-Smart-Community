@@ -19,7 +19,7 @@ z-paging 的核心设计理念是"仅需两步"：
 
 ```typescript
 // @query 回调函数签名
-function queryList(pageNo: number, pageSize: number): void
+function queryList(pageNo: number, pageSize: number): void;
 ```
 
 |    参数    |  类型  |                 说明                  |
@@ -42,32 +42,32 @@ function queryList(pageNo: number, pageSize: number): void
 
 ```vue
 <template>
-  <z-paging ref="pagingRef" v-model="dataList" @query="queryList">
-    <view v-for="item in dataList" :key="item.id">
-      {{ item.name }}
-    </view>
-  </z-paging>
+	<z-paging ref="pagingRef" v-model="dataList" @query="queryList">
+		<view v-for="item in dataList" :key="item.id">
+			{{ item.name }}
+		</view>
+	</z-paging>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import useZPaging from '@/uni_modules/z-paging/components/z-paging/js/hooks/useZPaging.js'
+import { ref } from "vue";
+import useZPaging from "@/uni_modules/z-paging/components/z-paging/js/hooks/useZPaging.js";
 
-const pagingRef = ref(null)
-const dataList = ref([])
+const pagingRef = ref(null);
+const dataList = ref([]);
 
 // 使用 useZPaging Hook 自动处理页面滚动和下拉刷新
-useZPaging(pagingRef)
+useZPaging(pagingRef);
 
 // 查询数据
 const queryList = async (pageNo, pageSize) => {
-  try {
-    const res = await uni.$http.get('/api/data', { pageNo, pageSize })
-    pagingRef.value.complete(res.data.list)
-  } catch (error) {
-    pagingRef.value.complete(false)
-  }
-}
+	try {
+		const res = await uni.$http.get("/api/data", { pageNo, pageSize });
+		pagingRef.value.complete(res.data.list);
+	} catch (error) {
+		pagingRef.value.complete(false);
+	}
+};
 </script>
 ```
 
@@ -84,20 +84,20 @@ const queryList = async (pageNo, pageSize) => {
 
 ```typescript
 const {
-  loading,
-  send: loadList,
-  onSuccess,
-  onError,
-} = useRequest((params) => getRepairOrderList(params), { immediate: false })
+	loading,
+	send: loadList,
+	onSuccess,
+	onError,
+} = useRequest((params) => getRepairOrderList(params), { immediate: false });
 
 onSuccess((event) => {
-  console.log('成功:', event.data)
-})
+	console.log("成功:", event.data);
+});
 
 onError((error) => {
-  console.error('失败:', error)
-  // 错误提示已由全局拦截器自动处理
-})
+	console.error("失败:", error);
+	// 错误提示已由全局拦截器自动处理
+});
 ```
 
 ## 4. 冲突点分析
@@ -117,93 +117,93 @@ onError((error) => {
 
 ```vue
 <template>
-  <z-paging ref="pagingRef" v-model="dataList" :default-page-size="pageSize" @query="handleQuery">
-    <view v-for="item in dataList" :key="item.id">
-      {{ item.name }}
-    </view>
+	<z-paging ref="pagingRef" v-model="dataList" :default-page-size="pageSize" @query="handleQuery">
+		<view v-for="item in dataList" :key="item.id">
+			{{ item.name }}
+		</view>
 
-    <template #empty>
-      <wd-status-tip image="search" tip="暂无数据" />
-    </template>
-  </z-paging>
+		<template #empty>
+			<wd-status-tip image="search" tip="暂无数据" />
+		</template>
+	</z-paging>
 </template>
 
 <script setup lang="ts">
-import type { RepairOrder, RepairListParams } from '@/types/repair'
-import { useRequest } from 'alova/client'
-import { ref } from 'vue'
-import { getRepairOrderList } from '@/api/repair'
+import type { RepairOrder, RepairListParams } from "@/types/repair";
+import { useRequest } from "alova/client";
+import { ref } from "vue";
+import { getRepairOrderList } from "@/api/repair";
 
 /** z-paging 组件引用 */
-const pagingRef = ref()
+const pagingRef = ref();
 
 /** 列表数据 */
-const dataList = ref<RepairOrder[]>([])
+const dataList = ref<RepairOrder[]>([]);
 
 /** 分页配置 */
-const pageSize = ref(15)
+const pageSize = ref(15);
 
 /** 当前查询参数（用于保存 @query 传入的分页参数） */
 const currentQueryParams = ref<{ page: number; row: number }>({
-  page: 1,
-  row: 15,
-})
+	page: 1,
+	row: 15,
+});
 
 /**
  * 使用 useRequest 管理请求状态
  * 强制规范：必须设置 immediate: false
  */
 const {
-  loading,
-  send: loadList,
-  onSuccess,
-  onError,
-} = useRequest((params: RepairListParams) => getRepairOrderList(params), { immediate: false })
+	loading,
+	send: loadList,
+	onSuccess,
+	onError,
+} = useRequest((params: RepairListParams) => getRepairOrderList(params), { immediate: false });
 
 /**
  * 成功回调 - 通知 z-paging 数据加载完成
  * @description 在这里调用 complete 方法
  */
 onSuccess((event) => {
-  const result = event.data
-  // 方式一：直接传入列表，z-paging 自动判断是否还有更多
-  pagingRef.value?.complete(result.list || [])
+	const result = event.data;
+	// 方式一：直接传入列表，z-paging 自动判断是否还有更多
+	pagingRef.value?.complete(result.list || []);
 
-  // 方式二：使用 completeByTotal 精确控制（如果后端返回 total）
-  // pagingRef.value?.completeByTotal(result.list || [], result.total)
-})
+	// 方式二：使用 completeByTotal 精确控制（如果后端返回 total）
+	// pagingRef.value?.completeByTotal(result.list || [], result.total)
+});
 
 /**
  * 失败回调 - 通知 z-paging 加载失败
  * @description 错误提示已由全局拦截器自动处理，这里只需通知 z-paging
  */
 onError((error) => {
-  console.error('加载列表失败:', error)
-  pagingRef.value?.complete(false)
-})
+	console.error("加载列表失败:", error);
+	pagingRef.value?.complete(false);
+});
 
 /**
  * z-paging 的 @query 回调
  * @description 接收 z-paging 计算的分页参数，触发数据请求
  */
 function handleQuery(pageNo: number, pageSizeValue: number) {
-  // 保存当前查询参数
-  currentQueryParams.value = {
-    page: pageNo,
-    row: pageSizeValue,
-  }
+	// 保存当前查询参数
+	currentQueryParams.value = {
+		page: pageNo,
+		row: pageSizeValue,
+	};
 
-  // 触发请求（不使用 await，通过回调处理结果）
-  loadList({
-    page: pageNo,
-    row: pageSizeValue,
-    // 其他业务参数...
-  })
+	// 触发请求（不使用 await，通过回调处理结果）
+	loadList({
+		page: pageNo,
+		row: pageSizeValue,
+		// 其他业务参数...
+	});
 }
 
 /** 手动刷新列表 */
 function handleRefresh() {
-  pagingRef.value?.reload()
+	pagingRef.value?.reload();
 }
 </script>
 ```
@@ -215,18 +215,18 @@ function handleRefresh() {
 ```typescript
 // 错误：使用 try-catch（违反 api-migration 规范）
 async function handleQuery(pageNo: number, pageSize: number) {
-  try {
-    const result = await loadList({ page: pageNo, row: pageSize })
-    pagingRef.value?.complete(result.list)
-  } catch {
-    pagingRef.value?.complete(false)
-  }
+	try {
+		const result = await loadList({ page: pageNo, row: pageSize });
+		pagingRef.value?.complete(result.list);
+	} catch {
+		pagingRef.value?.complete(false);
+	}
 }
 
 // 正确：使用回调钩子
 function handleQuery(pageNo: number, pageSize: number) {
-  loadList({ page: pageNo, row: pageSize })
-  // complete 在 onSuccess/onError 回调中调用
+	loadList({ page: pageNo, row: pageSize });
+	// complete 在 onSuccess/onError 回调中调用
 }
 ```
 
@@ -235,14 +235,14 @@ function handleQuery(pageNo: number, pageSize: number) {
 ```typescript
 // onSuccess 中处理成功
 onSuccess((event) => {
-  pagingRef.value?.complete(event.data.list || [])
-})
+	pagingRef.value?.complete(event.data.list || []);
+});
 
 // onError 中处理失败
 onError((error) => {
-  console.error('加载失败:', error)
-  pagingRef.value?.complete(false)
-})
+	console.error("加载失败:", error);
+	pagingRef.value?.complete(false);
+});
 ```
 
 #### 5.2.3 保持 pagingRef 的可用性
@@ -251,83 +251,83 @@ onError((error) => {
 
 ```typescript
 onSuccess((event) => {
-  // 使用可选链确保安全调用
-  pagingRef.value?.complete(event.data.list || [])
-})
+	// 使用可选链确保安全调用
+	pagingRef.value?.complete(event.data.list || []);
+});
 ```
 
 ### 5.3 带筛选条件的完整示例
 
 ```vue
 <template>
-  <view class="page-container">
-    <!-- 搜索栏 -->
-    <view class="search-bar">
-      <wd-search v-model="searchName" placeholder="搜索..." @search="handleSearch" />
-      <wd-button type="primary" size="small" @click="handleSearch"> 搜索 </wd-button>
-    </view>
+	<view class="page-container">
+		<!-- 搜索栏 -->
+		<view class="search-bar">
+			<wd-search v-model="searchName" placeholder="搜索..." @search="handleSearch" />
+			<wd-button type="primary" size="small" @click="handleSearch"> 搜索 </wd-button>
+		</view>
 
-    <!-- 列表 -->
-    <z-paging ref="pagingRef" v-model="dataList" :default-page-size="15" @query="handleQuery">
-      <view v-for="item in dataList" :key="item.id" class="list-item">
-        {{ item.title }}
-      </view>
+		<!-- 列表 -->
+		<z-paging ref="pagingRef" v-model="dataList" :default-page-size="15" @query="handleQuery">
+			<view v-for="item in dataList" :key="item.id" class="list-item">
+				{{ item.title }}
+			</view>
 
-      <template #empty>
-        <wd-status-tip image="search" tip="暂无数据" />
-      </template>
-    </z-paging>
-  </view>
+			<template #empty>
+				<wd-status-tip image="search" tip="暂无数据" />
+			</template>
+		</z-paging>
+	</view>
 </template>
 
 <script setup lang="ts">
-import type { RepairOrder, RepairListParams } from '@/types/repair'
-import { useRequest } from 'alova/client'
-import { ref } from 'vue'
-import { getRepairOrderList } from '@/api/repair'
+import type { RepairOrder, RepairListParams } from "@/types/repair";
+import { useRequest } from "alova/client";
+import { ref } from "vue";
+import { getRepairOrderList } from "@/api/repair";
 
 /** z-paging 组件引用 */
-const pagingRef = ref()
+const pagingRef = ref();
 
 /** 列表数据 */
-const dataList = ref<RepairOrder[]>([])
+const dataList = ref<RepairOrder[]>([]);
 
 /** 搜索条件 */
-const searchName = ref('')
-const selectedStatus = ref('')
+const searchName = ref("");
+const selectedStatus = ref("");
 
 /**
  * 使用 useRequest 管理请求状态
  */
 const {
-  loading,
-  send: loadList,
-  onSuccess,
-  onError,
-} = useRequest((params: RepairListParams) => getRepairOrderList(params), { immediate: false })
+	loading,
+	send: loadList,
+	onSuccess,
+	onError,
+} = useRequest((params: RepairListParams) => getRepairOrderList(params), { immediate: false });
 
 /** 成功回调 */
 onSuccess((event) => {
-  const result = event.data
-  pagingRef.value?.complete(result.ownerRepairs || [])
-})
+	const result = event.data;
+	pagingRef.value?.complete(result.ownerRepairs || []);
+});
 
 /** 失败回调 */
 onError((error) => {
-  console.error('加载列表失败:', error)
-  pagingRef.value?.complete(false)
-})
+	console.error("加载列表失败:", error);
+	pagingRef.value?.complete(false);
+});
 
 /**
  * z-paging 的 @query 回调
  */
 function handleQuery(pageNo: number, pageSize: number) {
-  loadList({
-    page: pageNo,
-    row: pageSize,
-    repairName: searchName.value || undefined,
-    state: selectedStatus.value || undefined,
-  })
+	loadList({
+		page: pageNo,
+		row: pageSize,
+		repairName: searchName.value || undefined,
+		state: selectedStatus.value || undefined,
+	});
 }
 
 /**
@@ -335,14 +335,14 @@ function handleQuery(pageNo: number, pageSize: number) {
  * @description 重置到第一页并刷新
  */
 function handleSearch() {
-  pagingRef.value?.reload()
+	pagingRef.value?.reload();
 }
 
 /**
  * 筛选条件变化
  */
 function handleFilterChange() {
-  pagingRef.value?.reload()
+	pagingRef.value?.reload();
 }
 </script>
 ```
@@ -364,9 +364,9 @@ function handleFilterChange() {
 
 ```typescript
 const { send: loadList } = useRequest(
-  (params) => getRepairOrderList(params),
-  { immediate: false }, // 必须设置，由 z-paging 控制请求时机
-)
+	(params) => getRepairOrderList(params),
+	{ immediate: false }, // 必须设置，由 z-paging 控制请求时机
+);
 ```
 
 ### 6.3 z-paging 的 auto 属性
@@ -375,11 +375,11 @@ const { send: loadList } = useRequest(
 
 ```typescript
 onMounted(() => {
-  // 手动触发首次加载
-  setTimeout(() => {
-    pagingRef.value?.reload()
-  }, 100)
-})
+	// 手动触发首次加载
+	setTimeout(() => {
+		pagingRef.value?.reload();
+	}, 100);
+});
 ```
 
 ## 7. 总结
@@ -395,22 +395,22 @@ onMounted(() => {
 
 ```typescript
 // 1. 定义 useRequest
-const { send: loadList, onSuccess, onError } = useRequest((params) => getXxxList(params), { immediate: false })
+const { send: loadList, onSuccess, onError } = useRequest((params) => getXxxList(params), { immediate: false });
 
 // 2. 在 onSuccess 中调用 complete
 onSuccess((event) => {
-  pagingRef.value?.complete(event.data.list || [])
-})
+	pagingRef.value?.complete(event.data.list || []);
+});
 
 // 3. 在 onError 中调用 complete(false)
 onError((error) => {
-  console.error('加载失败:', error)
-  pagingRef.value?.complete(false)
-})
+	console.error("加载失败:", error);
+	pagingRef.value?.complete(false);
+});
 
 // 4. @query 回调中触发请求
 function handleQuery(pageNo: number, pageSize: number) {
-  loadList({ page: pageNo, row: pageSize })
+	loadList({ page: pageNo, row: pageSize });
 }
 ```
 

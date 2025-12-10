@@ -44,7 +44,7 @@
 
 ---
 
-注意旧的地址 [codercup](https://github.com/codercup/unibest) 我进不去了，使用新的 [feige996](https://github.com/feige996/unibest)。PR和 issue 也请使用新地址，否则无法合并。
+注意旧的地址 [codercup](https://github.com/codercup/unibest) 我进不去了，使用新的 [feige996](https://github.com/feige996/unibest)。PR 和 issue 也请使用新地址，否则无法合并。
 
 ## 平台兼容性
 
@@ -70,15 +70,15 @@
 
 ## 📦 运行（支持热更新）
 
-- web平台： `pnpm dev:h5`, 然后打开 [http://localhost:9000/](http://localhost:9000/)。
-- weixin平台：`pnpm dev:mp` 然后打开微信开发者工具，导入本地文件夹，选择本项目的`dist/dev/mp-weixin` 文件。
-- APP平台：`pnpm dev:app`, 然后打开 `HBuilderX`，导入刚刚生成的`dist/dev/app` 文件夹，选择运行到模拟器(开发时优先使用)，或者运行的安卓/ios基座。(如果是 `安卓` 和 `鸿蒙` 平台，则不用这个方式，可以把整个unibest项目导入到hbx，通过hbx的菜单来运行到对应的平台。)
+- web 平台： `pnpm dev:h5`, 然后打开 [http://localhost:9000/](http://localhost:9000/)。
+- weixin 平台：`pnpm dev:mp` 然后打开微信开发者工具，导入本地文件夹，选择本项目的`dist/dev/mp-weixin` 文件。
+- APP 平台：`pnpm dev:app`, 然后打开 `HBuilderX`，导入刚刚生成的`dist/dev/app` 文件夹，选择运行到模拟器(开发时优先使用)，或者运行的安卓/ios 基座。(如果是 `安卓` 和 `鸿蒙` 平台，则不用这个方式，可以把整个 unibest 项目导入到 hbx，通过 hbx 的菜单来运行到对应的平台。)
 
 ## 🔗 发布
 
-- web平台： `pnpm build:h5`，打包后的文件在 `dist/build/h5`，可以放到web服务器，如nginx运行。如果最终不是放在根目录，可以在 `manifest.config.ts` 文件的 `h5.router.base` 属性进行修改。
-- weixin平台：`pnpm build:mp`, 打包后的文件在 `dist/build/mp-weixin`，然后通过微信开发者工具导入，并点击右上角的“上传”按钮进行上传。
-- APP平台：`pnpm build:app`, 然后打开 `HBuilderX`，导入刚刚生成的`dist/build/app` 文件夹，选择发行 - APP云打包。(如果是 `安卓` 和 `鸿蒙` 平台，则不用这个方式，可以把整个unibest项目导入到hbx，通过hbx的菜单来发行到对应的平台。)
+- web 平台： `pnpm build:h5`，打包后的文件在 `dist/build/h5`，可以放到 web 服务器，如 nginx 运行。如果最终不是放在根目录，可以在 `manifest.config.ts` 文件的 `h5.router.base` 属性进行修改。
+- weixin 平台：`pnpm build:mp`, 打包后的文件在 `dist/build/mp-weixin`，然后通过微信开发者工具导入，并点击右上角的“上传”按钮进行上传。
+- APP 平台：`pnpm build:app`, 然后打开 `HBuilderX`，导入刚刚生成的`dist/build/app` 文件夹，选择发行 - APP 云打包。(如果是 `安卓` 和 `鸿蒙` 平台，则不用这个方式，可以把整个 unibest 项目导入到 hbx，通过 hbx 的菜单来发行到对应的平台。)
 
 ## 📄 License
 
@@ -95,17 +95,15 @@ Copyright (c) 2025 菲鸽
 
 ## 我们在做什么？
 
-我们做的是物业系统的app。对于物业的员工来说，他们使用这款app响应处理业主的反馈与投诉。比如：
-
--
+我们做的是物业系统的 app。对于物业的员工来说，他们使用这款 app 响应处理业主的反馈与投诉。比如：
 
 ## 参考资料
 
-- gitee仓库： https://gitee.com/java110/PropertyApp
-- 可访问demo地址： http://property.homecommunity.cn
+- gitee 仓库： https://gitee.com/java110/PropertyApp
+- 可访问 demo 地址： http://property.homecommunity.cn
 - 参考系统的文档： http://www.homecommunity.cn/pages/demo/demo_cn.html
 
-### 参考app的账号与密码
+### 参考 app 的账号与密码
 
 - 物业员工账号： wuxw
 - 物业员工密码： admin
@@ -117,15 +115,15 @@ Copyright (c) 2025 菲鸽
 
 ## 期望达到的学习目标
 
-1. 借此来学习vue2和vue3的uniapp代码编写差异。便于我日后上手公司项目。熟悉一大套API。
-2. 尝试给出一个claude code代码迁移代理，迁移代码写法为vue3。
-3. 接触一下UI生成类的AI工具，帮我生成合适的UI方案，并设计合适的css颜色变量。
+1. 借此来学习 vue2 和 vue3 的 uniapp 代码编写差异。便于我日后上手公司项目。熟悉一大套 API。
+2. 尝试给出一个 claude code 代码迁移代理，迁移代码写法为 vue3。
+3. 接触一下 UI 生成类的 AI 工具，帮我生成合适的 UI 方案，并设计合适的 css 颜色变量。
 
 ## 工作任务划分
 
 ### 阮喵喵
 
-做下面这4个静态页面。
+做下面这 4 个静态页面。
 
 ![2025-09-13-00-33-54](https://s2.loli.net/2025/09/13/gtkP7dIYfnyqZ6m.png)
 

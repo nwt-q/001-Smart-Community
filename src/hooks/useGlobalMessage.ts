@@ -32,17 +32,26 @@ export const useGlobalMessage = defineStore('global-message', {
       }
     },
     alert(option: GlobalMessageOptions | string) {
-      const messageOptions = CommonUtil.deepMerge({ type: 'alert' }, CommonUtil.isString(option) ? { title: option } : option) as MessageOptions
+      const messageOptions = CommonUtil.deepMerge(
+        { type: 'alert' },
+        CommonUtil.isString(option) ? { title: option } : option,
+      ) as MessageOptions
       messageOptions.showCancelButton = false
       this.show(messageOptions)
     },
     confirm(option: GlobalMessageOptions | string) {
-      const messageOptions = CommonUtil.deepMerge({ type: 'confirm' }, CommonUtil.isString(option) ? { title: option } : option) as MessageOptions
+      const messageOptions = CommonUtil.deepMerge(
+        { type: 'confirm' },
+        CommonUtil.isString(option) ? { title: option } : option,
+      ) as MessageOptions
       messageOptions.showCancelButton = true
       this.show(messageOptions)
     },
     prompt(option: GlobalMessageOptions | string) {
-      const messageOptions = CommonUtil.deepMerge({ type: 'prompt' }, CommonUtil.isString(option) ? { title: option } : option) as MessageOptions
+      const messageOptions = CommonUtil.deepMerge(
+        { type: 'prompt' },
+        CommonUtil.isString(option) ? { title: option } : option,
+      ) as MessageOptions
       messageOptions.showCancelButton = true
       this.show(messageOptions)
     },

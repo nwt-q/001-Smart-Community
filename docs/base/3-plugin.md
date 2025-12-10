@@ -7,15 +7,15 @@
 ```vue
 <route lang="json5">
 {
-  layout: 'demo',
-  style: {
-    navigationBarTitleText: '标题',
-  },
+	layout: "demo",
+	style: {
+		navigationBarTitleText: "标题",
+	},
 }
 </route>
 
 <template>
-  <view class="text-green-500">菲鸽，你好，我喜欢你！</view>
+	<view class="text-green-500">菲鸽，你好，我喜欢你！</view>
 </template>
 ```
 
@@ -67,32 +67,32 @@
 <!-- 推荐使用json5，更强大，且允许注释 -->
 <route lang="json5" type="home">
 {
-  style: {
-    navigationStyle: 'custom',
-    navigationBarTitleText: '首页',
-  },
+	style: {
+		navigationStyle: "custom",
+		navigationBarTitleText: "首页",
+	},
 }
 </route>
 <template>
-  <div>
-    <h1>欢迎使用 unibest</h1>
-    <h4>unibest 是最好的 uniapp 开发模板</h4>
-  </div>
+	<div>
+		<h1>欢迎使用 unibest</h1>
+		<h4>unibest 是最好的 uniapp 开发模板</h4>
+	</div>
 </template>
 ```
 
 ```vue [src/pages/about.vue]
 <route lang="json5">
 {
-  style: {
-    navigationBarTitleText: '关于',
-  },
+	style: {
+		navigationBarTitleText: "关于",
+	},
 }
 </route>
 <template>
-  <view>
-    <view>通过 `/pages/about` 来访问这个页面</view>
-  </view>
+	<view>
+		<view>通过 `/pages/about` 来访问这个页面</view>
+	</view>
 </template>
 ```
 
@@ -108,9 +108,9 @@
 
 ```ts [vite.config.ts]
 UniPages({
-  exclude: ['**/components/**/**.*'],
-  subPackages: ['src/pages-sub'], // 是个数组，可以配置多个，但不能为 `src/pages` 里面的子目录
-})
+	exclude: ["**/components/**/**.*"],
+	subPackages: ["src/pages-sub"], // 是个数组，可以配置多个，但不能为 `src/pages` 里面的子目录
+});
 ```
 
 ## vite-plugin-uni-layouts
@@ -124,21 +124,21 @@ UniPages({
 ```vue [src/pages/demo.vue]{3}
 <route lang="json5">
 {
-  layout: 'demo',
-  style: {
-    navigationBarTitleText: '关于',
-  },
+	layout: "demo",
+	style: {
+		navigationBarTitleText: "关于",
+	},
 }
 </route>
 ```
 
 ```vue [src/layouts/demo.vue]
 <template>
-  <view>
-    <!-- 这里可以写通用的布局，比如导航栏，tabbar等 -->
-    <!-- slot里面装的就是子页面的内容 -->
-    <slot />
-  </view>
+	<view>
+		<!-- 这里可以写通用的布局，比如导航栏，tabbar等 -->
+		<!-- slot里面装的就是子页面的内容 -->
+		<slot />
+	</view>
 </template>
 ```
 

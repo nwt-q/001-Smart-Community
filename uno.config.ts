@@ -6,13 +6,7 @@
 
 // https://www.npmjs.com/package/@uni-helper/unocss-preset-uni
 import { presetUni } from '@uni-helper/unocss-preset-uni'
-import {
-  defineConfig,
-  presetAttributify,
-  presetIcons,
-  transformerDirectives,
-  transformerVariantGroup,
-} from 'unocss'
+import { defineConfig, presetAttributify, presetIcons, transformerDirectives, transformerVariantGroup } from 'unocss'
 
 export default defineConfig({
   /**
@@ -195,7 +189,7 @@ export default defineConfig({
       'p-safe',
       {
         padding:
-          'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
+					'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
       },
     ],
     ['pt-safe', { 'padding-top': 'env(safe-area-inset-top)' }],
@@ -406,5 +400,4 @@ export default defineConfig({
       `,
     },
   ],
-
 })

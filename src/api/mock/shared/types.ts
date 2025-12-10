@@ -23,6 +23,4 @@ export interface MockResponseOptions {
 }
 
 /** Mock 处理器函数 */
-export type MockHandler<T = any> = (
-  context: MockRequestContext
-) => Promise<ApiResponse<T>> | ApiResponse<T>
+export type MockHandler<T = any> = (context: MockRequestContext) => Promise<ApiResponse<T>> | ApiResponse<T>

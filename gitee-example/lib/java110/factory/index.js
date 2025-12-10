@@ -1,8 +1,8 @@
 /**
  * 工厂类入口类
- * 
+ *
  * add by wuxw 2019-12-28
- * 
+ *
  */
 //登录工厂类
 const loginFactory = require("./LoginFactory.js");
@@ -18,10 +18,10 @@ const httpFactory = require("./HttpFactory.js");
 const base64Factory = require("./Base64Factory.js");
 
 module.exports = {
-  login: loginFactory,
-  user: userFactory,
-  file: fileFactory,
-  core: coreFactory,
-  http: httpFactory,
-  base64: base64Factory
+	login: loginFactory,
+	user: userFactory,
+	file: fileFactory,
+	core: coreFactory,
+	http: httpFactory,
+	base64: base64Factory,
 };

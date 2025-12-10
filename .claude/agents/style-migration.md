@@ -152,40 +152,40 @@ UnoCSS + wot-design-uni
 
 ```typescript
 // uno.config.ts
-import { defineConfig } from 'unocss'
-import { presetUni } from '@uni-helper/unocss-preset-uni'
+import { defineConfig } from "unocss";
+import { presetUni } from "@uni-helper/unocss-preset-uni";
 
 export default defineConfig({
-  presets: [presetUni()],
-  theme: {
-    colors: {
-      // ColorUI 兼容色彩系统
-      'colorui-blue': '#0081FF',
-      'colorui-green': '#39b54a',
-      'colorui-red': '#e54d42',
-      'colorui-yellow': '#fbbd08',
-      'colorui-orange': '#f37b1d',
-      'colorui-purple': '#6739b6',
-    },
-  },
-  rules: [
-    // 渐变色支持
-    [
-      /^bg-gradient-(\\w+)$/,
-      ([, color]) => {
-        const gradients = {
-          green: 'linear-gradient(45deg, #39b54a, #8bc34a)',
-          blue: 'linear-gradient(45deg, #0081FF, #1cbbb4)',
-          red: 'linear-gradient(45deg, #e54d42, #ff5722)',
-        }
-        return { 'background-image': gradients[color] || gradients.green }
-      },
-    ],
-    // rpx 单位支持
-    [/^text-(\\d+)rpx$/, ([, d]) => ({ 'font-size': `${d}rpx` })],
-    [/^rounded-(\\d+\\.?\\d*)$/, ([, d]) => ({ 'border-radius': `${d}rpx` })],
-  ],
-})
+	presets: [presetUni()],
+	theme: {
+		colors: {
+			// ColorUI 兼容色彩系统
+			"colorui-blue": "#0081FF",
+			"colorui-green": "#39b54a",
+			"colorui-red": "#e54d42",
+			"colorui-yellow": "#fbbd08",
+			"colorui-orange": "#f37b1d",
+			"colorui-purple": "#6739b6",
+		},
+	},
+	rules: [
+		// 渐变色支持
+		[
+			/^bg-gradient-(\\w+)$/,
+			([, color]) => {
+				const gradients = {
+					green: "linear-gradient(45deg, #39b54a, #8bc34a)",
+					blue: "linear-gradient(45deg, #0081FF, #1cbbb4)",
+					red: "linear-gradient(45deg, #e54d42, #ff5722)",
+				};
+				return { "background-image": gradients[color] || gradients.green };
+			},
+		],
+		// rpx 单位支持
+		[/^text-(\\d+)rpx$/, ([, d]) => ({ "font-size": `${d}rpx` })],
+		[/^rounded-(\\d+\\.?\\d*)$/, ([, d]) => ({ "border-radius": `${d}rpx` })],
+	],
+});
 ```
 
 ### 配置要点
@@ -228,9 +228,9 @@ export default defineConfig({
 
 <style scoped>
 .item-content {
-  width: 100%;
-  margin-left: 20rpx;
-  line-height: 1.6em;
+	width: 100%;
+	margin-left: 20rpx;
+	line-height: 1.6em;
 }
 </style>
 ```

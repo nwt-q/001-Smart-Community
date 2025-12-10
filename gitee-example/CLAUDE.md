@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-HC掌上物业是一个完全开源的智慧社区物业管理系统移动端应用，基于 uni-app Vue2 框架开发，支持一次编码多端运行（H5、微信小程序、APP、支付宝小程序等）。项目面向物业工作人员，提供工单维修、巡检打卡、采购管理、物品领用、投诉处理、房产管理、通讯录、公告发布等完整的物业管理功能。
+HC 掌上物业是一个完全开源的智慧社区物业管理系统移动端应用，基于 uni-app Vue2 框架开发，支持一次编码多端运行（H5、微信小程序、APP、支付宝小程序等）。项目面向物业工作人员，提供工单维修、巡检打卡、采购管理、物品领用、投诉处理、房产管理、通讯录、公告发布等完整的物业管理功能。
 
 ### 项目特色
 
-- **Java110生态体系**: 配套 HomeCommunity 智慧社区后端系统
+- **Java110 生态体系**: 配套 HomeCommunity 智慧社区后端系统
 - **物业专业化**: 专门针对物业管理场景的业务设计
 - **全平台支持**: H5、微信小程序、APP 多端统一
 - **开源免费**: 完全开源，可自由定制和部署
@@ -29,13 +29,15 @@ HC掌上物业是一个完全开源的智慧社区物业管理系统移动端应
 此项目使用传统 uni-app 开发模式，主要通过 HBuilderX IDE 进行开发和构建：
 
 **开发调试**:
+
 - 在 HBuilderX 中打开项目根目录
 - 选择"运行" → "运行到浏览器" (H5)
 - 选择"运行" → "运行到小程序模拟器" → "微信开发者工具"
 - 选择"运行" → "运行到手机或模拟器"
 
 **生产构建**:
-- 选择"发行" → "网站-H5手机版"
+
+- 选择"发行" → "网站-H5 手机版"
 - 选择"发行" → "小程序-微信"
 - 选择"发行" → "App-云打包"
 
@@ -54,22 +56,22 @@ HC掌上物业是一个完全开源的智慧社区物业管理系统移动端应
 
 ```javascript
 // H5 环境代理配置
-let baseUrl = '/';  // H5 使用代理
+let baseUrl = "/"; // H5 使用代理
 
 // 小程序/APP 环境
-let baseUrl = 'http://demo.homecommunity.cn/';  // 直接后端地址
+let baseUrl = "http://demo.homecommunity.cn/"; // 直接后端地址
 
 // 其他重要配置
-let commonBaseUrl = 'http://demo.homecommunity.cn/';  // 图片资源服务器
-let QQMapKey = '';  // 腾讯地图 API 密钥
-let appPayKey = '';  // APP 支付密钥
+let commonBaseUrl = "http://demo.homecommunity.cn/"; // 图片资源服务器
+let QQMapKey = ""; // 腾讯地图 API 密钥
+let appPayKey = ""; // APP 支付密钥
 ```
 
 ## 项目架构详解
 
 ### 目录结构解析
 
-```
+```plain
 gitee-example/
 ├── api/                    # API 接口层 - 按业务模块组织
 │   ├── apply/             # 申请类接口
@@ -132,9 +134,9 @@ Vue.prototype.java110Factory = Java110Context.factory;
 Vue.prototype.java110Util = Java110Context.util;
 
 // 在页面中使用
-this.java110Context.getHeaders()  // 获取请求头
-this.java110Util.wxuuid()         // 生成UUID
-this.java110Factory.createRequest() // 创建请求对象
+this.java110Context.getHeaders(); // 获取请求头
+this.java110Util.wxuuid(); // 生成UUID
+this.java110Factory.createRequest(); // 创建请求对象
 ```
 
 #### 2. 模块化 API 设计
@@ -145,7 +147,7 @@ API 层按业务领域严格分模块，每个模块独立管理：
 - **投诉模块**: `api/complaint/` - 处理投诉工单
 - **巡检模块**: `api/inspection/` - 处理巡检任务
 - **采购模块**: `api/resource/` - 处理采购申请
-- **OA模块**: `api/oa/` - 处理办公流程
+- **OA 模块**: `api/oa/` - 处理办公流程
 
 #### 3. 页面路由组织策略
 
@@ -180,7 +182,7 @@ API 层按业务领域严格分模块，每个模块独立管理：
 
 #### 1. 用户认证与权限管理
 
-```
+```plain
 登录流程: pages/login/login.vue
 会话管理: lib/java110/api/Java110SessionApi.js
 权限检查: hasPrivilege() 方法
@@ -190,6 +192,7 @@ API 层按业务领域严格分模块，每个模块独立管理：
 #### 2. 工单管理体系
 
 **维修工单**:
+
 - `pages/repairOrder/` - 维修工单列表
 - `pages/repairAdd/` - 新增维修工单
 - `pages/repairDetail/` - 工单详情查看
@@ -198,6 +201,7 @@ API 层按业务领域严格分模块，每个模块独立管理：
 - `pages/repairDispatchFinish/` - 工单完成
 
 **投诉处理**:
+
 - `pages/complaintList/` - 投诉列表
 - `pages/complaintOrder/` - 投诉工单详情
 - `pages/complaintHandle/` - 投诉处理
@@ -235,12 +239,12 @@ API 层按业务领域严格分模块，每个模块独立管理：
 ```javascript
 // H5 环境
 // #ifdef H5
-let baseUrl = '/';
+let baseUrl = "/";
 // #endif
 
 // 小程序环境
 // #ifndef H5
-let baseUrl = 'http://demo.homecommunity.cn/';
+let baseUrl = "http://demo.homecommunity.cn/";
 // #endif
 
 // 微信小程序特定

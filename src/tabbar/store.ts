@@ -8,10 +8,12 @@ import { tabbarList as _tabbarList, customTabbarEnable } from './config'
 const BULGE_ENABLE = false
 
 /** tabbarList 里面的 path 从 pages.config.ts 得到 */
-const tabbarList = reactive<CustomTabBarItem[]>(_tabbarList.map(item => ({
-  ...item,
-  pagePath: item.pagePath.startsWith('/') ? item.pagePath : `/${item.pagePath}`,
-})))
+const tabbarList = reactive<CustomTabBarItem[]>(
+  _tabbarList.map(item => ({
+    ...item,
+    pagePath: item.pagePath.startsWith('/') ? item.pagePath : `/${item.pagePath}`,
+  })),
+)
 
 if (customTabbarEnable && BULGE_ENABLE) {
   if (tabbarList.length % 2) {
@@ -48,7 +50,9 @@ const tabbarStore = reactive({
     FG_LOG_ENABLE && console.log('index:', index, path)
     // console.log('tabbarList:', tabbarList)
     if (index === -1) {
-      const pagesPathList = getCurrentPages().map(item => item.route.startsWith('/') ? item.route : `/${item.route}`)
+      const pagesPathList = getCurrentPages().map(item =>
+        item.route.startsWith('/') ? item.route : `/${item.route}`,
+      )
       // console.log(pagesPathList)
       const flag = tabbarList.some(item => pagesPathList.includes(item.pagePath))
       if (!flag) {

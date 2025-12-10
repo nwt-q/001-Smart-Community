@@ -59,8 +59,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 在实现 `vue3项目` 迁移到 `vue2项目` 时，请遵守以下几条重要原则：
 
-1. 所有的接口都是mock假接口： 全部的接口都是使用本地的 `vite-plugin-mock-dev-server` 插件实现的假接口。
-2. 不考虑严格的登录逻辑： 我们不做任何登录功能。关于token的存储，读取，管理，使用的功能与逻辑，在 `vue3项目` 内都不做。
+1. 所有的接口都是 mock 假接口： 全部的接口都是使用本地的 `vite-plugin-mock-dev-server` 插件实现的假接口。
+2. 不考虑严格的登录逻辑： 我们不做任何登录功能。关于 token 的存储，读取，管理，使用的功能与逻辑，在 `vue3项目` 内都不做。
 3. 不考虑严格的鉴权逻辑： 我们不做任何鉴权功能。在跳转路由的时候，`vue3项目` 不做任何形式的鉴权处理。任何页面都可以随意跳转，任意访问。
 4. 不许滥用 unocss 的 shortcuts 功能： 不要将业务性质的，非公共性质的样式类，都写入到 `uno.config.ts` 配置文件内。避免滥用全局变量性质的配置文件，
 
@@ -88,9 +88,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```html
 <wd-popup v-model="showModal">
-  <wd-cell-group>
-    <!-- 内容 -->
-  </wd-cell-group>
+	<wd-cell-group>
+		<!-- 内容 -->
+	</wd-cell-group>
 </wd-popup>
 ```
 
@@ -98,30 +98,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```vue
 <template>
-  <wd-popup v-model="showModal">
-    <wd-cell-group>
-      <!-- 内容 -->
-    </wd-cell-group>
-  </wd-popup>
+	<wd-popup v-model="showModal">
+		<wd-cell-group>
+			<!-- 内容 -->
+		</wd-cell-group>
+	</wd-popup>
 </template>
 ```
 
 ### 3. javascript / typescript 的代码注释写法
 
-代码注释写法应该写成jsdoc格式。而不是单纯的双斜杠注释。比如：
+代码注释写法应该写成 jsdoc 格式。而不是单纯的双斜杠注释。比如：
 
 不合适的双斜线注释写法如下：
 
 ```ts
 // 模拟成功响应
-export function successResponse<T>(data: T, message: string = '操作成功') {
-  return {
-    success: true,
-    code: ResultEnum.Success,
-    message,
-    data,
-    timestamp: Date.now(),
-  }
+export function successResponse<T>(data: T, message: string = "操作成功") {
+	return {
+		success: true,
+		code: ResultEnum.Success,
+		message,
+		data,
+		timestamp: Date.now(),
+	};
 }
 ```
 
@@ -129,14 +129,14 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 
 ```ts
 /** 模拟成功响应 */
-export function successResponse<T>(data: T, message: string = '操作成功') {
-  return {
-    success: true,
-    code: ResultEnum.Success,
-    message,
-    data,
-    timestamp: Date.now(),
-  }
+export function successResponse<T>(data: T, message: string = "操作成功") {
+	return {
+		success: true,
+		code: ResultEnum.Success,
+		message,
+		data,
+		timestamp: Date.now(),
+	};
 }
 ```
 
@@ -146,14 +146,14 @@ export function successResponse<T>(data: T, message: string = '操作成功') {
 
 ### 5. vue 组件编写规则
 
-1. vue组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
+1. vue 组件命名风格，使用短横杠的命名风格，而不是大驼峰命名。
 2. 先 `<script setup lang="ts">`、然后 `<template>`、最后是 `<style scoped>` 。
-3. 每个vue组件的最前面，提供少量的html注释，说明本组件是做什么的。
+3. 每个 vue 组件的最前面，提供少量的 html 注释，说明本组件是做什么的。
 
 ### 6. jsdoc 注释的 `@example` 标签不要写冗长复杂的例子
 
 1. 你应该积极主动的函数编写 jsdoc 注释的 `@example` 标签。
-2. 但是 `@example` 标签不允许写复杂的例子，请写简单的单行例子。完整的函数使用例子，你应该择机在函数文件的附近编写md文档，在文档内给出使用例子。
+2. 但是 `@example` 标签不允许写复杂的例子，请写简单的单行例子。完整的函数使用例子，你应该择机在函数文件的附近编写 md 文档，在文档内给出使用例子。
 
 ### 7. 页面 vue 组件必须提供注释说明本组件的`业务名`和`访问地址`
 
@@ -325,7 +325,7 @@ pnpm ci
 
 ### 源码目录结构
 
-```
+```plain
 src/
 ├── api/            # API 接口定义
 ├── components/     # 公共组件

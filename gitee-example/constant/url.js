@@ -1,28 +1,28 @@
-import conf from '../conf/config.js'
+import conf from "../conf/config.js";
 const baseUrl = conf.baseUrl;
 const hcBaseUrl = conf.commonBaseUrl;
 export default {
 	baseUrl: baseUrl,
 	hcBaseUrl: hcBaseUrl, // 登录接口
-	loginUrl: baseUrl + 'app/login.pcUserLogin',
+	loginUrl: baseUrl + "app/login.pcUserLogin",
 	areaUrl: baseUrl + "app/area.listAreas",
-	GetNoticeListUrl: baseUrl + 'app/notice.listNotices', //公告接口
-	listMyEnteredCommunitys: baseUrl + 'app/community.listMyEnteredCommunitys', //查看员工小区
-	listOwnerRepairs: baseUrl + 'app/ownerRepair.listOwnerRepairs', //查看报修
-	saveOwnerRepair: baseUrl + 'app/ownerRepair.saveOwnerRepair', //维修
-	replyRepairAppraise: baseUrl + 'app/repair.replyRepairAppraise', //维修
-	
-	queryStaffInfos: baseUrl + 'app/query.staff.infos', //查询员工信息
-	changeStaffPwd: baseUrl + 'app/user.changeStaffPwd', //修改密码
-	listAuditHistoryComplaints: baseUrl + 'app/auditUser.listAuditHistoryComplaints', //查询历史单
-	saveComplaint: baseUrl + 'app/complaint', //查询业主房间
-	userLogout: baseUrl + 'app/user.service.logout', //绑定业主
-	listAuditComplaints: baseUrl + 'app/auditUser.listAuditComplaints', //查询绑定业主
-	listComplaintEvent: baseUrl + 'app/complaint.listComplaintEvent', //查询工单流转
-	listComplaintAppraise: baseUrl + 'app/complaintAppraise.listComplaintAppraise', //投诉评价
-	replyComplaintAppraise: baseUrl + 'app/complaintAppraise.replyComplaintAppraise', //评价回复
-	auditComplaint: baseUrl + 'app/complaint.auditComplaint', //查询业主门禁
-	queryFloors: baseUrl + 'app/floor.queryFloors', // 查询楼栋
+	GetNoticeListUrl: baseUrl + "app/notice.listNotices", //公告接口
+	listMyEnteredCommunitys: baseUrl + "app/community.listMyEnteredCommunitys", //查看员工小区
+	listOwnerRepairs: baseUrl + "app/ownerRepair.listOwnerRepairs", //查看报修
+	saveOwnerRepair: baseUrl + "app/ownerRepair.saveOwnerRepair", //维修
+	replyRepairAppraise: baseUrl + "app/repair.replyRepairAppraise", //维修
+
+	queryStaffInfos: baseUrl + "app/query.staff.infos", //查询员工信息
+	changeStaffPwd: baseUrl + "app/user.changeStaffPwd", //修改密码
+	listAuditHistoryComplaints: baseUrl + "app/auditUser.listAuditHistoryComplaints", //查询历史单
+	saveComplaint: baseUrl + "app/complaint", //查询业主房间
+	userLogout: baseUrl + "app/user.service.logout", //绑定业主
+	listAuditComplaints: baseUrl + "app/auditUser.listAuditComplaints", //查询绑定业主
+	listComplaintEvent: baseUrl + "app/complaint.listComplaintEvent", //查询工单流转
+	listComplaintAppraise: baseUrl + "app/complaintAppraise.listComplaintAppraise", //投诉评价
+	replyComplaintAppraise: baseUrl + "app/complaintAppraise.replyComplaintAppraise", //评价回复
+	auditComplaint: baseUrl + "app/complaint.auditComplaint", //查询业主门禁
+	queryFloors: baseUrl + "app/floor.queryFloors", // 查询楼栋
 	queryUnits: baseUrl + "app/unit.queryUnits", //查询单元
 	queryRooms: baseUrl + "app/room.queryRooms", //查询房屋
 	applyVisitorApplicationKey: baseUrl + "app/applicationKey.applyVisitorApplicationKey", //上传业主照片
@@ -38,20 +38,20 @@ export default {
 	listAdvertPhoto: baseUrl + "app/advert.listAdvertPhoto",
 	//查询巡检任务
 	listInspectionTasks: baseUrl + "app/inspectionTask.listInspectionTasks",
-	
-	listMaintainanceTask:baseUrl+"app/maintainanceTask.listMaintainanceTask",
+
+	listMaintainanceTask: baseUrl + "app/maintainanceTask.listMaintainanceTask",
 	//巡检任务详情
-	listInspectionTaskDetails: baseUrl + 'app/inspectionTaskDetail.listInspectionTaskDetails',
-	
+	listInspectionTaskDetails: baseUrl + "app/inspectionTaskDetail.listInspectionTaskDetails",
+
 	//保养明细
-	listMaintainanceTaskDetail: baseUrl + 'app/maintainanceTask.listMaintainanceTaskDetail',
-	
+	listMaintainanceTaskDetail: baseUrl + "app/maintainanceTask.listMaintainanceTaskDetail",
+
 	//巡检
-	updateInspectionTaskDetail: baseUrl + 'app/inspectionTaskDetail.updateInspectionTaskDetail',
-	
+	updateInspectionTaskDetail: baseUrl + "app/inspectionTaskDetail.updateInspectionTaskDetail",
+
 	//保养
-	updateMaintainanceTaskDetail: baseUrl + 'app/maintainanceTask.updateMaintainanceTaskDetail',
-	
+	updateMaintainanceTaskDetail: baseUrl + "app/maintainanceTask.updateMaintainanceTaskDetail",
+
 	// 查询报修单处理师傅
 	listRepairStaffs: baseUrl + "app/ownerRepair.listRepairStaffs",
 	//查询员工报修单
@@ -64,24 +64,24 @@ export default {
 	//报修办结
 	repairFinish: baseUrl + "app/ownerRepair.repairFinish",
 	repairEnd: baseUrl + "app/ownerRepair.repairEnd",
-	
+
 	//报修评价
-	appraiseRepair: baseUrl + 'app/repair/appraiseRepair',
-	appraiseRepairNew: baseUrl + 'callComponent/ownerRepair.appraiseRepair',
+	appraiseRepair: baseUrl + "app/repair/appraiseRepair",
+	appraiseRepairNew: baseUrl + "callComponent/ownerRepair.appraiseRepair",
 	//查询房屋和业主接口
-	listRoomAndOwner: baseUrl + 'app/fee.listRoomsWhereFeeSet',
+	listRoomAndOwner: baseUrl + "app/fee.listRoomsWhereFeeSet",
 	//查询费用信息
-	listFee: baseUrl + 'app/fee.listFee',
+	listFee: baseUrl + "app/fee.listFee",
 	//查询缴费历史
 	queryFeeDetail: baseUrl + "app/fee.queryFeeDetail",
 	// 投诉 处理意见
-	listWorkflowAuditInfo: baseUrl + 'app/workflow.listWorkflowAuditInfo',
-	listOweFees: baseUrl + 'app/feeApi/listOweFees',
-	toQrOweFeePay: baseUrl + 'app/payment.nativeQrcodePayment',
+	listWorkflowAuditInfo: baseUrl + "app/workflow.listWorkflowAuditInfo",
+	listOweFees: baseUrl + "app/feeApi/listOweFees",
+	toQrOweFeePay: baseUrl + "app/payment.nativeQrcodePayment",
 	// 报修抢单
-	robRepairOrder: baseUrl + 'app/ownerRepair.grabbingRepair',
+	robRepairOrder: baseUrl + "app/ownerRepair.grabbingRepair",
 	// 获取空置房申请列表
-	listApplyRoom: baseUrl + 'app/applyRoomDiscount/queryApplyRoomDiscount',
+	listApplyRoom: baseUrl + "app/applyRoomDiscount/queryApplyRoomDiscount",
 	queryFeeDiscount: baseUrl + "app/feeDiscount/queryFeeDiscount",
 	updateApplyRoomDiscount: baseUrl + "app/applyRoomDiscount/updateApplyRoomDiscount",
 	updateReviewApplyRoomDiscount: baseUrl + "app/applyRoomDiscount/updateReviewApplyRoomDiscount",
@@ -137,7 +137,7 @@ export default {
 	queryStaffListInfo: baseUrl + "app/query.staff.infos",
 	// 巡检流转
 	UpdateInspectionTask: baseUrl + "app/inspectionTask.updateInspectionTask",
-	
+
 	// 保养流转
 	UpdateMaintainanceTask: baseUrl + "app/maintainanceTask.updateMaintainanceTask",
 	// 物品转赠
@@ -150,7 +150,7 @@ export default {
 	deletePurchaseApply: baseUrl + "app/purchaseApply.deletePurchaseApply",
 	//查询水电抄表记录
 	listMeterWaters: baseUrl + "app/meterWater.listMeterWaters",
-	listRepairSettings: baseUrl + 'app/repair.listRepairSettings',
+	listRepairSettings: baseUrl + "app/repair.listRepairSettings",
 	saveHelpOwnerRepair: baseUrl + "app/ownerRepair.saveOwnerRepair",
 	updateRoomRenovationState: baseUrl + "app/roomRenovation/updateRoomRenovationState",
 	queryOaWorkflow: baseUrl + "app/oaWorkflow/queryOaWorkflow",
@@ -188,116 +188,93 @@ export default {
 	listCommunitySpaceConfirmOrder: baseUrl + "app/communitySpace.listCommunitySpaceConfirmOrder",
 	// 核销订单
 	saveCommunitySpaceConfirmOrder: baseUrl + "app/communitySpace.saveCommunitySpaceConfirmOrder",
-	queryReportStaffInspection: baseUrl+"app/inspection.queryReportStaffInspection",
-	listCouponPropertyUserDetail: baseUrl+"app/couponProperty.listCouponPropertyUserDetail",
-	writeOffCouponPropertyUser: baseUrl+"app/couponProperty.writeOffCouponPropertyUser",
-	queryUndoItemRelease: baseUrl+"app/itemRelease.queryUndoItemRelease",
-	queryFinishItemRelease: baseUrl+"app/itemRelease.queryFinishItemRelease",
-	listItemRelease: baseUrl+"app/itemRelease.listItemRelease",
-	listItemReleaseRes: baseUrl+"app/itemRelease.listItemReleaseRes",
-	queryOaWorkflowUser: baseUrl+"app/oaWorkflow/queryOaWorkflowUser",
-	queryNextDealUser: baseUrl+"app/oaWorkflow.queryNextDealUser",
-	auditUndoItemRelease: baseUrl+"app/itemRelease.auditUndoItemRelease",
-	listIntegralSetting: baseUrl+"app/integral.listIntegralSetting",
-	queryOwners: baseUrl+"app/owner.queryOwners",
-	queryOwnerAndMembers: baseUrl+"app/owner.queryOwnerAndMembers",
-	saveRoomOwner: baseUrl+"app/owner.saveRoomOwner",
+	queryReportStaffInspection: baseUrl + "app/inspection.queryReportStaffInspection",
+	listCouponPropertyUserDetail: baseUrl + "app/couponProperty.listCouponPropertyUserDetail",
+	writeOffCouponPropertyUser: baseUrl + "app/couponProperty.writeOffCouponPropertyUser",
+	queryUndoItemRelease: baseUrl + "app/itemRelease.queryUndoItemRelease",
+	queryFinishItemRelease: baseUrl + "app/itemRelease.queryFinishItemRelease",
+	listItemRelease: baseUrl + "app/itemRelease.listItemRelease",
+	listItemReleaseRes: baseUrl + "app/itemRelease.listItemReleaseRes",
+	queryOaWorkflowUser: baseUrl + "app/oaWorkflow/queryOaWorkflowUser",
+	queryNextDealUser: baseUrl + "app/oaWorkflow.queryNextDealUser",
+	auditUndoItemRelease: baseUrl + "app/itemRelease.auditUndoItemRelease",
+	listIntegralSetting: baseUrl + "app/integral.listIntegralSetting",
+	queryOwners: baseUrl + "app/owner.queryOwners",
+	queryOwnerAndMembers: baseUrl + "app/owner.queryOwnerAndMembers",
+	saveRoomOwner: baseUrl + "app/owner.saveRoomOwner",
 	deleteOwner: baseUrl + "app/owner.deleteOwner",
 	editOwner: baseUrl + "app/owner.editOwner",
-		
-		
-	
-	queryOwnerAccount: baseUrl+"app/account.queryCommunityOwnerAccount",
-	useIntegral: baseUrl+"app/integral.useIntegral",
-	listIntegralUserDetail: baseUrl+"app/integral.listIntegralUserDetail",
-	listReserveGoodsConfirmOrder: baseUrl+"app/reserveOrder.listReserveGoodsConfirmOrder",
-	saveReserveGoodsConfirmOrder: baseUrl+"app/reserveOrder.saveReserveGoodsConfirmOrder",
-	queryUndoVisit: baseUrl+"app/visit.queryUndoVisit",
-	queryFinishVisit: baseUrl+"app/visit.queryFinishVisit",
-	listVisit: baseUrl+"app/visit.listVisits",
-	auditUndoVisit: baseUrl+"app/visit.auditUndoVisit",
-	queryUndoCount: baseUrl+"callComponent/undo/list",
-	allocationStoreEnter: baseUrl+"app/resourceStore.allocationStoreEnter",
-	queryAttendanceClassesTask: baseUrl+"app/attendanceClass/queryAttendanceClassesTask",
-	
+
+	queryOwnerAccount: baseUrl + "app/account.queryCommunityOwnerAccount",
+	useIntegral: baseUrl + "app/integral.useIntegral",
+	listIntegralUserDetail: baseUrl + "app/integral.listIntegralUserDetail",
+	listReserveGoodsConfirmOrder: baseUrl + "app/reserveOrder.listReserveGoodsConfirmOrder",
+	saveReserveGoodsConfirmOrder: baseUrl + "app/reserveOrder.saveReserveGoodsConfirmOrder",
+	queryUndoVisit: baseUrl + "app/visit.queryUndoVisit",
+	queryFinishVisit: baseUrl + "app/visit.queryFinishVisit",
+	listVisit: baseUrl + "app/visit.listVisits",
+	auditUndoVisit: baseUrl + "app/visit.auditUndoVisit",
+	queryUndoCount: baseUrl + "callComponent/undo/list",
+	allocationStoreEnter: baseUrl + "app/resourceStore.allocationStoreEnter",
+	queryAttendanceClassesTask: baseUrl + "app/attendanceClass/queryAttendanceClassesTask",
+
 	//todo 费用
-	listOweFeeCallable: baseUrl+"app/oweFeeCallable.listOweFeeCallable",
-	writeOweFeeCallable: baseUrl+"app/oweFeeCallable.writeOweFeeCallable",
-	saveRoomCreateFee: baseUrl+"app/fee.saveRoomCreateFee",
-	
-	
-	
-	
-	
+	listOweFeeCallable: baseUrl + "app/oweFeeCallable.listOweFeeCallable",
+	writeOweFeeCallable: baseUrl + "app/oweFeeCallable.writeOweFeeCallable",
+	saveRoomCreateFee: baseUrl + "app/fee.saveRoomCreateFee",
+
 	//todo 设备相关
-	listMachines: baseUrl+"app/machine.listMachines",
-	listMachineRecords: baseUrl+"app/machineRecord.listMachineRecords",
-	listChargeMachine: baseUrl+"app/chargeMachine.listChargeMachine",
-	listChargeMachineOrder: baseUrl+"app/chargeMachine.listChargeMachineOrder",
-	
-	
-	
-	
+	listMachines: baseUrl + "app/machine.listMachines",
+	listMachineRecords: baseUrl + "app/machineRecord.listMachineRecords",
+	listChargeMachine: baseUrl + "app/chargeMachine.listChargeMachine",
+	listChargeMachineOrder: baseUrl + "app/chargeMachine.listChargeMachineOrder",
+
 	//todo 车辆相关
-	queryOwnerCars: baseUrl+"app/owner.queryOwnerCars",
-	listParkingAreas: baseUrl+"app/parkingArea.listParkingAreas",
-	listParkingAreaMachines: baseUrl+"app/machine.listParkingAreaMachines",
-	openDoor: baseUrl+"app/machine/openDoor",
-	closeDoor: baseUrl+"app/machine/closeDoor",
-	customCarInOut: baseUrl+"app/machine.customCarInOutCmd",
-	listCarInParkingArea: baseUrl+"app/carInout.listCarInParkingAreaCmd",
-	listParkingCouponCar: baseUrl+"app/parkingCoupon.listParkingCouponCar",
-	getTempCarFeeOrder: baseUrl+"app/tempCarFee.getTempCarFeeOrder",
-	listCarInoutDetail: baseUrl+"app/carInoutDetail.listCarInoutDetail",
-	listCarInoutPayment: baseUrl+"app/carInoutPayment.listCarInoutPayment",
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	queryOwnerCars: baseUrl + "app/owner.queryOwnerCars",
+	listParkingAreas: baseUrl + "app/parkingArea.listParkingAreas",
+	listParkingAreaMachines: baseUrl + "app/machine.listParkingAreaMachines",
+	openDoor: baseUrl + "app/machine/openDoor",
+	closeDoor: baseUrl + "app/machine/closeDoor",
+	customCarInOut: baseUrl + "app/machine.customCarInOutCmd",
+	listCarInParkingArea: baseUrl + "app/carInout.listCarInParkingAreaCmd",
+	listParkingCouponCar: baseUrl + "app/parkingCoupon.listParkingCouponCar",
+	getTempCarFeeOrder: baseUrl + "app/tempCarFee.getTempCarFeeOrder",
+	listCarInoutDetail: baseUrl + "app/carInoutDetail.listCarInoutDetail",
+	listCarInoutPayment: baseUrl + "app/carInoutPayment.listCarInoutPayment",
+
 	//todo 报表相关接口
-	queryFeeDataReport:baseUrl+"app/dataReport.queryFeeDataReport",
-	queryOrderDataReport:baseUrl+"app/dataReport.queryOrderDataReport",
-	queryInoutDataReport:baseUrl+"app/dataReport.queryInoutDataReport",
-	queryOthersDataReport:baseUrl+"app/dataReport.queryOthersDataReport",
-	queryPayFeeDetail:baseUrl+"app/reportFeeMonthStatistics/queryPayFeeDetail",
-	queryReportFeeDetailRoom:baseUrl+"app/reportFeeMonthStatistics.queryReportFeeDetailRoom",
-	queryReportFeeSummary:baseUrl+"app/reportFeeMonthStatistics.queryReportFeeSummary",
-	
-	
+	queryFeeDataReport: baseUrl + "app/dataReport.queryFeeDataReport",
+	queryOrderDataReport: baseUrl + "app/dataReport.queryOrderDataReport",
+	queryInoutDataReport: baseUrl + "app/dataReport.queryInoutDataReport",
+	queryOthersDataReport: baseUrl + "app/dataReport.queryOthersDataReport",
+	queryPayFeeDetail: baseUrl + "app/reportFeeMonthStatistics/queryPayFeeDetail",
+	queryReportFeeDetailRoom: baseUrl + "app/reportFeeMonthStatistics.queryReportFeeDetailRoom",
+	queryReportFeeSummary: baseUrl + "app/reportFeeMonthStatistics.queryReportFeeSummary",
+
 	//todo 工作大
-	queryStartWork:baseUrl+"app/work.queryStartWork",
-	listWorkType:baseUrl+"app/workType.listWorkType",
-	saveWorkPool:baseUrl+"app/work.saveWorkPool",
-	listWorkTask:baseUrl+"app/work.listWorkTask",
-	listWorkPool:baseUrl+"app/work.listWorkPool",
-	listWorkEvent:baseUrl+"app/workEvent.listWorkEvent",
-	listWorkPoolFile:baseUrl+"app/work.listWorkPoolFile",
-	listWorkCopy:baseUrl+"app/work.listWorkCopy",
-	listWorkCycle:baseUrl+"app/workCycle.listWorkCycle",
-	updateWorkPool:baseUrl+"app/work.updateWorkPool",
-	deleteWorkPool:baseUrl+"app/work.deleteWorkPool",
-	queryTaskWork:baseUrl+"app/work.queryTaskWork",
-	finishWorkTask:baseUrl+"app/work.finishWorkTask",
-	queryCopyWork:baseUrl+"app/work.queryCopyWork",
-	finishWorkCopy:baseUrl+"app/work.finishWorkCopy",
-	
-	listFloorShareReading:baseUrl+"app/meter.listFloorShareReading",
-	listFloorShareMeter:baseUrl+"app/meter.listFloorShareMeter",
-	saveFloorShareReading:baseUrl+"app/meter.saveFloorShareReading",
-	deleteFloorShareReading:baseUrl+"app/meter.deleteFloorShareReading",
-	auditFloorShareReading:baseUrl+"app/meter.auditFloorShareReading",
-	
-	
-	
+	queryStartWork: baseUrl + "app/work.queryStartWork",
+	listWorkType: baseUrl + "app/workType.listWorkType",
+	saveWorkPool: baseUrl + "app/work.saveWorkPool",
+	listWorkTask: baseUrl + "app/work.listWorkTask",
+	listWorkPool: baseUrl + "app/work.listWorkPool",
+	listWorkEvent: baseUrl + "app/workEvent.listWorkEvent",
+	listWorkPoolFile: baseUrl + "app/work.listWorkPoolFile",
+	listWorkCopy: baseUrl + "app/work.listWorkCopy",
+	listWorkCycle: baseUrl + "app/workCycle.listWorkCycle",
+	updateWorkPool: baseUrl + "app/work.updateWorkPool",
+	deleteWorkPool: baseUrl + "app/work.deleteWorkPool",
+	queryTaskWork: baseUrl + "app/work.queryTaskWork",
+	finishWorkTask: baseUrl + "app/work.finishWorkTask",
+	queryCopyWork: baseUrl + "app/work.queryCopyWork",
+	finishWorkCopy: baseUrl + "app/work.finishWorkCopy",
+
+	listFloorShareReading: baseUrl + "app/meter.listFloorShareReading",
+	listFloorShareMeter: baseUrl + "app/meter.listFloorShareMeter",
+	saveFloorShareReading: baseUrl + "app/meter.saveFloorShareReading",
+	deleteFloorShareReading: baseUrl + "app/meter.deleteFloorShareReading",
+	auditFloorShareReading: baseUrl + "app/meter.auditFloorShareReading",
+
 	//todo 调用物联网接口
-	getIotOpenApi:baseUrl+"app/iot.getOpenApi",
-	postIotOpenApi:baseUrl+"app/iot.postOpenApi",
-	
-	
-	
-}
+	getIotOpenApi: baseUrl + "app/iot.getOpenApi",
+	postIotOpenApi: baseUrl + "app/iot.postOpenApi",
+};

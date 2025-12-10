@@ -50,31 +50,31 @@
 
 ```css
 @font-face {
-  font-family: iconfont; /* Project id 4032028 */
-  src:
-    url('//at.alicdn.com/t/c/font_4032028_mbcuy517h6.woff2?t=1713685013355') format('woff2'),
-    url('//at.alicdn.com/t/c/font_4032028_mbcuy517h6.woff?t=1713685013355') format('woff'),
-    url('//at.alicdn.com/t/c/font_4032028_mbcuy517h6.ttf?t=1713685013355') format('truetype');
+	font-family: iconfont; /* Project id 4032028 */
+	src:
+		url("//at.alicdn.com/t/c/font_4032028_mbcuy517h6.woff2?t=1713685013355") format("woff2"),
+		url("//at.alicdn.com/t/c/font_4032028_mbcuy517h6.woff?t=1713685013355") format("woff"),
+		url("//at.alicdn.com/t/c/font_4032028_mbcuy517h6.ttf?t=1713685013355") format("truetype");
 }
 
 .iconfont {
-  font-family: iconfont !important;
-  font-size: 16px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: iconfont !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .icon-facebook::before {
-  content: '\e87d';
+	content: "\e87d";
 }
 
 .icon-twitter::before {
-  content: '\e646';
+	content: "\e646";
 }
 
 .icon-telegram::before {
-  content: '\f245';
+	content: "\f245";
 }
 ```
 
@@ -82,7 +82,7 @@
 
 ![alt text](./assets/5-23.png)
 
-- 6. 预览，`h5 `端正常，APP 端不正常，小程序端看着正常，控制台也会报错，如下图：
+- 6. 预览，`h5`端正常，APP 端不正常，小程序端看着正常，控制台也会报错，如下图：
 
 ![alt text](./assets/5-22.png)
 

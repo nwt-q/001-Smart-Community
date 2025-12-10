@@ -31,8 +31,8 @@ DB_PASSWORD=foobar
 如上配置，只有 `VITE_SOME_KEY` 会被暴露为 `import.meta.env.VITE_SOME_KEY` 提供给客户端源码，而 `DB_PASSWORD` 则不会。
 
 ```js
-console.log(import.meta.env.VITE_SOME_KEY) // "123"
-console.log(import.meta.env.DB_PASSWORD) // undefined
+console.log(import.meta.env.VITE_SOME_KEY); // "123"
+console.log(import.meta.env.DB_PASSWORD); // undefined
 ```
 
 ### mode 模式
@@ -60,7 +60,7 @@ Vite 允许你为不同的构建环境指定不同的模式。通常在 `npm scr
 
 `uni` 环境变量这里指运行 `uni` 的平台变量，通过 `vite` 的 `define` 配置可以暴露出来。
 
-```
+```plain
 define: {
   __UNI_PLATFORM__: JSON.stringify(UNI_PLATFORM),
 },
@@ -69,17 +69,17 @@ define: {
 代码里面使用：
 
 ```js
-export const platform = __UNI_PLATFORM__
-export const isH5 = __UNI_PLATFORM__ === 'h5'
-export const isApp = __UNI_PLATFORM__ === 'app'
-export const isMp = __UNI_PLATFORM__.startsWith('mp-')
+export const platform = __UNI_PLATFORM__;
+export const isH5 = __UNI_PLATFORM__ === "h5";
+export const isApp = __UNI_PLATFORM__ === "app";
+export const isMp = __UNI_PLATFORM__.startsWith("mp-");
 const PLATFORM = {
-  platform,
-  isH5,
-  isApp,
-  isMp,
-}
-export default PLATFORM
+	platform,
+	isH5,
+	isApp,
+	isMp,
+};
+export default PLATFORM;
 ```
 
 ## 总结

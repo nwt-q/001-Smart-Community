@@ -82,7 +82,7 @@ export function formatStaffList(staffs: Staff[], keyword: string = 'initials'): 
 
   // 按首字母排序（兼容原项目的 localeCompare 排序）
   const sortedStaffs = [...staffs].sort((a, b) => {
-    return (`${a[keyword as keyof Staff]}`).localeCompare(`${b[keyword as keyof Staff]}`)
+    return `${a[keyword as keyof Staff]}`.localeCompare(`${b[keyword as keyof Staff]}`)
   })
 
   const result: StaffGroup[] = []

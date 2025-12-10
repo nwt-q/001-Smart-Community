@@ -103,19 +103,19 @@
 
    <script setup lang="ts">
    definePage({
-     style: {
-       navigationBarTitleText: '维修工单池',
-       enablePullDownRefresh: true,
-     },
-   })
+   	style: {
+   		navigationBarTitleText: "维修工单池",
+   		enablePullDownRefresh: true,
+   	},
+   });
    </script>
 
    <template>
-     <view class="repair-order-list-page">
-       <view class="p-4 text-center">
-         <text class="text-lg text-gray-600">维修工单池页面 - 占位符</text>
-       </view>
-     </view>
+   	<view class="repair-order-list-page">
+   		<view class="p-4 text-center">
+   			<text class="text-lg text-gray-600">维修工单池页面 - 占位符</text>
+   		</view>
+   	</view>
    </template>
    ```
 
@@ -169,69 +169,69 @@ src/pages-sub/repair/
 
    ```typescript
    export type PageRoute =
-     | '/pages/index/index'
-     // ... 现有路径
+   	| "/pages/index/index"
+   	// ... 现有路径
 
-     // 维修管理模块路由
-     | '/pages-sub/repair/order-list' // 维修工单池
-     | '/pages-sub/repair/dispatch' // 维修待办单
-     | '/pages-sub/repair/finish' // 维修已办
-     | '/pages-sub/repair/order-detail' // 维修详情
-     | '/pages-sub/repair/add-order' // 添加维修记录
-     | '/pages-sub/repair/handle' // 订单处理
-     | '/pages-sub/repair/select-resource' // 选择物品
-     | '/pages-sub/repair/end-order' // 结束订单
-     | '/pages-sub/repair/appraise' // 回访工单
-     | '/pages-sub/repair/appraise-reply' // 回复评价
+   	// 维修管理模块路由
+   	| "/pages-sub/repair/order-list" // 维修工单池
+   	| "/pages-sub/repair/dispatch" // 维修待办单
+   	| "/pages-sub/repair/finish" // 维修已办
+   	| "/pages-sub/repair/order-detail" // 维修详情
+   	| "/pages-sub/repair/add-order" // 添加维修记录
+   	| "/pages-sub/repair/handle" // 订单处理
+   	| "/pages-sub/repair/select-resource" // 选择物品
+   	| "/pages-sub/repair/end-order" // 结束订单
+   	| "/pages-sub/repair/appraise" // 回访工单
+   	| "/pages-sub/repair/appraise-reply"; // 回复评价
    ```
 
    **2.2 定义页面参数类型到 `PageParams` 接口**
 
    ```typescript
    export interface PageParams {
-     // ... 现有参数定义
+   	// ... 现有参数定义
 
-     /** 维修模块参数 */
-     '/pages-sub/repair/order-list': {
-       status?: 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
-       page?: number
-       row?: number
-     }
-     '/pages-sub/repair/dispatch': {
-       page?: number
-       row?: number
-     }
-     '/pages-sub/repair/finish': {
-       page?: number
-       row?: number
-     }
-     '/pages-sub/repair/order-detail': {
-       repairId: string
-       storeId?: string
-     }
-     '/pages-sub/repair/add-order': {
-       communityId?: string
-     }
-     '/pages-sub/repair/handle': {
-       action: 'DISPATCH' | 'TRANSFER' | 'RETURN' | 'FINISH'
-       repairId: string
-       repairType?: string
-     }
-     '/pages-sub/repair/select-resource': {
-       feeFlag?: string
-     }
-     '/pages-sub/repair/end-order': {
-       repairId: string
-       communityId: string
-     }
-     '/pages-sub/repair/appraise': {
-       repairId: string
-       repairType?: string
-     }
-     '/pages-sub/repair/appraise-reply': {
-       ruId: string
-       repairId: string
-     }
+   	/** 维修模块参数 */
+   	"/pages-sub/repair/order-list": {
+   		status?: "PENDING" | "ASSIGNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+   		page?: number;
+   		row?: number;
+   	};
+   	"/pages-sub/repair/dispatch": {
+   		page?: number;
+   		row?: number;
+   	};
+   	"/pages-sub/repair/finish": {
+   		page?: number;
+   		row?: number;
+   	};
+   	"/pages-sub/repair/order-detail": {
+   		repairId: string;
+   		storeId?: string;
+   	};
+   	"/pages-sub/repair/add-order": {
+   		communityId?: string;
+   	};
+   	"/pages-sub/repair/handle": {
+   		action: "DISPATCH" | "TRANSFER" | "RETURN" | "FINISH";
+   		repairId: string;
+   		repairType?: string;
+   	};
+   	"/pages-sub/repair/select-resource": {
+   		feeFlag?: string;
+   	};
+   	"/pages-sub/repair/end-order": {
+   		repairId: string;
+   		communityId: string;
+   	};
+   	"/pages-sub/repair/appraise": {
+   		repairId: string;
+   		repairType?: string;
+   	};
+   	"/pages-sub/repair/appraise-reply": {
+   		ruId: string;
+   		repairId: string;
+   	};
    }
    ```
 
@@ -241,63 +241,63 @@ src/pages-sub/repair/
 
    ```typescript
    export class TypedRouter {
-     // ... 现有方法
+   	// ... 现有方法
 
-     /** 维修模块导航 */
+   	/** 维修模块导航 */
 
-     /** 跳转到维修工单列表 */
-     static toRepairOrderList(params?: PageParams['/pages-sub/repair/order-list']) {
-       return navigateToTyped('/pages-sub/repair/order-list', params)
-     }
+   	/** 跳转到维修工单列表 */
+   	static toRepairOrderList(params?: PageParams["/pages-sub/repair/order-list"]) {
+   		return navigateToTyped("/pages-sub/repair/order-list", params);
+   	}
 
-     /** 跳转到维修待办单 */
-     static toRepairDispatch(params?: PageParams['/pages-sub/repair/dispatch']) {
-       return navigateToTyped('/pages-sub/repair/dispatch', params)
-     }
+   	/** 跳转到维修待办单 */
+   	static toRepairDispatch(params?: PageParams["/pages-sub/repair/dispatch"]) {
+   		return navigateToTyped("/pages-sub/repair/dispatch", params);
+   	}
 
-     /** 跳转到维修已办 */
-     static toRepairFinish(params?: PageParams['/pages-sub/repair/finish']) {
-       return navigateToTyped('/pages-sub/repair/finish', params)
-     }
+   	/** 跳转到维修已办 */
+   	static toRepairFinish(params?: PageParams["/pages-sub/repair/finish"]) {
+   		return navigateToTyped("/pages-sub/repair/finish", params);
+   	}
 
-     /** 跳转到维修详情 */
-     static toRepairDetail(repairId: string, storeId?: string) {
-       return navigateToTyped('/pages-sub/repair/order-detail', { repairId, storeId })
-     }
+   	/** 跳转到维修详情 */
+   	static toRepairDetail(repairId: string, storeId?: string) {
+   		return navigateToTyped("/pages-sub/repair/order-detail", { repairId, storeId });
+   	}
 
-     /** 跳转到新增维修记录 */
-     static toAddRepair(communityId?: string) {
-       return navigateToTyped('/pages-sub/repair/add-order', { communityId })
-     }
+   	/** 跳转到新增维修记录 */
+   	static toAddRepair(communityId?: string) {
+   		return navigateToTyped("/pages-sub/repair/add-order", { communityId });
+   	}
 
-     /** 跳转到订单处理 */
-     static toRepairHandle(
-       action: 'DISPATCH' | 'TRANSFER' | 'RETURN' | 'FINISH',
-       repairId: string,
-       repairType?: string,
-     ) {
-       return navigateToTyped('/pages-sub/repair/handle', { action, repairId, repairType })
-     }
+   	/** 跳转到订单处理 */
+   	static toRepairHandle(
+   		action: "DISPATCH" | "TRANSFER" | "RETURN" | "FINISH",
+   		repairId: string,
+   		repairType?: string,
+   	) {
+   		return navigateToTyped("/pages-sub/repair/handle", { action, repairId, repairType });
+   	}
 
-     /** 跳转到选择物品 */
-     static toSelectResource(feeFlag?: string) {
-       return navigateToTyped('/pages-sub/repair/select-resource', { feeFlag })
-     }
+   	/** 跳转到选择物品 */
+   	static toSelectResource(feeFlag?: string) {
+   		return navigateToTyped("/pages-sub/repair/select-resource", { feeFlag });
+   	}
 
-     /** 跳转到结束订单 */
-     static toEndRepair(repairId: string, communityId: string) {
-       return navigateToTyped('/pages-sub/repair/end-order', { repairId, communityId })
-     }
+   	/** 跳转到结束订单 */
+   	static toEndRepair(repairId: string, communityId: string) {
+   		return navigateToTyped("/pages-sub/repair/end-order", { repairId, communityId });
+   	}
 
-     /** 跳转到回访工单 */
-     static toAppraiseRepair(repairId: string, repairType?: string) {
-       return navigateToTyped('/pages-sub/repair/appraise', { repairId, repairType })
-     }
+   	/** 跳转到回访工单 */
+   	static toAppraiseRepair(repairId: string, repairType?: string) {
+   		return navigateToTyped("/pages-sub/repair/appraise", { repairId, repairType });
+   	}
 
-     /** 跳转到回复评价 */
-     static toReplyAppraise(ruId: string, repairId: string) {
-       return navigateToTyped('/pages-sub/repair/appraise-reply', { ruId, repairId })
-     }
+   	/** 跳转到回复评价 */
+   	static toReplyAppraise(ruId: string, repairId: string) {
+   		return navigateToTyped("/pages-sub/repair/appraise-reply", { ruId, repairId });
+   	}
    }
    ```
 
@@ -323,36 +323,36 @@ src/pages-sub/repair/
 
    ```vue
    <template>
-     <view class="repair-order-list-page p-4">
-       <view class="mb-4">
-         <text class="text-lg">维修工单池页面</text>
-       </view>
+   	<view class="repair-order-list-page p-4">
+   		<view class="mb-4">
+   			<text class="text-lg">维修工单池页面</text>
+   		</view>
 
-       <!-- 临时测试按钮 -->
-       <view class="space-y-2">
-         <button @click="handleGoToDetail" class="w-full">查看工单详情</button>
-         <button @click="handleDispatch" class="w-full">派单</button>
-         <button @click="handleEndOrder" class="w-full">结束订单</button>
-       </view>
-     </view>
+   		<!-- 临时测试按钮 -->
+   		<view class="space-y-2">
+   			<button @click="handleGoToDetail" class="w-full">查看工单详情</button>
+   			<button @click="handleDispatch" class="w-full">派单</button>
+   			<button @click="handleEndOrder" class="w-full">结束订单</button>
+   		</view>
+   	</view>
    </template>
 
    <script setup lang="ts">
-   import { TypedRouter } from '@/router'
+   import { TypedRouter } from "@/router";
 
    /** 查看详情 - 假数据测试 */
    function handleGoToDetail() {
-     TypedRouter.toRepairDetail('REP_001', 'STORE_001')
+   	TypedRouter.toRepairDetail("REP_001", "STORE_001");
    }
 
    /** 派单 - 假数据测试 */
    function handleDispatch() {
-     TypedRouter.toRepairHandle('DISPATCH', 'REP_001', '水电维修')
+   	TypedRouter.toRepairHandle("DISPATCH", "REP_001", "水电维修");
    }
 
    /** 结束订单 - 假数据测试 */
    function handleEndOrder() {
-     TypedRouter.toEndRepair('REP_001', 'COMM_001')
+   	TypedRouter.toEndRepair("REP_001", "COMM_001");
    }
    </script>
    ```
@@ -388,79 +388,79 @@ src/pages-sub/repair/
 2. **创建接口定义文件** (`src/api/repair.ts`)
 
    ```typescript
-   import { http } from '@/http/alova'
+   import { http } from "@/http/alova";
    import type {
-     RepairOrder,
-     RepairListParams,
-     RepairListResponse,
-     CreateRepairReq,
-     UpdateRepairReq,
-     RepairStatistics,
-   } from '@/types/repair'
+   	RepairOrder,
+   	RepairListParams,
+   	RepairListResponse,
+   	CreateRepairReq,
+   	UpdateRepairReq,
+   	RepairStatistics,
+   } from "@/types/repair";
 
    /** 1. 查询维修工单列表 */
    export const getRepairOrderList = (params: RepairListParams) =>
-     http.Get<RepairListResponse>('/app/ownerRepair.listOwnerRepairs', { params })
+   	http.Get<RepairListResponse>("/app/ownerRepair.listOwnerRepairs", { params });
 
    /** 2. 查询维修待办单列表 */
    export const getRepairDispatchList = (params: RepairListParams) =>
-     http.Get<RepairListResponse>('/app/ownerRepair.listRepairDispatch', { params })
+   	http.Get<RepairListResponse>("/app/ownerRepair.listRepairDispatch", { params });
 
    /** 3. 查询维修已办单列表 */
    export const getRepairFinishList = (params: RepairListParams) =>
-     http.Get<RepairListResponse>('/app/ownerRepair.listRepairFinish', { params })
+   	http.Get<RepairListResponse>("/app/ownerRepair.listRepairFinish", { params });
 
    /** 4. 获取维修工单详情 */
    export const getRepairDetail = (repairId: string) =>
-     http.Get<RepairOrder>('/app/ownerRepair.getOwnerRepair', {
-       params: { repairId },
-     })
+   	http.Get<RepairOrder>("/app/ownerRepair.getOwnerRepair", {
+   		params: { repairId },
+   	});
 
    /** 5. 创建维修工单 */
    export const createRepairOrder = (data: CreateRepairReq) =>
-     http.Post<RepairOrder>('/app/ownerRepair.saveOwnerRepair', data)
+   	http.Post<RepairOrder>("/app/ownerRepair.saveOwnerRepair", data);
 
    /** 6. 更新维修工单 */
    export const updateRepairOrder = (data: UpdateRepairReq) =>
-     http.Post<RepairOrder>('/app/ownerRepair.updateOwnerRepair', data)
+   	http.Post<RepairOrder>("/app/ownerRepair.updateOwnerRepair", data);
 
    /** 7. 派单 */
    export const dispatchRepair = (data: { repairId: string; staffId: string; remark?: string }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.dispatchRepair', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.dispatchRepair", data);
 
    /** 8. 转单 */
    export const transferRepair = (data: { repairId: string; staffId: string; remark?: string }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.transferRepair', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.transferRepair", data);
 
    /** 9. 退单 */
    export const returnRepair = (data: { repairId: string; remark: string }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.returnRepair', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.returnRepair", data);
 
    /** 10. 办结工单 */
    export const finishRepair = (data: { repairId: string; remark?: string; images?: string[] }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.finishRepair', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.finishRepair", data);
 
    /** 11. 结束订单 */
    export const endRepair = (data: { repairId: string; communityId: string }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.endRepair', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.endRepair", data);
 
    /** 12. 回访工单 */
    export const appraiseRepair = (data: { repairId: string; rating: number; comment: string }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.appraiseRepair', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.appraiseRepair", data);
 
    /** 13. 回复评价 */
    export const replyAppraise = (data: { ruId: string; repairId: string; reply: string }) =>
-     http.Post<{ success: boolean }>('/app/ownerRepair.replyAppraise', data)
+   	http.Post<{ success: boolean }>("/app/ownerRepair.replyAppraise", data);
 
    /** 14. 查询维修物品/资源 */
    export const queryResources = (params: { keyword?: string; page?: number; row?: number }) =>
-     http.Get<{ resources: any[]; total: number }>('/app/ownerRepair.queryResources', { params })
+   	http.Get<{ resources: any[]; total: number }>("/app/ownerRepair.queryResources", { params });
 
    /** 15. 获取维修统计数据 */
    export const getRepairStatistics = (communityId: string) =>
-     http.Get<RepairStatistics>('/app/ownerRepair.getStatistics', {
-       params: { communityId },
-     })
+   	http.Get<RepairStatistics>("/app/ownerRepair.getStatistics", {
+   		params: { communityId },
+   	});
    ```
 
 3. **创建 Mock 接口实现** (`src/api/mock/repair.mock.ts`)
@@ -473,112 +473,112 @@ src/pages-sub/repair/
    - ✅ URL 前缀规范：直接使用 `/app/...`，不包含 `/api`
 
    ```typescript
-   import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from './shared/utils'
-   import type { RepairOrder, RepairListParams, RepairStatus } from '@/types/repair'
-   import type { PaginationResponse } from '@/types/api'
+   import { defineUniAppMock, successResponse, errorResponse, mockLog, ResultEnumMap } from "./shared/utils";
+   import type { RepairOrder, RepairListParams, RepairStatus } from "@/types/repair";
+   import type { PaginationResponse } from "@/types/api";
 
    /** Mock 数据库对象 - 内联数据存储 */
    const mockRepairDatabase = {
-     /** 维修工单数据 */
-     repairs: [
-       {
-         repairId: 'REP_001',
-         title: '水电维修',
-         description: '业主报修：水电出现问题，需要及时处理。',
-         ownerName: '张三',
-         ownerPhone: '13812345678',
-         address: '1栋101A室',
-         repairType: '水电维修',
-         status: 'PENDING' as RepairStatus,
-         priority: 'HIGH' as const,
-         createTime: '2024-01-15T10:30:00Z',
-         updateTime: '2024-01-20T14:20:00Z',
-         assignedWorker: null,
-         estimatedCost: 200,
-         actualCost: null,
-         images: ['https://picsum.photos/400/300?random=1'],
-         communityId: 'COMM_001',
-       },
-       // ... 更多模拟数据
-     ] as RepairOrder[],
+   	/** 维修工单数据 */
+   	repairs: [
+   		{
+   			repairId: "REP_001",
+   			title: "水电维修",
+   			description: "业主报修：水电出现问题，需要及时处理。",
+   			ownerName: "张三",
+   			ownerPhone: "13812345678",
+   			address: "1栋101A室",
+   			repairType: "水电维修",
+   			status: "PENDING" as RepairStatus,
+   			priority: "HIGH" as const,
+   			createTime: "2024-01-15T10:30:00Z",
+   			updateTime: "2024-01-20T14:20:00Z",
+   			assignedWorker: null,
+   			estimatedCost: 200,
+   			actualCost: null,
+   			images: ["https://picsum.photos/400/300?random=1"],
+   			communityId: "COMM_001",
+   		},
+   		// ... 更多模拟数据
+   	] as RepairOrder[],
 
-     /** 获取工单详情 */
-     getRepairById(repairId: string): RepairOrder | undefined {
-       return this.repairs.find((repair) => repair.repairId === repairId)
-     },
+   	/** 获取工单详情 */
+   	getRepairById(repairId: string): RepairOrder | undefined {
+   		return this.repairs.find((repair) => repair.repairId === repairId);
+   	},
 
-     /** 获取工单列表 */
-     getRepairList(params: RepairListParams): PaginationResponse<RepairOrder> {
-       let filteredRepairs = [...this.repairs]
+   	/** 获取工单列表 */
+   	getRepairList(params: RepairListParams): PaginationResponse<RepairOrder> {
+   		let filteredRepairs = [...this.repairs];
 
-       if (params.status) {
-         filteredRepairs = filteredRepairs.filter((r) => r.status === params.status)
-       }
+   		if (params.status) {
+   			filteredRepairs = filteredRepairs.filter((r) => r.status === params.status);
+   		}
 
-       const total = filteredRepairs.length
-       const start = (params.page - 1) * params.row
-       const end = start + params.row
-       const list = filteredRepairs.slice(start, end)
+   		const total = filteredRepairs.length;
+   		const start = (params.page - 1) * params.row;
+   		const end = start + params.row;
+   		const list = filteredRepairs.slice(start, end);
 
-       return { list, total, page: params.page, pageSize: params.row, hasMore: end < total }
-     },
+   		return { list, total, page: params.page, pageSize: params.row, hasMore: end < total };
+   	},
 
-     // ... 更多数据库操作方法
-   }
+   	// ... 更多数据库操作方法
+   };
 
    /** Mock 接口定义 */
    export default defineUniAppMock([
-     // 1. 获取维修工单列表
-     {
-       url: '/app/ownerRepair.listOwnerRepairs',
-       method: ['GET', 'POST'],
-       delay: [300, 800],
-       body: async ({ query, body }) => {
-         const params = { ...query, ...body } as RepairListParams
-         mockLog('listOwnerRepairs', params)
+   	// 1. 获取维修工单列表
+   	{
+   		url: "/app/ownerRepair.listOwnerRepairs",
+   		method: ["GET", "POST"],
+   		delay: [300, 800],
+   		body: async ({ query, body }) => {
+   			const params = { ...query, ...body } as RepairListParams;
+   			mockLog("listOwnerRepairs", params);
 
-         const result = mockRepairDatabase.getRepairList({
-           page: Number(params.page) || 1,
-           row: Number(params.row) || 10,
-           status: params.status,
-         })
+   			const result = mockRepairDatabase.getRepairList({
+   				page: Number(params.page) || 1,
+   				row: Number(params.row) || 10,
+   				status: params.status,
+   			});
 
-         mockLog('listOwnerRepairs result', `${result.list.length} items`)
+   			mockLog("listOwnerRepairs result", `${result.list.length} items`);
 
-         return successResponse(
-           {
-             ownerRepairs: result.list,
-             total: result.total,
-             page: result.page,
-             row: result.pageSize,
-           },
-           '查询成功',
-         )
-       },
-     },
+   			return successResponse(
+   				{
+   					ownerRepairs: result.list,
+   					total: result.total,
+   					page: result.page,
+   					row: result.pageSize,
+   				},
+   				"查询成功",
+   			);
+   		},
+   	},
 
-     // 2. 获取维修工单详情
-     {
-       url: '/app/ownerRepair.getOwnerRepair',
-       method: ['GET', 'POST'],
-       delay: 200,
-       body: async ({ query, body }) => {
-         const params = { ...query, ...body }
-         mockLog('getOwnerRepair', params)
+   	// 2. 获取维修工单详情
+   	{
+   		url: "/app/ownerRepair.getOwnerRepair",
+   		method: ["GET", "POST"],
+   		delay: 200,
+   		body: async ({ query, body }) => {
+   			const params = { ...query, ...body };
+   			mockLog("getOwnerRepair", params);
 
-         const repair = mockRepairDatabase.getRepairById(params.repairId)
+   			const repair = mockRepairDatabase.getRepairById(params.repairId);
 
-         if (!repair) {
-           return errorResponse('维修工单不存在', ResultEnumMap.NotFound)
-         }
+   			if (!repair) {
+   				return errorResponse("维修工单不存在", ResultEnumMap.NotFound);
+   			}
 
-         mockLog('getOwnerRepair result', repair.title)
-         return successResponse(repair, '查询成功')
-       },
-     },
+   			mockLog("getOwnerRepair result", repair.title);
+   			return successResponse(repair, "查询成功");
+   		},
+   	},
 
-     // ... 更多接口定义
-   ])
+   	// ... 更多接口定义
+   ]);
    ```
 
 4. **在页面中使用接口**
@@ -587,44 +587,44 @@ src/pages-sub/repair/
 
    ```vue
    <script setup lang="ts">
-   import { useRequest } from 'alova/client'
-   import { getRepairOrderList } from '@/api/repair'
-   import { ref } from 'vue'
+   import { useRequest } from "alova/client";
+   import { getRepairOrderList } from "@/api/repair";
+   import { ref } from "vue";
 
    /** 列表数据 */
-   const repairList = ref<RepairOrder[]>([])
+   const repairList = ref<RepairOrder[]>([]);
 
    /** 请求管理 */
-   const { loading, send: loadList, onSuccess, onError } = useRequest(() => getRepairOrderList({ page: 1, row: 10 }))
+   const { loading, send: loadList, onSuccess, onError } = useRequest(() => getRepairOrderList({ page: 1, row: 10 }));
 
    /** 成功回调 */
    onSuccess((result) => {
-     repairList.value = result.ownerRepairs || []
-     console.log('加载成功:', result)
-   })
+   	repairList.value = result.ownerRepairs || [];
+   	console.log("加载成功:", result);
+   });
 
    /** 失败回调 */
    onError((error) => {
-     console.error('加载失败:', error)
-     uni.showToast({ title: '加载失败', icon: 'none' })
-   })
+   	console.error("加载失败:", error);
+   	uni.showToast({ title: "加载失败", icon: "none" });
+   });
 
    /** 加载数据 */
    function handleLoad() {
-     loadList()
+   	loadList();
    }
    </script>
 
    <template>
-     <view class="p-4">
-       <button @click="handleLoad">加载数据</button>
-       <view v-if="loading">加载中...</view>
-       <view v-else>
-         <view v-for="item in repairList" :key="item.repairId" class="mb-2">
-           <text>{{ item.repairId }} - {{ item.title }}</text>
-         </view>
-       </view>
-     </view>
+   	<view class="p-4">
+   		<button @click="handleLoad">加载数据</button>
+   		<view v-if="loading">加载中...</view>
+   		<view v-else>
+   			<view v-for="item in repairList" :key="item.repairId" class="mb-2">
+   				<text>{{ item.repairId }} - {{ item.title }}</text>
+   			</view>
+   		</view>
+   	</view>
    </template>
    ```
 
@@ -677,29 +677,29 @@ src/pages-sub/repair/
 
    ```vue
    <template>
-     <view>
-       <view class="cu-bar bg-white search">
-         <view class="search-form round">
-           <text class="cuIcon-search"></text>
-           <input type="text" placeholder="输入报修人" v-model="repairName" />
-         </view>
-         <view class="action">
-           <button class="cu-btn bg-gradual-green" @tap="searchRepair">搜索</button>
-         </view>
-       </view>
+   	<view>
+   		<view class="cu-bar bg-white search">
+   			<view class="search-form round">
+   				<text class="cuIcon-search"></text>
+   				<input type="text" placeholder="输入报修人" v-model="repairName" />
+   			</view>
+   			<view class="action">
+   				<button class="cu-btn bg-gradual-green" @tap="searchRepair">搜索</button>
+   			</view>
+   		</view>
 
-       <view v-for="(item, index) in repairOrders" :key="index" class="bg-white margin-bottom-sm padding">
-         <view class="flex padding-bottom-xs solid-bottom">
-           <view>{{ item.repairId }}</view>
-           <view class="text-gray">{{ item.stateName }}</view>
-         </view>
-         <view class="flex margin-top">
-           <view class="text-gray">报修类型</view>
-           <view class="text-gray">{{ item.repairTypeName }}</view>
-         </view>
-         <button class="cu-btn sm line-gray" @click="toDetail(item)">详情</button>
-       </view>
-     </view>
+   		<view v-for="(item, index) in repairOrders" :key="index" class="bg-white margin-bottom-sm padding">
+   			<view class="flex padding-bottom-xs solid-bottom">
+   				<view>{{ item.repairId }}</view>
+   				<view class="text-gray">{{ item.stateName }}</view>
+   			</view>
+   			<view class="flex margin-top">
+   				<view class="text-gray">报修类型</view>
+   				<view class="text-gray">{{ item.repairTypeName }}</view>
+   			</view>
+   			<button class="cu-btn sm line-gray" @click="toDetail(item)">详情</button>
+   		</view>
+   	</view>
    </template>
    ```
 
@@ -707,27 +707,27 @@ src/pages-sub/repair/
 
    ```vue
    <template>
-     <view class="repair-order-list-page">
-       <!-- 搜索栏 -->
-       <view class="flex items-center px-4 py-2 bg-white">
-         <wd-search v-model="repairName" placeholder="输入报修人" @search="handleSearch" />
-       </view>
+   	<view class="repair-order-list-page">
+   		<!-- 搜索栏 -->
+   		<view class="flex items-center px-4 py-2 bg-white">
+   			<wd-search v-model="repairName" placeholder="输入报修人" @search="handleSearch" />
+   		</view>
 
-       <!-- 列表 -->
-       <z-paging ref="pagingRef" v-model="repairOrders" @query="handleQuery">
-         <template #default="{ item }">
-           <wd-cell-group class="mb-2">
-             <wd-cell :title="item.repairId" :value="item.stateName" />
-             <wd-cell title="报修类型" :value="item.repairTypeName" />
-             <wd-cell>
-               <template #right-icon>
-                 <wd-button size="small" @click="handleToDetail(item)"> 详情 </wd-button>
-               </template>
-             </wd-cell>
-           </wd-cell-group>
-         </template>
-       </z-paging>
-     </view>
+   		<!-- 列表 -->
+   		<z-paging ref="pagingRef" v-model="repairOrders" @query="handleQuery">
+   			<template #default="{ item }">
+   				<wd-cell-group class="mb-2">
+   					<wd-cell :title="item.repairId" :value="item.stateName" />
+   					<wd-cell title="报修类型" :value="item.repairTypeName" />
+   					<wd-cell>
+   						<template #right-icon>
+   							<wd-button size="small" @click="handleToDetail(item)"> 详情 </wd-button>
+   						</template>
+   					</wd-cell>
+   				</wd-cell-group>
+   			</template>
+   		</z-paging>
+   	</view>
    </template>
    ```
 
@@ -782,27 +782,27 @@ src/pages-sub/repair/
 
    ```vue
    <template>
-     <view class="cu-bar bg-white search">
-       <view class="search-form round">
-         <input type="text" />
-       </view>
-     </view>
+   	<view class="cu-bar bg-white search">
+   		<view class="search-form round">
+   			<input type="text" />
+   		</view>
+   	</view>
 
-     <view class="bg-white margin-bottom-sm margin-right-sm radius margin-left-sm padding">
-       <view class="flex padding-bottom-xs solid-bottom justify-between">
-         <view>{{ item.repairId }}</view>
-         <view class="text-gray">{{ item.stateName }}</view>
-       </view>
-     </view>
+   	<view class="bg-white margin-bottom-sm margin-right-sm radius margin-left-sm padding">
+   		<view class="flex padding-bottom-xs solid-bottom justify-between">
+   			<view>{{ item.repairId }}</view>
+   			<view class="text-gray">{{ item.stateName }}</view>
+   		</view>
+   	</view>
    </template>
 
    <style>
    .cu-bar.search {
-     padding: 20rpx 30rpx;
+   	padding: 20rpx 30rpx;
    }
    .search-form {
-     background: #f1f1f1;
-     padding: 10rpx 20rpx;
+   	background: #f1f1f1;
+   	padding: 10rpx 20rpx;
    }
    </style>
    ```
@@ -811,18 +811,18 @@ src/pages-sub/repair/
 
    ```vue
    <template>
-     <view class="flex items-center px-4 py-2 bg-white">
-       <view class="bg-gray-100 px-3 py-2 rounded-full flex-1">
-         <input type="text" class="bg-transparent outline-none" />
-       </view>
-     </view>
+   	<view class="flex items-center px-4 py-2 bg-white">
+   		<view class="bg-gray-100 px-3 py-2 rounded-full flex-1">
+   			<input type="text" class="bg-transparent outline-none" />
+   		</view>
+   	</view>
 
-     <view class="bg-white mb-2 mx-2 rounded-lg p-4">
-       <view class="flex items-center justify-between pb-2 border-b border-gray-200">
-         <view>{{ item.repairId }}</view>
-         <view class="text-gray-600">{{ item.stateName }}</view>
-       </view>
-     </view>
+   	<view class="bg-white mb-2 mx-2 rounded-lg p-4">
+   		<view class="flex items-center justify-between pb-2 border-b border-gray-200">
+   			<view>{{ item.repairId }}</view>
+   			<view class="text-gray-600">{{ item.stateName }}</view>
+   		</view>
+   	</view>
    </template>
 
    <style scoped>
@@ -882,56 +882,56 @@ src/pages-sub/repair/
    ```vue
    <script>
    export default {
-     data() {
-       return {
-         repairOrders: [],
-         repairName: '',
-         page: 1,
-         totalRecords: 0,
-         loading: false,
-       }
-     },
+   	data() {
+   		return {
+   			repairOrders: [],
+   			repairName: "",
+   			page: 1,
+   			totalRecords: 0,
+   			loading: false,
+   		};
+   	},
 
-     computed: {
-       hasMore() {
-         return this.repairOrders.length < this.totalRecords
-       },
-     },
+   	computed: {
+   		hasMore() {
+   			return this.repairOrders.length < this.totalRecords;
+   		},
+   	},
 
-     mounted() {
-       this.loadRepairList()
-     },
+   	mounted() {
+   		this.loadRepairList();
+   	},
 
-     methods: {
-       async loadRepairList() {
-         this.loading = true
-         try {
-           const res = await this.$api.getRepairList({
-             page: this.page,
-             row: 10,
-             repairName: this.repairName,
-           })
-           this.repairOrders = res.data.ownerRepairs
-           this.totalRecords = res.data.total
-         } catch (error) {
-           uni.showToast({ title: '加载失败', icon: 'none' })
-         } finally {
-           this.loading = false
-         }
-       },
+   	methods: {
+   		async loadRepairList() {
+   			this.loading = true;
+   			try {
+   				const res = await this.$api.getRepairList({
+   					page: this.page,
+   					row: 10,
+   					repairName: this.repairName,
+   				});
+   				this.repairOrders = res.data.ownerRepairs;
+   				this.totalRecords = res.data.total;
+   			} catch (error) {
+   				uni.showToast({ title: "加载失败", icon: "none" });
+   			} finally {
+   				this.loading = false;
+   			}
+   		},
 
-       handleSearch() {
-         this.page = 1
-         this.loadRepairList()
-       },
+   		handleSearch() {
+   			this.page = 1;
+   			this.loadRepairList();
+   		},
 
-       toDetail(item) {
-         uni.navigateTo({
-           url: `/pages/repairDetail/repairDetail?repairId=${item.repairId}`,
-         })
-       },
-     },
-   }
+   		toDetail(item) {
+   			uni.navigateTo({
+   				url: `/pages/repairDetail/repairDetail?repairId=${item.repairId}`,
+   			});
+   		},
+   	},
+   };
    </script>
    ```
 
@@ -939,62 +939,62 @@ src/pages-sub/repair/
 
    ```vue
    <script setup lang="ts">
-   import { ref, computed, onMounted } from 'vue'
-   import { useRequest } from 'alova/client'
-   import { getRepairOrderList } from '@/api/repair'
-   import { TypedRouter } from '@/router'
-   import type { RepairOrder } from '@/types/repair'
+   import { ref, computed, onMounted } from "vue";
+   import { useRequest } from "alova/client";
+   import { getRepairOrderList } from "@/api/repair";
+   import { TypedRouter } from "@/router";
+   import type { RepairOrder } from "@/types/repair";
 
    /** 列表数据 */
-   const repairOrders = ref<RepairOrder[]>([])
-   const repairName = ref('')
-   const page = ref(1)
-   const totalRecords = ref(0)
+   const repairOrders = ref<RepairOrder[]>([]);
+   const repairName = ref("");
+   const page = ref(1);
+   const totalRecords = ref(0);
 
    /** 计算属性 - 是否有更多数据 */
-   const hasMore = computed(() => repairOrders.value.length < totalRecords.value)
+   const hasMore = computed(() => repairOrders.value.length < totalRecords.value);
 
    /** 请求管理 - 加载列表 */
    const {
-     loading,
-     send: loadList,
-     onSuccess: onLoadSuccess,
-     onError: onLoadError,
+   	loading,
+   	send: loadList,
+   	onSuccess: onLoadSuccess,
+   	onError: onLoadError,
    } = useRequest(() =>
-     getRepairOrderList({
-       page: page.value,
-       row: 10,
-       keyword: repairName.value,
-     }),
-   )
+   	getRepairOrderList({
+   		page: page.value,
+   		row: 10,
+   		keyword: repairName.value,
+   	}),
+   );
 
    /** 加载成功回调 */
    onLoadSuccess((result) => {
-     repairOrders.value = result.ownerRepairs || []
-     totalRecords.value = result.total || 0
-   })
+   	repairOrders.value = result.ownerRepairs || [];
+   	totalRecords.value = result.total || 0;
+   });
 
    /** 加载失败回调 */
    onLoadError((error) => {
-     console.error('加载失败:', error)
-     uni.showToast({ title: '加载失败', icon: 'none' })
-   })
+   	console.error("加载失败:", error);
+   	uni.showToast({ title: "加载失败", icon: "none" });
+   });
 
    /** 搜索处理 */
    function handleSearch() {
-     page.value = 1
-     loadList()
+   	page.value = 1;
+   	loadList();
    }
 
    /** 跳转到详情 */
    function handleToDetail(item: RepairOrder) {
-     TypedRouter.toRepairDetail(item.repairId)
+   	TypedRouter.toRepairDetail(item.repairId);
    }
 
    /** 页面加载时获取数据 */
    onMounted(() => {
-     loadList()
-   })
+   	loadList();
+   });
    </script>
    ```
 

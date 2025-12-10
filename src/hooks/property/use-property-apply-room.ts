@@ -33,10 +33,7 @@ export function extractApplyRecordParams(apply: PropertyApplication) {
  * @returns 记录详情页面所需的参数对象
  * @example extractRecordDetailParams(record, communityId)
  */
-export function extractRecordDetailParams(
-  record: ApplicationRecord,
-  communityId: string,
-) {
+export function extractRecordDetailParams(record: ApplicationRecord, communityId: string) {
   return {
     ardrId: record.ardrId,
     applicationId: record.applicationId,

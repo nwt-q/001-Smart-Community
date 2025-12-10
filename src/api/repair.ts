@@ -33,11 +33,7 @@ export function getRepairFinishList(params: RepairListParams) {
 }
 
 /** 4. 获取维修工单详情 */
-export function getRepairDetail(params: {
-  repairId: string
-  storeId?: string
-  communityId?: string
-}) {
+export function getRepairDetail(params: { repairId: string, storeId?: string, communityId?: string }) {
   return http.Get<{ ownerRepair: RepairOrder }>('/app/ownerRepair.queryOwnerRepair', {
     params,
   })
@@ -51,10 +47,7 @@ export function getRepairStatistics(communityId?: string) {
 }
 
 /** 6. 查询维修师傅列表 */
-export function getRepairStaffs(params?: {
-  repairType?: string
-  communityId?: string
-}) {
+export function getRepairStaffs(params?: { repairType?: string, communityId?: string }) {
   return http.Get<{ staffs: Array<{ staffId: string, staffName: string, repairTypes: string[] }> }>(
     '/app/ownerRepair.listRepairStaffs',
     { params },
@@ -62,23 +55,14 @@ export function getRepairStaffs(params?: {
 }
 
 /** 7. 查询报修师傅（按维修类型查询） */
-export function getRepairTypeUsers(params: {
-  repairType: string
-  communityId?: string
-}) {
-  return http.Get<{ users: Array<{ userId: string, userName: string }> }>(
-    '/app/repair.listRepairTypeUsers',
-    { params },
-  )
+export function getRepairTypeUsers(params: { repairType: string, communityId?: string }) {
+  return http.Get<{ users: Array<{ userId: string, userName: string }> }>('/app/repair.listRepairTypeUsers', {
+    params,
+  })
 }
 
 /** 8. 查询维修物品/资源列表 */
-export function queryResources(params?: {
-  keyword?: string
-  resTypeId?: string
-  page?: number
-  row?: number
-}) {
+export function queryResources(params?: { keyword?: string, resTypeId?: string, page?: number, row?: number }) {
   return http.Get<{
     resources: Array<{
       resId: string
@@ -147,27 +131,17 @@ export function finishRepair(data: {
 }
 
 /** 13. 结束订单 */
-export function endRepair(data: {
-  repairId: string
-  communityId: string
-}) {
+export function endRepair(data: { repairId: string, communityId: string }) {
   return http.Post<{ success: boolean }>('/app/ownerRepair.repairEnd', data)
 }
 
 /** 14. 开始维修 */
-export function repairStart(data: {
-  repairId: string
-  communityId?: string
-}) {
+export function repairStart(data: { repairId: string, communityId?: string }) {
   return http.Post<{ success: boolean }>('/app/ownerRepair.repairStart', data)
 }
 
 /** 15. 暂停维修 */
-export function repairStop(data: {
-  repairId: string
-  communityId?: string
-  remark?: string
-}) {
+export function repairStop(data: { repairId: string, communityId?: string, remark?: string }) {
   return http.Post<{ success: boolean }>('/app/ownerRepair.repairStop', data)
 }
 
@@ -186,22 +160,14 @@ export function appraiseRepair(data: {
 }
 
 /** 17. 回复评价 */
-export function replyAppraise(data: {
-  ruId: string
-  repairId: string
-  reply: string
-  communityId?: string
-}) {
+export function replyAppraise(data: { ruId: string, repairId: string, reply: string, communityId?: string }) {
   return http.Post<{ success: boolean }>('/app/repair.replyRepairAppraise', data)
 }
 
 /** ==================== 其他接口 ==================== */
 
 /** 18. 查询维修相关配置信息（维修类型/状态等） */
-export function queryRepairInfo(params?: {
-  communityId?: string
-  rsts?: string
-}) {
+export function queryRepairInfo(params?: { communityId?: string, rsts?: string }) {
   return http.Get<{
     resourceStoreTypes: Array<{
       rstId: string
@@ -212,10 +178,7 @@ export function queryRepairInfo(params?: {
 }
 
 /** 19. 查询字典数据 */
-export function queryDictInfo(params: {
-  domain: string
-  name?: string
-}) {
+export function queryDictInfo(params: { domain: string, name?: string }) {
   return http.Get<{
     data: Array<{
       statusCd: string
@@ -225,29 +188,21 @@ export function queryDictInfo(params: {
 }
 
 /** 20. 抢单 */
-export function robRepairOrder(data: {
-  repairId: string
-  staffId: string
-  staffName: string
-  communityId?: string
-}) {
+export function robRepairOrder(data: { repairId: string, staffId: string, staffName: string, communityId?: string }) {
   return http.Post<{ success: boolean }>('/app/ownerRepair.grabbingRepair', data)
 }
 
 /** 21. 获取报修类型配置列表 */
-export function getRepairSettings(params: {
-  communityId: string
-  publicArea: 'T' | 'F'
-  page?: number
-  row?: number
-}) {
-  return http.Get<Array<{
-    repairType: string
-    repairTypeName: string
-    payFeeFlag: 'T' | 'F'
-    priceScope?: string
-    publicArea: 'T' | 'F'
-  }>>('/app/repairSetting.listRepairSettings', { params })
+export function getRepairSettings(params: { communityId: string, publicArea: 'T' | 'F', page?: number, row?: number }) {
+  return http.Get<
+    Array<{
+      repairType: string
+      repairTypeName: string
+      payFeeFlag: 'T' | 'F'
+      priceScope?: string
+      publicArea: 'T' | 'F'
+    }>
+  >('/app/repairSetting.listRepairSettings', { params })
 }
 
 /** ==================== 新增缺失的 API 函数 ==================== */
@@ -264,18 +219,20 @@ export function getRepairStaffList(params: RepairListParams) {
 
 /** 24. 查询工单流转记录 */
 export function getRepairStaffRecords(params: { repairId: string, communityId?: string }) {
-  return http.Get<{ staffRecords: Array<{
-    ruId?: string
-    repairId: string
-    staffId: string
-    staffName?: string
-    statusCd?: string
-    statusName?: string
-    startTime?: string
-    endTime?: string
-    context?: string
-    payTypeName?: string
-  }> }>('/app/ownerRepair.listRepairStaffRecords', { params })
+  return http.Get<{
+    staffRecords: Array<{
+      ruId?: string
+      repairId: string
+      staffId: string
+      staffName?: string
+      statusCd?: string
+      statusName?: string
+      startTime?: string
+      endTime?: string
+      context?: string
+      payTypeName?: string
+    }>
+  }>('/app/ownerRepair.listRepairStaffRecords', { params })
 }
 
 /** 25. 查询支付方式字典 */
@@ -285,17 +242,19 @@ export function getRepairPayTypes() {
 
 /** 26. 查询维修物资 */
 export function getRepairResources(params: { rstId: string, communityId?: string }) {
-  return http.Get<{ resources: Array<{
-    resId: string
-    resName: string
-    resTypeName?: string
-    specName?: string
-    price?: number
-    outLowPrice?: number
-    outHighPrice?: number
-    unit?: string
-    stock?: number
-  }> }> ('/app/resourceStore.listResources', { params })
+  return http.Get<{
+    resources: Array<{
+      resId: string
+      resName: string
+      resTypeName?: string
+      specName?: string
+      price?: number
+      outLowPrice?: number
+      outHighPrice?: number
+      unit?: string
+      stock?: number
+    }>
+  }>('/app/resourceStore.listResources', { params })
 }
 
 /** 27. 查询物资类型 */

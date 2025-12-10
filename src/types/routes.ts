@@ -5,7 +5,7 @@
 
 /** 页面路由类型（完整版本，包含主包和分包） */
 export type PageRoute
-  /** 主包页面 */
+/** 主包页面 */
   = | '/pages/index/index'
     | '/pages/about/about'
     | '/pages/me/me'
@@ -13,8 +13,8 @@ export type PageRoute
     | '/pages/address/list'
     | '/pages/activity/index'
     | '/pages/activity/detail'
-  /** 分包页面 */
-    /** 维修管理模块 (10个页面) */
+	/** 分包页面 */
+	/** 维修管理模块 (10个页面) */
     | '/pages-sub/repair/order-list' // 维修工单池
     | '/pages-sub/repair/dispatch' // 维修待办单
     | '/pages-sub/repair/finish' // 维修已办
@@ -25,7 +25,7 @@ export type PageRoute
     | '/pages-sub/repair/end-order' // 结束订单
     | '/pages-sub/repair/appraise' // 回访工单
     | '/pages-sub/repair/appraise-reply' // 回复评价
-    /** 投诉管理模块 */
+	/** 投诉管理模块 */
     | '/pages-sub/complaint/list'
     | '/pages-sub/complaint/detail'
     | '/pages-sub/complaint/handle'
@@ -36,16 +36,13 @@ export type PageRoute
     | '/pages-sub/property/apply-room-record'
     | '/pages-sub/property/apply-room-record-handle'
     | '/pages-sub/property/apply-room-record-detail'
-    /** 选择器模块 (3个页面) - 级联选择功能 */
+	/** 选择器模块 (3个页面) - 级联选择功能 */
     | '/pages-sub/selector/select-floor' // 选择楼栋 (无参数)
     | '/pages-sub/selector/select-unit' // 选择单元 (需要 floorId 参数)
     | '/pages-sub/selector/select-room' // 选择房屋 (需要 floorId 和 unitId 参数)
 
 /** Tab页面路由类型 */
-export type TabRoute
-  = | '/pages/index/index'
-    | '/pages/address/list'
-    | '/pages/me/me'
+export type TabRoute = '/pages/index/index' | '/pages/address/list' | '/pages/me/me'
 
 /** 页面参数类型映射（强类型约束） */
 export interface PageParams {
@@ -205,7 +202,14 @@ export interface PageConfig {
 
 /** 路由跳转选项 */
 export interface NavigationOptions {
-  animationType?: 'pop-in' | 'fade-in' | 'slide-in-right' | 'slide-in-left' | 'slide-in-top' | 'slide-in-bottom' | 'none'
+  animationType?:
+    | 'pop-in'
+    | 'fade-in'
+    | 'slide-in-right'
+    | 'slide-in-left'
+    | 'slide-in-top'
+    | 'slide-in-bottom'
+    | 'none'
   animationDuration?: number
   success?: () => void
   fail?: (err: any) => void

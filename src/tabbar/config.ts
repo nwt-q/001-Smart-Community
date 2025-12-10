@@ -119,15 +119,19 @@ export const customTabbarList: CustomTabBarItem[] = [
  * 是否启用 tabbar 缓存
  * NATIVE_TABBAR(1) 和 CUSTOM_TABBAR_WITH_CACHE(2) 时，需要tabbar缓存
  */
-export const tabbarCacheEnable
-  = [TABBAR_STRATEGY_MAP.NATIVE_TABBAR, TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITH_CACHE].includes(selectedTabbarStrategy)
+export const tabbarCacheEnable = [
+  TABBAR_STRATEGY_MAP.NATIVE_TABBAR,
+  TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITH_CACHE,
+].includes(selectedTabbarStrategy)
 
 /**
  * 是否启用自定义 tabbar
  * CUSTOM_TABBAR(2,3) 时，启用自定义tabbar
  */
-export const customTabbarEnable
-  = [TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITH_CACHE, TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITHOUT_CACHE].includes(selectedTabbarStrategy)
+export const customTabbarEnable = [
+  TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITH_CACHE,
+  TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITHOUT_CACHE,
+].includes(selectedTabbarStrategy)
 
 /**
  * 是否需要隐藏原生 tabbar
@@ -135,7 +139,9 @@ export const customTabbarEnable
  */
 export const needHideNativeTabbar = selectedTabbarStrategy === TABBAR_STRATEGY_MAP.CUSTOM_TABBAR_WITH_CACHE
 
-const _tabbarList = customTabbarEnable ? customTabbarList.map(item => ({ text: item.text, pagePath: item.pagePath })) : nativeTabbarList
+const _tabbarList = customTabbarEnable
+  ? customTabbarList.map(item => ({ text: item.text, pagePath: item.pagePath }))
+  : nativeTabbarList
 export const tabbarList = customTabbarEnable ? customTabbarList : nativeTabbarList
 
 const _tabbar: TabBar = {

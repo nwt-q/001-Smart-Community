@@ -70,9 +70,9 @@
 ```typescript
 /** 查询维修状态字典 */
 export function getRepairStates() {
-  return http.Get<DictItem[]>('/callComponent/core/list', {
-    params: { domain: 'repair_status' },
-  })
+	return http.Get<DictItem[]>("/callComponent/core/list", {
+		params: { domain: "repair_status" },
+	});
 }
 ```
 
@@ -92,7 +92,7 @@ export function getRepairStates() {
 ```typescript
 /** 查询工单流转记录 */
 export function getRepairStaffRecords(params: { repairId: string; communityId?: string }) {
-  return http.Get<{ staffRecords: RepairStaffRecord[] }>('/app/ownerRepair.listRepairStaffRecords', { params })
+	return http.Get<{ staffRecords: RepairStaffRecord[] }>("/app/ownerRepair.listRepairStaffRecords", { params });
 }
 ```
 
@@ -112,9 +112,9 @@ export function getRepairStaffRecords(params: { repairId: string; communityId?: 
 ```typescript
 /** 查询支付方式字典 */
 export function getRepairPayTypes() {
-  return http.Get<DictItem[]>('/callComponent/core/list', {
-    params: { domain: 'pay_type' },
-  })
+	return http.Get<DictItem[]>("/callComponent/core/list", {
+		params: { domain: "pay_type" },
+	});
 }
 ```
 
@@ -134,10 +134,10 @@ export function getRepairPayTypes() {
 
 ```typescript
 // 方案1: 保留 getRepairDispatchList，修改页面调用
-export { getRepairDispatchList as getRepairStaffList }
+export { getRepairDispatchList as getRepairStaffList };
 
 // 方案2: 添加别名导出
-export const getRepairStaffList = getRepairDispatchList
+export const getRepairStaffList = getRepairDispatchList;
 ```
 
 #### 问题 5: 物品选择相关接口命名不一致
@@ -154,8 +154,8 @@ export const getRepairStaffList = getRepairDispatchList
 
 ```typescript
 // 添加别名导出
-export { queryResources as getRepairResources }
-export { queryRepairInfo as getRepairResourceTypes }
+export { queryResources as getRepairResources };
+export { queryRepairInfo as getRepairResourceTypes };
 ```
 
 ### 2.3 类型定义问题
@@ -168,7 +168,7 @@ export { queryRepairInfo as getRepairResourceTypes }
 
 ```typescript
 export function getRepairDetail(repairId: string) {
-  return http.Get<{ ownerRepair: RepairOrder }>('/app/ownerRepair.queryOwnerRepair', { params: { repairId } })
+	return http.Get<{ ownerRepair: RepairOrder }>("/app/ownerRepair.queryOwnerRepair", { params: { repairId } });
 }
 ```
 
@@ -176,17 +176,17 @@ export function getRepairDetail(repairId: string) {
 
 ```typescript
 getRepairDetail({
-  repairId: repairId.value,
-  storeId: storeId.value,
-  communityId: communityInfo.communityId,
-})
+	repairId: repairId.value,
+	storeId: storeId.value,
+	communityId: communityInfo.communityId,
+});
 ```
 
 **建议修复**:
 
 ```typescript
 export function getRepairDetail(params: { repairId: string; storeId?: string; communityId?: string }) {
-  return http.Get<{ ownerRepairs: RepairOrder[] }>('/app/ownerRepair.queryOwnerRepair', { params })
+	return http.Get<{ ownerRepairs: RepairOrder[] }>("/app/ownerRepair.queryOwnerRepair", { params });
 }
 ```
 
@@ -199,14 +199,14 @@ export function getRepairDetail(params: { repairId: string; storeId?: string; co
 **Mock 实现**:
 
 ```typescript
-return successResponse({ ownerRepair: repair }, '查询成功')
+return successResponse({ ownerRepair: repair }, "查询成功");
 ```
 
 **页面使用**:
 
 ```typescript
 if (result.ownerRepairs && result.ownerRepairs.length > 0) {
-  repairDetail.value = result.ownerRepairs[0]
+	repairDetail.value = result.ownerRepairs[0];
 }
 ```
 
@@ -385,17 +385,17 @@ if (result.ownerRepairs && result.ownerRepairs.length > 0) {
 ```typescript
 /** 查询维修状态字典 */
 export function getRepairStates() {
-  return queryDictInfo({ domain: 'repair_status' })
+	return queryDictInfo({ domain: "repair_status" });
 }
 
 /** 查询工单流转记录 */
 export function getRepairStaffRecords(params: { repairId: string; communityId?: string }) {
-  return http.Get<{ staffRecords: RepairStaffRecord[] }>('/app/ownerRepair.listRepairStaffRecords', { params })
+	return http.Get<{ staffRecords: RepairStaffRecord[] }>("/app/ownerRepair.listRepairStaffRecords", { params });
 }
 
 /** 查询支付方式字典 */
 export function getRepairPayTypes() {
-  return queryDictInfo({ domain: 'pay_type' })
+	return queryDictInfo({ domain: "pay_type" });
 }
 ```
 
@@ -453,12 +453,12 @@ export function getRepairPayTypes() {
 ```typescript
 // 修改前
 export function getRepairDetail(repairId: string) {
-  return http.Get<{ ownerRepair: RepairOrder }>('/app/ownerRepair.queryOwnerRepair', { params: { repairId } })
+	return http.Get<{ ownerRepair: RepairOrder }>("/app/ownerRepair.queryOwnerRepair", { params: { repairId } });
 }
 
 // 修改后
 export function getRepairDetail(params: { repairId: string; storeId?: string; communityId?: string }) {
-  return http.Get<{ ownerRepairs: RepairOrder[] }>('/app/ownerRepair.queryOwnerRepair', { params })
+	return http.Get<{ ownerRepairs: RepairOrder[] }>("/app/ownerRepair.queryOwnerRepair", { params });
 }
 ```
 
@@ -470,9 +470,9 @@ export function getRepairDetail(params: { repairId: string; storeId?: string; co
 
 ```typescript
 /** ==================== 接口别名（向后兼容） ==================== */
-export { getRepairDispatchList as getRepairStaffList }
-export { queryResources as getRepairResources }
-export { queryRepairInfo as getRepairResourceTypes }
+export { getRepairDispatchList as getRepairStaffList };
+export { queryResources as getRepairResources };
+export { queryRepairInfo as getRepairResourceTypes };
 ```
 
 #### 优化步骤 2: 完善 Mock 业务逻辑
@@ -481,13 +481,13 @@ export { queryRepairInfo as getRepairResourceTypes }
 
 ```typescript
 // 抢单接口增加并发检查
-if (repair.status !== 'PENDING') {
-  return errorResponse('该工单已被抢单或已派单', ResultEnumMap.Error)
+if (repair.status !== "PENDING") {
+	return errorResponse("该工单已被抢单或已派单", ResultEnumMap.Error);
 }
 
 // 模拟并发抢单场景（10%概率）
 if (Math.random() < 0.1) {
-  return errorResponse('抢单失败，该工单已被其他师傅抢走', ResultEnumMap.Error)
+	return errorResponse("抢单失败，该工单已被其他师傅抢走", ResultEnumMap.Error);
 }
 ```
 

@@ -44,26 +44,26 @@ description: 接口错误提示能力 - 提供统一的接口错误提示标准�
 
 ```typescript
 // src/utils/api-error-handler.ts
-import { useGlobalToast } from '@/hooks/useGlobalToast'
+import { useGlobalToast } from "@/hooks/useGlobalToast";
 
 /** 错误级别枚举 */
 export enum ErrorLevel {
-  FATAL = 'fatal',
-  SEVERE = 'severe',
-  NORMAL = 'normal',
-  LIGHT = 'light',
+	FATAL = "fatal",
+	SEVERE = "severe",
+	NORMAL = "normal",
+	LIGHT = "light",
 }
 
 /** API 错误信息接口 */
 export interface ApiErrorInfo {
-  level: ErrorLevel
-  message: string
-  code?: number | string
+	level: ErrorLevel;
+	message: string;
+	code?: number | string;
 }
 
 /** 错误处理选项 */
 export interface ErrorHandlerOptions {
-  shouldShowError?: boolean
+	shouldShowError?: boolean;
 }
 
 /**
@@ -71,75 +71,75 @@ export interface ErrorHandlerOptions {
  * @description 统一的接口错误提示处理工具，供全局拦截器和组件层使用
  */
 export class ApiErrorHandler {
-  /**
-   * 统一错误处理入口
-   * @example ApiErrorHandler.handle({ level: ErrorLevel.NORMAL, message: '操作失败' })
-   */
-  static handle(error: ApiErrorInfo, options: ErrorHandlerOptions = {}): void {
-    const { shouldShowError = true } = options
-    if (!shouldShowError) return
+	/**
+	 * 统一错误处理入口
+	 * @example ApiErrorHandler.handle({ level: ErrorLevel.NORMAL, message: '操作失败' })
+	 */
+	static handle(error: ApiErrorInfo, options: ErrorHandlerOptions = {}): void {
+		const { shouldShowError = true } = options;
+		if (!shouldShowError) return;
 
-    const toast = useGlobalToast()
+		const toast = useGlobalToast();
 
-    switch (error.level) {
-      case ErrorLevel.FATAL:
-        this.handleFatalError(error.message, error.code)
-        break
-      case ErrorLevel.SEVERE:
-        toast.error({ msg: error.message, duration: 3000 })
-        break
-      case ErrorLevel.NORMAL:
-        toast.error({ msg: error.message, duration: 2000 })
-        break
-      case ErrorLevel.LIGHT:
-        toast.warning({ msg: error.message, duration: 1500 })
-        break
-    }
-  }
+		switch (error.level) {
+			case ErrorLevel.FATAL:
+				this.handleFatalError(error.message, error.code);
+				break;
+			case ErrorLevel.SEVERE:
+				toast.error({ msg: error.message, duration: 3000 });
+				break;
+			case ErrorLevel.NORMAL:
+				toast.error({ msg: error.message, duration: 2000 });
+				break;
+			case ErrorLevel.LIGHT:
+				toast.warning({ msg: error.message, duration: 1500 });
+				break;
+		}
+	}
 
-  /**
-   * 处理致命错误
-   * @description 使用 Message 弹框，并提供跳转处理
-   */
-  private static handleFatalError(message: string, code?: number | string): void {
-    uni.showModal({
-      title: '系统错误',
-      content: message,
-      showCancel: false,
-      success: () => {
-        uni.reLaunch({ url: '/pages/index/index' })
-      },
-    })
-  }
+	/**
+	 * 处理致命错误
+	 * @description 使用 Message 弹框，并提供跳转处理
+	 */
+	private static handleFatalError(message: string, code?: number | string): void {
+		uni.showModal({
+			title: "系统错误",
+			content: message,
+			showCancel: false,
+			success: () => {
+				uni.reLaunch({ url: "/pages/index/index" });
+			},
+		});
+	}
 
-  /**
-   * 映射 HTTP 状态码到错误信息
-   * @example const error = ApiErrorHandler.mapStatusCode(404, '用户不存在')
-   */
-  static mapStatusCode(statusCode: number, originalMessage?: string): ApiErrorInfo {
-    const errorMap: Record<number, { level: ErrorLevel; message: string }> = {
-      400: { level: ErrorLevel.NORMAL, message: '请求参数错误' },
-      401: { level: ErrorLevel.FATAL, message: '登录已过期，请重新登录' },
-      403: { level: ErrorLevel.SEVERE, message: '权限不足，无法访问' },
-      404: { level: ErrorLevel.NORMAL, message: '请求的资源不存在' },
-      500: { level: ErrorLevel.SEVERE, message: '服务器内部错误' },
-      502: { level: ErrorLevel.LIGHT, message: '网关错误，请稍后重试' },
-      503: { level: ErrorLevel.SEVERE, message: '服务暂时不可用' },
-    }
+	/**
+	 * 映射 HTTP 状态码到错误信息
+	 * @example const error = ApiErrorHandler.mapStatusCode(404, '用户不存在')
+	 */
+	static mapStatusCode(statusCode: number, originalMessage?: string): ApiErrorInfo {
+		const errorMap: Record<number, { level: ErrorLevel; message: string }> = {
+			400: { level: ErrorLevel.NORMAL, message: "请求参数错误" },
+			401: { level: ErrorLevel.FATAL, message: "登录已过期，请重新登录" },
+			403: { level: ErrorLevel.SEVERE, message: "权限不足，无法访问" },
+			404: { level: ErrorLevel.NORMAL, message: "请求的资源不存在" },
+			500: { level: ErrorLevel.SEVERE, message: "服务器内部错误" },
+			502: { level: ErrorLevel.LIGHT, message: "网关错误，请稍后重试" },
+			503: { level: ErrorLevel.SEVERE, message: "服务暂时不可用" },
+		};
 
-    const defaultError = { level: ErrorLevel.NORMAL, message: '请求失败，请稍后重试' }
-    const error = errorMap[statusCode] || defaultError
+		const defaultError = { level: ErrorLevel.NORMAL, message: "请求失败，请稍后重试" };
+		const error = errorMap[statusCode] || defaultError;
 
-    return { ...error, code: statusCode, message: originalMessage || error.message }
-  }
+		return { ...error, code: statusCode, message: originalMessage || error.message };
+	}
 
-  /**
-   * 映射业务错误码到错误信息
-   * @example const error = ApiErrorHandler.mapBusinessCode('1001', '余额不足')
-   */
-  static mapBusinessCode(code: string | number, message: string): ApiErrorInfo {
-    return { level: ErrorLevel.NORMAL, message, code }
-  }
+	/**
+	 * 映射业务错误码到错误信息
+	 * @example const error = ApiErrorHandler.mapBusinessCode('1001', '余额不足')
+	 */
+	static mapBusinessCode(code: string | number, message: string): ApiErrorInfo {
+		return { level: ErrorLevel.NORMAL, message, code };
+	}
 }
 ```
 
@@ -147,54 +147,54 @@ export class ApiErrorHandler {
 
 ```typescript
 // src/http/alova.ts 关键部分
-import { ApiErrorHandler, ErrorLevel } from '@/utils/api-error-handler'
-import { useGlobalToast } from '@/hooks/useGlobalToast'
+import { ApiErrorHandler, ErrorLevel } from "@/utils/api-error-handler";
+import { useGlobalToast } from "@/hooks/useGlobalToast";
 
 const alovaInstance = createAlova({
-  baseURL: import.meta.env.VITE_APP_PROXY_PREFIX,
-  // ... 其他配置 ...
+	baseURL: import.meta.env.VITE_APP_PROXY_PREFIX,
+	// ... 其他配置 ...
 
-  responded: onResponseRefreshToken((response, method) => {
-    const { config } = method
-    const { requestType } = config
-    const { statusCode, data: rawData, errMsg } = response as UniNamespace.RequestSuccessCallbackResult
+	responded: onResponseRefreshToken((response, method) => {
+		const { config } = method;
+		const { requestType } = config;
+		const { statusCode, data: rawData, errMsg } = response as UniNamespace.RequestSuccessCallbackResult;
 
-    // 处理特殊请求类型（上传/下载）
-    if (requestType === 'upload' || requestType === 'download') {
-      return response
-    }
+		// 处理特殊请求类型（上传/下载）
+		if (requestType === "upload" || requestType === "download") {
+			return response;
+		}
 
-    const toast = useGlobalToast()
-    const shouldShowToast = config.meta?.toast !== false
+		const toast = useGlobalToast();
+		const shouldShowToast = config.meta?.toast !== false;
 
-    // 处理 HTTP 状态码错误
-    if (statusCode !== 200) {
-      const errorInfo = ApiErrorHandler.mapStatusCode(statusCode)
+		// 处理 HTTP 状态码错误
+		if (statusCode !== 200) {
+			const errorInfo = ApiErrorHandler.mapStatusCode(statusCode);
 
-      if (shouldShowToast) {
-        ApiErrorHandler.handle(errorInfo)
-      }
+			if (shouldShowToast) {
+				ApiErrorHandler.handle(errorInfo);
+			}
 
-      throw new Error(`${errorInfo.message}：${errMsg}`)
-    }
+			throw new Error(`${errorInfo.message}：${errMsg}`);
+		}
 
-    // 处理业务逻辑错误
-    const { code, message, data } = rawData as IResponse
+		// 处理业务逻辑错误
+		const { code, message, data } = rawData as IResponse;
 
-    if (code !== ResultEnum.Success && code !== String(ResultEnum.Success)) {
-      const errorInfo = ApiErrorHandler.mapBusinessCode(code, message)
+		if (code !== ResultEnum.Success && code !== String(ResultEnum.Success)) {
+			const errorInfo = ApiErrorHandler.mapBusinessCode(code, message);
 
-      if (shouldShowToast) {
-        ApiErrorHandler.handle(errorInfo)
-      }
+			if (shouldShowToast) {
+				ApiErrorHandler.handle(errorInfo);
+			}
 
-      throw new Error(`请求错误[${code}]：${message}`)
-    }
+			throw new Error(`请求错误[${code}]：${message}`);
+		}
 
-    // 处理成功响应，返回业务数据
-    return data
-  }),
-})
+		// 处理成功响应，返回业务数据
+		return data;
+	}),
+});
 ```
 
 ## 6. 组件层使用规范
@@ -203,79 +203,79 @@ const alovaInstance = createAlova({
 
 ```vue
 <template>
-  <view class="page-container">
-    <wd-button :loading="loading" @click="handleRefresh">刷新数据</wd-button>
+	<view class="page-container">
+		<wd-button :loading="loading" @click="handleRefresh">刷新数据</wd-button>
 
-    <view v-if="repairData?.list?.length">
-      <view v-for="item in repairData.list" :key="item.repairId" class="list-item">
-        {{ item.title }}
-      </view>
-    </view>
-  </view>
+		<view v-if="repairData?.list?.length">
+			<view v-for="item in repairData.list" :key="item.repairId" class="list-item">
+				{{ item.title }}
+			</view>
+		</view>
+	</view>
 </template>
 
 <script setup lang="ts">
-import { useRequest } from 'alova/client'
-import { getRepairOrderList } from '@/api/repair'
-import { ref, onMounted } from 'vue'
-import type { RepairListParams } from '@/types/repair'
+import { useRequest } from "alova/client";
+import { getRepairOrderList } from "@/api/repair";
+import { ref, onMounted } from "vue";
+import type { RepairListParams } from "@/types/repair";
 
 /** 查询参数 */
 const queryParams = ref<RepairListParams>({
-  page: 1,
-  row: 10,
-  status: undefined,
-})
+	page: 1,
+	row: 10,
+	status: undefined,
+});
 
 /**
  * 请求管理 - 使用 useRequest + 回调钩子
  * 🔴 强制规范：必须设置 immediate: false
  */
 const {
-  loading,
-  data: repairData,
-  send: loadRepairList,
-  onSuccess,
-  onError,
-  onComplete,
+	loading,
+	data: repairData,
+	send: loadRepairList,
+	onSuccess,
+	onError,
+	onComplete,
 } = useRequest(() => getRepairOrderList(queryParams.value), {
-  immediate: false,
-})
+	immediate: false,
+});
 
 /**
  * 成功回调 - 处理业务逻辑
  * @description 错误提示已在 Alova 响应拦截器中自动处理，这里只需处理成功逻辑
  */
 onSuccess((result) => {
-  console.log('维修工单列表加载成功:', result)
-})
+	console.log("维修工单列表加载成功:", result);
+});
 
 /**
  * 失败回调 - 日志记录和状态恢复
  * @description 错误提示已在 Alova 响应拦截器中自动处理，这里用于日志和状态恢复
  */
 onError((error) => {
-  console.error('维修工单列表加载失败:', error)
-  // 不需要重复显示错误提示
-})
+	console.error("维修工单列表加载失败:", error);
+	// 不需要重复显示错误提示
+});
 
 /**
  * 完成回调 - 无论成功失败都执行
  * @description 用于停止下拉刷新等通用操作
  */
 onComplete(() => {
-  uni.stopPullDownRefresh()
-})
+	uni.stopPullDownRefresh();
+});
 
 /** 刷新数据 */
 function handleRefresh() {
-  loadRepairList()
+	loadRepairList();
 }
 
 /** 页面加载时手动触发 */
 onMounted(() => {
-  loadRepairList()
-})
+	loadRepairList();
+});
 </script>
 ```
 
@@ -283,76 +283,76 @@ onMounted(() => {
 
 ```vue
 <template>
-  <view class="form-container">
-    <wd-input v-model="formData.title" label="标题" placeholder="请输入标题" />
-    <wd-input v-model="formData.description" label="描述" placeholder="请输入描述" />
-    <wd-button :loading="submitting" @click="handleSubmit">提交</wd-button>
-  </view>
+	<view class="form-container">
+		<wd-input v-model="formData.title" label="标题" placeholder="请输入标题" />
+		<wd-input v-model="formData.description" label="描述" placeholder="请输入描述" />
+		<wd-button :loading="submitting" @click="handleSubmit">提交</wd-button>
+	</view>
 </template>
 
 <script setup lang="ts">
-import { useRequest } from 'alova/client'
-import { createRepairOrder } from '@/api/repair'
-import { reactive } from 'vue'
-import { useGlobalToast } from '@/hooks/useGlobalToast'
-import type { CreateRepairReq } from '@/types/repair'
+import { useRequest } from "alova/client";
+import { createRepairOrder } from "@/api/repair";
+import { reactive } from "vue";
+import { useGlobalToast } from "@/hooks/useGlobalToast";
+import type { CreateRepairReq } from "@/types/repair";
 
-const toast = useGlobalToast()
+const toast = useGlobalToast();
 
 /** 表单数据 */
 const formData = reactive<CreateRepairReq>({
-  title: '',
-  description: '',
-  repairType: '其他维修',
-})
+	title: "",
+	description: "",
+	repairType: "其他维修",
+});
 
 /**
  * 表单提交请求管理
  * 🔴 强制规范：必须设置 immediate: false
  */
 const {
-  loading: submitting,
-  send: submitRepair,
-  onSuccess: onSubmitSuccess,
-  onError: onSubmitError,
+	loading: submitting,
+	send: submitRepair,
+	onSuccess: onSubmitSuccess,
+	onError: onSubmitError,
 } = useRequest((data: CreateRepairReq) => createRepairOrder(data), {
-  immediate: false,
-})
+	immediate: false,
+});
 
 /**
  * 提交成功回调
  * @description 显示成功提示并重置表单
  */
 onSubmitSuccess((result) => {
-  console.log('创建成功:', result)
-  toast.success('维修工单创建成功')
+	console.log("创建成功:", result);
+	toast.success("维修工单创建成功");
 
-  // 重置表单
-  Object.assign(formData, {
-    title: '',
-    description: '',
-    repairType: '其他维修',
-  })
-})
+	// 重置表单
+	Object.assign(formData, {
+		title: "",
+		description: "",
+		repairType: "其他维修",
+	});
+});
 
 /**
  * 提交失败回调
  * @description 错误提示已自动处理，这里只需记录日志
  */
 onSubmitError((error) => {
-  console.error('创建失败:', error)
-})
+	console.error("创建失败:", error);
+});
 
 /** 表单提交处理 */
 function handleSubmit() {
-  // 表单验证
-  if (!formData.title) {
-    toast.warning('请输入标题')
-    return
-  }
+	// 表单验证
+	if (!formData.title) {
+		toast.warning("请输入标题");
+		return;
+	}
 
-  // 手动触发请求
-  submitRepair(formData)
+	// 手动触发请求
+	submitRepair(formData);
 }
 </script>
 ```
@@ -363,55 +363,55 @@ function handleSubmit() {
 
 ```vue
 <template>
-  <view class="page-container">
-    <wd-button @click="handleSilentRequest">静默请求</wd-button>
-  </view>
+	<view class="page-container">
+		<wd-button @click="handleSilentRequest">静默请求</wd-button>
+	</view>
 </template>
 
 <script setup lang="ts">
-import { useRequest } from 'alova/client'
-import { getRepairDetail } from '@/api/repair'
-import { ApiErrorHandler, ErrorLevel } from '@/utils/api-error-handler'
+import { useRequest } from "alova/client";
+import { getRepairDetail } from "@/api/repair";
+import { ApiErrorHandler, ErrorLevel } from "@/utils/api-error-handler";
 
 /**
  * 静默请求 - 禁用全局错误提示
  * @description 使用 meta.toast: false 禁用自动错误提示，在 onError 中自定义处理
  */
 const {
-  send: loadDetail,
-  onSuccess,
-  onError,
+	send: loadDetail,
+	onSuccess,
+	onError,
 } = useRequest((repairId: string) => getRepairDetail({ repairId }).setMeta({ toast: false }), {
-  immediate: false,
-})
+	immediate: false,
+});
 
 /**
  * 成功回调
  */
 onSuccess((result) => {
-  console.log('详情加载成功:', result)
-})
+	console.log("详情加载成功:", result);
+});
 
 /**
  * 失败回调 - 自定义错误处理
  * @description 由于禁用了自动提示，需要在这里手动处理错误
  */
 onError((error) => {
-  console.error('详情加载失败:', error)
+	console.error("详情加载失败:", error);
 
-  // 自定义错误处理逻辑
-  ApiErrorHandler.handle({
-    level: ErrorLevel.LIGHT,
-    message: '加载失败，将使用缓存数据',
-  })
+	// 自定义错误处理逻辑
+	ApiErrorHandler.handle({
+		level: ErrorLevel.LIGHT,
+		message: "加载失败，将使用缓存数据",
+	});
 
-  // 或者使用静默处理，不显示任何提示
-  // 直接使用缓存数据等兜底逻辑
-})
+	// 或者使用静默处理，不显示任何提示
+	// 直接使用缓存数据等兜底逻辑
+});
 
 /** 触发静默请求 */
 function handleSilentRequest() {
-  loadDetail('REP_001')
+	loadDetail("REP_001");
 }
 </script>
 ```
@@ -420,99 +420,99 @@ function handleSilentRequest() {
 
 ```vue
 <template>
-  <view class="list-container">
-    <view v-for="item in activityList" :key="item.activitiesId" class="list-item">
-      {{ item.title }}
-    </view>
+	<view class="list-container">
+		<view v-for="item in activityList" :key="item.activitiesId" class="list-item">
+			{{ item.title }}
+		</view>
 
-    <view v-if="hasMore" class="load-more" @click="handleLoadMore">
-      {{ loadingMore ? '加载中...' : '加载更多' }}
-    </view>
-  </view>
+		<view v-if="hasMore" class="load-more" @click="handleLoadMore">
+			{{ loadingMore ? "加载中..." : "加载更多" }}
+		</view>
+	</view>
 </template>
 
 <script setup lang="ts">
-import { useRequest } from 'alova/client'
-import { getActivityList } from '@/api/activity'
-import { ref, onMounted } from 'vue'
-import type { Activity } from '@/types/activity'
+import { useRequest } from "alova/client";
+import { getActivityList } from "@/api/activity";
+import { ref, onMounted } from "vue";
+import type { Activity } from "@/types/activity";
 
-const currentPage = ref(1)
-const hasMore = ref(true)
-const activityList = ref<Activity[]>([])
+const currentPage = ref(1);
+const hasMore = ref(true);
+const activityList = ref<Activity[]>([]);
 
 /**
  * 首次加载请求
  * 🔴 强制规范：必须设置 immediate: false
  */
 const {
-  loading,
-  send: loadList,
-  onSuccess: onListSuccess,
-  onError: onListError,
+	loading,
+	send: loadList,
+	onSuccess: onListSuccess,
+	onError: onListError,
 } = useRequest((page: number) => getActivityList({ page, row: 10 }), {
-  immediate: false,
-})
+	immediate: false,
+});
 
 /**
  * 加载更多请求
  * 🔴 强制规范：必须设置 immediate: false
  */
 const {
-  loading: loadingMore,
-  send: loadMore,
-  onSuccess: onLoadMoreSuccess,
-  onError: onLoadMoreError,
+	loading: loadingMore,
+	send: loadMore,
+	onSuccess: onLoadMoreSuccess,
+	onError: onLoadMoreError,
 } = useRequest((page: number) => getActivityList({ page, row: 10 }), {
-  immediate: false,
-})
+	immediate: false,
+});
 
 /** 列表加载成功 */
 onListSuccess((result) => {
-  activityList.value = result.activitiess || []
-  currentPage.value = 1
-  hasMore.value = result.activitiess?.length >= 10
-})
+	activityList.value = result.activitiess || [];
+	currentPage.value = 1;
+	hasMore.value = result.activitiess?.length >= 10;
+});
 
 /** 列表加载失败 */
 onListError((error) => {
-  console.error('加载失败:', error)
-  // 错误提示已自动处理
-})
+	console.error("加载失败:", error);
+	// 错误提示已自动处理
+});
 
 /** 加载更多成功 */
 onLoadMoreSuccess((result) => {
-  if (result?.activitiess?.length) {
-    activityList.value.push(...result.activitiess)
-    currentPage.value++
-    hasMore.value = result.activitiess.length >= 10
-  } else {
-    hasMore.value = false
-  }
-})
+	if (result?.activitiess?.length) {
+		activityList.value.push(...result.activitiess);
+		currentPage.value++;
+		hasMore.value = result.activitiess.length >= 10;
+	} else {
+		hasMore.value = false;
+	}
+});
 
 /** 加载更多失败 */
 onLoadMoreError((error) => {
-  console.error('加载更多失败:', error)
-  // 错误提示已自动处理
-})
+	console.error("加载更多失败:", error);
+	// 错误提示已自动处理
+});
 
 /** 下拉刷新 */
 function handleRefresh() {
-  loadList(1)
+	loadList(1);
 }
 
 /** 上拉加载更多 */
 function handleLoadMore() {
-  if (!loadingMore.value && hasMore.value) {
-    loadMore(currentPage.value + 1)
-  }
+	if (!loadingMore.value && hasMore.value) {
+		loadMore(currentPage.value + 1);
+	}
 }
 
 /** 页面加载时手动触发 */
 onMounted(() => {
-  loadList(1)
-})
+	loadList(1);
+});
 </script>
 ```
 
@@ -537,24 +537,24 @@ onMounted(() => {
 ## 8. Toast 工具使用
 
 ```typescript
-import { useGlobalToast } from '@/hooks/useGlobalToast'
+import { useGlobalToast } from "@/hooks/useGlobalToast";
 
-const toast = useGlobalToast()
+const toast = useGlobalToast();
 
 // 1. 成功提示 - 操作成功时使用
-toast.success('操作成功')
+toast.success("操作成功");
 
 // 2. 错误提示 - 业务错误时使用
-toast.error('操作失败：用户名已存在')
+toast.error("操作失败：用户名已存在");
 
 // 3. 警告提示 - 轻微问题或提醒时使用
-toast.warning('请先选择楼栋')
+toast.warning("请先选择楼栋");
 
 // 4. 信息提示 - 普通信息时使用
-toast.info('正在处理中...')
+toast.info("正在处理中...");
 
 // 5. 带配置的提示
-toast.error({ msg: '网络连接异常，请检查网络设置', duration: 3000 })
+toast.error({ msg: "网络连接异常，请检查网络设置", duration: 3000 });
 ```
 
 ## 9. 关键注意事项

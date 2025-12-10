@@ -33,7 +33,7 @@ UniPages({
 }),
 ```
 
-## 4. 首次运行 `pnpm:mp` 时报错。
+## 4. 首次运行 `pnpm:mp` 时报错
 
 首次运行 `pnpm:mp` 时报错，报错如下：
 
@@ -43,7 +43,7 @@ Error: ENOENT: no such file or directory, open '/Users/burtlai/unibest-projects/
 
 首次运行 `非h5端` 时都可能出现上面的问题，需要先执行一下 `pnpm i` 以生成 `src/manifest.json` 文件，后面就不会报错了。
 
-## 5. `git commit` 报错。
+## 5. `git commit` 报错
 
 请看 `commitlint.config.ts` 里面的配置，需要满足对应的设定。根据自己的需要，可以修改 `commitlint.config.ts` 里面的配置。
 
@@ -85,7 +85,7 @@ git commit -m "feat: xxx" --no-verify
 
 > 总结：`git rm -r --cached .` + `git commit` 即可。
 
-## 10. 支付宝小程序运行报错。
+## 10. 支付宝小程序运行报错
 
 - 默认运行是会报错的，如下图
   ![alt text](./assets/14-2.png)

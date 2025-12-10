@@ -13,8 +13,53 @@ import { defineUniAppMock, errorResponse, mockLog, randomDelay, successResponse 
 
 /** 中文姓名生成器 */
 function generateChineseName(): string {
-  const surnames = ['张', '王', '李', '赵', '刘', '陈', '杨', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗']
-  const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞', '平', '刚', '桂英']
+  const surnames = [
+    '张',
+    '王',
+    '李',
+    '赵',
+    '刘',
+    '陈',
+    '杨',
+    '黄',
+    '周',
+    '吴',
+    '徐',
+    '孙',
+    '胡',
+    '朱',
+    '高',
+    '林',
+    '何',
+    '郭',
+    '马',
+    '罗',
+  ]
+  const names = [
+    '伟',
+    '芳',
+    '娜',
+    '秀英',
+    '敏',
+    '静',
+    '丽',
+    '强',
+    '磊',
+    '军',
+    '洋',
+    '勇',
+    '艳',
+    '杰',
+    '娟',
+    '涛',
+    '明',
+    '超',
+    '秀兰',
+    '霞',
+    '平',
+    '刚',
+    '桂英',
+  ]
 
   const surname = surnames[Math.floor(Math.random() * surnames.length)]
   const name = names[Math.floor(Math.random() * names.length)]
@@ -25,7 +70,9 @@ function generateChineseName(): string {
 function generatePhoneNumber(): string {
   const prefixes = ['138', '139', '136', '137', '135', '159', '158', '150', '151', '152']
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
-  const suffix = Math.floor(Math.random() * 100000000).toString().padStart(8, '0')
+  const suffix = Math.floor(Math.random() * 100000000)
+    .toString()
+    .padStart(8, '0')
   return prefix + suffix
 }
 
@@ -82,8 +129,7 @@ function createMockStaff(id: string): Staff {
 
 const mockStaffDatabase = {
   /** 初始化员工数据（模拟原项目的数据量） */
-  staffs: Array.from({ length: 50 }, (_, index) =>
-    createMockStaff((index + 1).toString().padStart(3, '0'))) as Staff[],
+  staffs: Array.from({ length: 50 }, (_, index) => createMockStaff((index + 1).toString().padStart(3, '0'))) as Staff[],
 
   /** 获取员工详情 */
   getStaffById(staffId: string): Staff | undefined {
@@ -97,30 +143,27 @@ const mockStaffDatabase = {
     // 按名称搜索（兼容原项目的 name 参数）
     if (params.name?.trim()) {
       const keyword = params.name.toLowerCase()
-      filteredStaffs = filteredStaffs.filter(staff =>
-        staff.name.toLowerCase().includes(keyword)
-        || staff.position?.toLowerCase().includes(keyword)
-        || staff.orgName.toLowerCase().includes(keyword),
+      filteredStaffs = filteredStaffs.filter(
+        staff =>
+          staff.name.toLowerCase().includes(keyword)
+          || staff.position?.toLowerCase().includes(keyword)
+          || staff.orgName.toLowerCase().includes(keyword),
       )
     }
 
     // 按组织筛选
     if (params.orgName?.trim()) {
-      filteredStaffs = filteredStaffs.filter(staff =>
-        staff.orgName === params.orgName,
-      )
+      filteredStaffs = filteredStaffs.filter(staff => staff.orgName === params.orgName)
     }
 
     // 按首字母筛选
     if (params.initials?.trim()) {
-      filteredStaffs = filteredStaffs.filter(staff =>
-        staff.initials === params.initials,
-      )
+      filteredStaffs = filteredStaffs.filter(staff => staff.initials === params.initials)
     }
 
     // 按首字母排序（完全兼容原项目的 localeCompare 逻辑）
     filteredStaffs.sort((a, b) => {
-      return (`${a.initials}`).localeCompare(`${b.initials}`)
+      return `${a.initials}`.localeCompare(`${b.initials}`)
     })
 
     // 分页处理
@@ -156,12 +199,13 @@ const mockStaffDatabase = {
     }
 
     const lowerKeyword = keyword.toLowerCase()
-    return this.staffs.filter(staff =>
-      staff.name.toLowerCase().includes(lowerKeyword)
-      || staff.tel.includes(keyword)
-      || staff.position?.toLowerCase().includes(lowerKeyword)
-      || staff.orgName.toLowerCase().includes(lowerKeyword)
-      || staff.email?.toLowerCase().includes(lowerKeyword),
+    return this.staffs.filter(
+      staff =>
+        staff.name.toLowerCase().includes(lowerKeyword)
+        || staff.tel.includes(keyword)
+        || staff.position?.toLowerCase().includes(lowerKeyword)
+        || staff.orgName.toLowerCase().includes(lowerKeyword)
+        || staff.email?.toLowerCase().includes(lowerKeyword),
     )
   },
 
@@ -226,12 +270,15 @@ export default defineUniAppMock([
           staffsCount: result.staffs.length,
         })
 
-        return successResponse({
-          staffs: result.staffs,
-          total: result.total,
-          page: result.page,
-          row: result.row,
-        }, '查询员工信息成功')
+        return successResponse(
+          {
+            staffs: result.staffs,
+            total: result.total,
+            page: result.page,
+            row: result.row,
+          },
+          '查询员工信息成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: queryStaffInfos', error)
@@ -287,12 +334,15 @@ export default defineUniAppMock([
 
         mockLog('getStaffByDepartment result', `${staffs.length} staffs`)
 
-        return successResponse({
-          staffs,
-          total: staffs.length,
-          page: 1,
-          row: staffs.length,
-        }, '获取部门员工成功')
+        return successResponse(
+          {
+            staffs,
+            total: staffs.length,
+            page: 1,
+            row: staffs.length,
+          },
+          '获取部门员工成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getStaffByDepartment', error)
@@ -323,11 +373,14 @@ export default defineUniAppMock([
 
         mockLog('searchStaffs result', `${staffs.length} results`)
 
-        return successResponse({
-          staffs,
-          total: staffs.length,
-          keyword: params.keyword,
-        }, '搜索员工成功')
+        return successResponse(
+          {
+            staffs,
+            total: staffs.length,
+            keyword: params.keyword,
+          },
+          '搜索员工成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: searchStaffs', error)
@@ -359,11 +412,14 @@ export default defineUniAppMock([
 
         mockLog('getOrganizations result', `${organizations.length} organizations`)
 
-        return successResponse({
-          organizations: orgStats,
-          totalOrganizations: organizations.length,
-          totalStaffs: mockStaffDatabase.staffs.length,
-        }, '获取组织列表成功')
+        return successResponse(
+          {
+            organizations: orgStats,
+            totalOrganizations: organizations.length,
+            totalStaffs: mockStaffDatabase.staffs.length,
+          },
+          '获取组织列表成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getOrganizations', error)
@@ -397,9 +453,12 @@ export default defineUniAppMock([
 
         mockLog('updateStaffOnlineStatus result', staff.name)
 
-        return successResponse({
-          staff,
-        }, '更新在线状态成功')
+        return successResponse(
+          {
+            staff,
+          },
+          '更新在线状态成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: updateStaffOnlineStatus', error)
@@ -424,11 +483,14 @@ export default defineUniAppMock([
 
         mockLog('getOnlineStaffs result', `${onlineStaffs.length} online staffs`)
 
-        return successResponse({
-          staffs: onlineStaffs,
-          total: onlineStaffs.length,
-          onlineRatio: Math.round((onlineStaffs.length / mockStaffDatabase.staffs.length) * 100),
-        }, '获取在线员工成功')
+        return successResponse(
+          {
+            staffs: onlineStaffs,
+            total: onlineStaffs.length,
+            onlineRatio: Math.round((onlineStaffs.length / mockStaffDatabase.staffs.length) * 100),
+          },
+          '获取在线员工成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: getOnlineStaffs', error)
@@ -466,9 +528,12 @@ export default defineUniAppMock([
 
         mockLog('addStaff result', newStaff)
 
-        return successResponse({
-          staff: newStaff,
-        }, '添加员工成功')
+        return successResponse(
+          {
+            staff: newStaff,
+          },
+          '添加员工成功',
+        )
       }
       catch (error: any) {
         console.error('❌ Mock API Error: addStaff', error)

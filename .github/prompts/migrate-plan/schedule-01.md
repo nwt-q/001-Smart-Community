@@ -496,7 +496,7 @@ apply-room.vue
 
 ```html
 <view class="flex flex-col items-center justify-center py-20">
-  <text class="text-gray-400">暂无数据</text>
+	<text class="text-gray-400">暂无数据</text>
 </view>
 ```
 

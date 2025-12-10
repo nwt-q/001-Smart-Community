@@ -1,4 +1,4 @@
-export function preventClick(fn, params = '') {
+export function preventClick(fn, params = "") {
 	let that = this;
 	if (that.onoff) {
 		that.onoff = false;
@@ -8,8 +8,8 @@ export function preventClick(fn, params = '') {
 		// }, 3000)
 	} else {
 		uni.showToast({
-			title:'操作过于频繁',
-			icon: 'none'
-		})
+			title: "操作过于频繁",
+			icon: "none",
+		});
 	}
 }

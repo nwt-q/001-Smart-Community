@@ -2,92 +2,87 @@
  * 回话管理 接口类
  */
 
-import conf from '../../../conf/config.js'
+import conf from "../../../conf/config.js";
 
-import {
-	getHeaders
-} from './SystemApi.js'
+import { getHeaders } from "./SystemApi.js";
 
-import {
-	desDecrypt,
-	desEncrypt
-} from '../utils/DesUtil.js'
+import { desDecrypt, desEncrypt } from "../utils/DesUtil.js";
 
-import java110Config from '../Java110Config.js'
+import java110Config from "../Java110Config.js";
 
-import date from '../utils/date.js'
+import date from "../utils/date.js";
 
-import {isNull} from '../utils/StringUtil.js'
+import { isNull } from "../utils/StringUtil.js";
 
-const loginUrl = conf.baseUrl + 'app/login.pcUserLogin'
-
+const loginUrl = conf.baseUrl + "app/login.pcUserLogin";
 
 /**
  * 登录处理
  */
 export function login(userName, passwd) {
-
 	let userInfo = {
 		username: userName,
-		passwd: passwd
-	}
+		passwd: passwd,
+	};
 	return new Promise((resolve, reject) => {
 		uni.request({
 			url: loginUrl,
 			header: getHeaders(),
 			method: "POST",
 			data: userInfo,
-			success: function(res) {
+			success: function (res) {
 				let data = res.data;
 				if (data.code != 0) {
 					uni.showToast({
-						icon:'none',
-						title:data.msg
-					})
+						icon: "none",
+						title: data.msg,
+					});
 					reject(data.msg);
 					return;
 				}
 				resolve(data);
 			},
-			fail: function(error) {
+			fail: function (error) {
 				// 调用服务端登录接口失败
 				reject(error);
-			}
+			},
 		});
 	});
 }
 
-export function reLogin(){
+export function reLogin() {
 	let userInfo = uni.getStorageSync(java110Config.USER_INFO);
-	
+
 	if (isNull(userInfo)) {
 		return;
 	}
 	let _userInfo = JSON.parse(desDecrypt(userInfo));
 	//重新登录
-	login(_userInfo.username, _userInfo.passwd)
-		.then((res) => {
+	login(_userInfo.username, _userInfo.passwd).then(
+		(res) => {
 			let _data = res.data;
 			let _loginUsers = [];
-			_data.forEach(item => {
-				if (item.storeTypeCd == '800900000003') {
+			_data.forEach((item) => {
+				if (item.storeTypeCd == "800900000003") {
 					_loginUsers.push(item);
 				}
-			})
+			});
 			uni.setStorageSync(java110Config.TOKEN, _loginUsers[0].token);
 			let afterOneHourDate = date.addHour(new Date(), 1);
 			//let afterOneHourDate = date.addMinutes(new Date(), 1);
 			wx.setStorageSync(java110Config.LOGIN_FLAG, {
 				sessionKey: _userInfo.userName,
 				expireTime: afterOneHourDate.getTime(),
-				createTime: new Date().getTime()
+				createTime: new Date().getTime(),
 			});
 			uni.reLaunch({
-				url:'/pages/index/index'
-			})
-		}, err => {
+				url: "/pages/index/index",
+			});
+		},
+		(err) => {
 			return;
-		})
+		},
+	);
 }
 
 export function hasSession() {
@@ -98,9 +93,8 @@ export function hasSession() {
 			resolve();
 			return;
 		}
-		reject('回话已失效');
-	})
-
+		reject("回话已失效");
+	});
 }
 
 export function getLoginFlag() {
@@ -114,14 +108,14 @@ export function getUserInfo() {
 	let userInfo = uni.getStorageSync(java110Config.USER_INFO);
 	if (isNull(userInfo)) {
 		uni.redirectTo({
-			url: "/pages/login/login"
+			url: "/pages/login/login",
 		});
 		return;
 	}
 	let _userInfo = JSON.parse(desDecrypt(userInfo));
 	if (isNull(userInfo)) {
 		uni.redirectTo({
-			url: "/pages/login/login"
+			url: "/pages/login/login",
 		});
 		return;
 	}

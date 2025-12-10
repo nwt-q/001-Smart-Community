@@ -128,17 +128,17 @@
 
 ```scss
 .timeline-node {
-  .node-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #4299e1;
-  }
-  .node-line {
-    width: 2px;
-    background-color: #e2e8f0;
-    min-height: 40px;
-  }
+	.node-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background-color: #4299e1;
+	}
+	.node-line {
+		width: 2px;
+		background-color: #e2e8f0;
+		min-height: 40px;
+	}
 }
 ```
 
@@ -176,10 +176,10 @@
 
 ```typescript
 // 不同 action 的验证逻辑
-if (action.value === 'DISPATCH' || action.value === 'TRANSFER') {
-  // 验证师傅选择
-} else if (action.value === 'FINISH') {
-  // 验证物资、支付方式等
+if (action.value === "DISPATCH" || action.value === "TRANSFER") {
+	// 验证师傅选择
+} else if (action.value === "FINISH") {
+	// 验证物资、支付方式等
 }
 ```
 
@@ -316,23 +316,23 @@ _这些选择页面属于基础数据选择模块，不在当前维修模块迁�
 
 ```typescript
 export interface CreateRepairReq {
-  repairName: string
-  repairType: string
-  appointmentTime: string
-  tel: string
-  context: string
-  communityId: string
-  repairObjType: RepairObjType
-  repairObjId: string
-  repairObjName: string
-  // ... 其他字段
+	repairName: string;
+	repairType: string;
+	appointmentTime: string;
+	tel: string;
+	context: string;
+	communityId: string;
+	repairObjType: RepairObjType;
+	repairObjId: string;
+	repairObjName: string;
+	// ... 其他字段
 }
 ```
 
 2. **新增 API 接口** (`src/api/repair.ts:232`)
 
 ```typescript
-export function getRepairSettings(params: { communityId: string; publicArea: 'T' | 'F'; page?: number; row?: number })
+export function getRepairSettings(params: { communityId: string; publicArea: "T" | "F"; page?: number; row?: number });
 ```
 
 ---
@@ -359,8 +359,8 @@ const { loading, send: loadList } = useRequest(
 使用 TypedRouter 实现类型安全的路由跳转：
 
 ```typescript
-TypedRouter.toRepairDetail(item.repairId, item.storeId)
-TypedRouter.toRepairHandle(item.repairId, 'DISPATCH')
+TypedRouter.toRepairDetail(item.repairId, item.storeId);
+TypedRouter.toRepairHandle(item.repairId, "DISPATCH");
 ```
 
 - [x] 类型安全
@@ -372,8 +372,8 @@ TypedRouter.toRepairHandle(item.repairId, 'DISPATCH')
 通过 `src/utils/user.ts` 统一管理：
 
 ```typescript
-const userInfo = getUserInfo()
-const communityInfo = getCurrentCommunity()
+const userInfo = getUserInfo();
+const communityInfo = getCurrentCommunity();
 ```
 
 - [x] 统一接口
